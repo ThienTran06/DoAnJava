@@ -3,6 +3,7 @@ package com.library.librarymanager.controller;
 import com.library.librarymanager.entity.TacGia;
 import com.library.librarymanager.service.TacGiaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,10 +11,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tac-gia")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class TacGiaController {
     private final TacGiaService tacGiaService;
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @GetMapping
     List<TacGia> getAll(){return tacGiaService.getAll();}
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @GetMapping("/{id}")
     TacGia getById(@PathVariable int id){return tacGiaService.getById(id);}
     @PostMapping

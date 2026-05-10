@@ -1,4 +1,5 @@
 package com.library.librarymanager.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ public class ChiTietPhieuNhap {
     private int id;
     private int soLuong;
     private BigDecimal giaNhap;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="phieu_nhap_id")
     private PhieuNhap phieuNhap;

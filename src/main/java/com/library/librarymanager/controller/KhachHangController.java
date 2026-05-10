@@ -3,10 +3,11 @@ package com.library.librarymanager.controller;
 import com.library.librarymanager.entity.KhachHang;
 import com.library.librarymanager.service.KhachHangService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@PreAuthorize("hasAnyRole('ADMIN','STAFF')")
 @RestController
 @RequestMapping("/api/khach-hang")
 @RequiredArgsConstructor

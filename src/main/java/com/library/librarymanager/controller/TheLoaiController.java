@@ -3,6 +3,7 @@ package com.library.librarymanager.controller;
 import com.library.librarymanager.entity.TheLoai;
 import com.library.librarymanager.service.TheLoaiService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,10 +11,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/the-loai")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class TheLoaiController {
     private final TheLoaiService theLoaiService;
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @GetMapping
     List<TheLoai> getAll(){return theLoaiService.getAll();}
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
     @GetMapping("/{id}")
     TheLoai getById(@PathVariable int id){return theLoaiService.getById(id);}
     @PostMapping

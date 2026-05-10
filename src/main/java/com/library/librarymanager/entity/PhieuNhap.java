@@ -6,6 +6,7 @@ import org.springframework.cglib.core.Local;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,7 +16,6 @@ public class PhieuNhap {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String maPhieuNhap;
     private LocalDateTime ngayNhap;
     private BigDecimal tongTien;
     @ManyToOne
@@ -24,4 +24,6 @@ public class PhieuNhap {
     @ManyToOne
     @JoinColumn(name = "nhan_vien_id")
     private NhanVien nhanVien;
+    @OneToMany
+    private List<ChiTietPhieuNhap> danhSachChiTiet;
 }

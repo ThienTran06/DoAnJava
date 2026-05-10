@@ -49,4 +49,8 @@ public class SachServiceImpl implements SachService
     public void deleteById(int id) {
         sachRepository.deleteById(id);
     }
+    @Override
+    public List<Sach> search(String tenSach, String tenTheLoai, String tenTacGia, Integer namXuatBan) {
+        return sachRepository.search(tenSach, tenTheLoai, tenTacGia, namXuatBan);
+    }
 }

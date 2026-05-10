@@ -3,6 +3,7 @@ package com.library.librarymanager.controller;
 import com.library.librarymanager.entity.ChiTietPhieuNhap;
 import com.library.librarymanager.service.ChiTietPhieuNhapService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/chi-tiet-phieu-nhap")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class ChiTietPhieuNhapController {
     private final ChiTietPhieuNhapService chiTietPhieuNhapService;
     @GetMapping

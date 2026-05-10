@@ -11,4 +11,5 @@ public interface SachService {
         Sach create(Sach sach);
         Sach updateById(int id,Sach sach);
         void deleteById(int id);
+        List<Sach> search(String tenSach, String tenTheLoai, String tenTacGia, Integer namXuatBan);
 }
