@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/phieu-nhap")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+@PreAuthorize("hasAuthority('QUAN_LY_PHIEUNHAP')")
 public class PhieuNhapController {
     private final PhieuNhapService phieuNhapService;
     @GetMapping

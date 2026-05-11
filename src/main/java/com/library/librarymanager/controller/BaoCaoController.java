@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bao-cao")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAuthority('THONG_KE')")
 public class BaoCaoController {
     private final ChiTietHoaDonRepository chiTietHoaDonRepository;
     private final SachRepository sachRepository;

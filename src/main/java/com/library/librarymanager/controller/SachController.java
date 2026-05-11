@@ -13,13 +13,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SachController {
     private final SachService sachService;
-    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+    @PreAuthorize("hasAuthority('QUAN_LY_SACH')")
     @GetMapping
     List<Sach> getAll(){return sachService.getAll();}
-    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+    @PreAuthorize("hasAuthority('QUAN_LY_SACH')")
     @GetMapping("/{id}")
     Sach getById(@PathVariable int id){return sachService.getById(id);}
-    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+    @PreAuthorize("hasAuthority('QUAN_LY_SACH')")
     @GetMapping("/search")
     List<Sach> search(
             @RequestParam(required = false) String tenSach,

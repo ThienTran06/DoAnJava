@@ -20,7 +20,7 @@ import java.util.List;
 
 public class HoaDonServiceImpl implements HoaDonService {
     private final HoaDonRepository hoaDonRepository;
-    private  final NhanVienRepository nhanVienRepository;
+    private  final NguoiDungRepository nhanVienRepository;
     private final KhachHangRepository khachHangRepository;
     private final SachRepository sachRepository;
     private final ChiTietHoaDonRepository chiTietHoaDonRepository;
@@ -36,7 +36,7 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     public HoaDon create(HoaDonRequest request) {
-        NhanVien nhanVien = nhanVienRepository.findById(request.getNhanVienId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy nhân viên có id = "+request.getNhanVienId()));
+        NguoiDung nhanVien = nhanVienRepository.findById(request.getNhanVienId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy nhân viên có id = "+request.getNhanVienId()));
         KhachHang khachHang = khachHangRepository.findById(request.getKhachHangId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy khách hàng có id = "+request.getKhachHangId()));
         HoaDon newHoaDon = new HoaDon();
         newHoaDon.setNhanVien(nhanVien);

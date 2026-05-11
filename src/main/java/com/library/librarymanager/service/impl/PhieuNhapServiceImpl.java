@@ -6,7 +6,6 @@ import com.library.librarymanager.entity.*;
 import com.library.librarymanager.repository.*;
 ;
 import com.library.librarymanager.service.PhieuNhapService;
-import com.library.librarymanager.service.PhieuNhapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ import java.util.List;
 public class PhieuNhapServiceImpl implements PhieuNhapService {
     private final PhieuNhapRepository phieuNhapRepository;
     private final NhaCungCapRepository nhaCungCapRepository;
-    private final NhanVienRepository nhanVienRepository;
+    private final NguoiDungRepository nhanVienRepository;
     private final SachRepository sachRepository;
     private final ChiTietPhieuNhapRepository chiTietPhieuNhapRepository;
     @Override
@@ -41,7 +40,7 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
         NhaCungCap nhaCungCap = nhaCungCapRepository.findById(request.getNhaCungCapId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy nhà cung cấp có id = "+request.getNhaCungCapId()));
         phieuNhap.setNhaCungCap(nhaCungCap);
         phieuNhap.setNgayNhap(LocalDateTime.now());
-        NhanVien nhanVien = nhanVienRepository.findById(request.getNhanVienId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy nhân viên có id = "+request.getNhanVienId()));
+        NguoiDung nhanVien = nhanVienRepository.findById(request.getNhanVienId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy nhân viên có id = "+request.getNhanVienId()));
         phieuNhap.setNhanVien(nhanVien);
         phieuNhapRepository.save(phieuNhap);
         BigDecimal tongTienNhap = BigDecimal.ZERO;

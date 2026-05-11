@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/hoa-don")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+@PreAuthorize("hasAuthority('QUAN_LY_HOA_DON')")
 public class HoaDonController {
     private final HoaDonService hoaDonService;
     @GetMapping

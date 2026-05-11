@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/chi-tiet-phieu-nhap")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAuthority('QUAN_LY_PHIEU_NHAP')")
 public class ChiTietPhieuNhapController {
     private final ChiTietPhieuNhapService chiTietPhieuNhapService;
     @GetMapping

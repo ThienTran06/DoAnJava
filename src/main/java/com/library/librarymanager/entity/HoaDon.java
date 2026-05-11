@@ -24,7 +24,7 @@ public class HoaDon {
     private KhachHang khachHang;
     @ManyToOne
     @JoinColumn(name="nhan_vien_id")
-    private NhanVien nhanVien;
+    private NguoiDung nhanVien;
     @OneToMany
     private List<ChiTietHoaDon> danhSachChiTiet;
 }
