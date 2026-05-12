@@ -1,9 +1,8 @@
 package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.TacGia;
-import com.library.librarymanager.entity.TheLoai;
 import com.library.librarymanager.repository.TacGiaRepository;
-import com.library.librarymanager.service.TacGiaService;
+import com.library.librarymanager.service.Interface.TacGiaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

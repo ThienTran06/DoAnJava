@@ -1,7 +1,6 @@
-package com.library.librarymanager.service;
+package com.library.librarymanager.service.Interface;
 
 import com.library.librarymanager.entity.KhachHang;
-import com.library.librarymanager.entity.Sach;
 
 import java.util.List;
 

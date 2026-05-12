@@ -2,12 +2,10 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.TheLoai;
 import com.library.librarymanager.repository.TheLoaiRepository;
-import com.library.librarymanager.service.TheLoaiService;
+import com.library.librarymanager.service.Interface.TheLoaiService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 @Service

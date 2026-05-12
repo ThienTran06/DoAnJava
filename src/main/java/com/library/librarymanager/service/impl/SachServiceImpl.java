@@ -1,10 +1,8 @@
 package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.Sach;
-import com.library.librarymanager.entity.TacGia;
 import com.library.librarymanager.repository.SachRepository;
-import com.library.librarymanager.repository.TacGiaRepository;
-import com.library.librarymanager.service.SachService;
+import com.library.librarymanager.service.Interface.SachService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

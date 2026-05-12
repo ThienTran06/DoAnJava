@@ -2,7 +2,7 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.ChiTietHoaDon;
 import com.library.librarymanager.repository.ChiTietHoaDonRepository;
-import com.library.librarymanager.service.ChiTietHoaDonService;
+import com.library.librarymanager.service.Interface.ChiTietHoaDonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

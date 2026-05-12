@@ -1,7 +1,7 @@
 package com.library.librarymanager.controller;
 
 import com.library.librarymanager.entity.ChiTietPhieuNhap;
-import com.library.librarymanager.service.ChiTietPhieuNhapService;
+import com.library.librarymanager.service.Interface.ChiTietPhieuNhapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

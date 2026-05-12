@@ -1,7 +1,7 @@
 package com.library.librarymanager.controller;
 
 import com.library.librarymanager.entity.NhaCungCap;
-import com.library.librarymanager.service.NhaCungCapService;
+import com.library.librarymanager.service.Interface.NhaCungCapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

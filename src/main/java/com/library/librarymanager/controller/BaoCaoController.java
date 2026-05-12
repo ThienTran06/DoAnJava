@@ -1,9 +1,7 @@
 package com.library.librarymanager.controller;
 
-import com.library.librarymanager.dto.response.DoanhThuNgayResponse;
-import com.library.librarymanager.dto.response.DoanhThuThangResponse;
-import com.library.librarymanager.dto.response.SachBanChayResponse;
-import com.library.librarymanager.dto.response.SachTonKhoResponse;
+import com.library.librarymanager.dto.response.*;
+
 import com.library.librarymanager.repository.ChiTietHoaDonRepository;
 import com.library.librarymanager.repository.HoaDonRepository;
 import com.library.librarymanager.repository.SachRepository;

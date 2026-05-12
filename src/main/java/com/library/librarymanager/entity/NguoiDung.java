@@ -19,6 +19,7 @@ public class NguoiDung {
     private String username;
     private String password;
     private String SDT;
+    private String role;
 
     @ManyToOne
     @JoinColumn(name = "tenNhom")

@@ -1,4 +1,4 @@
-package com.library.librarymanager.service;
+package com.library.librarymanager.service.Interface;
 
 import com.library.librarymanager.entity.TacGia;
 

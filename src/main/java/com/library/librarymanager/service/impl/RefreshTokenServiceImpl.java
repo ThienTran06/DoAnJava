@@ -1,8 +1,9 @@
-package com.library.librarymanager.service;
+package com.library.librarymanager.service.impl;
 
 
 import com.library.librarymanager.entity.RefreshToken;
 import com.library.librarymanager.repository.RefreshTokenRepository;
+import com.library.librarymanager.service.Interface.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class RefreshTokenService {
+public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Autowired
     private RefreshTokenRepository repo;
-
+    @Override
     public RefreshToken create(String username) {
 
         RefreshToken rt = new RefreshToken();
@@ -33,7 +34,7 @@ public class RefreshTokenService {
 
         return repo.save(rt);
     }
-
+    @Override
     public RefreshToken validate(String token) {
 
         RefreshToken rt = repo.findByToken(token)
@@ -45,11 +46,11 @@ public class RefreshTokenService {
 
         return rt;
     }
-
+    @Override
     public void deleteByToken(String token) {
         repo.deleteByToken(token);
     }
-
+    @Override
     public void revokeAllByUsername(String username) {
         List<RefreshToken> list = repo.findByUsername(username);
 

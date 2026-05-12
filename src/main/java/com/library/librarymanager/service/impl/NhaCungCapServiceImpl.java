@@ -2,7 +2,7 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.NhaCungCap;
 import com.library.librarymanager.repository.NhaCungCapRepository;
-import com.library.librarymanager.service.NhaCungCapService;
+import com.library.librarymanager.service.Interface.NhaCungCapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

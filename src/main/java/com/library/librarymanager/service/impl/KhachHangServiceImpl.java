@@ -2,7 +2,7 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.KhachHang;
 import com.library.librarymanager.repository.KhachHangRepository;
-import com.library.librarymanager.service.KhachHangService;
+import com.library.librarymanager.service.Interface.KhachHangService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

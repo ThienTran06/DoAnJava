@@ -1,8 +1,7 @@
-package com.library.librarymanager.service;
+package com.library.librarymanager.service.Interface;
 
 import com.library.librarymanager.dto.request.HoaDonRequest;
 import com.library.librarymanager.entity.HoaDon;
-import com.library.librarymanager.entity.Sach;
 
 import java.util.List;
 
