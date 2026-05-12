@@ -1,7 +1,7 @@
 package com.library.librarymanager.controller;
 
 import com.library.librarymanager.entity.Sach;
-import com.library.librarymanager.service.SachService;
+import com.library.librarymanager.service.Interface.SachService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

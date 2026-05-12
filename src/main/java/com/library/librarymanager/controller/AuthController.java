@@ -7,8 +7,8 @@ import com.library.librarymanager.dto.response.LoginResponse;
 import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.entity.RefreshToken;
 import com.library.librarymanager.repository.NguoiDungRepository;
-import com.library.librarymanager.service.AuthService;
-import com.library.librarymanager.service.RefreshTokenService;
+import com.library.librarymanager.service.Interface.AuthService;
+import com.library.librarymanager.service.impl.RefreshTokenServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,7 @@ public class AuthController {
     private AuthService service;
 
     @Autowired
-    private RefreshTokenService refreshTokenService;
+    private RefreshTokenServiceImpl refreshTokenService;
 
     @Autowired
     private NguoiDungRepository repo;

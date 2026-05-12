@@ -1,4 +1,4 @@
-package com.library.librarymanager.service;
+package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.Exception.AuthException;
 import com.library.librarymanager.dto.request.CreateUserRequest;
@@ -10,15 +10,17 @@ import com.library.librarymanager.repository.ChucNangRepository;
 import com.library.librarymanager.repository.NguoiDungRepository;
 import com.library.librarymanager.repository.NhomNguoiDungRepository;
 import com.library.librarymanager.repository.PhanQuyenRepository;
+import com.library.librarymanager.service.Interface.NguoiDungService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class NguoiDungServiceImpl implements NguoiDungService {
 
     private final NguoiDungRepository repo;
     private final NhomNguoiDungRepository nhomRepo;
@@ -26,30 +28,32 @@ public class UserService {
     private final ChucNangRepository chucNangRepo;
     private final BCryptPasswordEncoder encoder;
 
+    @Override
     public List<NguoiDung> getAll() {
         return repo.findAll();
     }
-
+    @Override
     public NguoiDung getById(int id) {
         return repo.findById(id)
                 .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
     }
-
-    public void addAllPermissions(NguoiDung nd) {
-
+    @Override
+    public void addAllPermissions(int id) {
+        NguoiDung nd = repo.findById(id).orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
         List<ChucNang> dsChucNang = chucNangRepo.findAll();
-
+        List<PhanQuyen> dsphanQuyen = new ArrayList<>();
         for (ChucNang cn : dsChucNang) {
 
             PhanQuyen pq = new PhanQuyen();
 
             pq.setNguoiDung(nd);
             pq.setChucNang(cn);
-
+            dsphanQuyen.add(pq);
             phanQuyenRepo.save(pq);
         }
+        nd.setDsPhanQuyen(dsphanQuyen);
     }
-
+    @Override
     public void addStaffPermissions(NguoiDung nd) {
 
         List<ChucNang> ds =
@@ -65,7 +69,7 @@ public class UserService {
             phanQuyenRepo.save(pq);
         }
     }
-
+    @Override
     public NguoiDung create(CreateUserRequest req) {
 
         if (repo.findByUsername(req.getTenDangNhap()).isPresent()) {
@@ -100,7 +104,7 @@ public class UserService {
 
         return saved;
     }
-
+    @Override
     public NguoiDung update(int id, CreateUserRequest req) {
 
         NguoiDung nd = repo.findById(id)
@@ -132,7 +136,7 @@ public class UserService {
 
         return repo.save(nd);
     }
-
+    @Override
     public void delete(int id) {
 
         NguoiDung nd = repo.findById(id)

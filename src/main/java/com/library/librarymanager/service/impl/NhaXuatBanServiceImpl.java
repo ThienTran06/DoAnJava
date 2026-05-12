@@ -2,7 +2,7 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.NhaXuatBan;
 import com.library.librarymanager.repository.NhaXuatBanRepository;
-import com.library.librarymanager.service.NhaXuatBanService;
+import com.library.librarymanager.service.Interface.NhaXuatBanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,7 @@ package com.library.librarymanager.controller;
 
 import com.library.librarymanager.dto.request.HoaDonRequest;
 import com.library.librarymanager.entity.HoaDon;
-import com.library.librarymanager.service.HoaDonService;
+import com.library.librarymanager.service.Interface.HoaDonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
