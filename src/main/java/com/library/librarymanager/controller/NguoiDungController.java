@@ -4,7 +4,9 @@ import com.library.librarymanager.dto.request.CreateUserRequest;
 import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.service.impl.NguoiDungServiceImpl;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/nguoi-dung")
+@RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class NguoiDungController {
     @Autowired
     private NguoiDungServiceImpl sv;
@@ -37,7 +41,7 @@ public class NguoiDungController {
     public void deleteById(@PathVariable int id){
         sv.delete(id);
     }
-    @PutMapping("/id")
+    @PutMapping("/id/allPermissions")
     public void grantedAllPermissions(@PathVariable int id){
         sv.addAllPermissions(id);
     }
