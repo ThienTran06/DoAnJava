@@ -4,9 +4,7 @@ import com.library.librarymanager.dto.request.CreateUserRequest;
 import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.service.impl.NguoiDungServiceImpl;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,9 +12,8 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/nguoi-dung")
-@RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 public class NguoiDungController {
+
     @Autowired
     private NguoiDungServiceImpl sv;
 
@@ -25,24 +22,37 @@ public class NguoiDungController {
 
         return sv.create(req);
     }
+
     @GetMapping("/{id}")
-    public NguoiDung findById(@PathVariable int id){
+    public NguoiDung findById(@PathVariable int id) {
+
         return sv.getById(id);
     }
+
     @GetMapping
-    public List<NguoiDung> findAll(){
+    public List<NguoiDung> findAll() {
+
         return sv.getAll();
     }
-    @PutMapping("/id")
-    public NguoiDung updateById(@Valid @RequestBody CreateUserRequest req,@PathVariable int id){
-        return sv.update(id,req);
+
+    @PutMapping("/{id}")
+    public NguoiDung updateById(
+            @Valid @RequestBody CreateUserRequest req,
+            @PathVariable int id
+    ) {
+
+        return sv.update(id, req);
     }
-    @DeleteMapping("/id")
-    public void deleteById(@PathVariable int id){
+
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable int id) {
+
         sv.delete(id);
     }
-    @PutMapping("/id/allPermissions")
-    public void grantedAllPermissions(@PathVariable int id){
+
+    @PutMapping("/{id}/grant-all")
+    public void grantedAllPermissions(@PathVariable int id) {
+
         sv.addAllPermissions(id);
     }
 }

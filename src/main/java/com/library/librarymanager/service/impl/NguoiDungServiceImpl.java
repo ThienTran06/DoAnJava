@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,27 +31,32 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     public List<NguoiDung> getAll() {
         return repo.findAll();
     }
+
     @Override
     public NguoiDung getById(int id) {
         return repo.findById(id)
                 .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
     }
+
     @Override
     public void addAllPermissions(int id) {
-        NguoiDung nd = repo.findById(id).orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
+
+        NguoiDung nd = repo.findById(id)
+                .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
+
         List<ChucNang> dsChucNang = chucNangRepo.findAll();
-        List<PhanQuyen> dsphanQuyen = new ArrayList<>();
+
         for (ChucNang cn : dsChucNang) {
 
             PhanQuyen pq = new PhanQuyen();
 
             pq.setNguoiDung(nd);
             pq.setChucNang(cn);
-            dsphanQuyen.add(pq);
+
             phanQuyenRepo.save(pq);
         }
-        nd.setDsPhanQuyen(dsphanQuyen);
     }
+
     @Override
     public void addStaffPermissions(NguoiDung nd) {
 
@@ -69,6 +73,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
             phanQuyenRepo.save(pq);
         }
     }
+
     @Override
     public NguoiDung create(CreateUserRequest req) {
 
@@ -76,7 +81,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
             throw new RuntimeException("Tài khoản đã tồn tại");
         }
 
-        NhomNguoiDung nhom = nhomRepo.findById(req.getTenNhom())
+        NhomNguoiDung nhom = nhomRepo.findByTenNhom(req.getTenNhom())
                 .orElseThrow(() -> new AuthException("Nhóm không tồn tại"));
 
         NguoiDung nd = new NguoiDung();
@@ -104,6 +109,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 
         return saved;
     }
+
     @Override
     public NguoiDung update(int id, CreateUserRequest req) {
 
@@ -139,6 +145,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 
         return repo.save(nd);
     }
+
     @Override
     public void delete(int id) {
 

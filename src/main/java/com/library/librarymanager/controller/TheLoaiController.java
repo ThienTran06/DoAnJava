@@ -11,13 +11,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/the-loai")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAuthority('QUAN_LY_THE_LOAI')")
 public class TheLoaiController {
     private final TheLoaiService theLoaiService;
-    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+
     @GetMapping
     List<TheLoai> getAll(){return theLoaiService.getAll();}
-    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+
     @GetMapping("/{id}")
     TheLoai getById(@PathVariable int id){return theLoaiService.getById(id);}
     @PostMapping

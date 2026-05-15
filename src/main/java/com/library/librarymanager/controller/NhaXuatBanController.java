@@ -11,13 +11,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/nha-xuat-ban")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAuthority('QUAN_LY_NHA_XUAT_BAN')")
 public class NhaXuatBanController {
     private final NhaXuatBanService nhaXuatBanService;
-    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+
     @GetMapping
     List<NhaXuatBan> getAll(){return nhaXuatBanService.getAll();}
-    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+
     @GetMapping("/{id}")
     NhaXuatBan getById(@PathVariable int id){return nhaXuatBanService.getById(id);}
     @PostMapping

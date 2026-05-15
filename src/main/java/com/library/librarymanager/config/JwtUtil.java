@@ -36,7 +36,7 @@ public class JwtUtil {
                     .issueTime(new Date())
 
                     .expirationTime(
-                            new Date(System.currentTimeMillis() + 300000)
+                            new Date(System.currentTimeMillis() + 18000000)
                     )
 
                     .build();

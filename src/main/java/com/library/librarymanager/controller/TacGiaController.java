@@ -11,13 +11,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tac-gia")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAuthority('QUAN_LY_TAC_GIA')")
 public class TacGiaController {
     private final TacGiaService tacGiaService;
-    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+
     @GetMapping
     List<TacGia> getAll(){return tacGiaService.getAll();}
-    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+
     @GetMapping("/{id}")
     TacGia getById(@PathVariable int id){return tacGiaService.getById(id);}
     @PostMapping

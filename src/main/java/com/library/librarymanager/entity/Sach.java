@@ -19,6 +19,7 @@ public class Sach {
     private int soLuongTon;
     private String hinhAnh;
     private int namXuatBan;
+
     @ManyToOne
     @JoinColumn(name = "the_loai_id")
     private TheLoai theLoai;

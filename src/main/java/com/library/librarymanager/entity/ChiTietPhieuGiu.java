@@ -1,17 +1,17 @@
 package com.library.librarymanager.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 
 @Getter
 @Setter
+
+
 @Entity
-@Table(name = "chi_tiet_hoa_don")
-public class ChiTietHoaDon {
+@Table(name = "chi_tiet_phieu_giu")
+public class ChiTietPhieuGiu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,18 +19,10 @@ public class ChiTietHoaDon {
 
     private int soLuong;
 
-    private BigDecimal donGia;
-
-    private String tenSach;
-
-    private String hinhAnh;
-
-    private BigDecimal thanhTien;
-
-    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="hoa_don_id")
-    private HoaDon hoaDon;
+    @JoinColumn(name = "phieu_giu_id")
+    @JsonIgnore
+    private PhieuDatGiuSach phieuGiu;
 
     @ManyToOne
     @JoinColumn(name = "sach_id")

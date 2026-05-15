@@ -5,6 +5,7 @@ import com.library.librarymanager.dto.request.HoaDonRequest;
 import com.library.librarymanager.entity.*;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.HoaDonService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
+    @Transactional
     public HoaDon create(HoaDonRequest request) {
         NguoiDung nhanVien = nhanVienRepository.findById(request.getNhanVienId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy nhân viên có id = "+request.getNhanVienId()));
         KhachHang khachHang = khachHangRepository.findById(request.getKhachHangId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy khách hàng có id = "+request.getKhachHangId()));
@@ -46,16 +48,23 @@ public class HoaDonServiceImpl implements HoaDonService {
         BigDecimal tongTien = BigDecimal.ZERO;
         List<ChiTietHoaDon> list = new ArrayList<>();
         for(ChiTietHoaDonRequest chiTietHoaDonRequest : request.getDanhSachChiTiet()){
-            Sach sach= sachRepository.findById(chiTietHoaDonRequest.getSachID()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy sách có id = "+ chiTietHoaDonRequest.getSachID()));
+            Sach sach= sachRepository.findByIdForUpdate(chiTietHoaDonRequest.getSachID()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy sách có id = "+ chiTietHoaDonRequest.getSachID()));
             if(sach.getSoLuongTon()< chiTietHoaDonRequest.getSoLuong())throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không đủ sách tồn kho để bán");
             ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon();
             chiTietHoaDon.setSach(sach);
             chiTietHoaDon.setHoaDon(newHoaDon);
             chiTietHoaDon.setSoLuong(chiTietHoaDonRequest.getSoLuong());
             chiTietHoaDon.setDonGia(sach.getGiaBan());
+            chiTietHoaDon.setTenSach(sach.getTenSach());
+            chiTietHoaDon.setHinhAnh(sach.getHinhAnh());
+            chiTietHoaDon.setTenSach(sach.getTenSach());
+            chiTietHoaDon.setThanhTien(
+                    sach.getGiaBan().multiply(BigDecimal.valueOf(chiTietHoaDonRequest.getSoLuong())));
+
+
             sach.setSoLuongTon(sach.getSoLuongTon()- chiTietHoaDonRequest.getSoLuong());
-            sachRepository.save(sach);
-            tongTien=tongTien.add(sach.getGiaBan().multiply(BigDecimal.valueOf(chiTietHoaDonRequest.getSoLuong())));
+
+            tongTien=tongTien.add(chiTietHoaDon.getThanhTien());
             list.add(chiTietHoaDon);
         }
         chiTietHoaDonRepository.saveAll(list);
