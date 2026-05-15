@@ -96,7 +96,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         NguoiDung saved = repo.save(nd);
 
         if (nhom.getTenNhom().equals("ADMIN")) {
-            addAllPermissions(saved);
+            addAllPermissions(saved.getId());
         }
         else {
             addStaffPermissions(saved);
@@ -131,8 +131,11 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         nd.setHoTen(req.getHoTen());
 
         nd.setSDT(req.getSdt());
-
         nd.setNhom(nhom);
+
+        if(nhom.getTenNhom().equals("ADMIN")){
+            addAllPermissions(nd.getId());
+        }
 
         return repo.save(nd);
     }
