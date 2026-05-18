@@ -94,10 +94,10 @@ public class HoaDonServiceImpl implements HoaDonService {
     public void deleteById(int id) {
         hoaDonRepository.deleteById(id);
     }
-
+    @Transactional
     @Override
     public void huyHoaDon(int id) {
-        HoaDon hoaDon =hoaDonRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy hóa đơn có id = "+id));
+        HoaDon hoaDon =hoaDonRepository.findByIdForUpdate(id).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy hóa đơn có id = "+id));
         if(hoaDon.getTrangThai().equals("DA HUY"))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Đơn đã hủy rồi!");
         for(ChiTietHoaDon chiTietHoaDon : hoaDon.getDanhSachChiTiet()){
             Sach sach = chiTietHoaDon.getSach();

@@ -1,22 +1,23 @@
 package com.library.librarymanager.controller;
 
 import com.library.librarymanager.dto.request.CreateUserRequest;
+import com.library.librarymanager.dto.request.UpdatePermissionsRequest;
 import com.library.librarymanager.entity.NguoiDung;
+import com.library.librarymanager.service.Interface.NguoiDungService;
 import com.library.librarymanager.service.impl.NguoiDungServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@PreAuthorize("hasAuthority('QUAN_LY_NGUOI_DUNG')")
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/nguoi-dung")
 public class NguoiDungController {
-
     @Autowired
-    private NguoiDungServiceImpl sv;
-
+    private NguoiDungService sv;
     @PostMapping("/create")
     public NguoiDung create(@Valid @RequestBody CreateUserRequest req) {
 
@@ -55,4 +56,9 @@ public class NguoiDungController {
 
         sv.addAllPermissions(id);
     }
+    @PutMapping("/{id}/permissions")
+    public void updatePermissions(@PathVariable int id, @RequestBody UpdatePermissionsRequest req ){
+        sv.updatePermissions(id,req.getPermissionIds());
+    }
+
 }

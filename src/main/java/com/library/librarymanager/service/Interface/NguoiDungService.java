@@ -13,4 +13,6 @@ public interface NguoiDungService {
     public NguoiDung create(CreateUserRequest req);
     public NguoiDung update(int id, CreateUserRequest req);
     public void delete(int id);
+    public void updatePermissions(int id,List<Integer> permissionIds);
+
 }

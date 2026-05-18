@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,6 +26,7 @@ public class CreateUserRequest {
     private String hoTen;
     private String sdt;
     private String tenNhom;
+    private List<Integer> permissionIds;
 }
 
 
