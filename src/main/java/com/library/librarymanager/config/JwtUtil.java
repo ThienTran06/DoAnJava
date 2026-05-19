@@ -5,16 +5,23 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.*;
 import com.nimbusds.jwt.*;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET =
-            "mysecretkeymysecretkeymysecretkey";
+    private final byte[] secret;
+
+    public JwtUtil(
+            @Value("${jwt.secret:mysecretkeymysecretkeymysecretkey}") String secret
+    ) {
+        this.secret = secret.getBytes(StandardCharsets.UTF_8);
+    }
 
     public String generateToken(String username,
                                 String role,
@@ -23,7 +30,7 @@ public class JwtUtil {
         try {
 
             JWSSigner signer =
-                    new MACSigner(SECRET.getBytes());
+                    new MACSigner(secret);
 
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
 
@@ -63,7 +70,7 @@ public class JwtUtil {
             SignedJWT jwt = SignedJWT.parse(token);
 
             JWSVerifier verifier =
-                    new MACVerifier(SECRET.getBytes());
+                    new MACVerifier(secret);
 
             if (!jwt.verify(verifier)) {
                 throw new RuntimeException("Token không hợp lệ");
@@ -91,7 +98,7 @@ public class JwtUtil {
             SignedJWT jwt = SignedJWT.parse(token);
 
             JWSVerifier verifier =
-                    new MACVerifier(SECRET.getBytes());
+                    new MACVerifier(secret);
 
             if (!jwt.verify(verifier)) {
                 throw new RuntimeException("Token không hợp lệ");
@@ -113,7 +120,7 @@ public class JwtUtil {
             SignedJWT jwt = SignedJWT.parse(token);
 
             JWSVerifier verifier =
-                    new MACVerifier(SECRET.getBytes());
+                    new MACVerifier(secret);
 
             if (!jwt.verify(verifier)) {
                 throw new RuntimeException("Token không hợp lệ");
@@ -134,7 +141,7 @@ public class JwtUtil {
             SignedJWT jwt = SignedJWT.parse(token);
 
             JWSVerifier verifier =
-                    new MACVerifier(SECRET.getBytes());
+                    new MACVerifier(secret);
 
             if (!jwt.verify(verifier)) {
                 return false;
