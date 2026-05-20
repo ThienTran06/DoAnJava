@@ -103,7 +103,11 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
             cthd.setHoaDon(hd);
             cthd.setSach(ct.getSach());
             cthd.setSoLuong(ct.getSoLuong());
-
+            cthd.setDonGia(ct.getSach().getGiaBan());
+            cthd.setTenSach(ct.getSach().getTenSach());
+            cthd.setHinhAnh(ct.getSach().getHinhAnh());
+            BigDecimal thanhTien = ct.getSach().getGiaBan().multiply(BigDecimal.valueOf(ct.getSoLuong()));
+            cthd.setThanhTien(thanhTien);
             cthdRepo.save(cthd);
 
             BigDecimal gia = ct.getSach().getGiaBan();
@@ -128,21 +132,23 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
 
         PhieuDatGiuSach p = phieuRepo.findById(phieuId)
                 .orElseThrow(() -> new RuntimeException("Khong tim thay phieu"));
+        if(p.getTrangThai()==TrangThaiGiu.PENDING){
+            List<ChiTietPhieuGiu> ds = ctRepo.findByPhieuGiuId(phieuId);
 
-        List<ChiTietPhieuGiu> ds = ctRepo.findByPhieuGiuId(phieuId);
+            for (ChiTietPhieuGiu ct : ds) {
 
-        for (ChiTietPhieuGiu ct : ds) {
+                Sach s = ct.getSach();
 
-            Sach s = ct.getSach();
+                s.setSoLuongTon(
+                        s.getSoLuongTon() + ct.getSoLuong()
+                );
+            }
 
-            s.setSoLuongTon(
-                    s.getSoLuongTon() + ct.getSoLuong()
-            );
+            p.setTrangThai(TrangThaiGiu.EXPIRED);
+
+            phieuRepo.save(p);
         }
-
-        p.setTrangThai(TrangThaiGiu.EXPIRED);
-
-        phieuRepo.save(p);
+       else throw new RuntimeException("Không thể expire phiếu giữ không có trạng thái pending");
     }
 
     @Override

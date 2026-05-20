@@ -50,6 +50,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         for(ChiTietHoaDonRequest chiTietHoaDonRequest : request.getDanhSachChiTiet()){
             Sach sach= sachRepository.findByIdForUpdate(chiTietHoaDonRequest.getSachID()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy sách có id = "+ chiTietHoaDonRequest.getSachID()));
             if(sach.getSoLuongTon()< chiTietHoaDonRequest.getSoLuong())throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không đủ sách tồn kho để bán");
+            if(chiTietHoaDonRequest.getSoLuong()<=0)throw new IllegalArgumentException("Số lượng không được âm");
             ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon();
             chiTietHoaDon.setSach(sach);
             chiTietHoaDon.setHoaDon(newHoaDon);

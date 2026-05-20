@@ -33,21 +33,21 @@ public class ChiTietPhieuGiuServiceImpl implements ChiTietPhieuGiuService {
     public void themSach(int phieuId, int sachId, int soLuong) {
 
         PhieuDatGiuSach p = phieuRepo.findById(phieuId)
-                .orElseThrow(() -> new RuntimeException("Khong tim thay phieu"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu"));
 
         if (p.getTrangThai() != TrangThaiGiu.PENDING) {
-            throw new RuntimeException("Phieu khong hop le");
+            throw new RuntimeException("Phiếu không hợp lệ");
         }
-
+        if(soLuong<=0)throw new IllegalArgumentException("Số lượng không được âm");
         List<ChiTietPhieuGiu> ds = ctRepo.findByPhieuGiuId(phieuId);
 
         if (ds.size() >= maxSach) {
-            throw new RuntimeException("Vuot gioi han sach");
+            throw new RuntimeException("Vuơt giới hạn sách");
         }
 
         int tong = ds.stream().mapToInt(ChiTietPhieuGiu::getSoLuong).sum();
         if (tong + soLuong > maxSach) {
-            throw new RuntimeException("Vuot gioi han so luong sach");
+            throw new RuntimeException("Vuợt giới hạn số lượng sách");
         }
 
         boolean daGiu = ctRepo.existsBySach_IdAndPhieuGiu_IdNotAndPhieuGiu_TrangThai(
@@ -55,15 +55,15 @@ public class ChiTietPhieuGiuServiceImpl implements ChiTietPhieuGiuService {
         );
 
         if (daGiu) {
-            throw new RuntimeException("Sach da bi giu");
+            throw new RuntimeException("Sách đã được giữ");
         }
 
-        Sach s = sachRepo.findByIdForUpdate(sachId) .orElseThrow(() -> new RuntimeException("Khong tim thay sach"));;
+        Sach s = sachRepo.findByIdForUpdate(sachId) .orElseThrow(() -> new RuntimeException("Không tìm thấy sách"));;
 
 
 
         if (s.getSoLuongTon() < soLuong) {
-            throw new RuntimeException("Khong du so luong");
+            throw new RuntimeException("Không đủ số lượng");
         }
 
         s.setSoLuongTon(s.getSoLuongTon() - soLuong);
@@ -85,7 +85,7 @@ public class ChiTietPhieuGiuServiceImpl implements ChiTietPhieuGiuService {
     public void xoaSach(int chiTietId) {
 
         ChiTietPhieuGiu ct = ctRepo.findById(chiTietId)
-                .orElseThrow(() -> new RuntimeException("Khong tim thay"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sách"));
 
         Sach s = sachRepo.findByIdForUpdate(ct.getSach().getId()) .orElseThrow(() -> new RuntimeException("Khong tim thay sach"));;
 
