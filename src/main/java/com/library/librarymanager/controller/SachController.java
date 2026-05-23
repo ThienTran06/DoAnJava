@@ -1,5 +1,6 @@
 package com.library.librarymanager.controller;
 
+import com.library.librarymanager.dto.response.SachTonKhoResponse;
 import com.library.librarymanager.entity.Sach;
 import com.library.librarymanager.service.Interface.SachService;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +39,9 @@ public class SachController {
 
     @DeleteMapping("/{id}")
     void deleteById(@PathVariable int id){sachService.deleteById(id);}
+    @GetMapping("/ton-kho")
+    List<SachTonKhoResponse>getSachTonKho(@RequestParam String tenSach){
+        return sachService.getStockByName(tenSach);
+    }
 }
 

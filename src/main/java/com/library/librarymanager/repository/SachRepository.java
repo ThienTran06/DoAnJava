@@ -27,8 +27,13 @@ public interface SachRepository extends JpaRepository<Sach,Integer> {
             @Param("tenTacGia") String tenTacGia,
             @Param("namXuatBan") Integer namXuatBan
     );
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
 
+    @Query("SELECT s.tenSach as tenSach,s.soLuongTon as soLuongTonKho "
+    + "FROM Sach s "
+    + "WHERE (:tenSach IS NULL OR s.tenSach LIKE %:tenSach%) ")
+    List<SachTonKhoResponse> tonKhoTheoTen(@Param("tenSach")String tenSach);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
         select s from Sach s
         where s.id = :id

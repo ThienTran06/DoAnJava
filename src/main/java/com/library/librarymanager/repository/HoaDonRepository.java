@@ -1,5 +1,6 @@
 package com.library.librarymanager.repository;
 
+import com.library.librarymanager.dto.response.DoanhThuNamResponse;
 import com.library.librarymanager.dto.response.DoanhThuNgayResponse;
 import com.library.librarymanager.dto.response.DoanhThuThangResponse;
 import com.library.librarymanager.entity.HoaDon;
@@ -13,6 +14,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HoaDonRepository extends JpaRepository<HoaDon,Integer> {
+    @Query("SELECT YEAR(a.ngayBan) as nam , SUM(a.tongTien) as tongTien "
+            + "FROM HoaDon a "
+            + "WHERE a.trangThai IN ('PAID','HOAN THANH') "
+            + "GROUP BY YEAR(a.ngayBan) "
+            + "ORDER BY YEAR(a.ngayBan)")
+    List<DoanhThuNamResponse> doanhThuTheoNam();
+
+
     @Query("SELECT MONTH(a.ngayBan) as thang , SUM(a.tongTien) as tongTien "
     + "FROM HoaDon a "
     + "WHERE YEAR(a.ngayBan) = :nam AND a.trangThai IN ('PAID','HOAN THANH') "

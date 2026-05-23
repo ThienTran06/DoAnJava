@@ -38,6 +38,11 @@ public class BaoCaoController {
     List<DoanhThuNgayResponse> getDoanhThuNgay(@RequestParam int nam,@RequestParam int thang){
         return hoaDonRepository.doanhThuTheoNgay(nam,thang);
     }
+    @GetMapping("/doanh-thu-nam")
+    List<DoanhThuNamResponse> getDoanhThuNam(){
+        return hoaDonRepository.doanhThuTheoNam();
+    }
+
 
 
 

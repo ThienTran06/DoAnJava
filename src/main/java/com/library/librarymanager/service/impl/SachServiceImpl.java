@@ -1,5 +1,6 @@
 package com.library.librarymanager.service.impl;
 
+import com.library.librarymanager.dto.response.SachTonKhoResponse;
 import com.library.librarymanager.entity.Sach;
 import com.library.librarymanager.repository.SachRepository;
 import com.library.librarymanager.service.Interface.SachService;
@@ -50,5 +51,9 @@ public class SachServiceImpl implements SachService
     @Override
     public List<Sach> search(String tenSach, String tenTheLoai, String tenTacGia, Integer namXuatBan) {
         return sachRepository.search(tenSach, tenTheLoai, tenTacGia, namXuatBan);
+    }
+    @Override
+    public List<SachTonKhoResponse>getStockByName(String tenSach){
+        return sachRepository.tonKhoTheoTen(tenSach);
     }
 }
