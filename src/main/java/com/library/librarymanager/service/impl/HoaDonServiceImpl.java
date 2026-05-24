@@ -80,7 +80,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public HoaDon updateById(int id, HoaDon hoaDon) {
         HoaDon res = hoaDonRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy nhà cung cấp có id = "+id));
-        res.setMaHoaDon(hoaDon.getMaHoaDon());
+        res.setId(hoaDon.getId());
         res.setNgayBan(hoaDon.getNgayBan());
         res.setNhanVien(hoaDon.getNhanVien());
         res.setKhachHang(hoaDon.getKhachHang());

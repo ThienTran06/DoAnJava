@@ -15,7 +15,7 @@ public class HoaDon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String maHoaDon;
+
     private LocalDateTime ngayBan;
     private BigDecimal tongTien;
     private String trangThai;

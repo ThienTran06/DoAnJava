@@ -62,6 +62,7 @@ public class AuthServiceImpl implements AuthService {
                         .toList();
 
         String accessToken = jwtutil.generateToken(
+                user.getId(),
 
                 user.getUsername(),
 

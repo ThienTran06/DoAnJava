@@ -32,7 +32,7 @@ public class KhachHangServiceImpl implements KhachHangService {
     @Override
     public KhachHang updateById(int id, KhachHang khachHang) {
         KhachHang res = khachHangRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy khách hàng có id = "+id));
-        res.setSDT(khachHang.getSDT());
+        res.setSdt(khachHang.getSdt());
         res.setEmail(khachHang.getEmail());
         res.setHoTen(khachHang.getHoTen());
         khachHangRepository.save(res);

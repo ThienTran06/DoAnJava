@@ -11,6 +11,6 @@ public class KhachHang {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String hoTen;
-    private String SDT;
+    private String sdt;
     private String email;
 }

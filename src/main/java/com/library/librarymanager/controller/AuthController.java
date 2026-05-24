@@ -64,6 +64,7 @@ public class AuthController {
 
         String newAccessToken =
                 jwtutil.generateToken(
+                        user.getId(),
                         user.getUsername(),
                         user.getNhom().getTenNhom(),
                         permissions
