@@ -7,5 +7,6 @@ import java.math.BigDecimal;
 
 public interface DoanhThuThangResponse {
     public int getThang();
+    public int getNam();
     public BigDecimal getTongTien();
 }

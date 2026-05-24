@@ -13,4 +13,6 @@ public interface SachService {
         void deleteById(int id);
         List<Sach> search(String tenSach, String tenTheLoai, String tenTacGia, Integer namXuatBan);
         List<SachTonKhoResponse> getStockByName(String tenSach);
+         List<SachTonKhoResponse> getTonKhoNhieuNhat();
+         Integer getTongSoLuongTon();
 }

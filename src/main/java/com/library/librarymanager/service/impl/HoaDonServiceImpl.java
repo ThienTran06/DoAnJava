@@ -2,6 +2,10 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.dto.request.ChiTietHoaDonRequest;
 import com.library.librarymanager.dto.request.HoaDonRequest;
+import com.library.librarymanager.dto.response.DoanhThuNamResponse;
+import com.library.librarymanager.dto.response.DoanhThuNgayResponse;
+import com.library.librarymanager.dto.response.DoanhThuThangResponse;
+import com.library.librarymanager.dto.response.DoanhThuTheoTheLoaiResponse;
 import com.library.librarymanager.entity.*;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.HoaDonService;
@@ -108,5 +112,32 @@ public class HoaDonServiceImpl implements HoaDonService {
         hoaDon.setTrangThai("DA HUY");
         hoaDonRepository.save(hoaDon);
     }
+    @Override
+    public List<DoanhThuNgayResponse>getDoanhThuTheoNgay(int nam, int thang){
+        return hoaDonRepository.doanhThuTheoNgay(nam,thang);
+    }
+    @Override
+    public List<DoanhThuThangResponse>getDoanhThuTheoThang(int nam){
+        return hoaDonRepository.doanhThuTheoThang(nam);
+    }
+    @Override
+    public List<DoanhThuNamResponse> getDoanhThuTheoNam(){
+        return hoaDonRepository.doanhThuTheoNam();
+    }
+    @Override
+    public BigDecimal getDoanhThuHomNay(){
+        return hoaDonRepository.doanhThuHomNay();
+    }
+    @Override
+    public List<DoanhThuNgayResponse> getDoanhThuBayNgayTruoc(LocalDateTime local){
+        return hoaDonRepository.doanhThu7Ngay(local);
+    }
+    @Override
+    public List<DoanhThuNgayResponse> getDoanhThuBaMuoiNgayTruoc(LocalDateTime local){
+        return hoaDonRepository.doanhThuBaMuoiNgayTruoc(local);
+    }
+
+
+
 
 }

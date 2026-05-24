@@ -1,6 +1,7 @@
 package com.library.librarymanager.config;
 
 
+import com.library.librarymanager.Exception.AuthException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,9 +48,10 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = req.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            res.setStatus(401);
-            res.getWriter().write("Thiếu token");
-            return;
+//            res.setStatus(401);
+//            res.getWriter().write("Thiếu token");
+//            return;
+            throw new AuthException("thiếu token");
         }
 
         String token = authHeader.substring(7);

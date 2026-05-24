@@ -32,7 +32,8 @@ public interface SachRepository extends JpaRepository<Sach,Integer> {
     + "FROM Sach s "
     + "WHERE (:tenSach IS NULL OR s.tenSach LIKE %:tenSach%) ")
     List<SachTonKhoResponse> tonKhoTheoTen(@Param("tenSach")String tenSach);
-
+    @Query("SELECT SUM(s.soLuongTon) FROM Sach s")
+    Integer getTongSoLuongTon();
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
         select s from Sach s

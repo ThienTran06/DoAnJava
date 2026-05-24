@@ -1,5 +1,7 @@
 package com.library.librarymanager.service.impl;
 
+import com.library.librarymanager.dto.response.DoanhThuTheoTheLoaiResponse;
+import com.library.librarymanager.dto.response.SachBanChayResponse;
 import com.library.librarymanager.entity.ChiTietHoaDon;
 import com.library.librarymanager.repository.ChiTietHoaDonRepository;
 import com.library.librarymanager.service.Interface.ChiTietHoaDonService;
@@ -41,5 +43,14 @@ public class ChiTietHoaDonServiceImpl implements ChiTietHoaDonService {
     @Override
     public void deleteById(int id) {
         chiTietHoaDonRepository.deleteById(id);
+    }
+
+    @Override
+    public List<DoanhThuTheoTheLoaiResponse> getDoanhThuTheoTheLoai(){
+        return chiTietHoaDonRepository.doanhThuTheoTheLoai();
+    }
+    @Override
+    public List<SachBanChayResponse>getSachBanChay(){
+        return chiTietHoaDonRepository.sachBanChay();
     }
 }

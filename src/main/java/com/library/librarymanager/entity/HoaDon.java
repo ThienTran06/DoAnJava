@@ -25,6 +25,6 @@ public class HoaDon {
     @ManyToOne
     @JoinColumn(name="nhan_vien_id")
     private NguoiDung nhanVien;
-    @OneToMany
+    @OneToMany(mappedBy = "hoaDon")
     private List<ChiTietHoaDon> danhSachChiTiet;
 }

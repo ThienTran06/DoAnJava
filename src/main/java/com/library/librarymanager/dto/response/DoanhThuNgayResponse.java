@@ -5,5 +5,7 @@ import java.math.BigDecimal;
 
 public interface DoanhThuNgayResponse {
     public int getNgay();
+    public int getThang();
+    public int getNam();
     public BigDecimal getTongTien();
 }

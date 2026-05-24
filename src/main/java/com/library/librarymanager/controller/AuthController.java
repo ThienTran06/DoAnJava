@@ -12,6 +12,8 @@ import com.library.librarymanager.service.impl.RefreshTokenServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -33,57 +35,91 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponse login(
-            @Valid @RequestBody LoginRequest req
+            @Valid @RequestBody LoginRequest req,
+            HttpServletResponse response
     ) {
-        return service.login(req);
+
+        // call service to authenticate and generate tokens
+        LoginResponse lr = service.login(req);
+
+        // set refresh token as HttpOnly cookie (7 days)
+        if (lr.getRefreshToken() != null) {
+            Cookie cookie = new Cookie("refreshToken", lr.getRefreshToken());
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+            response.addCookie(cookie);
+        }
+
+        return lr;
     }
 
     @PostMapping("/refresh")
     public LoginResponse refresh(
-            @RequestBody RefreshRequest req
+            @RequestBody(required = false) RefreshRequest req,
+            @CookieValue(value = "refreshToken", required = false) String cookieRefreshToken
     ) {
 
-        RefreshToken rt =
-                refreshTokenService.validate(
-                        req.getRefreshToken()
-                );
+        String token = null;
 
-        NguoiDung user =
-                repo.findByUsername(
-                        rt.getUsername()
-                ).orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        if (req != null && req.getRefreshToken() != null && !req.getRefreshToken().isBlank()) {
+            token = req.getRefreshToken();
+        } else if (cookieRefreshToken != null && !cookieRefreshToken.isBlank()) {
+            token = cookieRefreshToken;
+        }
 
-        List<String> permissions =
-                user.getDsPhanQuyen()
-                        .stream()
-                        .map(pq ->
-                                pq.getChucNang()
-                                        .getTenChucNang()
-                        )
-                        .toList();
+        if (token == null) {
+            throw new RuntimeException("Refresh token không được cung cấp");
+        }
 
-        String newAccessToken =
-                jwtutil.generateToken(
-                        user.getUsername(),
-                        user.getNhom().getTenNhom(),
-                        permissions
-                );
+        RefreshToken rt = refreshTokenService.validate(token);
+
+        NguoiDung user = repo.findByUsername(rt.getUsername())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+        List<String> permissions = user.getDsPhanQuyen()
+                .stream()
+                .map(pq -> pq.getChucNang().getTenChucNang())
+                .toList();
+
+        String newAccessToken = jwtutil.generateToken(
+                user.getUsername(),
+                user.getNhom().getTenNhom(),
+                permissions
+        );
 
         return new LoginResponse(
                 "Refresh thành công",
                 newAccessToken,
-                req.getRefreshToken()
+                token
         );
     }
 
     @PostMapping("/logout")
     public String logout(
-            @RequestBody RefreshRequest req
+            @RequestBody(required = false) RefreshRequest req,
+            @CookieValue(value = "refreshToken", required = false) String cookieRefreshToken,
+            HttpServletResponse response
     ) {
 
-        refreshTokenService.deleteByToken(
-                req.getRefreshToken()
-        );
+        String token = null;
+
+        if (req != null && req.getRefreshToken() != null && !req.getRefreshToken().isBlank()) {
+            token = req.getRefreshToken();
+        } else if (cookieRefreshToken != null && !cookieRefreshToken.isBlank()) {
+            token = cookieRefreshToken;
+        }
+
+        if (token != null) {
+            refreshTokenService.deleteByToken(token);
+
+            // clear cookie
+            Cookie cookie = new Cookie("refreshToken", "");
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
 
         return "Logout thành công";
     }

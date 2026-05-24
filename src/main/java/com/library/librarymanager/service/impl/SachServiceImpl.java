@@ -56,4 +56,15 @@ public class SachServiceImpl implements SachService
     public List<SachTonKhoResponse>getStockByName(String tenSach){
         return sachRepository.tonKhoTheoTen(tenSach);
     }
+
+    @Override
+    public List<SachTonKhoResponse> getTonKhoNhieuNhat() {
+        return sachRepository.tonKhoNhieuNhat();
+    }
+
+    @Override
+    public Integer getTongSoLuongTon(){
+        return sachRepository.getTongSoLuongTon();
+    }
+
 }

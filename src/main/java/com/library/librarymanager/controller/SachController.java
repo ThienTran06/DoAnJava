@@ -3,6 +3,7 @@ package com.library.librarymanager.controller;
 import com.library.librarymanager.dto.response.SachTonKhoResponse;
 import com.library.librarymanager.entity.Sach;
 import com.library.librarymanager.service.Interface.SachService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class SachController {
     }
 
     @PostMapping
-    Sach create(@RequestBody Sach sach){return  sachService.create(sach);}
+    Sach create(@Valid @RequestBody Sach sach){return  sachService.create(sach);}
 
     @PutMapping("/{id}")
     Sach updateById(@PathVariable int id, @RequestBody Sach sach){return sachService.updateById(id,sach);}
