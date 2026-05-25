@@ -1,0 +1,113 @@
+<div class="page-shell page-transition active">
+  <div class="header-row" style="margin-bottom:18px;align-items:flex-end">
+    <div>
+      <div style="font-size:28px;font-weight:800;letter-spacing:-.8px;margin-bottom:4px">Nhân viên</div>
+      <div style="font-size:13px;color:var(--muted)">Quản lý nhân sự cửa hàng</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="search-box" style="width:320px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b5b5ae" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="staffSearch" placeholder="Tìm kiếm nhân viên...">
+      </div>
+      <select id="positionFilter" class="select"><option value="">Tất cả chức vụ</option><option>Quản lý</option><option>Thu ngân</option><option>Nhân viên bán hàng</option><option>Kho</option></select>
+      <button class="btn primary" id="btnAddStaff">Thêm nhân viên</button>
+    </div>
+  </div>
+  <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="stat-card"><div class="stat-value" id="staffTotal">32</div><div class="stat-label">Tổng nhân viên</div></div>
+    <div class="stat-card dark"><div class="stat-value" id="staffWorking">28</div><div class="stat-label">Đang làm việc</div></div>
+    <div class="stat-card"><div class="stat-value" id="staffManager">3</div><div class="stat-label">Quản lý</div></div>
+    <div class="stat-card"><div class="stat-value" id="staffTop">5</div><div class="stat-label">Nhân viên bán hàng xuất sắc</div></div>
+  </div>
+  <div class="table-card">
+    <div class="table-wrap">
+      <table class="tbl-books" style="min-width:1200px">
+        <thead><tr><th>STT</th><th>Avatar</th><th>Họ tên</th><th>Mã nhân viên</th><th>Chức vụ</th><th>Email</th><th>Số điện thoại</th><th>Ca làm việc</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <tbody id="staffTableBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="staffEmptyState" style="display:none;margin-top:16px">Chưa có nhân viên nào.</div>
+  </div>
+  <div class="modal-overlay" id="staffModal"><div class="modal"><div class="modal-head"><div class="modal-title">🧑‍💼 Thêm nhân viên</div><button class="close" id="closeStaffModal">×</button></div><form id="staffForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống</div></div><div class="field"><div class="label">Mã nhân viên</div><input class="input" name="code" required><div class="helper">Ví dụ: NV001</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ</div></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Chức vụ</div><select class="select" name="role"><option>Quản lý</option><option>Thu ngân</option><option>Nhân viên bán hàng</option><option>Kho</option></select></div><div class="field"><div class="label">Ca làm việc</div><input class="input" name="shift" placeholder="Sáng / Chiều / Tối"></div><div class="field"><div class="label">Ngày vào làm</div><input class="input" type="date" name="joinDate"></div><div class="field"><div class="label">Lương cơ bản</div><input class="input" type="number" name="salary" min="0" step="1000"></div><div class="field full"><div class="label">Avatar nhân viên</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="staffPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelStaff">Hủy</button><button type="submit" class="btn primary" id="saveStaff"><span class="txt">Lưu nhân viên</span><span class="spin"></span></button></div></form></div></div>
+</div>
+
+<script>
+// Initialize Staff page
+window.initStaff = function() {
+  const state = {
+    items: [
+      { name:'Nguyễn Văn Hùng', code:'NV001', role:'Quản lý', email:'hung@bookhouse.vn', phone:'0901111111', shift:'Hành chính', status:'Đang làm', avatar:'H' },
+      { name:'Trần Thị Lan', code:'NV002', role:'Thu ngân', email:'lan@bookhouse.vn', phone:'0902222222', shift:'Sáng', status:'Đang làm', avatar:'L' },
+      { name:'Phạm Minh Tuấn', code:'NV003', role:'Nhân viên bán hàng', email:'tuan@bookhouse.vn', phone:'0903333333', shift:'Chiều', status:'Nghỉ phép', avatar:'T' },
+      { name:'Lê Thu Hà', code:'NV004', role:'Kho', email:'ha@bookhouse.vn', phone:'0904444444', shift:'Tối', status:'Đã nghỉ việc', avatar:'H' }
+    ]
+  };
+  const modal = document.getElementById('staffModal');
+  const form = document.getElementById('staffForm');
+  const tableBody = document.getElementById('staffTableBody');
+  const search = document.getElementById('staffSearch');
+  const positionFilter = document.getElementById('positionFilter');
+  const preview = document.getElementById('staffPreview');
+  const openBtn = document.getElementById('btnAddStaff');
+  const closeBtn = document.getElementById('closeStaffModal');
+  const cancelBtn = document.getElementById('cancelStaff');
+  if (!modal || !form || !tableBody) return;
+
+  const render = () => {
+    const q = search.value.trim().toLowerCase();
+    const roleFilter = positionFilter.value;
+    const rows = state.items.filter(x => (!q || x.name.toLowerCase().includes(q) || x.code.toLowerCase().includes(q) || x.email.toLowerCase().includes(q)) && (!roleFilter || x.role === roleFilter));
+    tableBody.innerHTML = rows.length ? rows.map((item, idx) => `
+      <tr>
+        <td>${idx + 1}</td>
+        <td><div class="avatar">${item.avatar}</div></td>
+        <td style="font-weight:700">${item.name}</td>
+        <td>${item.code}</td>
+        <td>${item.role}</td>
+        <td style="color:var(--muted)">${item.email}</td>
+        <td>${item.phone}</td>
+        <td>${item.shift}</td>
+        <td><span class="badge ${item.status === 'Đang làm' ? 'paid' : item.status === 'Nghỉ phép' ? 'ok' : 'bad'}">${item.status}</span></td>
+        <td><div class="ops"><button class="link js-view-staff" data-name="${item.name}">Xem hồ sơ</button><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td>
+      </tr>
+    `).join('') : `<tr><td colspan="10"><div class="empty-state">Không tìm thấy nhân viên phù hợp.</div></td></tr>`;
+  };
+
+  const closeModal = () => { modal.classList.remove('open'); form.reset(); preview.removeAttribute('src'); preview.style.display='none'; preview.nextElementSibling.style.display='block'; };
+  openBtn.onclick = () => modal.classList.add('open');
+  closeBtn.onclick = closeModal; cancelBtn.onclick = closeModal;
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  search.oninput = render; positionFilter.onchange = render;
+  form.avatar.addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; preview.src = URL.createObjectURL(f); preview.style.display='block'; preview.nextElementSibling.style.display='none'; });
+  form.onsubmit = e => {
+    e.preventDefault();
+    let ok = true;
+    ['name','code','email','phone'].forEach(name => { const field = form.elements[name].closest('.field'); field.classList.remove('error'); field.querySelector('.helper').textContent = field.querySelector('.helper').dataset.base || field.querySelector('.helper').textContent; });
+    const emailOk = /^\S+@\S+\.\S+$/.test(form.email.value.trim());
+    const phoneOk = /^(0[3|5|7|8|9])[0-9]{8}$/.test(form.phone.value.trim());
+    if (!form.name.value.trim()) { markField(form.name, 'Không được để trống'); ok = false; }
+    if (!form.code.value.trim()) { markField(form.code, 'Không được để trống'); ok = false; }
+    if (!emailOk) { markField(form.email, 'Email không hợp lệ'); ok = false; }
+    if (!phoneOk) { markField(form.phone, 'SĐT đúng định dạng'); ok = false; }
+    if (!ok) return;
+    state.items.unshift({ name: form.name.value.trim(), code: form.code.value.trim(), role: form.role.value, email: form.email.value.trim(), phone: form.phone.value.trim(), shift: form.shift.value || 'Chưa phân ca', status: 'Đang làm', avatar: (form.name.value.trim()[0] || 'E').toUpperCase() });
+    render();
+    closeModal();
+    window.showToast('Đã thêm nhân viên');
+  };
+
+  tableBody.addEventListener('click', e => {
+    const btn = e.target.closest('.js-view-staff');
+    if (!btn) return;
+    alert('Hồ sơ nhân viên: ' + btn.dataset.name);
+  });
+
+  function markField(input, message) {
+    const field = input.closest('.field');
+    field.classList.add('error');
+    field.querySelector('.helper').textContent = message;
+  }
+
+  render();
+};
+</script>
