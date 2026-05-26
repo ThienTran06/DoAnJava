@@ -126,7 +126,8 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
     @Override
     public BigDecimal getDoanhThuHomNay(){
-        return hoaDonRepository.doanhThuHomNay();
+        BigDecimal doanhThu = hoaDonRepository.doanhThuHomNay();
+        return doanhThu == null ? BigDecimal.ZERO : doanhThu;
     }
     @Override
     public List<DoanhThuNgayResponse> getDoanhThuBayNgayTruoc(LocalDateTime local){
