@@ -94,6 +94,72 @@ window.initCategories = function() {
     window.showToast('Đã thêm thể loại');
   };
 
+  // Handle edit and delete buttons in table
+  tableBody.addEventListener('click', e => {
+    const editBtn = e.target.closest('.ops .link:not(.danger)');
+    const deleteBtn = e.target.closest('.ops .link.danger');
+    if (!editBtn && !deleteBtn) return;
+
+    const row = e.target.closest('tr');
+    const cells = row.querySelectorAll('td');
+    const categoryName = cells[1].textContent.trim();
+    const categoryDesc = cells[2].textContent.trim();
+    const itemIndex = state.items.findIndex(i => i.name === categoryName);
+
+    if (editBtn) {
+      // Open edit modal
+      form.name.value = categoryName;
+      form.description.value = categoryDesc === '—' ? '' : categoryDesc;
+      document.querySelector('.modal-head .modal-title').textContent = '📚 Sửa thể loại';
+      document.getElementById('saveCategory').querySelector('.txt').textContent = 'Cập nhật thể loại';
+      modal.classList.add('open');
+      
+      // Store original item for update
+      window.currentEditCategoryIndex = itemIndex;
+      window.currentEditCategoryName = categoryName;
+    } else if (deleteBtn) {
+      // Delete confirmation
+      window.showConfirm('Bạn chắc chắn muốn xóa thể loại này?', () => {
+        state.items.splice(itemIndex, 1);
+        render(search.value);
+        window.showToast('Đã xóa thể loại');
+      });
+    }
+  });
+
+  // Override form submit for edit/add
+  const originalSubmit = form.onsubmit;
+  form.onsubmit = e => {
+    e.preventDefault();
+    const name = form.name.value.trim();
+    const desc = form.description.value.trim();
+    const field = form.name.closest('.field');
+    const helper = field.querySelector('.helper');
+    field.classList.remove('error');
+    helper.textContent = 'Nhập tên thể loại';
+    if (!name) {
+      field.classList.add('error');
+      helper.textContent = 'Tên thể loại không được để trống';
+      return;
+    }
+
+    if (window.currentEditCategoryIndex !== undefined) {
+      // Update existing
+      state.items[window.currentEditCategoryIndex] = { name, description: desc || '—', status: state.items[window.currentEditCategoryIndex].status };
+      window.currentEditCategoryIndex = undefined;
+      window.currentEditCategoryName = undefined;
+      document.querySelector('.modal-head .modal-title').textContent = '📚 Thêm thể loại';
+      document.getElementById('saveCategory').querySelector('.txt').textContent = 'Lưu thể loại';
+    } else {
+      // Add new
+      state.items.unshift({ name, description: desc || '—', status: 'Hoạt động' });
+    }
+    render(search.value);
+    closeModal();
+    form.reset();
+    window.showToast(window.currentEditCategoryIndex !== undefined ? 'Đã cập nhật thể loại' : 'Đã thêm thể loại');
+  };
+
   render();
 };
 </script>

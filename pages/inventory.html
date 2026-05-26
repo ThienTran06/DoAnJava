@@ -1,16 +1,16 @@
 <div class="page-shell page-transition active">
   <div class="date-row">Quản lý sách – Danh sách đầu sách và kho hàng</div>
   <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
-    <div class="stat-card dark"><div class="stat-value">1,245</div><div class="stat-label">Tổng sách</div><span class="stat-delta up">↑ 9%</span></div>
-    <div class="stat-card"><div class="stat-value">186</div><div class="stat-label">Bán chạy nhất</div><span class="stat-delta up">↑ 14%</span></div>
-    <div class="stat-card"><div class="stat-value">5</div><div class="stat-label">Hết hàng</div><span class="stat-delta down">↓ 3</span></div>
-    <div class="stat-card"><div class="stat-value">125M đ</div><div class="stat-label">Giá trị kho</div><span class="stat-delta up">↑ 8%</span></div>
+    <div class="stat-card dark"><div class="stat-value" id="statTotalBooks">0</div><div class="stat-label">Tổng sách</div><span class="stat-delta up">↑ 9%</span></div>
+    <div class="stat-card"><div class="stat-value" id="statBestSeller">0</div><div class="stat-label">Bán chạy nhất</div><span class="stat-delta up">↑ 14%</span></div>
+    <div class="stat-card"><div class="stat-value" id="statOutOfStock">0</div><div class="stat-label">Hết hàng</div><span class="stat-delta down">↓ 3</span></div>
+    <div class="stat-card"><div class="stat-value" id="statInventoryValue">0</div><div class="stat-label">Giá trị kho</div><span class="stat-delta up">↑ 8%</span></div>
   </div>
   <div class="table-card">
-    <div class="header-row"><div style="font-size:14.5px;font-weight:800">Danh sách đầu sách</div><div style="display:flex;gap:10px"><button class="btn ghost">Lọc</button><button class="btn primary" id="btnAddBook">Thêm sách</button></div></div>
-    <div class="table-wrap"><table class="tbl-books"><thead><tr><th>STT</th><th>Tên</th><th>Mục</th><th>Giá</th><th>Số lượng</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="bookTable"><tr><td>1</td><td>Đắc nhân tâm</td><td>Kinh tế</td><td>95k đ</td><td>186</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>2</td><td>Combo Harry Potter</td><td>Trẻ em</td><td>250k đ</td><td>152</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>3</td><td>Nhà giả kim</td><td>Văn học</td><td>89k đ</td><td>128</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>4</td><td>Atomic Habits</td><td>Kỹ năng</td><td>119k đ</td><td>0</td><td><span class="badge bad">Hết hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>5</td><td>Dám bị ghét</td><td>Tâm lý</td><td>105k đ</td><td>98</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr></tbody></table></div>
+    <div class="header-row"><div style="font-size:14.5px;font-weight:800">Danh sách đầu sách</div><div style="display:flex;gap:10px;align-items:center"><div class="search-box" style="width:300px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b5b5ae" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="bookSearch" placeholder="Tìm kiếm sách..."></div><select id="categoryFilter" class="select" style="width:150px"><option value="">Tất cả thể loại</option><option>Kinh tế</option><option>Tâm lý</option><option>Văn học</option><option>Thiếu nhi</option><option>Kỹ năng</option></select><button class="btn primary" id="btnAddBook">Thêm sách</button></div></div>
+    <div class="table-wrap"><table class="tbl-books"><thead><tr><th>STT</th><th>Ảnh</th><th>Tên</th><th>Mục</th><th>Giá</th><th>Số lượng</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="bookTable"><tr><td>1</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Đắc nhân tâm</td><td>Kinh tế</td><td>95k đ</td><td>186</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>2</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Combo Harry Potter</td><td>Trẻ em</td><td>250k đ</td><td>152</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>3</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Nhà giả kim</td><td>Văn học</td><td>89k đ</td><td>128</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>4</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Atomic Habits</td><td>Kỹ năng</td><td>119k đ</td><td>0</td><td><span class="badge bad">Hết hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>5</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Dám bị ghét</td><td>Tâm lý</td><td>105k đ</td><td>98</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr></tbody></table></div>
   </div>
-  <div class="modal-overlay" id="modalOverlay"><div class="modal"><div class="modal-head"><div class="modal-title">📚 Thêm sách</div><button class="close" id="modalClose">×</button></div><form id="bookForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Tên sách</div><input class="input" name="title" required><div class="helper">Không để trống tên sách</div></div><div class="field"><div class="label">Giá bán</div><input class="input" name="price" type="number" min="1" step="1000" required><div class="helper">Giá phải lớn hơn 0</div></div><div class="field"><div class="label">Số lượng tồn</div><input class="input" name="stock" type="number" min="0" step="1" required></div><div class="field"><div class="label">Năm xuất bản</div><input class="input" name="year" type="number" min="1900" max="2099" required></div><div class="field"><div class="label">Ảnh sách</div><input class="input" name="image" type="file" accept="image/*"><div class="thumb"><img id="bookPreview"><span>Preview ảnh sẽ hiển thị ở đây</span></div></div><div class="field"><div class="label">Thể loại</div><select class="select" name="category" required><option value="">-- Chọn thể loại --</option><option>Kinh tế</option><option>Tâm lý</option><option>Văn học</option><option>Thiếu nhi</option><option>Kỹ năng</option></select></div><div class="field"><div class="label">Nhà xuất bản</div><select class="select" name="publisher" required><option value="">-- Chọn NXB --</option><option>NXB Trẻ</option><option>NXB Kim Đồng</option><option>NXB Lao Động</option></select></div><div class="field"><div class="label">Tác giả</div><select class="select" name="author" required><option value="">-- Chọn tác giả --</option><option>Dale Carnegie</option><option>Paulo Coelho</option><option>James Clear</option></select></div><div class="field full"><div class="label">Mô tả sách</div><textarea class="textarea" name="description"></textarea></div><div class="field"><div class="label">ISBN</div><input class="input" name="isbn"></div><div class="field"><div class="label">Ngôn ngữ</div><input class="input" name="language" value="Tiếng Việt"></div><div class="field"><div class="label">Số trang</div><input class="input" name="pages" type="number" min="1" step="1"></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelBook">Hủy</button><button type="submit" class="btn primary" id="saveBook"><span class="txt">Lưu</span><span class="spin"></span></button></div></form></div></div>
+  <div class="modal-overlay" id="modalOverlay"><div class="modal"><div class="modal-head"><div class="modal-title">📚 Thêm sách</div><button class="close" id="modalClose">×</button></div><form id="bookForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Tên sách</div><input class="input" name="title" required><div class="helper">Không để trống tên sách</div></div><div class="field"><div class="label">Giá bán</div><input class="input" name="price" type="number" min="1" step="1" required><div class="helper">Giá phải lớn hơn 0</div></div><div class="field"><div class="label">Số lượng tồn</div><input class="input" name="stock" type="number" min="0" step="1" required></div><div class="field"><div class="label">Năm xuất bản</div><input class="input" name="year" type="number" min="1900" max="2099" required></div><div class="field"><div class="label">Ảnh sách</div><input class="input" name="image" type="file" accept="image/*"><div class="thumb"><img id="bookPreview"><span>Preview ảnh sẽ hiển thị ở đây</span></div></div><div class="field"><div class="label">Thể loại</div><select class="select" name="category" required><option value="">-- Chọn thể loại --</option><option>Kinh tế</option><option>Tâm lý</option><option>Văn học</option><option>Thiếu nhi</option><option>Kỹ năng</option></select></div><div class="field"><div class="label">Nhà xuất bản</div><select class="select" name="publisher" required><option value="">-- Chọn NXB --</option><option>NXB Trẻ</option><option>NXB Kim Đồng</option><option>NXB Lao Động</option></select></div><div class="field"><div class="label">Tác giả</div><select class="select" name="author" required><option value="">-- Chọn tác giả --</option><option>Dale Carnegie</option><option>Paulo Coelho</option><option>James Clear</option></select></div><div class="field full"><div class="label">Mô tả sách</div><textarea class="textarea" name="description"></textarea></div><div class="field"><div class="label">ISBN</div><input class="input" name="isbn"></div><div class="field"><div class="label">Ngôn ngữ</div><input class="input" name="language" value="Tiếng Việt"></div><div class="field"><div class="label">Số trang</div><input class="input" name="pages" type="number" min="1" step="1"></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelBook">Hủy</button><button type="submit" class="btn primary" id="saveBook"><span class="txt">Lưu</span><span class="spin"></span></button></div></form></div></div>
 </div>
 
 <script>
@@ -23,19 +23,108 @@ window.initBooks = function() {
   const form = document.getElementById('bookForm');
   const saveBtn = document.getElementById('saveBook');
   const preview = document.getElementById('bookPreview');
+  const bookSearch = document.getElementById('bookSearch');
+  const categoryFilter = document.getElementById('categoryFilter');
+  const bookTable = document.getElementById('bookTable');
+  
   if (!overlay || !openBtn || !form) return;
   
+  // Store all books data on window to keep it persistent during session
+  if (!window.allBooks) {
+    window.allBooks = [
+      { name: 'Đắc nhân tâm', category: 'Kinh tế', price: '95', stock: '186', status: 'Còn hàng', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=150', year: 2020, publisher: 'NXB Trẻ', author: 'Dale Carnegie', description: 'Đắc nhân tâm là cuốn sách đắt giá nhất mọi thời đại về nghệ thuật đối nhân xử thế.', isbn: '9786041029341', language: 'Tiếng Việt', pages: 320 },
+      { name: 'Combo Harry Potter', category: 'Thiếu nhi', price: '250', stock: '152', status: 'Còn hàng', image: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=150', year: 2018, publisher: 'NXB Trẻ', author: 'Paulo Coelho', description: 'Trọn bộ tiểu thuyết Harry Potter nổi tiếng.', isbn: '9786041133333', language: 'Tiếng Việt', pages: 450 },
+      { name: 'Nhà giả kim', category: 'Văn học', price: '89', stock: '128', status: 'Còn hàng', image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=150', year: 2019, publisher: 'NXB Kim Đồng', author: 'Paulo Coelho', description: 'Cuốn sách bán chạy chỉ sau Kinh Thánh.', isbn: '9786042123456', language: 'Tiếng Việt', pages: 228 },
+      { name: 'Atomic Habits', category: 'Kỹ năng', price: '119', stock: '0', status: 'Hết hàng', image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=150', year: 2021, publisher: 'NXB Lao Động', author: 'James Clear', description: 'Thay đổi tí hon, hiệu quả bất ngờ.', isbn: '9786049999999', language: 'Tiếng Việt', pages: 350 },
+      { name: 'Dám bị ghét', category: 'Tâm lý', price: '105', stock: '98', status: 'Còn hàng', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=150', year: 2020, publisher: 'NXB Trẻ', author: 'Dale Carnegie', description: 'Tự do và hạnh phúc thực sự bắt đầu khi bạn dám bị ghét.', isbn: '9786041029342', language: 'Tiếng Việt', pages: 296 }
+    ];
+  }
+  const allBooks = window.allBooks;
+
   const closeModal = () => overlay.classList.remove('open');
-  
+
+  const updateBookStats = () => {
+    const totalBooks = allBooks.reduce((sum, b) => sum + (+b.stock), 0);
+    let maxStock = 0;
+    let bestSellerName = "—";
+    allBooks.forEach(b => {
+      if (+b.stock > maxStock) {
+        maxStock = +b.stock;
+        bestSellerName = b.name;
+      }
+    });
+    const outOfStockCount = allBooks.filter(b => +b.stock === 0).length;
+    const inventoryVal = allBooks.reduce((sum, b) => sum + (+b.price * +b.stock), 0);
+    
+    const statTotalEl = document.getElementById('statTotalBooks');
+    const statBestEl = document.getElementById('statBestSeller');
+    const statOutOfStockEl = document.getElementById('statOutOfStock');
+    const statValEl = document.getElementById('statInventoryValue');
+    
+    if (statTotalEl) statTotalEl.textContent = totalBooks.toLocaleString('vi-VN');
+    if (statBestEl) {
+      statBestEl.textContent = maxStock.toLocaleString('vi-VN');
+      const labelEl = statBestEl.nextElementSibling;
+      if (labelEl && labelEl.classList.contains('stat-label')) {
+        labelEl.textContent = `Bán chạy nhất (${bestSellerName})`;
+      }
+    }
+    if (statOutOfStockEl) statOutOfStockEl.textContent = outOfStockCount;
+    if (statValEl) {
+      if (inventoryVal >= 1000) {
+        statValEl.textContent = (inventoryVal / 1000).toFixed(1) + 'M đ';
+      } else {
+        statValEl.textContent = inventoryVal + 'k đ';
+      }
+    }
+  };
+
+  // Render table based on filter and search
+  const renderTable = () => {
+    const searchText = bookSearch.value.trim().toLowerCase();
+    const categoryValue = categoryFilter.value;
+    
+    let filtered = allBooks.filter(book => {
+      const matchSearch = !searchText || book.name.toLowerCase().includes(searchText) || book.category.toLowerCase().includes(searchText);
+      const matchCategory = !categoryValue || book.category === categoryValue;
+      return matchSearch && matchCategory;
+    });
+
+    bookTable.innerHTML = filtered.map((book, idx) => `
+      <tr>
+        <td>${idx + 1}</td>
+        <td><img src="${book.image || ''}" style="width:40px;height:50px;object-fit:cover;border-radius:4px;background:#f0f0f0" alt="Ảnh sách"></td>
+        <td>${book.name}</td>
+        <td>${book.category}</td>
+        <td>${book.price}k đ</td>
+        <td>${book.stock}</td>
+        <td><span class="badge ${book.status === 'Còn hàng' ? 'ok' : 'bad'}">${book.status}</span></td>
+        <td><div class="ops"><button class="link book-edit" data-book="${book.name}">Sửa</button><button class="link danger book-delete" data-book="${book.name}">Xóa</button></div></td>
+      </tr>
+    `).join('');
+    updateBookStats();
+  };
+
   // Remove old listeners first
   openBtn.onclick = null;
   closeBtn.onclick = null;
   cancelBtn.onclick = null;
   form.onsubmit = null;
   if (form.image) form.image.onchange = null;
+  if (bookSearch) bookSearch.oninput = null;
+  if (categoryFilter) categoryFilter.onchange = null;
+  bookTable.removeEventListener('click', window.bookTableHandler);
   
   // Attach fresh listeners
-  openBtn.onclick = () => overlay.classList.add('open');
+  openBtn.onclick = () => {
+    form.reset();
+    preview.removeAttribute('src');
+    preview.style.display = 'none';
+    preview.nextElementSibling.style.display = 'block';
+    document.querySelector('.modal-head .modal-title').textContent = '📚 Thêm sách';
+    saveBtn.querySelector('.txt').textContent = 'Lưu';
+    overlay.classList.add('open');
+  };
   closeBtn.onclick = closeModal;
   cancelBtn.onclick = closeModal;
   
@@ -59,6 +148,10 @@ window.initBooks = function() {
       preview.nextElementSibling.style.display = 'none'; 
     });
   }
+
+  // Search and filter handlers
+  if (bookSearch) bookSearch.oninput = renderTable;
+  if (categoryFilter) categoryFilter.onchange = renderTable;
   
   form.onsubmit = e => { 
     e.preventDefault(); 
@@ -87,13 +180,88 @@ window.initBooks = function() {
     saveBtn.classList.add('loading'); 
     setTimeout(() => { 
       saveBtn.classList.remove('loading'); 
+      const isEdit = window.editingBookIndex !== undefined;
+      const imageUrl = preview.style.display === 'block' ? preview.src : '';
+      const bookData = {
+        name: title,
+        category: form.category.value,
+        price: price.toString(),
+        stock: stock.toString(),
+        status: stock > 0 ? 'Còn hàng' : 'Hết hàng',
+        image: imageUrl,
+        year: year,
+        publisher: form.publisher.value,
+        author: form.author.value,
+        description: form.description.value,
+        isbn: form.isbn.value,
+        language: form.language.value,
+        pages: form.pages.value ? +form.pages.value : null
+      };
+
+      if (isEdit) {
+        allBooks[window.editingBookIndex] = bookData;
+        window.editingBookIndex = undefined;
+      } else {
+        allBooks.unshift(bookData);
+      }
       closeModal(); 
       form.reset(); 
       preview.removeAttribute('src'); 
       preview.style.display = 'none'; 
       preview.nextElementSibling.style.display = 'block'; 
-      window.showToast('Đã lưu sách mới'); 
+      renderTable();
+      window.showToast(isEdit ? 'Đã cập nhật sách' : 'Đã lưu sách mới'); 
     }, 900); 
   };
+
+  // Handle edit and delete buttons in table
+  window.bookTableHandler = e => {
+    const editBtn = e.target.closest('.book-edit');
+    const deleteBtn = e.target.closest('.book-delete');
+    if (!editBtn && !deleteBtn) return;
+
+    const bookName = editBtn ? editBtn.dataset.book : deleteBtn.dataset.book;
+    const bookIndex = allBooks.findIndex(b => b.name === bookName);
+
+    if (editBtn) {
+      const book = allBooks[bookIndex];
+      form.title.value = book.name;
+      form.price.value = book.price;
+      form.stock.value = book.stock;
+      form.category.value = book.category;
+      form.year.value = book.year || new Date().getFullYear();
+      form.publisher.value = book.publisher || '';
+      form.author.value = book.author || '';
+      form.description.value = book.description || '';
+      form.isbn.value = book.isbn || '';
+      form.language.value = book.language || 'Tiếng Việt';
+      form.pages.value = book.pages || '';
+      
+      if (book.image) {
+        preview.src = book.image;
+        preview.style.display = 'block';
+        preview.nextElementSibling.style.display = 'none';
+      } else {
+        preview.removeAttribute('src');
+        preview.style.display = 'none';
+        preview.nextElementSibling.style.display = 'block';
+      }
+      
+      document.querySelector('.modal-head .modal-title').textContent = '📚 Sửa sách';
+      saveBtn.querySelector('.txt').textContent = 'Cập nhật';
+      window.editingBookIndex = bookIndex;
+      overlay.classList.add('open');
+    } else if (deleteBtn) {
+      window.showConfirm('Bạn chắc chắn muốn xóa sách này?', () => {
+        allBooks.splice(bookIndex, 1);
+        renderTable();
+        window.showToast('Đã xóa sách');
+      });
+    }
+  };
+
+  bookTable.addEventListener('click', window.bookTableHandler);
+  
+  renderTable();
 };
 </script>

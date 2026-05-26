@@ -29,19 +29,21 @@
     <div class="empty-state" id="customerEmptyState" style="display:none;margin-top:16px">Chưa có khách hàng nào.</div>
   </div>
   <div class="modal-overlay" id="customerModal"><div class="modal"><div class="modal-head"><div class="modal-title">👤 Thêm khách hàng</div><button class="close" id="closeCustomerModal">×</button></div><form id="customerForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống tên</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ, ví dụ 09xxxxxxxx</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Ngày sinh</div><input class="input" name="dob" type="date"></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Hạng thành viên</div><select class="select" name="tier"><option>Bronze</option><option>Silver</option><option>Gold</option><option>VIP</option></select></div><div class="field full"><div class="label">Avatar khách hàng</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="customerPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelCustomer">Hủy</button><button type="submit" class="btn primary" id="saveCustomer"><span class="txt">Lưu khách hàng</span><span class="spin"></span></button></div></form></div></div>
+  <div class="modal-overlay" id="customerDetailModal"><div class="modal" style="max-width:500px"><div class="modal-head"><div class="modal-title">👤 Chi tiết khách hàng</div><button class="close" id="closeDetailModal">×</button></div><div class="modal-body"><div style="text-align:center;margin-bottom:20px" id="detailAvatarContainer"><div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto">A</div></div><div style="display:grid;gap:12px"><div><div style="font-size:12px;color:var(--muted)">Họ tên</div><div style="font-weight:700" id="detailName">—</div></div><div><div style="font-size:12px;color:var(--muted)">Số điện thoại</div><div style="font-weight:700" id="detailPhone">—</div></div><div><div style="font-size:12px;color:var(--muted)">Email</div><div style="font-weight:700" id="detailEmail">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ngày sinh</div><div style="font-weight:700" id="detailDOB">—</div></div><div><div style="font-size:12px;color:var(--muted)">Địa chỉ</div><div style="font-weight:700" id="detailAddress">—</div></div><div><div style="font-size:12px;color:var(--muted)">Hạng thành viên</div><div style="font-weight:700" id="detailTier">—</div></div><div><div style="font-size:12px;color:var(--muted)">Tổng đơn hàng</div><div style="font-weight:700" id="detailOrders">—</div></div><div><div style="font-size:12px;color:var(--muted)">Điểm tích lũy</div><div style="font-weight:700" id="detailPoints">—</div></div><div><div style="font-size:12px;color:var(--muted)">Trạng thái</div><div style="font-weight:700" id="detailStatus">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ghi chú</div><div style="font-weight:700" id="detailNote">—</div></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="closeDetailBtn">Đóng</button></div></div></div>
 </div>
 
 <script>
 // Initialize Customers page
 window.initCustomers = function() {
-  const state = {
-    items: [
-      { name: 'Nguyễn Văn An', phone: '0901234567', email: 'an@gmail.com', orders: 18, points: 1240, tier: 'VIP', status: 'Hoạt động', avatar: 'A' },
-      { name: 'Trần Thị Mai', phone: '0912345678', email: 'mai@gmail.com', orders: 9, points: 680, tier: 'Gold', status: 'Hoạt động', avatar: 'M' },
-      { name: 'Lê Hoàng Nam', phone: '0987654321', email: 'nam@gmail.com', orders: 5, points: 320, tier: 'Silver', status: 'Hoạt động', avatar: 'N' },
-      { name: 'Phạm Minh Thư', phone: '0933123456', email: 'thu@gmail.com', orders: 2, points: 90, tier: 'Bronze', status: 'Bị khóa', avatar: 'T' }
-    ]
-  };
+  if (!window.allCustomers) {
+    window.allCustomers = [
+      { name: 'Nguyễn Văn An', phone: '0901234567', email: 'an@gmail.com', orders: 18, points: 1240, tier: 'VIP', status: 'Hoạt động', avatar: 'A', joinDate: '2026-05-10' },
+      { name: 'Trần Thị Mai', phone: '0912345678', email: 'mai@gmail.com', orders: 9, points: 680, tier: 'Gold', status: 'Hoạt động', avatar: 'M', joinDate: '2026-05-18' },
+      { name: 'Lê Hoàng Nam', phone: '0987654321', email: 'nam@gmail.com', orders: 5, points: 320, tier: 'Silver', status: 'Hoạt động', avatar: 'N', joinDate: '2026-04-20' },
+      { name: 'Phạm Minh Thư', phone: '0933123456', email: 'thu@gmail.com', orders: 2, points: 90, tier: 'Bronze', status: 'Bị khóa', avatar: 'T', joinDate: '2026-03-15' }
+    ];
+  }
+  const state = { items: window.allCustomers };
   const tableBody = document.getElementById('customerTableBody');
   const emptyState = document.getElementById('customerEmptyState');
   const modal = document.getElementById('customerModal');
@@ -54,13 +56,42 @@ window.initCustomers = function() {
   if (!tableBody || !modal || !form) return;
 
   const badgeClass = tier => ({ Bronze:'badge ok', Silver:'badge paid', Gold:'badge ok', VIP:'badge paid' }[tier] || 'badge paid');
+  const updateCustomerStats = () => {
+    const total = state.items.length;
+    const vip = state.items.filter(x => x.tier === 'VIP').length;
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const newThisMonth = state.items.filter(x => {
+      if (!x.joinDate) return false;
+      const d = new Date(x.joinDate);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    }).length;
+    const totalOrders = state.items.reduce((sum, x) => sum + (+x.orders || 0), 0);
+
+    const statTotalEl = document.getElementById('customerTotal');
+    const statVipEl = document.getElementById('customerVip');
+    const statNewEl = document.getElementById('customerNew');
+    const statOrdersEl = document.getElementById('customerOrders');
+
+    if (statTotalEl) statTotalEl.textContent = total;
+    if (statVipEl) statVipEl.textContent = vip;
+    if (statNewEl) statNewEl.textContent = newNewCustomersCount(newThisMonth); // wait, let's just write newThisMonth directly: newThisMonth
+    if (statNewEl) statNewEl.textContent = newThisMonth;
+    if (statOrdersEl) statOrdersEl.textContent = totalOrders.toLocaleString('vi-VN');
+  };
+
+  function newNewCustomersCount(count) { return count; }
+
   const render = (q = '') => {
     const query = q.trim().toLowerCase();
     const rows = state.items.filter(x => !query || x.name.toLowerCase().includes(query) || x.phone.includes(query) || x.email.toLowerCase().includes(query));
     tableBody.innerHTML = rows.length ? rows.map((item, idx) => `
       <tr>
         <td>${idx + 1}</td>
-        <td><div class="avatar">${item.avatar}</div></td>
+        <td>
+          ${item.avatar && item.avatar.length > 1 ? `<img src="${item.avatar}" class="avatar" style="object-fit:cover;" alt="Avatar">` : `<div class="avatar">${item.avatar || (item.name[0] || 'C').toUpperCase()}</div>`}
+        </td>
         <td style="font-weight:700">${item.name}</td>
         <td>${item.phone}</td>
         <td style="color:var(--muted)">${item.email}</td>
@@ -72,6 +103,7 @@ window.initCustomers = function() {
       </tr>
     `).join('') : '';
     emptyState.style.display = rows.length ? 'none' : 'block';
+    updateCustomerStats();
   };
 
   const closeModal = () => { modal.classList.remove('open'); form.reset(); preview.removeAttribute('src'); preview.style.display='none'; preview.nextElementSibling.style.display='block'; };
@@ -85,7 +117,16 @@ window.initCustomers = function() {
   if (form && form.avatar) form.avatar.onchange = null;
   
   // Attach new listeners
-  if (openBtn) openBtn.onclick = () => modal.classList.add('open');
+  if (openBtn) openBtn.onclick = () => {
+    form.reset();
+    preview.removeAttribute('src');
+    preview.style.display = 'none';
+    preview.nextElementSibling.style.display = 'block';
+    document.querySelector('#customerModal .modal-title').textContent = '👤 Thêm khách hàng';
+    document.getElementById('saveCustomer').querySelector('.txt').textContent = 'Lưu khách hàng';
+    window.currentEditCustomerIndex = undefined;
+    modal.classList.add('open');
+  };
   if (closeBtn) closeBtn.onclick = closeModal;
   if (cancelBtn) cancelBtn.onclick = closeModal;
   
@@ -120,16 +161,129 @@ window.initCustomers = function() {
     if (!phoneOk) { phoneField.classList.add('error'); phoneField.querySelector('.helper').textContent = 'SĐT phải đúng định dạng'; ok = false; }
     if (!emailOk) { emailField.classList.add('error'); emailField.querySelector('.helper').textContent = 'Email không hợp lệ'; ok = false; }
     if (!ok) return;
-    state.items.unshift({ name, phone, email, orders: 0, points: 0, tier: form.tier.value, status: 'Hoạt động', avatar: (name[0] || 'C').toUpperCase() });
+
+    const avatarUrl = preview.style.display === 'block' ? preview.src : (name[0] || 'C').toUpperCase();
+
+    if (window.currentEditCustomerIndex !== undefined) {
+      // Update existing
+      state.items[window.currentEditCustomerIndex] = { 
+        name, phone, email, 
+        orders: state.items[window.currentEditCustomerIndex].orders, 
+        points: state.items[window.currentEditCustomerIndex].points, 
+        tier: form.tier.value, 
+        status: state.items[window.currentEditCustomerIndex].status, 
+        avatar: avatarUrl,
+        dob: form.dob.value,
+        address: form.address.value,
+        note: form.note.value,
+        joinDate: state.items[window.currentEditCustomerIndex].joinDate || new Date().toISOString()
+      };
+      window.currentEditCustomerIndex = undefined;
+      document.querySelector('#customerModal .modal-title').textContent = '👤 Thêm khách hàng';
+      document.getElementById('saveCustomer').querySelector('.txt').textContent = 'Lưu khách hàng';
+    } else {
+      // Add new
+      state.items.unshift({ 
+        name, phone, email, 
+        orders: 0, points: 0, 
+        tier: form.tier.value, 
+        status: 'Hoạt động', 
+        avatar: avatarUrl,
+        dob: form.dob.value,
+        address: form.address.value,
+        note: form.note.value,
+        joinDate: new Date().toISOString()
+      });
+    }
     render(search.value);
     closeModal();
-    window.showToast('Đã thêm khách hàng');
+    form.reset();
+    window.showToast(window.currentEditCustomerIndex !== undefined ? 'Đã cập nhật khách hàng' : 'Đã thêm khách hàng');
   };
 
+  // Handle edit and delete buttons in table
+  tableBody.addEventListener('click', e => {
+    const editBtn = e.target.closest('.ops .link:not(.danger):not(.js-view-customer)');
+    const deleteBtn = e.target.closest('.ops .link.danger');
+    if (!editBtn && !deleteBtn) return;
+
+    const row = e.target.closest('tr');
+    const cells = row.querySelectorAll('td');
+    const customerName = cells[2].textContent.trim();
+    const itemIndex = state.items.findIndex(i => i.name === customerName);
+
+    if (editBtn) {
+      // Open edit modal
+      const item = state.items[itemIndex];
+      form.name.value = item.name;
+      form.phone.value = item.phone;
+      form.email.value = item.email;
+      form.tier.value = item.tier;
+      form.dob.value = item.dob || '';
+      form.address.value = item.address || '';
+      form.note.value = item.note || '';
+      
+      if (item.avatar && item.avatar.length > 1) {
+        preview.src = item.avatar;
+        preview.style.display = 'block';
+        preview.nextElementSibling.style.display = 'none';
+      } else {
+        preview.removeAttribute('src');
+        preview.style.display = 'none';
+        preview.nextElementSibling.style.display = 'block';
+      }
+
+      document.querySelector('#customerModal .modal-title').textContent = '👤 Sửa khách hàng';
+      document.getElementById('saveCustomer').querySelector('.txt').textContent = 'Cập nhật';
+      window.currentEditCustomerIndex = itemIndex;
+      modal.classList.add('open');
+    } else if (deleteBtn) {
+      // Delete confirmation
+      window.showConfirm('Bạn chắc chắn muốn xóa khách hàng này?', () => {
+        state.items.splice(itemIndex, 1);
+        render(search.value);
+        window.showToast('Đã xóa khách hàng');
+      });
+    }
+  });
+
+  // View detail modal
+  const detailModal = document.getElementById('customerDetailModal');
+  const closeDetailBtn = document.getElementById('closeDetailModal');
+  const closeDetailBtn2 = document.getElementById('closeDetailBtn');
+  
+  if (closeDetailBtn) closeDetailBtn.onclick = () => detailModal.classList.remove('open');
+  if (closeDetailBtn2) closeDetailBtn2.onclick = () => detailModal.classList.remove('open');
+  
   tableBody.addEventListener('click', e => {
     const btn = e.target.closest('.js-view-customer');
     if (!btn) return;
-    alert('Chi tiết khách hàng: ' + btn.dataset.name);
+    const customerName = btn.dataset.name;
+    const customer = state.items.find(x => x.name === customerName);
+    if (!customer) return;
+
+    // Populate detail modal
+    document.getElementById('detailName').textContent = customer.name;
+    document.getElementById('detailPhone').textContent = customer.phone;
+    document.getElementById('detailEmail').textContent = customer.email;
+    document.getElementById('detailDOB').textContent = customer.dob || '—';
+    document.getElementById('detailAddress').textContent = customer.address || '—';
+    document.getElementById('detailTier').textContent = customer.tier;
+    document.getElementById('detailOrders').textContent = customer.orders;
+    document.getElementById('detailPoints').textContent = customer.points;
+    document.getElementById('detailStatus').textContent = customer.status;
+    document.getElementById('detailNote').textContent = customer.note || '—';
+
+    const avatarContainer = document.getElementById('detailAvatarContainer');
+    if (avatarContainer) {
+      if (customer.avatar && customer.avatar.length > 1) {
+        avatarContainer.innerHTML = `<img src="${customer.avatar}" class="avatar" style="width:80px;height:80px;object-fit:cover;margin:0 auto;" alt="Avatar">`;
+      } else {
+        avatarContainer.innerHTML = `<div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto;display:flex;align-items:center;justify-content:center;">${customer.avatar || (customer.name[0] || 'C').toUpperCase()}</div>`;
+      }
+    }
+    
+    detailModal.classList.add('open');
   });
 
   render();

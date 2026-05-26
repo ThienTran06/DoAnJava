@@ -29,19 +29,21 @@
     <div class="empty-state" id="staffEmptyState" style="display:none;margin-top:16px">Chưa có nhân viên nào.</div>
   </div>
   <div class="modal-overlay" id="staffModal"><div class="modal"><div class="modal-head"><div class="modal-title">🧑‍💼 Thêm nhân viên</div><button class="close" id="closeStaffModal">×</button></div><form id="staffForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống</div></div><div class="field"><div class="label">Mã nhân viên</div><input class="input" name="code" required><div class="helper">Ví dụ: NV001</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ</div></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Chức vụ</div><select class="select" name="role"><option>Quản lý</option><option>Thu ngân</option><option>Nhân viên bán hàng</option><option>Kho</option></select></div><div class="field"><div class="label">Ca làm việc</div><input class="input" name="shift" placeholder="Sáng / Chiều / Tối"></div><div class="field"><div class="label">Ngày vào làm</div><input class="input" type="date" name="joinDate"></div><div class="field"><div class="label">Lương cơ bản</div><input class="input" type="number" name="salary" min="0" step="1000"></div><div class="field full"><div class="label">Avatar nhân viên</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="staffPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelStaff">Hủy</button><button type="submit" class="btn primary" id="saveStaff"><span class="txt">Lưu nhân viên</span><span class="spin"></span></button></div></form></div></div>
+  <div class="modal-overlay" id="staffDetailModal"><div class="modal" style="max-width:600px"><div class="modal-head"><div class="modal-title">🧑‍💼 Hồ sơ nhân viên</div><button class="close" id="closeProfileModal">×</button></div><div class="modal-body"><div style="text-align:center;margin-bottom:20px" id="profileAvatarContainer"><div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto">A</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px"><div><div style="font-size:12px;color:var(--muted)">Họ tên</div><div style="font-weight:700" id="profileName">—</div></div><div><div style="font-size:12px;color:var(--muted)">Mã nhân viên</div><div style="font-weight:700" id="profileCode">—</div></div><div><div style="font-size:12px;color:var(--muted)">Email</div><div style="font-weight:700" id="profileEmail">—</div></div><div><div style="font-size:12px;color:var(--muted)">Số điện thoại</div><div style="font-weight:700" id="profilePhone">—</div></div><div><div style="font-size:12px;color:var(--muted)">Chức vụ</div><div style="font-weight:700" id="profileRole">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ca làm việc</div><div style="font-weight:700" id="profileShift">—</div></div><div><div style="font-size:12px;color:var(--muted)">Địa chỉ</div><div style="font-weight:700" id="profileAddress">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ngày vào làm</div><div style="font-weight:700" id="profileJoinDate">—</div></div><div><div style="font-size:12px;color:var(--muted)">Lương cơ bản</div><div style="font-weight:700" id="profileSalary">—</div></div><div><div style="font-size:12px;color:var(--muted)">Trạng thái</div><div style="font-weight:700" id="profileStatus">—</div></div><div style="grid-column:1/-1"><div style="font-size:12px;color:var(--muted)">Ghi chú</div><div style="font-weight:700" id="profileNote">—</div></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="closeProfileBtn">Đóng</button></div></div></div>
 </div>
 
 <script>
 // Initialize Staff page
 window.initStaff = function() {
-  const state = {
-    items: [
+  if (!window.allStaff) {
+    window.allStaff = [
       { name:'Nguyễn Văn Hùng', code:'NV001', role:'Quản lý', email:'hung@bookhouse.vn', phone:'0901111111', shift:'Hành chính', status:'Đang làm', avatar:'H' },
       { name:'Trần Thị Lan', code:'NV002', role:'Thu ngân', email:'lan@bookhouse.vn', phone:'0902222222', shift:'Sáng', status:'Đang làm', avatar:'L' },
       { name:'Phạm Minh Tuấn', code:'NV003', role:'Nhân viên bán hàng', email:'tuan@bookhouse.vn', phone:'0903333333', shift:'Chiều', status:'Nghỉ phép', avatar:'T' },
       { name:'Lê Thu Hà', code:'NV004', role:'Kho', email:'ha@bookhouse.vn', phone:'0904444444', shift:'Tối', status:'Đã nghỉ việc', avatar:'H' }
-    ]
-  };
+    ];
+  }
+  const state = { items: window.allStaff };
   const modal = document.getElementById('staffModal');
   const form = document.getElementById('staffForm');
   const tableBody = document.getElementById('staffTableBody');
@@ -53,6 +55,23 @@ window.initStaff = function() {
   const cancelBtn = document.getElementById('cancelStaff');
   if (!modal || !form || !tableBody) return;
 
+  const updateStaffStats = () => {
+    const total = state.items.length;
+    const working = state.items.filter(x => x.status === 'Đang làm').length;
+    const managers = state.items.filter(x => x.role === 'Quản lý').length;
+    const salesStaff = state.items.filter(x => x.role === 'Nhân viên bán hàng').length;
+
+    const statTotalEl = document.getElementById('staffTotal');
+    const statWorkingEl = document.getElementById('staffWorking');
+    const statManagerEl = document.getElementById('staffManager');
+    const statTopEl = document.getElementById('staffTop');
+
+    if (statTotalEl) statTotalEl.textContent = total;
+    if (statWorkingEl) statWorkingEl.textContent = working;
+    if (statManagerEl) statManagerEl.textContent = managers;
+    if (statTopEl) statTopEl.textContent = salesStaff;
+  };
+
   const render = () => {
     const q = search.value.trim().toLowerCase();
     const roleFilter = positionFilter.value;
@@ -60,7 +79,9 @@ window.initStaff = function() {
     tableBody.innerHTML = rows.length ? rows.map((item, idx) => `
       <tr>
         <td>${idx + 1}</td>
-        <td><div class="avatar">${item.avatar}</div></td>
+        <td>
+          ${item.avatar && item.avatar.length > 1 ? `<img src="${item.avatar}" class="avatar" style="object-fit:cover;" alt="Avatar">` : `<div class="avatar">${item.avatar || (item.name[0] || 'E').toUpperCase()}</div>`}
+        </td>
         <td style="font-weight:700">${item.name}</td>
         <td>${item.code}</td>
         <td>${item.role}</td>
@@ -71,10 +92,20 @@ window.initStaff = function() {
         <td><div class="ops"><button class="link js-view-staff" data-name="${item.name}">Xem hồ sơ</button><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td>
       </tr>
     `).join('') : `<tr><td colspan="10"><div class="empty-state">Không tìm thấy nhân viên phù hợp.</div></td></tr>`;
+    updateStaffStats();
   };
 
   const closeModal = () => { modal.classList.remove('open'); form.reset(); preview.removeAttribute('src'); preview.style.display='none'; preview.nextElementSibling.style.display='block'; };
-  openBtn.onclick = () => modal.classList.add('open');
+  openBtn.onclick = () => {
+    form.reset();
+    preview.removeAttribute('src');
+    preview.style.display = 'none';
+    preview.nextElementSibling.style.display = 'block';
+    document.querySelector('#staffModal .modal-title').textContent = '🧑‍💼 Thêm nhân viên';
+    document.getElementById('saveStaff').querySelector('.txt').textContent = 'Lưu nhân viên';
+    window.currentEditStaffIndex = undefined;
+    modal.classList.add('open');
+  };
   closeBtn.onclick = closeModal; cancelBtn.onclick = closeModal;
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
   search.oninput = render; positionFilter.onchange = render;
@@ -90,16 +121,138 @@ window.initStaff = function() {
     if (!emailOk) { markField(form.email, 'Email không hợp lệ'); ok = false; }
     if (!phoneOk) { markField(form.phone, 'SĐT đúng định dạng'); ok = false; }
     if (!ok) return;
-    state.items.unshift({ name: form.name.value.trim(), code: form.code.value.trim(), role: form.role.value, email: form.email.value.trim(), phone: form.phone.value.trim(), shift: form.shift.value || 'Chưa phân ca', status: 'Đang làm', avatar: (form.name.value.trim()[0] || 'E').toUpperCase() });
+
+    const avatarUrl = preview.style.display === 'block' ? preview.src : (form.name.value.trim()[0] || 'E').toUpperCase();
+
+    if (window.currentEditStaffIndex !== undefined) {
+      // Update existing
+      state.items[window.currentEditStaffIndex] = {
+        name: form.name.value.trim(),
+        code: form.code.value.trim(),
+        role: form.role.value,
+        email: form.email.value.trim(),
+        phone: form.phone.value.trim(),
+        shift: form.shift.value || 'Chưa phân ca',
+        status: state.items[window.currentEditStaffIndex].status,
+        avatar: avatarUrl,
+        address: form.address.value,
+        joinDate: form.joinDate.value,
+        salary: form.salary.value,
+        note: form.note.value
+      };
+      window.currentEditStaffIndex = undefined;
+      document.querySelector('#staffModal .modal-title').textContent = '🧑‍💼 Thêm nhân viên';
+      document.getElementById('saveStaff').querySelector('.txt').textContent = 'Lưu nhân viên';
+    } else {
+      // Add new
+      state.items.unshift({
+        name: form.name.value.trim(),
+        code: form.code.value.trim(),
+        role: form.role.value,
+        email: form.email.value.trim(),
+        phone: form.phone.value.trim(),
+        shift: form.shift.value || 'Chưa phân ca',
+        status: 'Đang làm',
+        avatar: avatarUrl,
+        address: form.address.value,
+        joinDate: form.joinDate.value,
+        salary: form.salary.value,
+        note: form.note.value
+      });
+    }
     render();
     closeModal();
-    window.showToast('Đã thêm nhân viên');
+    form.reset();
+    window.showToast(window.currentEditStaffIndex !== undefined ? 'Đã cập nhật nhân viên' : 'Đã thêm nhân viên');
   };
 
+  // Handle edit and delete buttons in table
+  tableBody.addEventListener('click', e => {
+    const editBtn = e.target.closest('.ops .link:not(.danger):not(.js-view-staff)');
+    const deleteBtn = e.target.closest('.ops .link.danger');
+    if (!editBtn && !deleteBtn) return;
+
+    const row = e.target.closest('tr');
+    const cells = row.querySelectorAll('td');
+    const staffName = cells[2].textContent.trim();
+    const itemIndex = state.items.findIndex(i => i.name === staffName);
+
+    if (editBtn) {
+      // Open edit modal
+      const item = state.items[itemIndex];
+      form.name.value = item.name;
+      form.code.value = item.code;
+      form.email.value = item.email;
+      form.phone.value = item.phone;
+      form.role.value = item.role;
+      form.shift.value = item.shift;
+      form.address.value = item.address || '';
+      form.joinDate.value = item.joinDate || '';
+      form.salary.value = item.salary || '';
+      form.note.value = item.note || '';
+      
+      if (item.avatar && item.avatar.length > 1) {
+        preview.src = item.avatar;
+        preview.style.display = 'block';
+        preview.nextElementSibling.style.display = 'none';
+      } else {
+        preview.removeAttribute('src');
+        preview.style.display = 'none';
+        preview.nextElementSibling.style.display = 'block';
+      }
+
+      document.querySelector('#staffModal .modal-title').textContent = '🧑‍💼 Sửa nhân viên';
+      document.getElementById('saveStaff').querySelector('.txt').textContent = 'Cập nhật';
+      window.currentEditStaffIndex = itemIndex;
+      modal.classList.add('open');
+    } else if (deleteBtn) {
+      // Delete confirmation
+      window.showConfirm('Bạn chắc chắn muốn xóa nhân viên này?', () => {
+        state.items.splice(itemIndex, 1);
+        render();
+        window.showToast('Đã xóa nhân viên');
+      });
+    }
+  });
+
+  // View profile modal
+  const detailModal = document.getElementById('staffDetailModal');
+  const closeProfileBtn = document.getElementById('closeProfileModal');
+  const closeProfileBtn2 = document.getElementById('closeProfileBtn');
+  
+  if (closeProfileBtn) closeProfileBtn.onclick = () => detailModal.classList.remove('open');
+  if (closeProfileBtn2) closeProfileBtn2.onclick = () => detailModal.classList.remove('open');
+  
   tableBody.addEventListener('click', e => {
     const btn = e.target.closest('.js-view-staff');
     if (!btn) return;
-    alert('Hồ sơ nhân viên: ' + btn.dataset.name);
+    const staffName = btn.dataset.name;
+    const staff = state.items.find(x => x.name === staffName);
+    if (!staff) return;
+
+    // Populate profile modal
+    document.getElementById('profileName').textContent = staff.name;
+    document.getElementById('profileCode').textContent = staff.code;
+    document.getElementById('profileEmail').textContent = staff.email;
+    document.getElementById('profilePhone').textContent = staff.phone;
+    document.getElementById('profileRole').textContent = staff.role;
+    document.getElementById('profileShift').textContent = staff.shift;
+    document.getElementById('profileAddress').textContent = staff.address || '—';
+    document.getElementById('profileJoinDate').textContent = staff.joinDate || '—';
+    document.getElementById('profileSalary').textContent = staff.salary ? staff.salary.toLocaleString() + ' đ' : '—';
+    document.getElementById('profileStatus').textContent = staff.status;
+    document.getElementById('profileNote').textContent = staff.note || '—';
+
+    const avatarContainer = document.getElementById('profileAvatarContainer');
+    if (avatarContainer) {
+      if (staff.avatar && staff.avatar.length > 1) {
+        avatarContainer.innerHTML = `<img src="${staff.avatar}" class="avatar" style="width:80px;height:80px;object-fit:cover;margin:0 auto;" alt="Avatar">`;
+      } else {
+        avatarContainer.innerHTML = `<div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto;display:flex;align-items:center;justify-content:center;">${staff.avatar || (staff.name[0] || 'E').toUpperCase()}</div>`;
+      }
+    }
+    
+    detailModal.classList.add('open');
   });
 
   function markField(input, message) {

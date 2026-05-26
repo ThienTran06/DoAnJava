@@ -43,7 +43,7 @@ body{margin:0;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--
     </div>
     <div class="nav-item" data-page="categories">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-      Danh mục
+      Thể loại
     </div>
     <div class="nav-item" data-page="customers">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -123,6 +123,78 @@ window.showToast = function(message) {
   requestAnimationFrame(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; });
   clearTimeout(window.showToast._t);
   window.showToast._t = setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(8px)'; }, 2200);
+};
+
+// Global confirmation modal - available to all pages
+window.showConfirm = function(message, onConfirm) {
+  const existing = document.getElementById('appConfirmModal');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'appConfirmModal';
+  overlay.style.cssText = `
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 18, 18, 0.45);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  `;
+
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    width: min(380px, 100%);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 24px;
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.2s ease;
+  `;
+
+  modal.innerHTML = `
+    <div style="font-size: 17px; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+      ⚠️ Xác nhận xóa
+    </div>
+    <div style="font-size: 13.5px; color: var(--muted); line-height: 1.5; margin-bottom: 22px; font-weight: 500;">
+      ${message}
+    </div>
+    <div style="display: flex; justify-content: flex-end; gap: 8px;">
+      <button id="confirmCancelBtn" style="border: 1.5px solid var(--border); background: var(--bg); color: var(--text); border-radius: 8px; padding: 8px 14px; font: inherit; font-weight: 700; cursor: pointer;">Hủy</button>
+      <button id="confirmOkBtn" style="border: none; background: var(--red); color: #fff; border-radius: 8px; padding: 8px 14px; font: inherit; font-weight: 700; cursor: pointer;">Xóa</button>
+    </div>
+  `;
+
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  requestAnimationFrame(() => {
+    overlay.style.opacity = '1';
+    modal.style.transform = 'translateY(0) scale(1)';
+  });
+
+  const closeConfirm = (accepted) => {
+    overlay.style.opacity = '0';
+    modal.style.transform = 'translateY(20px) scale(0.95)';
+    setTimeout(() => {
+      overlay.remove();
+      if (accepted && typeof onConfirm === 'function') {
+        onConfirm();
+      }
+    }, 200);
+  };
+
+  overlay.querySelector('#confirmCancelBtn').onclick = () => closeConfirm(false);
+  overlay.querySelector('#confirmOkBtn').onclick = () => closeConfirm(true);
+  overlay.onclick = (e) => {
+    if (e.target === overlay) closeConfirm(false);
+  };
 };
 </script>
 
