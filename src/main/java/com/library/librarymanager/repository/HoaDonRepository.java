@@ -45,21 +45,21 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Integer> {
     )
     BigDecimal doanhThuHomNay();
 
-    @Query("SELECT DAY(a.ngayBan),SUM(a.tongTien) " +
+    @Query("SELECT DAY(a.ngayBan) as ngay, MONTH(a.ngayBan) as thang, YEAR(a.ngayBan) as nam, SUM(a.tongTien) as tongTien " +
             "FROM HoaDon a " +
             "WHERE a.ngayBan >= :fromDate " +
             "AND a.trangThai IN ('HOAN THANH','PAID') "+
             "GROUP BY YEAR(a.ngayBan), MONTH(a.ngayBan), DAY(a.ngayBan) "+
-            "ORDER BY DAY(a.ngayBan) "
+            "ORDER BY YEAR(a.ngayBan), MONTH(a.ngayBan), DAY(a.ngayBan) "
     )
     List<DoanhThuNgayResponse> doanhThu7Ngay(@Param("fromDate") LocalDateTime fromDate);
 
-    @Query("SELECT DAY(a.ngayBan), SUM(a.tongTien) "
+    @Query("SELECT DAY(a.ngayBan) as ngay, MONTH(a.ngayBan) as thang, YEAR(a.ngayBan) as nam, SUM(a.tongTien) as tongTien "
             +"FROM HoaDon a "
             + "WHERE a.ngayBan >= :fromDate "
             + "AND a.trangThai IN ('HOAN THANH','PAID') "
-            + "GROUP BY YEAR(a.ngayBan), MONTH(a.ngayBan), DAY(a.ngayBan)"
-            + "ORDER BY DAY(a.ngayBan) ")
+            + "GROUP BY YEAR(a.ngayBan), MONTH(a.ngayBan), DAY(a.ngayBan) "
+            + "ORDER BY YEAR(a.ngayBan), MONTH(a.ngayBan), DAY(a.ngayBan) ")
     List<DoanhThuNgayResponse> doanhThuBaMuoiNgayTruoc(@Param("fromDate") LocalDateTime fromDate);
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT h FROM HoaDon h WHERE h.id = :id")

@@ -788,7 +788,11 @@ const viewTitles = {
   revenue: ['Doanh thu', 'Bao cao doanh thu tu backend'],
   inventory: ['Ton kho', 'Bao cao ton kho tu backend']
 };
-const loadedViews = { revenue: false, inventory: false };
+const loadedViews = { dashboard: false, revenue: false, inventory: false };
+const dashboardState = {
+  sevenDays: [],
+  thirtyDays: []
+};
 
 function getToken() {
   return localStorage.getItem('token');
@@ -833,17 +837,222 @@ function setView(view) {
   document.querySelector('.topbar-title').textContent = title[0];
   document.querySelector('.topbar-subtitle').textContent = title[1];
 
+  if (view === 'dashboard' && !loadedViews.dashboard) loadDashboard();
   if (view === 'revenue' && !loadedViews.revenue) loadRevenue();
   if (view === 'inventory' && !loadedViews.inventory) loadInventory();
 }
 
 function money(value) {
   const number = Number(value || 0);
-  return number.toLocaleString('vi-VN') + ' d';
+  return number.toLocaleString('vi-VN') + ' \u0111';
 }
 
 function sumMoney(rows) {
   return (rows || []).reduce((sum, row) => sum + Number(row.tongTien || 0), 0);
+}
+
+function shortMoney(value) {
+  const number = Number(value || 0);
+  if (number >= 1000000000) return (number / 1000000000).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + 'B';
+  if (number >= 1000000) return (number / 1000000).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + 'M';
+  if (number >= 1000) return (number / 1000).toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + 'K';
+  return number.toLocaleString('vi-VN');
+}
+
+function getDashboardStatCards() {
+  return document.querySelectorAll('#dashboardView .stats-grid .stat-card');
+}
+
+function setDashboardStat(index, value, label, state) {
+  const card = getDashboardStatCards()[index];
+  if (!card) return;
+  const valueEl = card.querySelector('.stat-value');
+  const labelEl = card.querySelector('.stat-label');
+  const deltaEl = card.querySelector('.stat-delta');
+  if (valueEl) valueEl.textContent = value;
+  if (labelEl) labelEl.textContent = label;
+  if (deltaEl) {
+    deltaEl.textContent = state || 'T\u1eeb backend';
+    deltaEl.classList.remove('up', 'down');
+    deltaEl.classList.add(state === 'L\u1ed7i API' ? 'down' : 'up');
+  }
+}
+
+function normalizeRevenueRows(rows) {
+  return (rows || [])
+    .map(row => ({
+      ngay: Number(row.ngay || 0),
+      thang: Number(row.thang || 0),
+      nam: Number(row.nam || 0),
+      tongTien: Number(row.tongTien || 0)
+    }))
+    .filter(row => row.ngay > 0)
+    .sort((a, b) => new Date(a.nam || 1970, (a.thang || 1) - 1, a.ngay) - new Date(b.nam || 1970, (b.thang || 1) - 1, b.ngay));
+}
+
+function renderDashboardLineChart(rows) {
+  const canvas = document.getElementById('lineChart');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const wrap = canvas.parentElement;
+  const W = wrap.clientWidth || 320, H = 140;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+
+  const dataRows = normalizeRevenueRows(rows);
+  const data = dataRows.length ? dataRows.map(row => row.tongTien / 1000000) : [0];
+  const labels = dataRows.length ? dataRows.map(row => `${String(row.ngay).padStart(2, '0')}/${String(row.thang || '').padStart(2, '0')}`) : ['--'];
+  const pad = { t: 10, r: 10, b: 28, l: 42 };
+  const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
+  const max = Math.max(...data, 1);
+  const yMax = Math.ceil(max / 5) * 5 || 5;
+  const px = i => pad.l + (data.length === 1 ? cw / 2 : (i / (data.length - 1)) * cw);
+  const py = v => pad.t + ch - (v / yMax) * ch;
+
+  ctx.strokeStyle = '#e8e8e2'; ctx.lineWidth = 1;
+  [0, yMax * 0.25, yMax * 0.5, yMax * 0.75, yMax].forEach(v => {
+    const y = py(v);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cw, y); ctx.stroke();
+    ctx.fillStyle = '#b5b5ae';
+    ctx.font = '600 10px DM Sans, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(v.toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + 'M', pad.l - 5, y + 3.5);
+  });
+
+  if (dataRows.length) {
+    const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + ch);
+    grad.addColorStop(0, 'rgba(31,31,31,0.1)');
+    grad.addColorStop(1, 'rgba(31,31,31,0)');
+    ctx.beginPath();
+    ctx.moveTo(px(0), py(data[0]));
+    for (let i = 1; i < data.length; i++) {
+      const xc = (px(i) + px(i - 1)) / 2;
+      ctx.bezierCurveTo(xc, py(data[i - 1]), xc, py(data[i]), px(i), py(data[i]));
+    }
+    ctx.lineTo(px(data.length - 1), py(0)); ctx.lineTo(px(0), py(0)); ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(px(0), py(data[0]));
+    for (let i = 1; i < data.length; i++) {
+      const xc = (px(i) + px(i - 1)) / 2;
+      ctx.bezierCurveTo(xc, py(data[i - 1]), xc, py(data[i]), px(i), py(data[i]));
+    }
+    ctx.strokeStyle = '#1f1f1f'; ctx.lineWidth = 2.2; ctx.stroke();
+    data.forEach((v, i) => {
+      ctx.beginPath(); ctx.arc(px(i), py(v), 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#1f1f1f'; ctx.fill();
+      ctx.beginPath(); ctx.arc(px(i), py(v), 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff'; ctx.fill();
+    });
+  }
+
+  ctx.fillStyle = '#b5b5ae'; ctx.font = '600 10px DM Sans, sans-serif'; ctx.textAlign = 'center';
+  labels.forEach((label, i) => ctx.fillText(label, px(i), H - 5));
+}
+
+function renderDashboardDonut(rows) {
+  const canvas = document.getElementById('donutChart');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = 120 * dpr; canvas.height = 120 * dpr;
+  canvas.style.width = '120px'; canvas.style.height = '120px';
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, 120, 120);
+
+  const colors = ['#1f1f1f', '#555555', '#888880', '#b5b5ae', '#e0e0da'];
+  const dataRows = (rows || []).slice(0, 5);
+  const total = sumMoney(dataRows);
+  const data = total > 0 ? dataRows.map(row => Number(row.tongTien || 0)) : [1];
+  const cx = 60, cy = 60, r = 52, inner = 34;
+  let start = -Math.PI / 2;
+  data.forEach((value, i) => {
+    const angle = (value / data.reduce((a, b) => a + b, 0)) * Math.PI * 2;
+    ctx.beginPath(); ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, start + angle);
+    ctx.closePath(); ctx.fillStyle = colors[i] || '#e0e0da'; ctx.fill();
+    start += angle;
+  });
+  ctx.beginPath(); ctx.arc(cx, cy, inner, 0, Math.PI * 2);
+  ctx.fillStyle = '#ffffff'; ctx.fill();
+
+  const centerValue = document.querySelector('#dashboardView .donut-center .val');
+  if (centerValue) centerValue.textContent = shortMoney(total);
+
+  const legend = document.querySelector('#dashboardView .legend');
+  if (!legend) return;
+  legend.innerHTML = dataRows.length ? dataRows.map((row, index) => {
+    const name = row.tenTheLoai || 'Kh\u00e1c';
+    const pct = total > 0 ? Math.round((Number(row.tongTien || 0) / total) * 100) : 0;
+    return `<div class="legend-item"><div class="legend-dot" style="background:${colors[index] || '#e0e0da'}"></div>${escapeHtml(name)}<span class="legend-pct">${pct}%</span></div>`;
+  }).join('') : '<div class="state-text">Kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u</div>';
+}
+
+function renderDashboardBestSellers(rows) {
+  const list = document.querySelector('#dashboardView .rank-list');
+  if (!list) return;
+  list.innerHTML = rows && rows.length ? rows.slice(0, 5).map((row, index) => `
+    <div class="rank-item">
+      <span class="rank-num">${index + 1}</span>
+      <div class="rank-bar-wrap"><div class="rank-name">${escapeHtml(row.tenSach || '')}</div></div>
+      <span class="rank-count">${Number(row.soLuongDaBan || 0).toLocaleString('vi-VN')}</span>
+    </div>
+  `).join('') : '<div class="state-text">Kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u</div>';
+}
+
+function renderDashboardInventory(rows) {
+  const list = document.querySelector('#dashboardView .inv-list');
+  if (!list) return;
+  list.innerHTML = rows && rows.length ? rows.slice(0, 5).map((row, index) => `
+    <div class="inv-item">
+      <div class="inv-num">${index + 1}</div>
+      <div class="inv-name">${escapeHtml(row.tenSach || '')}</div>
+      <span class="inv-count">${Number(row.soLuongTonKho || 0).toLocaleString('vi-VN')}</span>
+    </div>
+  `).join('') : '<div class="state-text">Kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u</div>';
+}
+
+async function loadDashboard() {
+  getDashboardStatCards().forEach((card, index) => {
+    const valueEl = card.querySelector('.stat-value');
+    if (valueEl) valueEl.textContent = '--';
+    const deltaEl = card.querySelector('.stat-delta');
+    if (deltaEl) deltaEl.textContent = '\u0110ang t\u1ea3i';
+  });
+
+  const results = await Promise.allSettled([
+    apiGet('/api/bao-cao/doanh-thu-hom-nay'),
+    apiGet('/api/bao-cao/tong-ton-kho'),
+    apiGet('/api/bao-cao/doanh-thu-bay-ngay-truoc'),
+    apiGet('/api/bao-cao/doanh-thu-ba-muoi-ngay-truoc'),
+    apiGet('/api/bao-cao/doanh-thu-theo-the-loai'),
+    apiGet('/api/bao-cao/sach-ban-chay'),
+    apiGet('/api/bao-cao/ton-kho-nhieu-nhat')
+  ]);
+
+  const [todayResult, stockResult, sevenResult, thirtyResult, categoryResult, bestSellerResult, inventoryResult] = results;
+  setDashboardStat(0, todayResult.status === 'fulfilled' ? money(todayResult.value) : 'L\u1ed7i', 'Doanh thu h\u00f4m nay', todayResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
+  setDashboardStat(1, stockResult.status === 'fulfilled' ? Number(stockResult.value || 0).toLocaleString('vi-VN') : 'L\u1ed7i', 'T\u1ed3n kho hi\u1ec7n t\u1ea1i', stockResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
+
+  dashboardState.sevenDays = sevenResult.status === 'fulfilled' ? sevenResult.value : [];
+  dashboardState.thirtyDays = thirtyResult.status === 'fulfilled' ? thirtyResult.value : [];
+  setDashboardStat(2, sevenResult.status === 'fulfilled' ? money(sumMoney(sevenResult.value)) : 'L\u1ed7i', 'Doanh thu 7 ng\u00e0y qua', sevenResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
+  setDashboardStat(3, thirtyResult.status === 'fulfilled' ? money(sumMoney(thirtyResult.value)) : 'L\u1ed7i', 'Doanh thu 30 ng\u00e0y qua', thirtyResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
+  setDashboardStat(4, bestSellerResult.status === 'fulfilled' ? Number(((bestSellerResult.value || [])[0] || {}).soLuongDaBan || 0).toLocaleString('vi-VN') : 'L\u1ed7i', 'S\u00e1ch b\u00e1n ch\u1ea1y nh\u1ea5t', bestSellerResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
+
+  renderDashboardLineChart(dashboardState.sevenDays);
+  if (categoryResult.status === 'fulfilled') renderDashboardDonut(categoryResult.value);
+  else renderDashboardDonut([]);
+  if (bestSellerResult.status === 'fulfilled') renderDashboardBestSellers(bestSellerResult.value);
+  else renderDashboardBestSellers([]);
+  if (inventoryResult.status === 'fulfilled') renderDashboardInventory(inventoryResult.value);
+  else renderDashboardInventory([]);
+
+  loadedViews.dashboard = true;
 }
 
 function setError(targetId, colspan, error) {
@@ -990,6 +1199,14 @@ document.getElementById('loadInventoryBtn').addEventListener('click', () => {
   loadedViews.inventory = false;
   loadInventory();
 });
+const dashboardRangeSelect = document.querySelector('#dashboardView .card-header select');
+if (dashboardRangeSelect) {
+  dashboardRangeSelect.addEventListener('change', () => {
+    const useThirtyDays = dashboardRangeSelect.selectedIndex === 1;
+    renderDashboardLineChart(useThirtyDays ? dashboardState.thirtyDays : dashboardState.sevenDays);
+  });
+}
+loadDashboard();
 </script>
 </body>
 </html>
