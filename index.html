@@ -291,6 +291,32 @@
   .stat-card:nth-child(4){animation-delay:.17s}
   .stat-card:nth-child(5){animation-delay:.21s}
   .card { animation: fadeUp 0.35s ease both; animation-delay:.28s; }
+  .view-panel { display: none; }
+  .view-panel.active { display: block; }
+  .report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+  .report-grid.two { grid-template-columns: 1fr 1fr; }
+  .report-value { font-size: 26px; font-weight: 800; letter-spacing: -0.7px; margin-top: 12px; }
+  .report-label { color: var(--text-muted); font-size: 12.5px; margin-top: 5px; }
+  .report-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .report-actions { display: flex; gap: 8px; align-items: center; }
+  .report-actions input {
+    width: 88px; font: inherit; font-size: 12.5px; font-weight: 600;
+    border: 1.5px solid var(--border); border-radius: 7px;
+    padding: 6px 9px; background: var(--surface); color: var(--text);
+  }
+  .report-btn {
+    border: 1.5px solid var(--text); border-radius: 7px; background: var(--text);
+    color: #f6f7ed; font: inherit; font-size: 12.5px; font-weight: 700;
+    padding: 7px 11px; cursor: pointer;
+  }
+  .report-note { color: var(--text-muted); font-size: 12.5px; margin-top: 10px; }
+  .state-text { color: var(--text-muted); font-size: 13px; padding: 10px 0; }
+  .bar-list { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: grid; grid-template-columns: 140px 1fr 92px; align-items: center; gap: 10px; font-size: 13px; }
+  .bar-name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-track { height: 9px; background: var(--bg); border-radius: 20px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--text); border-radius: 20px; min-width: 3px; }
+  .bar-value { text-align: right; color: var(--text-muted); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -305,11 +331,11 @@
       <div class="logo-text">BookHouse</div>
       <div class="logo-sub">Tri thức trong tầm tay</div>
     </div>
-  </div>
+    </div>
 
   <div class="nav-section">
     <div class="nav-label">Quản lý</div>
-    <div class="nav-item active">
+    <div class="nav-item active" data-view="dashboard">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f6f7ed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Tổng quan
     </div>
@@ -349,11 +375,11 @@
 
   <div class="nav-section">
     <div class="nav-label">Báo cáo</div>
-    <div class="nav-item">
+    <div class="nav-item" data-view="revenue">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Doanh thu
     </div>
-    <div class="nav-item">
+    <div class="nav-item" data-view="inventory">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Tồn kho
     </div>
@@ -407,6 +433,7 @@
       Hôm nay: 10/05/2026
     </div>
 
+    <section class="view-panel active" id="dashboardView">
     <!-- STAT CARDS -->
     <div class="stats-grid">
       <div class="stat-card dark">
@@ -588,6 +615,84 @@
         </div>
       </div>
     </div>
+    </section>
+
+    <section class="view-panel" id="revenueView">
+      <div class="report-toolbar">
+        <div>
+          <h2 style="font-size:22px;letter-spacing:-0.5px;margin-bottom:4px;">Doanh thu</h2>
+          <div class="report-note">Du lieu lay tu /api/bao-cao de test tren Vercel.</div>
+        </div>
+        <div class="report-actions">
+          <input id="revenueYear" type="number" min="2000" max="2100" value="2026" aria-label="Nam">
+          <input id="revenueMonth" type="number" min="1" max="12" value="5" aria-label="Thang">
+          <button class="report-btn" id="loadRevenueBtn" type="button">Tai lai</button>
+        </div>
+      </div>
+
+      <div class="report-grid">
+        <div class="card">
+          <span class="card-title">Hom nay</span>
+          <div class="report-value" id="todayRevenue">--</div>
+          <div class="report-label">Tong doanh thu hom nay</div>
+        </div>
+        <div class="card">
+          <span class="card-title">7 ngay gan nhat</span>
+          <div class="report-value" id="sevenDayRevenue">--</div>
+          <div class="report-label">Tong theo endpoint bay ngay truoc</div>
+        </div>
+        <div class="card">
+          <span class="card-title">30 ngay gan nhat</span>
+          <div class="report-value" id="thirtyDayRevenue">--</div>
+          <div class="report-label">Tong theo endpoint ba muoi ngay truoc</div>
+        </div>
+      </div>
+
+      <div class="report-grid two">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Doanh thu theo ngay</span></div>
+          <table class="tbl">
+            <thead><tr><th>Ngay</th><th>Thang</th><th>Nam</th><th>Tong tien</th></tr></thead>
+            <tbody id="dailyRevenueRows"><tr><td colspan="4" class="state-text">Chua tai du lieu</td></tr></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Doanh thu theo the loai</span></div>
+          <div class="bar-list" id="categoryRevenueRows"><div class="state-text">Chua tai du lieu</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view-panel" id="inventoryView">
+      <div class="report-toolbar">
+        <div>
+          <h2 style="font-size:22px;letter-spacing:-0.5px;margin-bottom:4px;">Ton kho</h2>
+          <div class="report-note">Kiem tra tong ton kho va danh sach sach ton kho nhieu nhat.</div>
+        </div>
+        <button class="report-btn" id="loadInventoryBtn" type="button">Tai lai</button>
+      </div>
+
+      <div class="report-grid two">
+        <div class="card">
+          <span class="card-title">Tong ton kho</span>
+          <div class="report-value" id="totalInventory">--</div>
+          <div class="report-label">So luong sach hien con</div>
+        </div>
+        <div class="card">
+          <span class="card-title">Trang thai API</span>
+          <div class="report-value" id="inventoryApiState">--</div>
+          <div class="report-label">Ket qua goi endpoint ton kho</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Ton kho nhieu nhat</span></div>
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Ten sach</th><th>So luong ton</th></tr></thead>
+          <tbody id="inventoryRows"><tr><td colspan="3" class="state-text">Chua tai du lieu</td></tr></tbody>
+        </table>
+      </div>
+    </section>
 
   </div>
 </div>
@@ -676,6 +781,184 @@
   ctx.beginPath(); ctx.arc(cx, cy, inner, 0, Math.PI*2);
   ctx.fillStyle = '#ffffff'; ctx.fill();
 })();
+
+const API_BASE = 'https://doanjava-production.up.railway.app';
+const viewTitles = {
+  dashboard: ['Tong quan', 'Chao mung ban tro lai, Admin!'],
+  revenue: ['Doanh thu', 'Bao cao doanh thu tu backend'],
+  inventory: ['Ton kho', 'Bao cao ton kho tu backend']
+};
+const loadedViews = { revenue: false, inventory: false };
+
+function getToken() {
+  return localStorage.getItem('token');
+}
+
+async function apiGet(path) {
+  const token = getToken();
+  if (!token) {
+    window.location.href = 'login.html';
+    throw new Error('Missing token');
+  }
+
+  const res = await fetch(API_BASE + path, {
+    headers: { Authorization: 'Bearer ' + token },
+    credentials: 'include'
+  });
+
+  if (res.status === 401 || res.status === 403) {
+    localStorage.removeItem('token');
+    window.location.href = 'login.html';
+    throw new Error('Unauthorized');
+  }
+
+  if (!res.ok) {
+    const message = await res.text();
+    throw new Error(message || ('HTTP ' + res.status));
+  }
+
+  return res.json();
+}
+
+function setView(view) {
+  document.querySelectorAll('[data-view]').forEach(item => {
+    item.classList.toggle('active', item.dataset.view === view);
+  });
+  document.querySelectorAll('.view-panel').forEach(panel => {
+    panel.classList.remove('active');
+  });
+  document.getElementById(view + 'View').classList.add('active');
+
+  const title = viewTitles[view] || viewTitles.dashboard;
+  document.querySelector('.topbar-title').textContent = title[0];
+  document.querySelector('.topbar-subtitle').textContent = title[1];
+
+  if (view === 'revenue' && !loadedViews.revenue) loadRevenue();
+  if (view === 'inventory' && !loadedViews.inventory) loadInventory();
+}
+
+function money(value) {
+  const number = Number(value || 0);
+  return number.toLocaleString('vi-VN') + ' d';
+}
+
+function sumMoney(rows) {
+  return (rows || []).reduce((sum, row) => sum + Number(row.tongTien || 0), 0);
+}
+
+function setError(targetId, colspan, error) {
+  document.getElementById(targetId).innerHTML =
+    `<tr><td colspan="${colspan}" class="state-text">Loi: ${escapeHtml(error.message)}</td></tr>`;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+async function loadRevenue() {
+  const year = document.getElementById('revenueYear').value || new Date().getFullYear();
+  const month = document.getElementById('revenueMonth').value || (new Date().getMonth() + 1);
+  document.getElementById('dailyRevenueRows').innerHTML = '<tr><td colspan="4" class="state-text">Dang tai...</td></tr>';
+  document.getElementById('categoryRevenueRows').innerHTML = '<div class="state-text">Dang tai...</div>';
+
+  try {
+    const [today, sevenDays, thirtyDays, daily, byCategory] = await Promise.all([
+      apiGet('/api/bao-cao/doanh-thu-hom-nay'),
+      apiGet('/api/bao-cao/doanh-thu-bay-ngay-truoc'),
+      apiGet('/api/bao-cao/doanh-thu-ba-muoi-ngay-truoc'),
+      apiGet(`/api/bao-cao/doanh-thu-ngay?nam=${encodeURIComponent(year)}&thang=${encodeURIComponent(month)}`),
+      apiGet('/api/bao-cao/doanh-thu-theo-the-loai')
+    ]);
+
+    document.getElementById('todayRevenue').textContent = money(today);
+    document.getElementById('sevenDayRevenue').textContent = money(sumMoney(sevenDays));
+    document.getElementById('thirtyDayRevenue').textContent = money(sumMoney(thirtyDays));
+
+    document.getElementById('dailyRevenueRows').innerHTML = daily.length
+      ? daily.map(row => `
+          <tr>
+            <td>${row.ngay}</td>
+            <td>${row.thang}</td>
+            <td>${row.nam}</td>
+            <td style="font-weight:700">${money(row.tongTien)}</td>
+          </tr>
+        `).join('')
+      : '<tr><td colspan="4" class="state-text">Khong co du lieu</td></tr>';
+
+    renderCategoryRevenue(byCategory);
+    loadedViews.revenue = true;
+  }
+  catch (error) {
+    setError('dailyRevenueRows', 4, error);
+    document.getElementById('categoryRevenueRows').innerHTML =
+      `<div class="state-text">Loi: ${escapeHtml(error.message)}</div>`;
+  }
+}
+
+function renderCategoryRevenue(rows) {
+  const max = Math.max(...(rows || []).map(row => Number(row.tongTien || 0)), 1);
+  document.getElementById('categoryRevenueRows').innerHTML = rows && rows.length
+    ? rows.map(row => {
+        const name = row.tenTheLoai || 'Khac';
+        const value = Number(row.tongTien || 0);
+        const width = Math.max((value / max) * 100, 3);
+        return `
+          <div class="bar-row">
+            <div class="bar-name" title="${escapeHtml(name)}">${escapeHtml(name)}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div>
+            <div class="bar-value">${money(value)}</div>
+          </div>
+        `;
+      }).join('')
+    : '<div class="state-text">Khong co du lieu</div>';
+}
+
+async function loadInventory() {
+  document.getElementById('inventoryRows').innerHTML = '<tr><td colspan="3" class="state-text">Dang tai...</td></tr>';
+  document.getElementById('inventoryApiState').textContent = 'Dang tai';
+
+  try {
+    const [total, topInventory] = await Promise.all([
+      apiGet('/api/bao-cao/tong-ton-kho'),
+      apiGet('/api/bao-cao/ton-kho-nhieu-nhat')
+    ]);
+
+    document.getElementById('totalInventory').textContent = Number(total || 0).toLocaleString('vi-VN');
+    document.getElementById('inventoryApiState').textContent = 'OK';
+    document.getElementById('inventoryRows').innerHTML = topInventory.length
+      ? topInventory.map((row, index) => `
+          <tr>
+            <td style="font-weight:700">${index + 1}</td>
+            <td>${escapeHtml(row.tenSach || '')}</td>
+            <td style="font-weight:700">${Number(row.soLuongTonKho || 0).toLocaleString('vi-VN')}</td>
+          </tr>
+        `).join('')
+      : '<tr><td colspan="3" class="state-text">Khong co du lieu</td></tr>';
+
+    loadedViews.inventory = true;
+  }
+  catch (error) {
+    document.getElementById('inventoryApiState').textContent = 'Loi';
+    setError('inventoryRows', 3, error);
+  }
+}
+
+document.querySelectorAll('[data-view]').forEach(item => {
+  item.addEventListener('click', () => setView(item.dataset.view));
+});
+document.getElementById('loadRevenueBtn').addEventListener('click', () => {
+  loadedViews.revenue = false;
+  loadRevenue();
+});
+document.getElementById('loadInventoryBtn').addEventListener('click', () => {
+  loadedViews.inventory = false;
+  loadInventory();
+});
 </script>
 </body>
 </html>
