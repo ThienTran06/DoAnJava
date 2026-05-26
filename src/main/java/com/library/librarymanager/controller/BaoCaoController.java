@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bao-cao")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('THONG_KE')")
+@PreAuthorize("hasAuthority('XEM_BAO_CAO')")
 public class BaoCaoController {
     private final ChiTietHoaDonService chiTietHoaDonService;
     private final SachService sachService;
