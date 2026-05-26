@@ -865,39 +865,70 @@ async function loadRevenue() {
   const month = document.getElementById('revenueMonth').value || (new Date().getMonth() + 1);
   document.getElementById('dailyRevenueRows').innerHTML = '<tr><td colspan="4" class="state-text">Dang tai...</td></tr>';
   document.getElementById('categoryRevenueRows').innerHTML = '<div class="state-text">Dang tai...</div>';
+  document.getElementById('todayRevenue').textContent = '--';
+  document.getElementById('sevenDayRevenue').textContent = '--';
+  document.getElementById('thirtyDayRevenue').textContent = '--';
 
-  try {
-    const [today, sevenDays, thirtyDays, daily, byCategory] = await Promise.all([
-      apiGet('/api/bao-cao/doanh-thu-hom-nay'),
-      apiGet('/api/bao-cao/doanh-thu-bay-ngay-truoc'),
-      apiGet('/api/bao-cao/doanh-thu-ba-muoi-ngay-truoc'),
-      apiGet(`/api/bao-cao/doanh-thu-ngay?nam=${encodeURIComponent(year)}&thang=${encodeURIComponent(month)}`),
-      apiGet('/api/bao-cao/doanh-thu-theo-the-loai')
-    ]);
+  const results = await Promise.allSettled([
+    apiGet('/api/bao-cao/doanh-thu-hom-nay'),
+    apiGet('/api/bao-cao/doanh-thu-bay-ngay-truoc'),
+    apiGet('/api/bao-cao/doanh-thu-ba-muoi-ngay-truoc'),
+    apiGet(`/api/bao-cao/doanh-thu-ngay?nam=${encodeURIComponent(year)}&thang=${encodeURIComponent(month)}`),
+    apiGet('/api/bao-cao/doanh-thu-theo-the-loai')
+  ]);
 
-    document.getElementById('todayRevenue').textContent = money(today);
-    document.getElementById('sevenDayRevenue').textContent = money(sumMoney(sevenDays));
-    document.getElementById('thirtyDayRevenue').textContent = money(sumMoney(thirtyDays));
+  const [todayResult, sevenDaysResult, thirtyDaysResult, dailyResult, categoryResult] = results;
 
-    document.getElementById('dailyRevenueRows').innerHTML = daily.length
-      ? daily.map(row => `
-          <tr>
-            <td>${row.ngay}</td>
-            <td>${row.thang}</td>
-            <td>${row.nam}</td>
-            <td style="font-weight:700">${money(row.tongTien)}</td>
-          </tr>
-        `).join('')
-      : '<tr><td colspan="4" class="state-text">Khong co du lieu</td></tr>';
-
-    renderCategoryRevenue(byCategory);
-    loadedViews.revenue = true;
+  if (todayResult.status === 'fulfilled') {
+    document.getElementById('todayRevenue').textContent = money(todayResult.value);
   }
-  catch (error) {
-    setError('dailyRevenueRows', 4, error);
+  else {
+    document.getElementById('todayRevenue').textContent = 'Loi';
+  }
+
+  if (sevenDaysResult.status === 'fulfilled') {
+    document.getElementById('sevenDayRevenue').textContent = money(sumMoney(sevenDaysResult.value));
+  }
+  else {
+    document.getElementById('sevenDayRevenue').textContent = 'Loi';
+  }
+
+  if (thirtyDaysResult.status === 'fulfilled') {
+    document.getElementById('thirtyDayRevenue').textContent = money(sumMoney(thirtyDaysResult.value));
+  }
+  else {
+    document.getElementById('thirtyDayRevenue').textContent = 'Loi';
+  }
+
+  if (dailyResult.status === 'fulfilled') {
+    renderDailyRevenue(dailyResult.value);
+  }
+  else {
+    setError('dailyRevenueRows', 4, dailyResult.reason);
+  }
+
+  if (categoryResult.status === 'fulfilled') {
+    renderCategoryRevenue(categoryResult.value);
+  }
+  else {
     document.getElementById('categoryRevenueRows').innerHTML =
-      `<div class="state-text">Loi: ${escapeHtml(error.message)}</div>`;
+      `<div class="state-text">Loi: ${escapeHtml(categoryResult.reason.message)}</div>`;
   }
+
+  loadedViews.revenue = true;
+}
+
+function renderDailyRevenue(rows) {
+  document.getElementById('dailyRevenueRows').innerHTML = rows && rows.length
+    ? rows.map(row => `
+        <tr>
+          <td>${row.ngay}</td>
+          <td>${row.thang}</td>
+          <td>${row.nam}</td>
+          <td style="font-weight:700">${money(row.tongTien)}</td>
+        </tr>
+      `).join('')
+    : '<tr><td colspan="4" class="state-text">Khong co du lieu</td></tr>';
 }
 
 function renderCategoryRevenue(rows) {
