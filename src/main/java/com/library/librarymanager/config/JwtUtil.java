@@ -18,8 +18,11 @@ public class JwtUtil {
     private final byte[] secret;
 
     public JwtUtil(
-            @Value("${jwt.secret:mysecretkeymysecretkeymysecretkey}") String secret
+            @Value("${jwt.secret}") String secret
     ) {
+        if (secret == null || secret.length() < 32) {
+            throw new IllegalArgumentException("jwt.secret must be at least 32 characters");
+        }
         this.secret = secret.getBytes(StandardCharsets.UTF_8);
     }
 

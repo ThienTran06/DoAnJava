@@ -48,10 +48,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = req.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-//            res.setStatus(401);
-//            res.getWriter().write("Thiếu token");
-//            return;
-            throw new AuthException("thiếu token");
+            res.setStatus(401);
+            res.getWriter().write("Thiếu token");
+            return;
         }
 
         String token = authHeader.substring(7);

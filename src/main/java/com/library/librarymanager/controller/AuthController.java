@@ -11,15 +11,23 @@ import com.library.librarymanager.service.Interface.AuthService;
 import com.library.librarymanager.service.impl.RefreshTokenServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
+    private static final int REFRESH_TOKEN_MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
 
     @Autowired
     private AuthService service;
@@ -33,22 +41,23 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtutil;
 
+    @Value("${app.auth.refresh-cookie-same-site:None}")
+    private String refreshCookieSameSite;
+
     @PostMapping("/login")
     public LoginResponse login(
             @Valid @RequestBody LoginRequest req,
             HttpServletResponse response
     ) {
 
-        // call service to authenticate and generate tokens
         LoginResponse lr = service.login(req);
 
-        // set refresh token as HttpOnly cookie (7 days)
         if (lr.getRefreshToken() != null) {
-            Cookie cookie = new Cookie("refreshToken", lr.getRefreshToken());
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-            response.addCookie(cookie);
+            response.addHeader(
+                    HttpHeaders.SET_COOKIE,
+                    buildRefreshCookie(lr.getRefreshToken(), REFRESH_TOKEN_MAX_AGE_SECONDS).toString()
+            );
+            lr.setRefreshToken(null);
         }
 
         return lr;
@@ -60,22 +69,16 @@ public class AuthController {
             @CookieValue(value = "refreshToken", required = false) String cookieRefreshToken
     ) {
 
-        String token = null;
-
-        if (req != null && req.getRefreshToken() != null && !req.getRefreshToken().isBlank()) {
-            token = req.getRefreshToken();
-        } else if (cookieRefreshToken != null && !cookieRefreshToken.isBlank()) {
-            token = cookieRefreshToken;
-        }
+        String token = resolveRefreshToken(req, cookieRefreshToken);
 
         if (token == null) {
-            throw new RuntimeException("Refresh token không được cung cấp");
+            throw new RuntimeException("Refresh token khong duoc cung cap");
         }
 
         RefreshToken rt = refreshTokenService.validate(token);
 
         NguoiDung user = repo.findByUsername(rt.getUsername())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+                .orElseThrow(() -> new RuntimeException("Khong tim thay nguoi dung"));
 
         List<String> permissions = user.getDsPhanQuyen()
                 .stream()
@@ -89,9 +92,9 @@ public class AuthController {
         );
 
         return new LoginResponse(
-                "Refresh thành công",
+                "Refresh thanh cong",
                 newAccessToken,
-                token
+                null
         );
     }
 
@@ -102,25 +105,37 @@ public class AuthController {
             HttpServletResponse response
     ) {
 
-        String token = null;
-
-        if (req != null && req.getRefreshToken() != null && !req.getRefreshToken().isBlank()) {
-            token = req.getRefreshToken();
-        } else if (cookieRefreshToken != null && !cookieRefreshToken.isBlank()) {
-            token = cookieRefreshToken;
-        }
+        String token = resolveRefreshToken(req, cookieRefreshToken);
 
         if (token != null) {
             refreshTokenService.deleteByToken(token);
-
-            // clear cookie
-            Cookie cookie = new Cookie("refreshToken", "");
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
         }
 
-        return "Logout thành công";
+        response.addHeader(
+                HttpHeaders.SET_COOKIE,
+                buildRefreshCookie("", 0).toString()
+        );
+
+        return "Logout thanh cong";
+    }
+
+    private String resolveRefreshToken(RefreshRequest req, String cookieRefreshToken) {
+        if (req != null && req.getRefreshToken() != null && !req.getRefreshToken().isBlank()) {
+            return req.getRefreshToken();
+        }
+        if (cookieRefreshToken != null && !cookieRefreshToken.isBlank()) {
+            return cookieRefreshToken;
+        }
+        return null;
+    }
+
+    private ResponseCookie buildRefreshCookie(String value, int maxAgeSeconds) {
+        return ResponseCookie.from("refreshToken", value)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite(refreshCookieSameSite)
+                .path("/")
+                .maxAge(maxAgeSeconds)
+                .build();
     }
 }

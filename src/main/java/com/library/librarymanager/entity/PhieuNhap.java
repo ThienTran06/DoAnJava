@@ -23,6 +23,6 @@ public class PhieuNhap {
     @ManyToOne
     @JoinColumn(name = "nhan_vien_id")
     private NguoiDung nhanVien;
-    @OneToMany
+    @OneToMany(mappedBy = "phieuNhap")
     private List<ChiTietPhieuNhap> danhSachChiTiet;
 }
