@@ -621,7 +621,7 @@
       <div class="report-toolbar">
         <div>
           <h2 style="font-size:22px;letter-spacing:-0.5px;margin-bottom:4px;">Doanh thu</h2>
-          <div class="report-note">Du lieu lay tu /api/bao-cao de test tren Vercel.</div>
+          <div class="report-note">Dữ liệu lấy từ /api/bao-cao để test trên Vercel.</div>
         </div>
         <div class="report-actions">
           <input id="revenueYear" type="number" min="2000" max="2100" value="2026" aria-label="Nam">
@@ -632,33 +632,33 @@
 
       <div class="report-grid">
         <div class="card">
-          <span class="card-title">Hom nay</span>
+          <span class="card-title">Hôm nay</span>
           <div class="report-value" id="todayRevenue">--</div>
-          <div class="report-label">Tong doanh thu hom nay</div>
+          <div class="report-label">Tổng doanh thu hôm nay</div>
         </div>
         <div class="card">
-          <span class="card-title">7 ngay gan nhat</span>
+          <span class="card-title">7 ngày gần nhất</span>
           <div class="report-value" id="sevenDayRevenue">--</div>
-          <div class="report-label">Tong theo endpoint bay ngay truoc</div>
+          <div class="report-label">Tổng theo endpoint bảy ngày trước</div>
         </div>
         <div class="card">
-          <span class="card-title">30 ngay gan nhat</span>
+          <span class="card-title">30 ngày gần nhất</span>
           <div class="report-value" id="thirtyDayRevenue">--</div>
-          <div class="report-label">Tong theo endpoint ba muoi ngay truoc</div>
+          <div class="report-label">Tổng theo endpoint ba mươi ngày trước</div>
         </div>
       </div>
 
       <div class="report-grid two">
         <div class="card">
-          <div class="card-header"><span class="card-title">Doanh thu theo ngay</span></div>
+          <div class="card-header"><span class="card-title">Doanh thu theo ngày</span></div>
           <table class="tbl">
-            <thead><tr><th>Ngay</th><th>Thang</th><th>Nam</th><th>Tong tien</th></tr></thead>
-            <tbody id="dailyRevenueRows"><tr><td colspan="4" class="state-text">Chua tai du lieu</td></tr></tbody>
+            <thead><tr><th>Ngày</th><th>Tháng</th><th>Năm</th><th>Tổng tiền</th></tr></thead>
+            <tbody id="dailyRevenueRows"><tr><td colspan="4" class="state-text">Chưa tải dữ liệu</td></tr></tbody>
           </table>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-title">Doanh thu theo the loai</span></div>
-          <div class="bar-list" id="categoryRevenueRows"><div class="state-text">Chua tai du lieu</div></div>
+          <div class="card-header"><span class="card-title">Doanh thu theo thể loại</span></div>
+          <div class="bar-list" id="categoryRevenueRows"><div class="state-text">Chưa tải dữ liệu</div></div>
         </div>
       </div>
     </section>
@@ -667,29 +667,29 @@
       <div class="report-toolbar">
         <div>
           <h2 style="font-size:22px;letter-spacing:-0.5px;margin-bottom:4px;">Ton kho</h2>
-          <div class="report-note">Kiem tra tong ton kho va danh sach sach ton kho nhieu nhat.</div>
+          <div class="report-note">Kiểm tra tổng tồn kho va danh sách sách tồn kho nhiều nhất.</div>
         </div>
         <button class="report-btn" id="loadInventoryBtn" type="button">Tai lai</button>
       </div>
 
       <div class="report-grid two">
         <div class="card">
-          <span class="card-title">Tong ton kho</span>
+          <span class="card-title">Tổng tồn kho</span>
           <div class="report-value" id="totalInventory">--</div>
-          <div class="report-label">So luong sach hien con</div>
+          <div class="report-label">Số lượng sách hiện còn</div>
         </div>
         <div class="card">
-          <span class="card-title">Trang thai API</span>
+          <span class="card-title">Trạng thái API</span>
           <div class="report-value" id="inventoryApiState">--</div>
-          <div class="report-label">Ket qua goi endpoint ton kho</div>
+          <div class="report-label">Kết quả gọi endpoint tồn kho</div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-header"><span class="card-title">Ton kho nhieu nhat</span></div>
+        <div class="card-header"><span class="card-title">Tồn kho nhiều nhất</span></div>
         <table class="tbl">
-          <thead><tr><th>#</th><th>Ten sach</th><th>So luong ton</th></tr></thead>
-          <tbody id="inventoryRows"><tr><td colspan="3" class="state-text">Chua tai du lieu</td></tr></tbody>
+          <thead><tr><th>#</th><th>Tên sách</th><th>Số lượng tồn</th></tr></thead>
+          <tbody id="inventoryRows"><tr><td colspan="3" class="state-text">Chưa tải dữ liệu</td></tr></tbody>
         </table>
       </div>
     </section>
