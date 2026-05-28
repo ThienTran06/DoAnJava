@@ -13,4 +13,8 @@ public class KhachHang {
     private String hoTen;
     private String sdt;
     private String email;
+    private String avatar;
+    private Integer diemTichLuy = 0;
+    private String hangThanhVien = "Đồng";
+    private Boolean trangThai = true;
 }

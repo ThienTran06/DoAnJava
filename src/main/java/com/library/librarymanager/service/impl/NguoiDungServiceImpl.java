@@ -1,5 +1,10 @@
 package com.library.librarymanager.service.impl;
 
+import java.util.List;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.library.librarymanager.Exception.AuthException;
 import com.library.librarymanager.dto.request.CreateUserRequest;
 import com.library.librarymanager.entity.ChucNang;
@@ -11,12 +16,9 @@ import com.library.librarymanager.repository.NguoiDungRepository;
 import com.library.librarymanager.repository.NhomNguoiDungRepository;
 import com.library.librarymanager.repository.PhanQuyenRepository;
 import com.library.librarymanager.service.Interface.NguoiDungService;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -97,7 +99,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         NguoiDung nd = new NguoiDung();
 
         nd.setUsername(req.getTenDangNhap());
-
+ 
         String hash = encoder.encode(req.getMatKhau());
 
         nd.setPassword(hash);
@@ -107,8 +109,15 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         nd.setHoTen(req.getHoTen());
 
         nd.setNhom(nhom);
+nd.setEmail(req.getEmail());
+nd.setAvatar(req.getAvatar());
+nd.setCaLamViec(req.getCaLamViec());
+nd.setDiaChi(req.getDiaChi());
+nd.setNgayVaoLam(req.getNgayVaoLam());
+nd.setLuongCoBan(req.getLuongCoBan());
+nd.setGhiChu(req.getGhiChu());
 
-        NguoiDung saved = repo.save(nd);
+NguoiDung saved = repo.save(nd);
 
         if (nhom.getTenNhom().equals("ADMIN")) {
             addAllPermissions(saved.getId());
@@ -148,7 +157,16 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         nd.setHoTen(req.getHoTen());
 
         nd.setSDT(req.getSdt());
-        nd.setNhom(nhom);
+nd.setNhom(nhom);
+nd.setEmail(req.getEmail());
+if (req.getAvatar() != null && !req.getAvatar().isBlank()) {
+    nd.setAvatar(req.getAvatar());
+}
+nd.setCaLamViec(req.getCaLamViec());
+nd.setDiaChi(req.getDiaChi());
+nd.setNgayVaoLam(req.getNgayVaoLam());
+nd.setLuongCoBan(req.getLuongCoBan());
+nd.setGhiChu(req.getGhiChu());
 
         if(nhom.getTenNhom().equals("ADMIN")){
             addAllPermissions(nd.getId());

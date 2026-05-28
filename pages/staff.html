@@ -35,15 +35,69 @@
 <script>
 // Initialize Staff page
 window.initStaff = function() {
-  if (!window.allStaff) {
-    window.allStaff = [
-      { name:'Nguyễn Văn Hùng', code:'NV001', role:'Quản lý', email:'hung@bookhouse.vn', phone:'0901111111', shift:'Hành chính', status:'Đang làm', avatar:'H' },
-      { name:'Trần Thị Lan', code:'NV002', role:'Thu ngân', email:'lan@bookhouse.vn', phone:'0902222222', shift:'Sáng', status:'Đang làm', avatar:'L' },
-      { name:'Phạm Minh Tuấn', code:'NV003', role:'Nhân viên bán hàng', email:'tuan@bookhouse.vn', phone:'0903333333', shift:'Chiều', status:'Nghỉ phép', avatar:'T' },
-      { name:'Lê Thu Hà', code:'NV004', role:'Kho', email:'ha@bookhouse.vn', phone:'0904444444', shift:'Tối', status:'Đã nghỉ việc', avatar:'H' }
-    ];
-  }
-  const state = { items: window.allStaff };
+  const state = { items: window.allStaff || [] };
+
+  const API_BASE = window.API_BASE_URL || 'http://localhost:8081';
+  const STAFF_API = `${API_BASE}/api/nguoi-dung`;
+  let staffLoading = false;
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token')
+      || sessionStorage.getItem('token')
+      || window.localStorage.token
+      || window.sessionStorage.token;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  const mapStaff = (item) => ({
+  id: item?.id,
+  name: item?.hoTen || item?.ten || '—',
+  code: item?.username || item?.maNhanVien || item?.code || '',
+  role: item?.nhom?.tenNhom || item?.vaiTro || item?.role || '',
+  email: item?.email || '',
+  phone: item?.SDT || item?.sdt || '',
+  shift: item?.caLamViec || item?.shift || '',
+  status: item?.trangThai || item?.status || 'Đang làm',
+  avatar: item?.avatar || '',
+  address: item?.diaChi || item?.address || '',
+  joinDate: item?.ngayVaoLam || item?.joinDate || '',
+  salary: item?.luongCoBan || item?.salary || '',
+  note: item?.ghiChu || item?.note || ''
+});
+
+  const renderLoadingState = () => {
+    tableBody.innerHTML = `<tr><td colspan="10"><div class="empty-state">Đang tải danh sách nhân viên...</div></td></tr>`;
+  };
+
+  const loadStaffFromApi = async () => {
+    staffLoading = true;
+    renderLoadingState();
+
+    try {
+      const response = await fetch(STAFF_API, {
+        headers: {
+          Accept: 'application/json',
+          ...getAuthHeaders(),
+        },
+      });
+
+      if (response.status === 401) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const data = await response.json();
+      state.items = Array.isArray(data) ? data.map(mapStaff) : [];
+      window.allStaff = state.items;
+      staffLoading = false;
+      render();
+    } catch (error) {
+      staffLoading = false;
+      tableBody.innerHTML = `<tr><td colspan="10"><div class="empty-state">Không thể tải danh sách nhân viên từ backend.</div></td></tr>`;
+    }
+  };
   const modal = document.getElementById('staffModal');
   const form = document.getElementById('staffForm');
   const tableBody = document.getElementById('staffTableBody');
@@ -73,6 +127,7 @@ window.initStaff = function() {
   };
 
   const render = () => {
+    if (staffLoading) return;
     const q = search.value.trim().toLowerCase();
     const roleFilter = positionFilter.value;
     const rows = state.items.filter(x => (!q || x.name.toLowerCase().includes(q) || x.code.toLowerCase().includes(q) || x.email.toLowerCase().includes(q)) && (!roleFilter || x.role === roleFilter));
@@ -110,62 +165,91 @@ window.initStaff = function() {
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
   search.oninput = render; positionFilter.onchange = render;
   form.avatar.addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; preview.src = URL.createObjectURL(f); preview.style.display='block'; preview.nextElementSibling.style.display='none'; });
-  form.onsubmit = e => {
-    e.preventDefault();
-    let ok = true;
-    ['name','code','email','phone'].forEach(name => { const field = form.elements[name].closest('.field'); field.classList.remove('error'); field.querySelector('.helper').textContent = field.querySelector('.helper').dataset.base || field.querySelector('.helper').textContent; });
-    const emailOk = /^\S+@\S+\.\S+$/.test(form.email.value.trim());
-    const phoneOk = /^(0[3|5|7|8|9])[0-9]{8}$/.test(form.phone.value.trim());
-    if (!form.name.value.trim()) { markField(form.name, 'Không được để trống'); ok = false; }
-    if (!form.code.value.trim()) { markField(form.code, 'Không được để trống'); ok = false; }
-    if (!emailOk) { markField(form.email, 'Email không hợp lệ'); ok = false; }
-    if (!phoneOk) { markField(form.phone, 'SĐT đúng định dạng'); ok = false; }
-    if (!ok) return;
+  form.onsubmit = async e => {
+  e.preventDefault();
+  let ok = true;
+  ['name','code','email','phone'].forEach(n => {
+    const field = form.elements[n].closest('.field');
+    field.classList.remove('error');
+  });
+  const emailOk = /^\S+@\S+\.\S+$/.test(form.email.value.trim());
+  const phoneOk = /^(0[3|5|7|8|9])[0-9]{8}$/.test(form.phone.value.trim());
+  if (!form.name.value.trim()) { markField(form.name, 'Không được để trống'); ok = false; }
+  if (!form.code.value.trim()) { markField(form.code, 'Không được để trống'); ok = false; }
+  if (!emailOk) { markField(form.email, 'Email không hợp lệ'); ok = false; }
+  if (!phoneOk) { markField(form.phone, 'SĐT đúng định dạng'); ok = false; }
+  if (!ok) return;
 
-    const avatarUrl = preview.style.display === 'block' ? preview.src : (form.name.value.trim()[0] || 'E').toUpperCase();
+  const isEdit = window.currentEditStaffIndex !== undefined;
+  const staffId = isEdit ? state.items[window.currentEditStaffIndex]?.id : null;
+  const url = isEdit ? `${STAFF_API}/${staffId}` : `${STAFF_API}/create`;
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
-    if (window.currentEditStaffIndex !== undefined) {
-      // Update existing
-      state.items[window.currentEditStaffIndex] = {
-        name: form.name.value.trim(),
-        code: form.code.value.trim(),
-        role: form.role.value,
-        email: form.email.value.trim(),
-        phone: form.phone.value.trim(),
-        shift: form.shift.value || 'Chưa phân ca',
-        status: state.items[window.currentEditStaffIndex].status,
-        avatar: avatarUrl,
-        address: form.address.value,
-        joinDate: form.joinDate.value,
-        salary: form.salary.value,
-        note: form.note.value
-      };
+  // Upload ảnh lên Cloudinary nếu có file mới
+let avatarUrl = isEdit ? (state.items[window.currentEditStaffIndex]?.avatar || '') : '';
+const avatarFile = form.avatar.files && form.avatar.files[0];
+if (avatarFile) {
+  const cloudinaryFormData = new FormData();
+  cloudinaryFormData.append('file', avatarFile);
+  cloudinaryFormData.append('upload_preset', 'ml_default');
+  cloudinaryFormData.append('cloud_name', 'ddjcg7c8y');
+  try {
+    const cloudRes = await fetch('https://api.cloudinary.com/v1_1/ddjcg7c8y/image/upload', {
+      method: 'POST',
+      body: cloudinaryFormData,
+    });
+    const cloudData = await cloudRes.json();
+    if (cloudData.secure_url) avatarUrl = cloudData.secure_url;
+  } catch (err) {
+    console.error('Upload ảnh thất bại', err);
+  }
+}
+
+  const payload = {
+  tenDangNhap: form.code.value.trim(),
+  matKhau: '123456',
+  hoTen: form.name.value.trim(),
+  sdt: form.phone.value.trim(),
+  tenNhom: form.role.value === 'Quản lý' ? 'ADMIN' : 'STAFF',
+  permissionIds: [1],
+  email: form.email.value.trim(),
+  caLamViec: form.shift.value || '',
+  diaChi: form.address.value || '',
+  ngayVaoLam: form.joinDate.value || '',
+  luongCoBan: Number(form.salary.value) || 0,
+  ghiChu: form.note.value || '',
+  avatar: avatarUrl
+};
+
+  try {
+    const response = await fetch(url, {
+      method: isEdit ? 'PUT' : 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify(payload),
+    });
+    if (response.status === 401) { window.location.href = 'login.html'; return; }
+    if (!response.ok) throw new Error('Request failed');
+    const saved = await response.json();
+    const mapped = mapStaff(saved);
+    if (isEdit) {
+      state.items[window.currentEditStaffIndex] = mapped;
       window.currentEditStaffIndex = undefined;
       document.querySelector('#staffModal .modal-title').textContent = '🧑‍💼 Thêm nhân viên';
       document.getElementById('saveStaff').querySelector('.txt').textContent = 'Lưu nhân viên';
     } else {
-      // Add new
-      state.items.unshift({
-        name: form.name.value.trim(),
-        code: form.code.value.trim(),
-        role: form.role.value,
-        email: form.email.value.trim(),
-        phone: form.phone.value.trim(),
-        shift: form.shift.value || 'Chưa phân ca',
-        status: 'Đang làm',
-        avatar: avatarUrl,
-        address: form.address.value,
-        joinDate: form.joinDate.value,
-        salary: form.salary.value,
-        note: form.note.value
-      });
+      state.items.unshift(mapped);
     }
+    window.allStaff = state.items;
     render();
     closeModal();
-    form.reset();
-    window.showToast(window.currentEditStaffIndex !== undefined ? 'Đã cập nhật nhân viên' : 'Đã thêm nhân viên');
-  };
-
+    window.showToast(isEdit ? 'Đã cập nhật nhân viên' : 'Đã thêm nhân viên');
+  } catch (err) {
+    window.showToast('Không thể lưu nhân viên. Kiểm tra lại backend.');
+  }
+};
   // Handle edit and delete buttons in table
   tableBody.addEventListener('click', e => {
     const editBtn = e.target.closest('.ops .link:not(.danger):not(.js-view-staff)');
@@ -206,14 +290,26 @@ window.initStaff = function() {
       window.currentEditStaffIndex = itemIndex;
       modal.classList.add('open');
     } else if (deleteBtn) {
-      // Delete confirmation
-      window.showConfirm('Bạn chắc chắn muốn xóa nhân viên này?', () => {
-        state.items.splice(itemIndex, 1);
-        render();
-        window.showToast('Đã xóa nhân viên');
+  const item = state.items[itemIndex];
+  window.showConfirm('Bạn chắc chắn muốn xóa nhân viên này?', async () => {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    try {
+      const response = await fetch(`${STAFF_API}/${item.id}`, {
+        method: 'DELETE',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
+      if (response.status === 401) { window.location.href = 'login.html'; return; }
+      if (!response.ok) throw new Error('Delete failed');
+      state.items.splice(itemIndex, 1);
+      window.allStaff = state.items;
+      render();
+      window.showToast('Đã xóa nhân viên');
+    } catch (err) {
+      window.showToast('Không thể xóa nhân viên');
     }
   });
+}
+});
 
   // View profile modal
   const detailModal = document.getElementById('staffDetailModal');
@@ -262,5 +358,6 @@ window.initStaff = function() {
   }
 
   render();
+  loadStaffFromApi();
 };
 </script>

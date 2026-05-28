@@ -25,12 +25,7 @@
 // Initialize Categories page
 window.initCategories = function() {
   const state = {
-    items: [
-      { name: 'Kinh tế', description: 'Sách về kinh doanh và tài chính', status: 'Hoạt động' },
-      { name: 'Tâm lý', description: 'Sách phát triển bản thân', status: 'Hoạt động' },
-      { name: 'Văn học', description: 'Tác phẩm văn học chọn lọc', status: 'Hoạt động' },
-      { name: 'Thiếu nhi', description: 'Sách cho trẻ em', status: 'Hoạt động' }
-    ]
+    items: []
   };
   const modal = document.getElementById('categoryModal');
   const openBtn = document.getElementById('btnAddCategory');
@@ -41,7 +36,69 @@ window.initCategories = function() {
   const search = document.getElementById('categorySearch');
   if (!modal || !openBtn || !form || !tableBody) return;
 
+  const API_BASE = window.API_BASE_URL || 'http://localhost:8081';
+  const CATEGORY_API = `${API_BASE}/api/the-loai`;
+  let categoriesLoaded = false;
+  let categoriesLoading = false;
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token')
+      || sessionStorage.getItem('token')
+      || window.localStorage.token
+      || window.sessionStorage.token;
+
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  const mapCategory = (item) => ({
+    id: item?.id,
+    name: item?.tenTheLoai || '—',
+    description: item?.moTa || item?.description || '—',
+    status: item?.trangThai || 'Hoạt động'
+  });
+
+  const renderLoadingState = () => {
+    tableBody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Đang tải thể loại...</div></td></tr>`;
+  };
+
+  const renderErrorState = (message) => {
+    tableBody.innerHTML = `<tr><td colspan="5"><div class="empty-state">${message}</div></td></tr>`;
+  };
+
+  const loadCategoriesFromApi = async () => {
+    categoriesLoading = true;
+    renderLoadingState();
+
+    try {
+      const response = await fetch(CATEGORY_API, {
+        headers: {
+          Accept: 'application/json',
+          ...getAuthHeaders(),
+        },
+      });
+
+      if (response.status === 401) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      state.items = Array.isArray(data) ? data.map(mapCategory) : [];
+      categoriesLoaded = true;
+      categoriesLoading = false;
+      render(search ? search.value : '');
+    } catch (error) {
+      categoriesLoading = false;
+      renderErrorState('Không thể tải danh sách thể loại từ backend.');
+    }
+  };
+
   const render = (filter = '') => {
+    if (categoriesLoading) return;
     const q = filter.trim().toLowerCase();
     const rows = state.items.filter(i => !q || i.name.toLowerCase().includes(q) || i.description.toLowerCase().includes(q));
     tableBody.innerHTML = rows.length ? rows.map((item, index) => `
@@ -161,5 +218,6 @@ window.initCategories = function() {
   };
 
   render();
+  loadCategoriesFromApi();
 };
 </script>
