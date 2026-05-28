@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +76,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         }
         chiTietHoaDonRepository.saveAll(list);
         newHoaDon.setDanhSachChiTiet(list);
-        newHoaDon.setNgayBan(LocalDateTime.now());
+        newHoaDon.setNgayBan(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
         newHoaDon.setTongTien(tongTien);
         hoaDonRepository.save(newHoaDon);
         return newHoaDon;
@@ -126,7 +128,10 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
     @Override
     public BigDecimal getDoanhThuHomNay(){
-        BigDecimal doanhThu = hoaDonRepository.doanhThuHomNay();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime startOfNextDay = today.plusDays(1).atStartOfDay();
+        BigDecimal doanhThu = hoaDonRepository.doanhThuHomNay(startOfDay, startOfNextDay);
         return doanhThu == null ? BigDecimal.ZERO : doanhThu;
     }
     @Override

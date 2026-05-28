@@ -37,13 +37,14 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Integer> {
             + "GROUP BY YEAR(a.ngayBan), MONTH(a.ngayBan), DAY(a.ngayBan) "
             + "ORDER BY DAY(a.ngayBan)")
     List<DoanhThuNgayResponse> doanhThuTheoNgay(@Param("nam") int nam, @Param("thang") int thang);
-    @Query("SELECT SUM(a.tongTien) " +
-            "FROM HoaDon a " +
-            "WHERE DATE(a.ngayBan) = CURRENT_DATE " +
-            "AND a.trangThai IN ('HOAN THANH','PAID')"+
-            "GROUP BY YEAR(a.ngayBan), MONTH(a.ngayBan), DAY(a.ngayBan)"
-    )
-    BigDecimal doanhThuHomNay();
+    @Query("SELECT SUM(a.tongTien) "
+            + "FROM HoaDon a "
+            + "WHERE a.ngayBan >= :startOfDay AND a.ngayBan < :startOfNextDay "
+            + "AND a.trangThai IN ('HOAN THANH','PAID')")
+    BigDecimal doanhThuHomNay(
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("startOfNextDay") LocalDateTime startOfNextDay
+    );
 
     @Query("SELECT DAY(a.ngayBan) as ngay, MONTH(a.ngayBan) as thang, YEAR(a.ngayBan) as nam, SUM(a.tongTien) as tongTien " +
             "FROM HoaDon a " +
