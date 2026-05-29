@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookHouse – Quản lý hóa đơn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+          --bg: #f6f7ed;
+          --surface: #ffffff;
+          --border: #e8e8e2;
+          --text: #1f1f1f;
+          --text-muted: #888880;
+          --text-subtle: #b5b5ae;
+          --green: #3a7d44;
+          --green-light: #e8f5eb;
+          --red: #c0392b;
+          --red-light: #fdecea;
+          --orange: #d35400;
+          --orange-light: #fbeee6;
+          --radius: 14px;
+          --radius-sm: 8px;
+          --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+          font-family: 'DM Sans', sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          display: flex;
+          height: 100vh;
+          overflow: hidden;
+          font-size: 14.5px;
+          font-weight: 500;
+        }
+
+        /* ─── SVG ICON HELPER ─── */
+        .ico { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .ico svg { display: block; }
+
+        /* ─── SIDEBAR ─── */
+        .sidebar {
+          width: 224px; min-width: 224px;
+          background: var(--surface);
+          border-right: 1px solid var(--border);
+          display: flex; flex-direction: column;
+          overflow-y: auto; padding: 0 0 24px;
+        }
+        .sidebar-logo {
+          display: flex; align-items: center; gap: 11px;
+          padding: 22px 20px 18px;
+          border-bottom: 1px solid var(--border);
+        }
+        .logo-mark {
+          width: 34px; height: 34px;
+          background: var(--text);
+          border-radius: 9px;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .logo-text { font-weight: 800; font-size: 15.5px; letter-spacing: -0.5px; line-height: 1.1; }
+        .logo-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+
+        .nav-section { padding: 18px 12px 4px; }
+        .nav-label {
+          font-size: 10px; font-weight: 700;
+          letter-spacing: 0.09em; text-transform: uppercase;
+          color: var(--text-subtle); padding: 0 8px; margin-bottom: 4px;
+        }
+        .nav-item {
+          display: flex; align-items: center; gap: 9px;
+          padding: 8px 10px; border-radius: var(--radius-sm);
+          cursor: pointer; color: var(--text-muted);
+          font-size: 13.5px; font-weight: 500;
+          transition: all 0.15s; user-select: none;
+        }
+        .nav-item:hover { background: var(--bg); color: var(--text); }
+        .nav-item.active { background: var(--text); color: #f6f7ed; font-weight: 600; }
+        .nav-item.active svg { stroke: #f6f7ed !important; }
+        .nav-badge {
+          margin-left: auto; background: var(--text); color: white;
+          font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px;
+        }
+        .nav-item.active .nav-badge { background: rgba(255,255,255,0.25); }
+        .nav-arrow { margin-left: auto; font-size: 11px; opacity: 0.35; }
+
+        .sidebar-footer {
+          margin-top: auto; padding: 14px 16px 0;
+          border-top: 1px solid var(--border);
+        }
+        .user-card {
+          display: flex; align-items: center; gap: 10px;
+          padding: 10px; border-radius: var(--radius-sm); cursor: pointer;
+        }
+        .user-card:hover { background: var(--bg); }
+        .avatar {
+          width: 32px; height: 32px; background: var(--text);
+          border-radius: 50%; display: flex; align-items: center; justify-content: center;
+          color: #f6f7ed; font-size: 12px; font-weight: 700; flex-shrink: 0;
+        }
+        .user-name { font-weight: 700; font-size: 13px; }
+        .user-role { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+
+        /* ─── MAIN ─── */
+        .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+        /* ─── TOPBAR ─── */
+        .topbar {
+          background: var(--surface); border-bottom: 1px solid var(--border);
+          padding: 0 28px; height: 62px;
+          display: flex; align-items: center; gap: 16px;
+          flex-shrink: 0; position: sticky; top: 0; z-index: 10;
+        }
+        .topbar-left { flex: 1; }
+        .topbar-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+        .topbar-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: 1px; }
+
+        /* ─── CONTENT ─── */
+        .content { padding: 22px 28px; flex: 1; display: flex; flex-direction: column; gap: 18px; }
+
+        /* ─── CARDS & CONTROLS ─── */
+        .card {
+          background: var(--surface); border: 1.5px solid var(--border);
+          border-radius: var(--radius); padding: 20px;
+          transition: box-shadow 0.2s;
+        }
+        .card:hover { box-shadow: var(--shadow-md); }
+        .card-header-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .page-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+
+        .controls-group { display: flex; align-items: center; gap: 10px; }
+        .input-text {
+          background: var(--bg); border: 1px solid var(--border);
+          border-radius: 9px; padding: 8px 14px; font-family: inherit;
+          font-size: 13.5px; font-weight: 500; color: var(--text); outline: none;
+          transition: all 0.2s;
+        }
+        .input-text:focus { border-color: var(--text); background: var(--surface); }
+
+        .btn {
+          display: inline-flex; align-items: center; gap: 6px;
+          padding: 8px 14px; border-radius: 9px; font-family: inherit;
+          font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+          border: 1.5px solid var(--border); background: var(--surface); color: var(--text);
+        }
+        .btn:hover { background: var(--bg); }
+        .btn-primary { background: var(--text); color: #f6f7ed; border-color: var(--text); }
+        .btn-primary:hover { background: #333; color: #fff; }
+        .btn-danger-ghost { border-color: var(--red); color: var(--red); background: transparent; }
+        .btn-danger-ghost:hover { background: var(--red-light); }
+        .btn-icon { width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 50%; }
+
+        /* ─── DATA TABLE ─── */
+        .table-wrap { width: 100%; overflow-x: auto; margin-top: 10px; }
+        .tbl { width: 100%; border-collapse: collapse; text-align: left; }
+        .tbl th {
+          font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+          text-transform: uppercase; color: var(--text-subtle);
+          padding: 12px 8px; border-bottom: 1.5px solid var(--border);
+        }
+        .tbl td { padding: 12px 8px; font-size: 13.5px; border-bottom: 1px solid var(--border); vertical-align: middle; font-weight: 500; }
+        .tbl tr:last-child td { border-bottom: none; }
+        .tbl tr:hover td { background: var(--bg); }
+
+        /* ─── BADGES ─── */
+        .badge { display: inline-flex; padding: 3px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
+        .badge.id-tag { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; border-radius: 4px; }
+        .badge.success { background: var(--green-light); color: var(--green); }
+        .badge.danger { background: var(--red-light); color: var(--red); }
+        .badge.warning { background: var(--orange-light); color: var(--orange); }
+
+        /* ─── MODAL & DRAWER STRUCTURE ─── */
+        .modal-overlay {
+          position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.4); display: flex; align-items: center;
+          justify-content: center; z-index: 100; opacity: 0; pointer-events: none;
+          transition: opacity 0.2s ease;
+        }
+        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .modal-box {
+          background: var(--surface); border-radius: var(--radius);
+          width: 90%; max-width: 1050px; max-height: 85vh;
+          display: flex; flex-direction: column; overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+          transform: translateY(15px); transition: transform 0.2s ease;
+        }
+        .modal-overlay.open .modal-box { transform: translateY(0); }
+        .modal-header {
+          padding: 16px 24px; border-bottom: 1px solid var(--border);
+          display: flex; align-items: center; justify-content: space-between;
+        }
+        .modal-title { font-size: 16px; font-weight: 700; }
+        .modal-body { padding: 20px 24px; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 12px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+
+        /* Create Invoice Grid Layout */
+        .create-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; height: 100%; }
+        .section-card { border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 14px; }
+        .section-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+        /* Cart Layout Sticky behavior mimicking */
+        .cart-container { display: flex; flex-direction: column; height: 530px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }
+        .cart-items-list { flex: 1; overflow-y: auto; margin-bottom: 12px; padding-right: 4px; }
+
+        /* Mini Product Items Cards */
+        .mini-card {
+          display: flex; gap: 10px; border: 1px solid var(--border);
+          border-radius: var(--radius-sm); padding: 8px; margin-bottom: 10px;
+        }
+        .mini-card img { width: 50px; height: 68px; object-fit: cover; border-radius: 4px; background: #eee; }
+        .mini-card-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .mini-card-title { font-size: 13px; font-weight: 600; line-height: 1.2; }
+        .mini-card-price { color: var(--red); font-size: 13px; font-weight: 600; }
+
+        /* ─── DRAWER RIGHT ─── */
+        .drawer-overlay {
+          position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.3); z-index: 90; opacity: 0; pointer-events: none;
+          transition: opacity 0.2s ease;
+        }
+        .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+        .drawer-box {
+          position: fixed; top: 0; right: 0; bottom: 0; width: 620px;
+          background: var(--surface); border-left: 1px solid var(--border);
+          z-index: 91; transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.1, 0.7, 0.1, 1);
+          display: flex; flex-direction: column;
+        }
+        .drawer-overlay.open + .drawer-box { transform: translateX(0); }
+
+        /* Form Layout Utility */
+        .form-item { margin-bottom: 12px; }
+        .form-item label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+        .form-item input { width: 100%; }
+
+        .space-compact { display: flex; }
+        .space-compact input { border-top-right-radius: 0; border-bottom-right-radius: 0; flex: 1; }
+        .space-compact .btn { border-top-left-radius: 0; border-bottom-left-radius: 0; margin-left: -1px; }
+
+        .detail-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafafa; padding: 12px; border-radius: 8px; margin-bottom: 16px; }
+        .summary-label { font-size: 12px; color: var(--text-muted); font-weight: 400; }
+        .summary-value { font-size: 13.5px; font-weight: 600; margin-top: 1px; }
+
+        /* SCROLLBAR CUSTOMIZATION */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-mark">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f6f7ed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div>
+            <div class="logo-text">BookHouse</div>
+            <div class="logo-sub">Tri thức trong tầm tay</div>
+        </div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-label">Quản lý</div>
+        <div class="nav-item">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Tổng quan
+        </div>
+        <div class="nav-item">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            Sách
+        </div>
+        <div class="nav-item">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            Danh mục <span class="nav-arrow">›</span>
+        </div>
+        <div class="nav-item">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Khách hàng
+        </div>
+        <div class="nav-item">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Nhân viên
+        </div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-label">Nghiệp vụ</div>
+        <div class="nav-item">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Bán hàng
+        </div>
+        <div class="nav-item active">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f6f7ed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Hóa đơn <span class="nav-badge" id="sidebar-invoice-count">0</span>
+        </div>
+        <div class="nav-item">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+            Nhập hàng <span class="nav-arrow">›</span>
+        </div>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="user-card">
+            <div class="avatar" id="avatar-box">A</div>
+            <div>
+                <div class="user-name" id="user-display-name">Admin</div>
+                <div class="user-role">Quản trị viên</div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<div class="main">
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-title">Hóa đơn</div>
+            <div class="topbar-subtitle">Hệ thống quản lý quy trình bán sách</div>
+        </div>
+    </header>
+
+    <div class="content">
+
+        <div class="card">
+            <div class="card-header-row">
+                <div class="page-title">🧾 Quản lý hóa đơn</div>
+                <div class="controls-group">
+                    <input type="text" class="input-text" id="searchInvoiceInput" placeholder="Tìm mã hóa đơn (ID)..." style="width: 240px;">
+                    <input type="date" class="input-text" id="datePickerInput">
+                    <button class="btn btn-primary" id="btnOpenCreateModal">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Tạo hóa đơn
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="flex: 1; display: flex; flex-direction: column;">
+            <div class="table-wrap">
+                <table class="tbl" id="invoiceTable">
+                    <thead>
+                    <tr>
+                        <th>Mã HĐ</th>
+                        <th>Ngày bán</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th style="text-align: center;">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="invoiceTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="createInvoiceModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-title">🧾 Tạo hóa đơn mới</div>
+            <button class="btn btn-icon" onclick="closeCreateModal()" style="border:none; background:transparent;">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="create-grid">
+
+                <div>
+                    <div class="section-card">
+                        <div class="section-title">👤 Khách hàng</div>
+                        <div class="space-compact">
+                            <input type="text" class="input-text" id="customerPhoneInput" placeholder="Nhập số điện thoại khách hàng...">
+                            <button class="btn" onclick="handleFindCustomer()" style="border-radius:0;">Tìm</button>
+                            <button class="btn btn-primary" onclick="openCreateCustomerModal()">+ Tạo KH</button>
+                        </div>
+
+                        <div id="selectedCustomerCard" style="display: none; margin-top: 12px; padding: 10px; background: #fafafa; border-radius: 6px; border: 1px dashed var(--border);">
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-title">📚 Tìm kiếm sách</div>
+                        <input type="text" class="input-text" id="searchBookInput" placeholder="Tìm tên sách..." style="width:100%; margin-bottom:12px;">
+                        <div style="max-height: 230px; overflow-y:auto; border: 1px solid var(--border); border-radius:6px;">
+                            <table class="tbl" style="font-size:12.5px;">
+                                <thead>
+                                <tr>
+                                    <th>Sách</th>
+                                    <th>Giá</th>
+                                    <th style="text-align:right;">Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody id="bookSearchTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cart-container">
+                    <div class="section-title">🛒 Giỏ hàng (<span id="cartCount">0</span>)</div>
+                    <div class="cart-items-list" id="cartItemsList">
+                        <div style="color: #999; text-align: center; padding-top: 100px;">Chưa có sản phẩm</div>
+                    </div>
+
+                    <div>
+                        <div style="height:1px; background:var(--border); margin: 12px 0;"></div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:700;">Tổng tiền</span>
+                            <span style="color:var(--red); font-size:18px; font-weight:800;" id="cartTotalDisplay">0 đ</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeCreateModal()">Hủy bỏ</button>
+            <button class="btn btn-primary" onclick="submitCreateInvoice()" id="btnSubmitInvoice">Xác nhận tạo</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="createCustomerModal" style="background: rgba(0,0,0,0.5); z-index: 110;">
+    <div class="modal-box" style="max-width: 450px;">
+        <div class="modal-header">
+            <div class="modal-title">👤 Tạo tài khoản khách hàng</div>
+            <button class="btn btn-icon" onclick="closeCreateCustomerModal()" style="border:none; background:transparent;">✕</button>
+        </div>
+        <div class="modal-body">
+            <form id="customerForm" onsubmit="event.preventDefault();">
+                <div class="form-item">
+                    <label>Họ tên *</label>
+                    <input type="text" class="input-text" id="custName" required>
+                </div>
+                <div class="form-item">
+                    <label>Số điện thoại *</label>
+                    <input type="text" class="input-text" id="custPhone" required>
+                </div>
+                <div class="form-item">
+                    <label>Email</label>
+                    <input type="email" class="input-text" id="custEmail">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeCreateCustomerModal()">Đóng</button>
+            <button class="btn btn-primary" onclick="submitCreateCustomer()">Tạo mới</button>
+        </div>
+    </div>
+</div>
+
+<div class="drawer-overlay" id="detailDrawerOverlay" onclick="closeDetailDrawer()"></div>
+<div class="drawer-box" id="detailDrawer">
+    <div class="modal-header">
+        <div class="modal-title" style="display:flex; align-items:center; gap:8px;">
+            <span>🧾 Chi tiết hóa đơn</span>
+            <span class="badge id-tag" id="drawerInvoiceId">#...</span>
+        </div>
+        <button class="btn btn-icon" onclick="closeDetailDrawer()" style="border:none; background:transparent;">✕</button>
+    </div>
+    <div class="modal-body">
+
+        <div class="detail-summary-grid">
+            <div>
+                <div class="summary-label">Khách hàng:</div>
+                <div class="summary-value" id="dtCustName">...</div>
+            </div>
+            <div>
+                <div class="summary-label">Mã KH:</div>
+                <div class="summary-value"><span class="badge id-tag" id="dtCustId">#N/A</span></div>
+            </div>
+            <div>
+                <div class="summary-label">Nhân viên lập:</div>
+                <div class="summary-value" id="dtStaffName">...</div>
+            </div>
+            <div>
+                <div class="summary-label">Mã NV:</div>
+                <div class="summary-value"><span class="badge" style="background:#f5f5f5;" id="dtStaffId">#0</span></div>
+            </div>
+            <div>
+                <div class="summary-label">Ngày bán:</div>
+                <div class="summary-value" id="dtDate">...</div>
+            </div>
+            <div>
+                <div class="summary-label">Trạng thái:</div>
+                <div class="summary-value" id="dtStatusBadgeWrap">...</div>
+            </div>
+        </div>
+
+        <div style="font-weight:700; font-size:14px; margin-bottom:12px; color:#434343;">📦 Danh sách sản phẩm</div>
+        <div id="drawerProductsList" style="display:flex; flex-direction:column; gap:10px; max-height:calc(100vh - 380px); overflow-y:auto; padding-right:4px;">
+        </div>
+
+        <div style="margin-top:24px; padding:16px; background:#fff1f0; border-radius:12px; border:1px solid #ffa39e; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700; color:#a8071a; font-size:15px;">Thành tiền cần thanh toán</span>
+            <span style="font-size:20px; font-weight:800; color:var(--red);" id="dtTotalAmount">0 đ</span>
+        </div>
+
+    </div>
+    <div class="modal-footer" id="drawerFooterAction">
+    </div>
+</div>
+
+<script>
+    /* ================= FETCH BASE URL CONFIGURATION ================= */
+    const API_BASE_URL = 'https://doanjava-production.up.railway.app';
+
+    /* ================= APP STATE MANAGEMENT ================= */
+    let invoices = [];
+    let books = [];
+    let customers = [];
+    let selectedCartItems = [];
+    let selectedCustomer = null;
+    let currentUser = null;
+
+    let searchInvoiceQuery = "";
+    let searchBookQuery = "";
+
+    /* ================= HELPER FUNCTION TO GET AUTH HEADERS ================= */
+    // Tự động bóc tách chuỗi Token được lưu trữ trong thiết bị để đính kèm vào Fetch
+    function getAuthHeaders(contentType = 'application/json') {
+      const token = localStorage.getItem("token"); // Đổi key nếu hệ thống của bạn lưu tên khác
+      const headers = {};
+      if (contentType) {
+        headers['Content-Type'] = contentType;
+      }
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      return headers;
+    }
+
+    /* ================= INITIALIZATION LOADING ================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadCurrentUser();
+      fetchInvoices();
+      fetchBooks();
+      fetchCustomers();
+      setupEventListeners();
+    });
+
+    function setupEventListeners() {
+      document.getElementById('btnOpenCreateModal').addEventListener('click', () => {
+        document.getElementById('createInvoiceModal').classList.add('open');
+      });
+      document.getElementById('searchInvoiceInput').addEventListener('input', (e) => {
+        searchInvoiceQuery = e.target.value;
+        renderInvoicesTable();
+      });
+      document.getElementById('searchBookInput').addEventListener('input', (e) => {
+        searchBookQuery = e.target.value;
+        renderBookSearchList();
+      });
+    }
+
+    function loadCurrentUser() {
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        currentUser = user;
+        if(user) {
+          document.getElementById('user-display-name').innerText = user.hoTen || "Admin";
+          document.getElementById('avatar-box').innerText = String(user.hoTen || "A").charAt(0).toUpperCase();
+        }
+      } catch {
+        currentUser = null;
+      }
+    }
+
+    /* ================= DATA FETCHING IMPLEMENTED WITH FETCH ================= */
+    async function fetchInvoices() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/hoa-don`, {
+          method: 'GET',
+          headers: getAuthHeaders(null) // Không cần Content-Type khi dùng GET
+        });
+        if (!response.ok) throw new Error('Network response error');
+        const dataJson = await response.json();
+
+        invoices = dataJson?.data || dataJson?.content || (Array.isArray(dataJson) ? dataJson : []);
+        renderInvoicesTable();
+        document.getElementById('sidebar-invoice-count').innerText = invoices.length;
+      } catch (err) {
+        console.error(err);
+        invoices = [];
+        renderInvoicesTable();
+      }
+    }
+
+    async function fetchBooks() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/sach`, {
+          method: 'GET',
+          headers: getAuthHeaders(null)
+        });
+        if (!response.ok) throw new Error('Network response error');
+        const dataJson = await response.json();
+
+        books = dataJson?.data || dataJson?.content || (Array.isArray(dataJson) ? dataJson : []);
+        renderBookSearchList();
+      } catch (err) {
+        console.error(err);
+        books = [];
+        alert("Lỗi tải danh mục sách");
+      }
+    }
+
+    async function fetchCustomers() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/khach-hang`, {
+          method: 'GET',
+          headers: getAuthHeaders(null)
+        });
+        if (!response.ok) throw new Error('Network response error');
+        const dataJson = await response.json();
+
+        customers = dataJson?.data || dataJson?.content || (Array.isArray(dataJson) ? dataJson : []);
+      } catch (err) {
+        console.error(err);
+        customers = [];
+      }
+    }
+
+    /* ================= DATA RENDERING MECHANISMS ================= */
+    function renderInvoicesTable() {
+      const tbody = document.getElementById('invoiceTableBody');
+      tbody.innerHTML = "";
+
+      const filtered = invoices.filter(x =>
+        String(x.id || "").toLowerCase().includes(searchInvoiceQuery.toLowerCase())
+      );
+
+      if(filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Không tìm thấy hóa đơn tương thích</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+
+        let dateString = item.ngayBan || "";
+        if(item.ngayBan) {
+          const d = new Date(item.ngayBan);
+          if(!isNaN(d.getTime())) {
+            dateString = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+          }
+        }
+
+        let statusMarkup = "";
+        if (item.trangThai === "HOAN_THANH") {
+          statusMarkup = `<span class="badge success">Hoàn thành</span>`;
+        } else if (item.trangThai === "HUY_DON" || item.trangThai === "DA_HUY") {
+          statusMarkup = `<span class="badge danger">Đã hủy</span>`;
+        } else {
+          statusMarkup = `<span class="badge warning">${item.trangThai || 'Đang xử lý'}</span>`;
+        }
+
+        const isCancelled = (item.trangThai === "HUY_DON" || item.trangThai === "DA_HUY");
+        const cancelActionBtn = isCancelled ?
+          `<button class="btn btn-icon" disabled style="background:#f5f5f5; color:var(--text-subtle); border-color:var(--border);">✕</button>` :
+          `<button class="btn btn-icon btn-danger-ghost" onclick="triggerCancelInvoice(${item.id})" title="Hủy hóa đơn">✕</button>`;
+
+        tr.innerHTML = `
+          <td><span class="badge id-tag">#${item.id}</span></td>
+          <td style="color:#595959;"><span style="margin-right:4px;">📅</span>${dateString}</td>
+          <td><span style="color:var(--red); font-weight:700;">${(item.tongTien || 0).toLocaleString()} đ</span></td>
+          <td>${statusMarkup}</td>
+          <td style="text-align: center;">
+            <div style="display:inline-flex; gap:8px;">
+              <button class="btn btn-icon" onclick="viewDetailDrawer(${item.id})" style="border-color:#1890ff; color:#1890ff;" title="Xem chi tiết">👁</button>
+              ${cancelActionBtn}
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderBookSearchList() {
+      const tbody = document.getElementById('bookSearchTableBody');
+      tbody.innerHTML = "";
+
+      const filtered = books.filter(b =>
+        b.tenSach?.toLowerCase().includes(searchBookQuery.toLowerCase())
+      );
+
+      if(filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Không tìm thấy sách</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(b => {
+        const tr = document.createElement('tr');
+        const imgUrl = b.hinhAnh || "https://via.placeholder.com/55x75";
+        tr.innerHTML = `
+          <td>
+            <div style="display:flex; gap:8px; align-items:start;">
+              <img src="${imgUrl}" style="width:40px; height:54px; object-fit:cover; border-radius:4px;" onerror="this.src='https://via.placeholder.com/40x54'">
+              <div>
+                <div style="font-weight:600; line-height:1.2;">${b.tenSach}</div>
+                <div style="color:var(--text-muted); font-size:11px; margin-top:2px;">Tồn kho: ${b.soLuongTon}</div>
+              </div>
+            </div>
+          </td>
+          <td style="white-space:nowrap;">${(b.giaBan || 0).toLocaleString()} đ</td>
+          <td style="text-align:right;"><button class="btn" style="padding:4px 8px; font-size:12px;" onclick="addBookToCart(${b.id})">Thêm</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderCartItems() {
+      const container = document.getElementById('cartItemsList');
+      const totalDisplay = document.getElementById('cartTotalDisplay');
+      const countDisplay = document.getElementById('cartCount');
+
+      countDisplay.innerText = selectedCartItems.length;
+
+      if(selectedCartItems.length === 0) {
+        container.innerHTML = `<div style="color: #999; text-align: center; padding-top: 100px;">Chưa có sản phẩm</div>`;
+        totalDisplay.innerText = "0 đ";
+        return;
+      }
+
+      container.innerHTML = "";
+      let calculatedTotal = 0;
+
+      selectedCartItems.forEach(item => {
+        calculatedTotal += item.gia * item.sl;
+        const card = document.createElement('div');
+        card.className = "mini-card";
+        const fallbackSrc = item.hinhAnh || "https://via.placeholder.com/50x68";
+
+        card.innerHTML = `
+          <img src="${fallbackSrc}" onerror="this.src='https://via.placeholder.com/50x68'">
+          <div class="mini-card-info">
+            <div class="mini-card-title">${item.tenSach}</div>
+            <div class="mini-card-price">${(item.gia).toLocaleString()} đ</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+              <input type="number" class="input-text" min="1" max="${item.tonKho}" value="${item.sl}"
+                style="width:65px; padding:2px 6px; font-size:12px;" onchange="updateCartQuantity(${item.id}, this.value)">
+              <button class="btn btn-danger-ghost" style="padding:2px 6px; font-size:11px; border:none;" onclick="removeCartItem(${item.id})">Xóa</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      totalDisplay.innerText = calculatedTotal.toLocaleString() + " đ";
+    }
+
+    /* ================= SHOP CART CONTROLLERS LOGIC ================= */
+    function addBookToCart(bookId) {
+      const book = books.find(b => b.id === bookId);
+      if(!book) return;
+
+      const existing = selectedCartItems.find(x => x.id === bookId);
+      if(existing) {
+        if(existing.sl < book.soLuongTon) {
+          existing.sl += 1;
+        } else {
+          alert("Số lượng chọn đã đạt giới hạn tồn kho.");
+        }
+      } else {
+        selectedCartItems.push({
+          id: book.id,
+          tenSach: book.tenSach,
+          gia: book.giaBan,
+          sl: 1,
+          hinhAnh: book.hinhAnh,
+          tonKho: book.soLuongTon
+        });
+      }
+      renderCartItems();
+    }
+
+    function updateCartQuantity(itemId, numericValue) {
+      let parsed = parseInt(numericValue) || 1;
+      const target = selectedCartItems.find(x => x.id === itemId);
+      if(target) {
+        if (parsed > target.tonKho) {
+          parsed = target.tonKho;
+          alert(`Chỉ có thể đặt tối đa ${target.tonKho} sản phẩm hiện có trong kho.`);
+        }
+        if (parsed < 1) parsed = 1;
+        target.sl = parsed;
+      }
+      renderCartItems();
+    }
+
+    function removeCartItem(itemId) {
+      selectedCartItems = selectedCartItems.filter(x => x.id !== itemId);
+      renderCartItems();
+    }
+
+    function resetCartState() {
+      selectedCartItems = [];
+      selectedCustomer = null;
+      searchBookQuery = "";
+      document.getElementById('customerPhoneInput').value = "";
+      document.getElementById('searchBookInput').value = "";
+      document.getElementById('selectedCustomerCard').style.display = 'none';
+      renderCartItems();
+      renderBookSearchList();
+    }
+
+    /* ================= CUSTOMER HANDLING ================= */
+    function handleFindCustomer() {
+      const phoneInput = document.getElementById('customerPhoneInput').value.trim();
+      const kh = customers.find(x => x.sdt === phoneInput);
+      if(!kh) {
+        alert("Không tìm thấy thông tin khách hàng");
+        selectedCustomer = null;
+        document.getElementById('selectedCustomerCard').style.display = 'none';
+        return;
+      }
+      selectedCustomer = kh;
+      const card = document.getElementById('selectedCustomerCard');
+      card.innerHTML = `
+        <div style="font-weight:700; font-size:13.5px;">${kh.hoTen}</div>
+        <div style="margin: 4px 0;"><span class="badge id-tag" style="font-size:11px;">KH#${kh.id}</span></div>
+        <div style="font-size:12px; color:var(--text-muted)">SĐT: ${kh.sdt} | Email: ${kh.email || 'N/A'}</div>
+      `;
+      card.style.display = 'block';
+    }
+
+    function openCreateCustomerModal() {
+      document.getElementById('createCustomerModal').classList.add('open');
+    }
+    function closeCreateCustomerModal() {
+      document.getElementById('createCustomerModal').classList.remove('open');
+      document.getElementById('customerForm').reset();
+    }
+
+    async function submitCreateCustomer() {
+      const hoTen = document.getElementById('custName').value.trim();
+      const sdt = document.getElementById('custPhone').value.trim();
+      const email = document.getElementById('custEmail').value.trim();
+
+      if(!hoTen || !sdt) {
+        alert("Vui lòng nhập đầy đủ các trường bắt buộc (*)");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/khach-hang`, {
+          method: 'POST',
+          headers: getAuthHeaders('application/json'),
+          body: JSON.stringify({ hoTen, sdt, email })
+        });
+
+        if (!response.ok) throw new Error('Không thể tạo khách hàng');
+        const newCustomer = await response.json();
+
+        customers.push(newCustomer);
+        selectedCustomer = newCustomer;
+        document.getElementById('customerPhoneInput').value = newCustomer.sdt;
+        handleFindCustomer();
+        closeCreateCustomerModal();
+        alert("Tạo tài khoản khách hàng hoàn tất");
+      } catch (err) {
+        console.error(err);
+        alert("Lỗi tạo khách hàng mới");
+      }
+    }
+
+    /* ================= POSTING INVOICE WITH FETCH ================= */
+    async function submitCreateInvoice() {
+      if(selectedCartItems.length === 0) {
+        alert("Giỏ hàng rỗng. Chưa chọn đầu sách nào");
+        return;
+      }
+      if(!selectedCustomer) {
+        alert("Vui lòng nhập thông tin khách hàng để lập hóa đơn");
+        return;
+      }
+      if(!currentUser || !currentUser.id) {
+        alert("Không tìm thấy thông tin định danh nhân viên phiên hiện tại.");
+        return;
+      }
+
+      try {
+        const payload = {
+          khachHangId: selectedCustomer.id,
+          nhanVienId: Number(currentUser.id),
+          danhSachChiTiet: selectedCartItems.map(x => ({
+            sachID: x.id,
+            soLuong: x.sl
+          }))
+        };
+
+        const response = await fetch(`${API_BASE_URL}/api/hoa-don`, {
+          method: 'POST',
+          headers: getAuthHeaders('application/json'),
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || "Hệ thống gặp lỗi khi tạo hóa đơn");
+        }
+
+        alert("Tạo hóa đơn thành công!");
+        closeCreateModal();
+        fetchInvoices();
+        fetchBooks();
+      } catch(err) {
+        alert(err.message);
+      }
+    }
+
+    function closeCreateModal() {
+      document.getElementById('createInvoiceModal').classList.remove('open');
+      resetCartState();
+    }
+
+    /* ================= DETAILED DRAWER VIEW & CANCELLATION WITH FETCH ================= */
+    function viewDetailDrawer(invoiceId) {
+      const target = invoices.find(x => x.id === invoiceId);
+      if(!target) return;
+
+      document.getElementById('drawerInvoiceId').innerText = `#${target.id}`;
+      document.getElementById('dtCustName').innerText = target.khachHang?.hoTen || "Khách vãng lai";
+      document.getElementById('dtCustId').innerText = `#${target.khachHang?.id || "N/A"}`;
+      document.getElementById('dtStaffName').innerText = target.nhanVien?.hoTen || "N/A";
+      document.getElementById('dtStaffId').innerText = `#${target.nhanVien?.id || 0}`;
+
+      let formattedDate = target.ngayBan || "";
+      if(target.ngayBan) {
+        const d = new Date(target.ngayBan);
+        if(!isNaN(d.getTime())) {
+          formattedDate = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        }
+      }
+      document.getElementById('dtDate').innerText = formattedDate;
+
+      const wrapBadge = document.getElementById('dtStatusBadgeWrap');
+      if (target.trangThai === "HOAN_THANH") {
+        wrapBadge.innerHTML = `<span class="badge success">Hoàn thành</span>`;
+      } else if (target.trangThai === "HUY_DON" || target.trangThai === "DA_HUY") {
+        wrapBadge.innerHTML = `<span class="badge danger">Đã hủy</span>`;
+      } else {
+        wrapBadge.innerHTML = `<span class="badge warning">${target.trangThai}</span>`;
+      }
+
+      const targetProductsList = document.getElementById('drawerProductsList');
+      targetProductsList.innerHTML = "";
+
+      const detailsArray = target.danhSachChiTiet || [];
+      detailsArray.forEach(c => {
+        const pCard = document.createElement('div');
+        pCard.className = "section-card";
+        pCard.style.margin = "0";
+        pCard.style.background = "#fff";
+        const thumb = c.hinhAnh || "https://via.placeholder.com/64x84";
+
+        pCard.innerHTML = `
+          <div style="display:flex; gap:12px; align-items:start;">
+            <img src="${thumb}" style="width:50px; height:68px; object-fit:cover; border-radius:6px;" onerror="this.src='https://via.placeholder.com/50x68'">
+            <div style="flex:1;">
+              <div style="font-weight:600; font-size:14px; color:#262626;">${c.tenSach || "Sách không rõ tên"}</div>
+              <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-top:6px; color:var(--text-muted);">
+                <span>Số lượng: <strong style="color:var(--text);">${c.soLuong}</strong></span>
+                <span>Đơn giá: ${(c.donGia || 0).toLocaleString()} đ</span>
+              </div>
+              <div style="height:1px; background:#f0f0f0; margin:6px 0;"></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
+                <span style="color:var(--text-muted);">Thành tiền:</span>
+                <span style="font-weight:700; color:var(--red);">${(c.thanhTien || 0).toLocaleString()} đ</span>
+              </div>
+            </div>
+          </div>
+        `;
+        targetProductsList.appendChild(pCard);
+      });
+
+      document.getElementById('dtTotalAmount').innerText = (target.tongTien || 0).toLocaleString() + " đ";
+
+      const isCancelable = (target.trangThai !== "HUY_DON" && target.trangThai !== "DA_HUY");
+      const footerActionArea = document.getElementById('drawerFooterAction');
+      if(isCancelable) {
+        footerActionArea.innerHTML = `
+          <button class="btn btn-danger-ghost" style="border-radius:6px; font-weight:700;" onclick="triggerCancelInvoice(${target.id}, true)">
+            Hủy hóa đơn
+          </button>
+        `;
+      } else {
+        footerActionArea.innerHTML = `<button class="btn" disabled style="border-radius:6px;">Hóa đơn đã đóng</button>`;
+      }
+
+      document.getElementById('detailDrawerOverlay').classList.add('open');
+      document.getElementById('detailDrawer').classList.add('open');
+    }
+
+    function closeDetailDrawer() {
+      document.getElementById('detailDrawerOverlay').classList.remove('open');
+      document.getElementById('detailDrawer').classList.remove('open');
+    }
+
+    async function triggerCancelInvoice(invoiceId, isFromDrawer = false) {
+      const confirmation = confirm("Bạn chắc chắn muốn hủy đơn hàng này chứ? Hành động này không thể hoàn tác.");
+      if(!confirmation) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/hoa-don/${invoiceId}/huy_don`, {
+          method: 'PUT',
+          headers: getAuthHeaders(null)
+        });
+
+        if(!response.ok) throw new Error('Không thể hủy hóa đơn');
+
+        alert("Đã hủy hóa đơn thành công!");
+        if(isFromDrawer) {
+          closeDetailDrawer();
+        }
+        fetchInvoices();
+      } catch(err) {
+        console.error(err);
+        alert("Hủy hóa đơn thất bại");
+      }
+    }
+</script>
+</body>
+</html>

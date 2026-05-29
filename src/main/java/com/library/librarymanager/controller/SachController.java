@@ -53,7 +53,7 @@ public class SachController {
             @RequestParam Integer theLoaiId,
             @RequestParam Integer nhaXuatBanId,
             @RequestParam List<Integer> tacGiaIds,
-            @RequestParam MultipartFile hinhAnh
+            @RequestParam(required = false) MultipartFile hinhAnh
     ) {
 
         return sachService.create(

@@ -4,8 +4,10 @@ import com.library.librarymanager.entity.*;
 import com.library.librarymanager.enums.TrangThaiGiu;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.PhieuGiuSachService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -167,5 +169,9 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
     @Override
     public List<PhieuDatGiuSach> getAll() {
         return phieuRepo.findAll();
+    }
+    @Override
+    public PhieuDatGiuSach getById(int id) {
+        return phieuRepo.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy phiếu"));
     }
 }

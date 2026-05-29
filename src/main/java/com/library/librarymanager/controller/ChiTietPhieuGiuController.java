@@ -17,19 +17,13 @@ public class ChiTietPhieuGiuController {
         this.ctService = ctService;
     }
 
-    @PostMapping("/them")
+    @PostMapping("/them/{phieuId}/{sachId}/{soLuong}")
     public String themSach(
-            @RequestParam int phieuId,
-            @RequestParam int sachId,
-            @RequestParam int soLuong
+            @PathVariable int phieuId,
+            @PathVariable int sachId,
+            @PathVariable int soLuong
     ) {
-
-        ctService.themSach(
-                phieuId,
-                sachId,
-                soLuong
-        );
-
+        ctService.themSach(phieuId, sachId, soLuong);
         return "Them sach thanh cong";
     }
 

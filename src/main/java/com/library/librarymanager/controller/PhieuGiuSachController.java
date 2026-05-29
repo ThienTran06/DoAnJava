@@ -21,16 +21,17 @@ public class PhieuGiuSachController {
         this.phieuService = phieuService;
     }
 
-    @PostMapping("/tao")
-    public int taoPhieu(@RequestParam int khachHangId) {
+    @PostMapping("/tao/{khachHangId}")
+    public int taoPhieu(@PathVariable  int khachHangId) {
 
         return phieuService.taoPhieu(khachHangId);
     }
-
-    @PostMapping("/confirm/{phieuId}")
+    @GetMapping("/{id}")
+    PhieuDatGiuSach getById(@PathVariable int id){return phieuService.getById(id);}
+    @PostMapping("/confirm/{phieuId}/{nhanVienId}")
     public String confirm(
             @PathVariable int phieuId,
-            @RequestParam int nhanVienId
+            @PathVariable  int nhanVienId
     ) {
 
         phieuService.confirm(phieuId, nhanVienId);
