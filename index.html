@@ -184,6 +184,28 @@
   .stat-delta.down { background: var(--red-light); color: var(--red); }
   .dark .stat-delta.up { background: rgba(58,125,68,0.28); color: #7dcb88; }
   .dark .stat-delta.down { background: rgba(192,57,43,0.28); color: #e87b6e; }
+  .kpi-card .stat-value { font-size: 22px; }
+  .kpi-progress {
+    height: 8px; border-radius: 999px; overflow: hidden;
+    background: var(--bg); margin: 10px 0 8px;
+  }
+  .kpi-progress-fill {
+    height: 100%; width: 0%; border-radius: inherit;
+    background: var(--text); transition: width 0.2s ease;
+  }
+  .kpi-form { display: none; gap: 6px; margin-top: 10px; }
+  .kpi-form.active { display: flex; }
+  .kpi-input {
+    min-width: 0; flex: 1; border: 1.5px solid var(--border);
+    border-radius: 7px; padding: 7px 8px; background: var(--surface);
+    color: var(--text); font: inherit; font-size: 12px; font-weight: 700;
+  }
+  .kpi-save-btn {
+    border: 1.5px solid var(--text); border-radius: 7px; background: var(--text);
+    color: #f6f7ed; font: inherit; font-size: 12px; font-weight: 800;
+    padding: 7px 9px; cursor: pointer;
+  }
+  .kpi-note { font-size: 11.5px; color: var(--text-muted); margin-top: 7px; font-weight: 500; line-height: 1.35; }
 
   /* ─── MID ROW ─── */
   .mid-row { display: grid; grid-template-columns: 1fr 0.72fr 0.58fr; gap: 14px; margin-bottom: 18px; }
@@ -493,16 +515,22 @@
         <span class="stat-delta down">↓ 2.4%</span>
       </div>
 
-      <div class="stat-card">
+      <div class="stat-card kpi-card">
         <div class="stat-header">
           <div class="stat-icon-wrap">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/><path d="M14 9h5v5"/></svg>
           </div>
-          <span class="stat-more">···</span>
+          <span class="stat-more" id="kpiEditBtn">···</span>
         </div>
-        <div class="stat-value">6</div>
-        <div class="stat-label">Phiếu nhập hôm nay</div>
-        <span class="stat-delta up">↑ 20%</span>
+        <div class="stat-value" id="dailyKpiPercent">--</div>
+        <div class="stat-label" id="dailyKpiLabel">KPI doanh thu hôm nay</div>
+        <div class="kpi-progress"><div class="kpi-progress-fill" id="dailyKpiProgress"></div></div>
+        <span class="stat-delta down" id="dailyKpiStatus">Chưa đặt KPI</span>
+        <form class="kpi-form" id="dailyKpiForm">
+          <input class="kpi-input" id="dailyKpiInput" type="number" min="0" step="1000" placeholder="KPI hôm nay">
+          <button class="kpi-save-btn" type="submit">Lưu</button>
+        </form>
+        <div class="kpi-note" id="dailyKpiNote">Cần quyền XEM BÁO CÁO để đặt KPI.</div>
       </div>
     </div>
 
@@ -830,6 +858,8 @@ const viewTitles = {
 };
 const loadedViews = { dashboard: false, revenue: false, inventory: false };
 const dashboardState = {
+  todayRevenue: 0,
+  dailyKpiTarget: 0,
   sevenDays: [],
   thirtyDays: []
 };
@@ -843,7 +873,57 @@ function getToken() {
   return localStorage.getItem('token');
 }
 
+function decodeJwtPayload() {
+  const token = getToken();
+  if (!token) return {};
+  const parts = token.split('.');
+  if (parts.length < 2) return {};
+  try {
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
+    const bytes = Uint8Array.from(atob(padded), char => char.charCodeAt(0));
+    return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+  }
+  catch (error) {
+    return {};
+  }
+}
+
+function normalizePermission(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\s-]+/g, '_')
+    .toUpperCase();
+}
+
+function getUserPermissions() {
+  const payload = decodeJwtPayload();
+  return Array.isArray(payload.permissions) ? payload.permissions : [];
+}
+
+function hasPermission(permission) {
+  const expected = normalizePermission(permission);
+  return getUserPermissions().some(item => normalizePermission(item) === expected);
+}
+
+function canSetDailyKpi() {
+  return hasPermission('XEM_BAO_CAO') || hasPermission('XEM BÁO CÁO');
+}
+
 async function apiGet(path) {
+  return apiRequest(path);
+}
+
+async function apiPost(path, body) {
+  return apiRequest(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+}
+
+async function apiRequest(path, options = {}) {
   const token = getToken();
   if (!token) {
     window.location.href = 'login.html';
@@ -851,7 +931,8 @@ async function apiGet(path) {
   }
 
   const res = await fetch(API_BASE + path, {
-    headers: { Authorization: 'Bearer ' + token },
+    ...options,
+    headers: { Authorization: 'Bearer ' + token, ...(options.headers || {}) },
     credentials: 'include'
   });
 
@@ -866,7 +947,9 @@ async function apiGet(path) {
     throw new Error(message || ('HTTP ' + res.status));
   }
 
-  return res.json();
+  if (res.status === 204) return null;
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
 function setView(view) {
@@ -921,6 +1004,77 @@ function setDashboardStat(index, value, label, state) {
     deltaEl.classList.remove('up', 'down');
     deltaEl.classList.add(state === 'L\u1ed7i API' ? 'down' : 'up');
   }
+}
+
+function getDailyKpiTarget() {
+  return Number(dashboardState.dailyKpiTarget || 0);
+}
+
+function setDailyKpiTarget(value) {
+  const target = Math.max(0, Number(value || 0));
+  dashboardState.dailyKpiTarget = target;
+  return target;
+}
+
+async function loadDailyKpiTarget() {
+  const kpi = await apiGet('/api/kpi-ngay/hom-nay');
+  return setDailyKpiTarget(kpi ? kpi.mucTieuDoanhThu : 0);
+}
+
+async function saveDailyKpiTarget(value) {
+  const kpi = await apiPost('/api/kpi-ngay/hom-nay', { mucTieuDoanhThu: Number(value || 0) });
+  return setDailyKpiTarget(kpi ? kpi.mucTieuDoanhThu : value);
+}
+
+function renderDailyKpi(todayRevenue, failed = false) {
+  const target = getDailyKpiTarget();
+  const revenue = Number(todayRevenue || 0);
+  const percent = target > 0 ? Math.round((revenue / target) * 100) : 0;
+  const reached = target > 0 && revenue >= target;
+
+  const percentEl = document.getElementById('dailyKpiPercent');
+  const labelEl = document.getElementById('dailyKpiLabel');
+  const statusEl = document.getElementById('dailyKpiStatus');
+  const progressEl = document.getElementById('dailyKpiProgress');
+  const noteEl = document.getElementById('dailyKpiNote');
+  const inputEl = document.getElementById('dailyKpiInput');
+  const formEl = document.getElementById('dailyKpiForm');
+  const editBtn = document.getElementById('kpiEditBtn');
+  const allowed = canSetDailyKpi();
+
+  if (!percentEl || !labelEl || !statusEl || !progressEl || !noteEl) return;
+
+  if (failed) {
+    percentEl.textContent = 'Lỗi';
+    labelEl.textContent = 'KPI doanh thu hôm nay';
+    statusEl.textContent = 'Lỗi API';
+    statusEl.classList.remove('up');
+    statusEl.classList.add('down');
+    progressEl.style.width = '0%';
+  }
+  else if (target > 0) {
+    percentEl.textContent = percent.toLocaleString('vi-VN') + '%';
+    labelEl.textContent = `${money(revenue)} / ${money(target)}`;
+    statusEl.textContent = reached ? 'Đã đạt KPI' : 'Chưa đạt KPI';
+    statusEl.classList.toggle('up', reached);
+    statusEl.classList.toggle('down', !reached);
+    progressEl.style.width = Math.min(percent, 100) + '%';
+  }
+  else {
+    percentEl.textContent = '--';
+    labelEl.textContent = `Doanh thu: ${money(revenue)}`;
+    statusEl.textContent = 'Chưa đặt KPI';
+    statusEl.classList.remove('up');
+    statusEl.classList.add('down');
+    progressEl.style.width = '0%';
+  }
+
+  if (inputEl) inputEl.value = target > 0 ? target : '';
+  if (formEl && !allowed) formEl.classList.remove('active');
+  if (editBtn) editBtn.style.display = allowed ? 'inline-flex' : 'none';
+  noteEl.textContent = allowed
+    ? 'Bấm dấu ··· để đặt KPI doanh thu cho hôm nay.'
+    : 'Chỉ tài khoản có quyền XEM BÁO CÁO mới được đặt KPI.';
 }
 
 function normalizeRevenueRows(rows) {
@@ -1167,18 +1321,21 @@ async function loadDashboard() {
     apiGet('/api/bao-cao/doanh-thu-ba-muoi-ngay-truoc'),
     apiGet('/api/bao-cao/doanh-thu-theo-the-loai'),
     apiGet('/api/bao-cao/sach-ban-chay'),
-    apiGet('/api/bao-cao/ton-kho-nhieu-nhat')
+    apiGet('/api/bao-cao/ton-kho-nhieu-nhat'),
+    loadDailyKpiTarget()
   ]);
 
-  const [todayResult, stockResult, sevenResult, thirtyResult, categoryResult, bestSellerResult, inventoryResult] = results;
+  const [todayResult, stockResult, sevenResult, thirtyResult, categoryResult, bestSellerResult, inventoryResult, kpiResult] = results;
   setDashboardStat(0, todayResult.status === 'fulfilled' ? money(todayResult.value) : 'L\u1ed7i', 'Doanh thu h\u00f4m nay', todayResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
   setDashboardStat(1, stockResult.status === 'fulfilled' ? Number(stockResult.value || 0).toLocaleString('vi-VN') : 'L\u1ed7i', 'T\u1ed3n kho hi\u1ec7n t\u1ea1i', stockResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
 
+  dashboardState.todayRevenue = todayResult.status === 'fulfilled' ? Number(todayResult.value || 0) : 0;
   dashboardState.sevenDays = sevenResult.status === 'fulfilled' ? sevenResult.value : [];
   dashboardState.thirtyDays = thirtyResult.status === 'fulfilled' ? thirtyResult.value : [];
   setDashboardStat(2, sevenResult.status === 'fulfilled' ? money(sumMoney(sevenResult.value)) : 'L\u1ed7i', 'Doanh thu 7 ng\u00e0y qua', sevenResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
   setDashboardStat(3, thirtyResult.status === 'fulfilled' ? money(sumMoney(thirtyResult.value)) : 'L\u1ed7i', 'Doanh thu 30 ng\u00e0y qua', thirtyResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
-  setDashboardStat(4, bestSellerResult.status === 'fulfilled' ? Number(((bestSellerResult.value || [])[0] || {}).soLuongDaBan || 0).toLocaleString('vi-VN') : 'L\u1ed7i', 'S\u00e1ch b\u00e1n ch\u1ea1y nh\u1ea5t', bestSellerResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
+  if (kpiResult.status !== 'fulfilled') dashboardState.dailyKpiTarget = 0;
+  renderDailyKpi(dashboardState.todayRevenue, todayResult.status !== 'fulfilled');
 
   renderDashboardLineChart(dashboardState.sevenDays);
   if (categoryResult.status === 'fulfilled') renderDashboardDonut(categoryResult.value);
@@ -1388,6 +1545,35 @@ document.getElementById('loadInventoryBtn').addEventListener('click', () => {
   loadedViews.inventory = false;
   loadInventory();
 });
+const kpiEditBtn = document.getElementById('kpiEditBtn');
+const dailyKpiForm = document.getElementById('dailyKpiForm');
+const dailyKpiInput = document.getElementById('dailyKpiInput');
+if (kpiEditBtn && dailyKpiForm) {
+  kpiEditBtn.addEventListener('click', () => {
+    if (!canSetDailyKpi()) return;
+    dailyKpiForm.classList.toggle('active');
+    if (dailyKpiForm.classList.contains('active') && dailyKpiInput) dailyKpiInput.focus();
+  });
+}
+if (dailyKpiForm && dailyKpiInput) {
+  dailyKpiForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!canSetDailyKpi()) {
+      dailyKpiForm.classList.remove('active');
+      renderDailyKpi(dashboardState.todayRevenue);
+      return;
+    }
+    try {
+      await saveDailyKpiTarget(dailyKpiInput.value);
+      dailyKpiForm.classList.remove('active');
+      renderDailyKpi(dashboardState.todayRevenue);
+    }
+    catch (error) {
+      const noteEl = document.getElementById('dailyKpiNote');
+      if (noteEl) noteEl.textContent = 'Không lưu được KPI: ' + error.message;
+    }
+  });
+}
 const quickRevenueBtn = document.getElementById('quickRevenueBtn');
 if (quickRevenueBtn) {
   quickRevenueBtn.addEventListener('click', () => setView('revenue'));

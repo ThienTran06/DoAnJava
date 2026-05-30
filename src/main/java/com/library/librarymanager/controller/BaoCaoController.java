@@ -30,9 +30,14 @@ public class BaoCaoController {
         return chiTietHoaDonService.getSachBanChay();
     }
 
+
     @GetMapping("/ton-kho-nhieu-nhat")
     List<SachTonKhoResponse> getTonKhoNhieuNhat() {
         return sachService.getTonKhoNhieuNhat();
+    }
+    @GetMapping("/ton-kho-it")
+    List<SachTonKhoResponse> getTonKhoIt(){
+        return null;
     }
 
     @GetMapping("/doanh-thu-thang")
@@ -91,4 +96,5 @@ public class BaoCaoController {
     List<TopSachDoanhThuResponse> getSachTopDoanhThu() {
         return chiTietHoaDonService.getSachTopDoanhThu();
     }
+
 }

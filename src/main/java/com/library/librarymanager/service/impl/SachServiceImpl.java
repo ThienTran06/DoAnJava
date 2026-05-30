@@ -61,6 +61,10 @@ public class SachServiceImpl implements SachService
     public List<SachTonKhoResponse> getTonKhoNhieuNhat() {
         return sachRepository.tonKhoNhieuNhat();
     }
+    @Override
+    public List<SachTonKhoResponse> getTonKhoIt(){
+        return sachRepository.tonKhoIt();
+    }
 
     @Override
     public Integer getTongSoLuongTon(){

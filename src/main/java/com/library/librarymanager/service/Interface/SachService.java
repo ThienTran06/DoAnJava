@@ -15,4 +15,5 @@ public interface SachService {
         List<SachTonKhoResponse> getStockByName(String tenSach);
          List<SachTonKhoResponse> getTonKhoNhieuNhat();
          Integer getTongSoLuongTon();
+         List<SachTonKhoResponse> getTonKhoIt();
 }
