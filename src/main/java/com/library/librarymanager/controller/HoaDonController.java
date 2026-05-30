@@ -1,6 +1,7 @@
 package com.library.librarymanager.controller;
 
 import com.library.librarymanager.dto.request.HoaDonRequest;
+import com.library.librarymanager.dto.request.UpdateHoaDonRequest;
 import com.library.librarymanager.entity.HoaDon;
 import com.library.librarymanager.service.Interface.HoaDonService;
 import jakarta.validation.Valid;
@@ -23,11 +24,15 @@ public class HoaDonController {
     @PostMapping
     HoaDon create(@Valid @RequestBody HoaDonRequest hoaDon){return  hoaDonService.create(hoaDon);}
     @PutMapping("/{id}")
-    HoaDon updateById(@PathVariable int id, @RequestBody HoaDon hoaDon){return hoaDonService.updateById(id,hoaDon);}
+    HoaDon updateById(@PathVariable int id, @Valid @RequestBody UpdateHoaDonRequest request){return hoaDonService.updateById(id,request);}
     @DeleteMapping("/{id}")
     void deleteById(@PathVariable int id){hoaDonService.deleteById(id);}
     @PutMapping("/{id}/huy_don")
     void huyHoaDon(@PathVariable int id) {
         hoaDonService.huyHoaDon(id);
+    }
+    @PutMapping("/{id}/chi-tiet")
+    HoaDon updateChiTiet(@PathVariable int id, @Valid @RequestBody HoaDonRequest request) {
+        return hoaDonService.updateChiTiet(id, request);
     }
 }

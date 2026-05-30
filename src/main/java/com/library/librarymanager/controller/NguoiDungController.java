@@ -56,7 +56,7 @@ public class NguoiDungController {
         sv.addAllPermissions(id);
     }
     @PutMapping("/{id}/permissions")
-    public void updatePermissions(@PathVariable int id, @RequestBody UpdatePermissionsRequest req ){
+    public void updatePermissions(@PathVariable int id, @Valid @RequestBody UpdatePermissionsRequest req ){
         sv.updatePermissions(id,req.getPermissionIds());
     }
 

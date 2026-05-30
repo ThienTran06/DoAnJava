@@ -4,8 +4,10 @@ import com.library.librarymanager.entity.*;
 import com.library.librarymanager.enums.TrangThaiGiu;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.PhieuGiuSachService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,6 +22,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
     private final ChiTietHoaDonRepository cthdRepo;
     private final KhachHangRepository khachHangRepository;
     private final NguoiDungRepository nguoiDungRepository;
+    private final SachRepository sachRepository;
 
     public PhieuGiuSachServiceImpl(
             ChiTietPhieuGiuRepository ctRepo,
@@ -27,7 +30,8 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
             HoaDonRepository hoaDonRepo,
             ChiTietHoaDonRepository cthdRepo,
             KhachHangRepository khachHangRepository,
-            NguoiDungRepository nguoiDungRepository
+            NguoiDungRepository nguoiDungRepository,
+            SachRepository sachRepository
     ) {
         this.ctRepo = ctRepo;
         this.phieuRepo = phieuRepo;
@@ -35,6 +39,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
         this.cthdRepo = cthdRepo;
         this.khachHangRepository = khachHangRepository;
         this.nguoiDungRepository = nguoiDungRepository;
+        this.sachRepository = sachRepository;
     }
 
     @Override
@@ -62,9 +67,10 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
     @Transactional
     public void confirm(int phieuId, int nhanVienId) {
 
-        PhieuDatGiuSach p = phieuRepo.findById(phieuId)
-                .orElseThrow(() -> new RuntimeException("Khong tim thay phieu"));
-
+        PhieuDatGiuSach p = phieuRepo.findByIdForUpdate(phieuId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Khong tim thay phieu giu sachh co id = " + phieuId
+        ));
         if (p.getTrangThai() != TrangThaiGiu.PENDING) {
             throw new RuntimeException("Phieu khong hop le");
         }
@@ -130,14 +136,14 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
     @Transactional
     public void expire(int phieuId) {
 
-        PhieuDatGiuSach p = phieuRepo.findById(phieuId)
+        PhieuDatGiuSach p = phieuRepo.findByIdForUpdate(phieuId)
                 .orElseThrow(() -> new RuntimeException("Khong tim thay phieu"));
         if(p.getTrangThai()==TrangThaiGiu.PENDING){
             List<ChiTietPhieuGiu> ds = ctRepo.findByPhieuGiuId(phieuId);
 
             for (ChiTietPhieuGiu ct : ds) {
 
-                Sach s = ct.getSach();
+                Sach s = sachRepository.findByIdForUpdate(ct.getSach().getId()).orElseThrow(() -> new RuntimeException("Khong tim thay sach"));
 
                 s.setSoLuongTon(
                         s.getSoLuongTon() + ct.getSoLuong()
@@ -157,7 +163,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
 
         expire(phieuId);
 
-        PhieuDatGiuSach p = phieuRepo.findById(phieuId)
+        PhieuDatGiuSach p = phieuRepo.findByIdForUpdate(phieuId)
                 .orElseThrow(() -> new RuntimeException("Khong tim thay phieu"));
 
         p.setTrangThai(TrangThaiGiu.CANCELLED);

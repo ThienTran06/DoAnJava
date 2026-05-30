@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -65,4 +66,18 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Integer> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT h FROM HoaDon h WHERE h.id = :id")
     Optional<HoaDon> findByIdForUpdate(@Param("id") int id);
+
+    @Query("SELECT DAY(a.ngayBan) as ngay, MONTH(a.ngayBan) as thang, YEAR(a.ngayBan) as nam, SUM(a.tongTien) as tongTien "
+        +"FROM HoaDon a "
+        +"WHERE a.ngayBan >= :start "
+        +"AND a.ngayBan < :end "
+        +"AND a.trangThai IN ('HOAN THANH', 'PAID') "
+            + "GROUP BY YEAR(a.ngayBan), MONTH(a.ngayBan), DAY(a.ngayBan) "
+            + "ORDER BY YEAR(a.ngayBan), MONTH(a.ngayBan), DAY(a.ngayBan) ")
+    List<DoanhThuNgayResponse> getDoanhThuKhoangNgay(@Param("start") LocalDateTime tuNgay, @Param("end") LocalDateTime denNgay);
+    @Query("SELECT SUM(a.tongTien) as tongTien "
+        +"From HoaDon a "
+        +"WHERE a.trangThai IN ('HOAN THANH', 'PAID') "
+    )
+    BigDecimal getTongDoanhThu();
 }

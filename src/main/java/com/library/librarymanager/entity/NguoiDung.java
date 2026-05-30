@@ -17,10 +17,9 @@ public class NguoiDung {
     private int id;
     private String hoTen;
     private String username;
+    @JsonIgnore
     private String password;
     private String SDT;
-
-
     @ManyToOne
     @JoinColumn(name = "tenNhom")
     private NhomNguoiDung nhom;

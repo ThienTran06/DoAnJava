@@ -2,10 +2,12 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.dto.response.DoanhThuTheoTheLoaiResponse;
 import com.library.librarymanager.dto.response.SachBanChayResponse;
+import com.library.librarymanager.dto.response.TopSachDoanhThuResponse;
 import com.library.librarymanager.entity.ChiTietHoaDon;
 import com.library.librarymanager.repository.ChiTietHoaDonRepository;
 import com.library.librarymanager.service.Interface.ChiTietHoaDonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -52,5 +54,10 @@ public class ChiTietHoaDonServiceImpl implements ChiTietHoaDonService {
     @Override
     public List<SachBanChayResponse>getSachBanChay(){
         return chiTietHoaDonRepository.sachBanChay();
+    }
+
+    @Override
+    public List<TopSachDoanhThuResponse> getSachTopDoanhThu() {
+        return chiTietHoaDonRepository.sachTopDoanhThu(PageRequest.of(0, 10));
     }
 }

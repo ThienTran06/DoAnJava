@@ -2,6 +2,7 @@ package com.library.librarymanager.service.Interface;
 
 import com.library.librarymanager.dto.response.DoanhThuTheoTheLoaiResponse;
 import com.library.librarymanager.dto.response.SachBanChayResponse;
+import com.library.librarymanager.dto.response.TopSachDoanhThuResponse;
 import com.library.librarymanager.entity.ChiTietHoaDon;
 
 import java.util.List;
@@ -14,5 +15,6 @@ public interface ChiTietHoaDonService {
     void deleteById(int id);
     List<SachBanChayResponse> getSachBanChay();
     List<DoanhThuTheoTheLoaiResponse>getDoanhThuTheoTheLoai();
+    List<TopSachDoanhThuResponse> getSachTopDoanhThu();
 
 }

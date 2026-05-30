@@ -17,6 +17,7 @@ public class PhieuNhap {
     private int id;
     private LocalDateTime ngayNhap;
     private BigDecimal tongTien;
+    private String trangThai;
     @ManyToOne
     @JoinColumn(name="nha_cung_cap_id")
     private NhaCungCap nhaCungCap;
