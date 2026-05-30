@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -295,6 +295,8 @@
   .view-panel.active { display: block; }
   .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 18px; }
   .report-grid.two { grid-template-columns: 1fr 1fr; }
+  .report-grid.charts { grid-template-columns: 1fr 1fr; }
+  .report-chart-wrap { position: relative; height: 190px; }
   .report-value { font-size: 26px; font-weight: 800; letter-spacing: -0.7px; margin-top: 12px; }
   .report-label { color: var(--text-muted); font-size: 12.5px; margin-top: 5px; }
   .report-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
@@ -320,6 +322,10 @@
   .bar-track { height: 9px; background: var(--bg); border-radius: 20px; overflow: hidden; }
   .bar-fill { height: 100%; background: var(--text); border-radius: 20px; min-width: 3px; }
   .bar-value { text-align: right; color: var(--text-muted); font-weight: 700; }
+  @media (max-width: 1100px) {
+    .report-grid.two,
+    .report-grid.charts { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -352,7 +358,7 @@
     </div>
     <div class="nav-item">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Khách hàng
+      Khách Hàng
     </div>
     <div class="nav-item">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -369,10 +375,6 @@
     <div class="nav-item">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       Hóa đơn <span class="nav-badge">5</span>
-    </div>
-    <div class="nav-item" onclick="window.location.href='phieu-giu.html'">
-      <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v20"/><path d="M18 2v20"/><path d="M6 7h12"/><path d="M6 17h12"/><path d="M3 5h18"/><path d="M3 19h18"/></svg>
-      Phiáº¿u giá»¯
     </div>
     <div class="nav-item">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
@@ -604,7 +606,7 @@
               <div class="quick-icon-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
               <div class="quick-label">Tạo hóa đơn</div>
             </div>
-            <div class="quick-btn">
+            <div class="quick-btn" id="quickRevenueBtn">
               <div class="quick-icon-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
               <div class="quick-label">Báo cáo</div>
             </div>
@@ -632,23 +634,23 @@
         </div>
         <div class="report-actions">
           <div class="report-date-field">
-            <label for="revenueYear">Nam</label>
-            <input id="revenueYear" type="number" min="2000" max="2100" value="2026" aria-label="Nam">
+            <label for="revenueYear">Năm</label>
+            <input id="revenueYear" type="number" min="2000" max="2100" value="2026" aria-label="Năm">
           </div>
           <div class="report-date-field">
-            <label for="revenueMonth">Thang</label>
-            <input id="revenueMonth" type="number" min="1" max="12" value="5" aria-label="Thang">
+            <label for="revenueMonth">Tháng</label>
+            <input id="revenueMonth" type="number" min="1" max="12" value="5" aria-label="Tháng">
           </div>
-          <button class="report-btn" id="loadMonthlyRevenueBtn" type="button">Theo thang</button>
+          <button class="report-btn" id="loadMonthlyRevenueBtn" type="button">Theo tháng</button>
           <div class="report-date-field">
-            <label for="revenueStartDate">Tu ngay</label>
-            <input id="revenueStartDate" type="date" aria-label="Tu ngay">
+            <label for="revenueStartDate">Từ ngày</label>
+            <input id="revenueStartDate" type="date" aria-label="Từ ngày">
           </div>
           <div class="report-date-field">
-            <label for="revenueEndDate">Den ngay</label>
-            <input id="revenueEndDate" type="date" aria-label="Den ngay">
+            <label for="revenueEndDate">Đến ngày</label>
+            <input id="revenueEndDate" type="date" aria-label="Đến ngày">
           </div>
-          <button class="report-btn" id="loadRevenueBtn" type="button">Theo khoang</button>
+          <button class="report-btn" id="loadRevenueBtn" type="button">Theo khoảng</button>
         </div>
       </div>
 
@@ -669,9 +671,20 @@
           <div class="report-label">Tổng theo endpoint ba mươi ngày trước</div>
         </div>
         <div class="card">
-          <span class="card-title">Bo loc dang xem</span>
+          <span class="card-title">Bộ lọc đang xem</span>
           <div class="report-value" id="rangeRevenue">--</div>
-          <div class="report-label" id="rangeRevenueLabel">Tong theo khoang da chon</div>
+          <div class="report-label" id="rangeRevenueLabel">Tổng theo khoảng đã chọn</div>
+        </div>
+      </div>
+
+      <div class="report-grid charts">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Biểu đồ doanh thu 7 ngày</span></div>
+          <div class="report-chart-wrap"><canvas id="sevenDayRevenueChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Biểu đồ doanh thu 30 ngày</span></div>
+          <div class="report-chart-wrap"><canvas id="thirtyDayRevenueChart"></canvas></div>
         </div>
       </div>
 
@@ -693,8 +706,8 @@
     <section class="view-panel" id="inventoryView">
       <div class="report-toolbar">
         <div>
-          <h2 style="font-size:22px;letter-spacing:-0.5px;margin-bottom:4px;">Ton kho</h2>
-          <div class="report-note">Kiểm tra tổng tồn kho va danh sách sách tồn kho nhiều nhất.</div>
+          <h2 style="font-size:22px;letter-spacing:-0.5px;margin-bottom:4px;">Tồn kho</h2>
+          <div class="report-note">Kiểm tra tổng tồn kho và danh sách sách tồn kho nhiều nhất.</div>
         </div>
         <button class="report-btn" id="loadInventoryBtn" type="button">Tải lại</button>
       </div>
@@ -811,9 +824,9 @@
 
 const API_BASE = 'https://doanjava-production.up.railway.app';
 const viewTitles = {
-  dashboard: ['Tong quan', 'Chao mung ban tro lai, Admin!'],
-  revenue: ['Doanh thu', 'Bao cao doanh thu tu backend'],
-  inventory: ['Ton kho', 'Bao cao ton kho tu backend']
+  dashboard: ['Tổng quan', 'Chào mừng bạn trở lại, Admin!'],
+  revenue: ['Doanh thu', 'Báo cáo doanh thu từ backend'],
+  inventory: ['Tồn kho', 'Báo cáo tồn kho từ backend']
 };
 const loadedViews = { dashboard: false, revenue: false, inventory: false };
 const dashboardState = {
@@ -986,6 +999,97 @@ function renderDashboardLineChart(rows) {
   labels.forEach((label, i) => ctx.fillText(label, px(i), H - 5));
 }
 
+function renderRevenueLineChart(canvasId, rows) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const wrap = canvas.parentElement;
+  const W = wrap.clientWidth || 360, H = 190;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+
+  const dataRows = normalizeRevenueRows(rows);
+  const pad = { t: 12, r: 14, b: 34, l: 48 };
+  const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
+
+  if (!dataRows.length) {
+    ctx.fillStyle = '#888880';
+    ctx.font = '600 13px DM Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Không có dữ liệu', W / 2, H / 2);
+    return;
+  }
+
+  const values = dataRows.map(row => Number(row.tongTien || 0));
+  const data = values.map(value => value / 1000000);
+  const labels = dataRows.map(row => `${String(row.ngay).padStart(2, '0')}/${String(row.thang).padStart(2, '0')}`);
+  const max = Math.max(...data, 1);
+  const yMax = Math.ceil(max / 5) * 5 || 5;
+  const px = i => pad.l + (data.length === 1 ? cw / 2 : (i / (data.length - 1)) * cw);
+  const py = v => pad.t + ch - (v / yMax) * ch;
+
+  ctx.strokeStyle = '#e8e8e2';
+  ctx.lineWidth = 1;
+  [0, yMax * 0.25, yMax * 0.5, yMax * 0.75, yMax].forEach(v => {
+    const y = py(v);
+    ctx.beginPath();
+    ctx.moveTo(pad.l, y);
+    ctx.lineTo(pad.l + cw, y);
+    ctx.stroke();
+    ctx.fillStyle = '#b5b5ae';
+    ctx.font = '600 10px DM Sans, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(v.toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + 'M', pad.l - 6, y + 3.5);
+  });
+
+  const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + ch);
+  grad.addColorStop(0, 'rgba(31,31,31,0.14)');
+  grad.addColorStop(1, 'rgba(31,31,31,0)');
+  ctx.beginPath();
+  ctx.moveTo(px(0), py(data[0]));
+  for (let i = 1; i < data.length; i++) {
+    const xc = (px(i) + px(i - 1)) / 2;
+    ctx.bezierCurveTo(xc, py(data[i - 1]), xc, py(data[i]), px(i), py(data[i]));
+  }
+  ctx.lineTo(px(data.length - 1), py(0));
+  ctx.lineTo(px(0), py(0));
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(px(0), py(data[0]));
+  for (let i = 1; i < data.length; i++) {
+    const xc = (px(i) + px(i - 1)) / 2;
+    ctx.bezierCurveTo(xc, py(data[i - 1]), xc, py(data[i]), px(i), py(data[i]));
+  }
+  ctx.strokeStyle = '#1f1f1f';
+  ctx.lineWidth = 2.4;
+  ctx.stroke();
+
+  data.forEach((value, i) => {
+    ctx.beginPath();
+    ctx.arc(px(i), py(value), 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#1f1f1f';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(px(i), py(value), 2, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+  });
+
+  const step = Math.max(1, Math.ceil(labels.length / 8));
+  ctx.fillStyle = '#b5b5ae';
+  ctx.font = '600 10px DM Sans, sans-serif';
+  ctx.textAlign = 'center';
+  labels.forEach((label, i) => {
+    if (i % step === 0 || i === labels.length - 1) ctx.fillText(label, px(i), H - 9);
+  });
+}
+
 function renderDashboardDonut(rows) {
   const canvas = document.getElementById('donutChart');
   if (!canvas) return;
@@ -1089,7 +1193,7 @@ async function loadDashboard() {
 
 function setError(targetId, colspan, error) {
   document.getElementById(targetId).innerHTML =
-    `<tr><td colspan="${colspan}" class="state-text">Loi: ${escapeHtml(error.message)}</td></tr>`;
+    `<tr><td colspan="${colspan}" class="state-text">Lỗi: ${escapeHtml(error.message)}</td></tr>`;
 }
 
 function escapeHtml(value) {
@@ -1131,20 +1235,22 @@ function ensureRevenueMonth() {
 async function loadRevenue(mode = 'range') {
   const { startDate, endDate } = ensureRevenueDateRange();
   const { year, month } = ensureRevenueMonth();
-  document.getElementById('dailyRevenueRows').innerHTML = '<tr><td colspan="4" class="state-text">Dang tai...</td></tr>';
-  document.getElementById('categoryRevenueRows').innerHTML = '<div class="state-text">Dang tai...</div>';
+  document.getElementById('dailyRevenueRows').innerHTML = '<tr><td colspan="4" class="state-text">Đang tải...</td></tr>';
+  document.getElementById('categoryRevenueRows').innerHTML = '<div class="state-text">Đang tải...</div>';
   document.getElementById('todayRevenue').textContent = '--';
   document.getElementById('sevenDayRevenue').textContent = '--';
   document.getElementById('thirtyDayRevenue').textContent = '--';
   document.getElementById('rangeRevenue').textContent = '--';
+  renderRevenueLineChart('sevenDayRevenueChart', []);
+  renderRevenueLineChart('thirtyDayRevenueChart', []);
   document.getElementById('rangeRevenueLabel').textContent =
-    mode === 'month' ? `Thang ${month}/${year}` : `${startDate} den ${endDate}`;
+    mode === 'month' ? `Tháng ${month}/${year}` : `${startDate} đến ${endDate}`;
 
   if (mode === 'range' && startDate > endDate) {
-    document.getElementById('rangeRevenue').textContent = 'Loi';
+    document.getElementById('rangeRevenue').textContent = 'Lỗi';
     document.getElementById('dailyRevenueRows').innerHTML =
-      '<tr><td colspan="4" class="state-text">Tu ngay phai nho hon hoac bang den ngay</td></tr>';
-    document.getElementById('categoryRevenueRows').innerHTML = '<div class="state-text">Chua goi API</div>';
+      '<tr><td colspan="4" class="state-text">Từ ngày phải nhỏ hơn hoặc bằng đến ngày</td></tr>';
+    document.getElementById('categoryRevenueRows').innerHTML = '<div class="state-text">Chưa gọi API</div>';
     loadedViews.revenue = true;
     return;
   }
@@ -1165,21 +1271,25 @@ async function loadRevenue(mode = 'range') {
     document.getElementById('todayRevenue').textContent = money(todayResult.value);
   }
   else {
-    document.getElementById('todayRevenue').textContent = 'Loi';
+    document.getElementById('todayRevenue').textContent = 'Lỗi';
   }
 
   if (sevenDaysResult.status === 'fulfilled') {
     document.getElementById('sevenDayRevenue').textContent = money(sumMoney(sevenDaysResult.value));
+    renderRevenueLineChart('sevenDayRevenueChart', sevenDaysResult.value);
   }
   else {
-    document.getElementById('sevenDayRevenue').textContent = 'Loi';
+    document.getElementById('sevenDayRevenue').textContent = 'Lỗi';
+    renderRevenueLineChart('sevenDayRevenueChart', []);
   }
 
   if (thirtyDaysResult.status === 'fulfilled') {
     document.getElementById('thirtyDayRevenue').textContent = money(sumMoney(thirtyDaysResult.value));
+    renderRevenueLineChart('thirtyDayRevenueChart', thirtyDaysResult.value);
   }
   else {
-    document.getElementById('thirtyDayRevenue').textContent = 'Loi';
+    document.getElementById('thirtyDayRevenue').textContent = 'Lỗi';
+    renderRevenueLineChart('thirtyDayRevenueChart', []);
   }
 
   if (dailyResult.status === 'fulfilled') {
@@ -1187,7 +1297,7 @@ async function loadRevenue(mode = 'range') {
     document.getElementById('rangeRevenue').textContent = money(sumMoney(dailyResult.value));
   }
   else {
-    document.getElementById('rangeRevenue').textContent = 'Loi';
+    document.getElementById('rangeRevenue').textContent = 'Lỗi';
     setError('dailyRevenueRows', 4, dailyResult.reason);
   }
 
@@ -1196,7 +1306,7 @@ async function loadRevenue(mode = 'range') {
   }
   else {
     document.getElementById('categoryRevenueRows').innerHTML =
-      `<div class="state-text">Loi: ${escapeHtml(categoryResult.reason.message)}</div>`;
+      `<div class="state-text">Lỗi: ${escapeHtml(categoryResult.reason.message)}</div>`;
   }
 
   loadedViews.revenue = true;
@@ -1212,14 +1322,14 @@ function renderDailyRevenue(rows) {
           <td style="font-weight:700">${money(row.tongTien)}</td>
         </tr>
       `).join('')
-    : '<tr><td colspan="4" class="state-text">Khong co du lieu</td></tr>';
+    : '<tr><td colspan="4" class="state-text">Không có dữ liệu</td></tr>';
 }
 
 function renderCategoryRevenue(rows) {
   const max = Math.max(...(rows || []).map(row => Number(row.tongTien || 0)), 1);
   document.getElementById('categoryRevenueRows').innerHTML = rows && rows.length
     ? rows.map(row => {
-        const name = row.tenTheLoai || 'Khac';
+        const name = row.tenTheLoai || 'Khác';
         const value = Number(row.tongTien || 0);
         const width = Math.max((value / max) * 100, 3);
         return `
@@ -1230,12 +1340,12 @@ function renderCategoryRevenue(rows) {
           </div>
         `;
       }).join('')
-    : '<div class="state-text">Khong co du lieu</div>';
+    : '<div class="state-text">Không có dữ liệu</div>';
 }
 
 async function loadInventory() {
-  document.getElementById('inventoryRows').innerHTML = '<tr><td colspan="3" class="state-text">Dang tai...</td></tr>';
-  document.getElementById('inventoryApiState').textContent = 'Dang tai';
+  document.getElementById('inventoryRows').innerHTML = '<tr><td colspan="3" class="state-text">Đang tải...</td></tr>';
+  document.getElementById('inventoryApiState').textContent = 'Đang tải';
 
   try {
     const [total, topInventory] = await Promise.all([
@@ -1253,12 +1363,12 @@ async function loadInventory() {
             <td style="font-weight:700">${Number(row.soLuongTonKho || 0).toLocaleString('vi-VN')}</td>
           </tr>
         `).join('')
-      : '<tr><td colspan="3" class="state-text">Khong co du lieu</td></tr>';
+      : '<tr><td colspan="3" class="state-text">Không có dữ liệu</td></tr>';
 
     loadedViews.inventory = true;
   }
   catch (error) {
-    document.getElementById('inventoryApiState').textContent = 'Loi';
+    document.getElementById('inventoryApiState').textContent = 'Lỗi';
     setError('inventoryRows', 3, error);
   }
 }
@@ -1278,6 +1388,10 @@ document.getElementById('loadInventoryBtn').addEventListener('click', () => {
   loadedViews.inventory = false;
   loadInventory();
 });
+const quickRevenueBtn = document.getElementById('quickRevenueBtn');
+if (quickRevenueBtn) {
+  quickRevenueBtn.addEventListener('click', () => setView('revenue'));
+}
 const dashboardRangeSelect = document.querySelector('#dashboardView .card-header select');
 if (dashboardRangeSelect) {
   dashboardRangeSelect.addEventListener('change', () => {
