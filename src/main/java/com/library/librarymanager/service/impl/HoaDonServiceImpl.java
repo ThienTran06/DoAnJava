@@ -10,6 +10,7 @@ import com.library.librarymanager.dto.response.DoanhThuTheoTheLoaiResponse;
 import com.library.librarymanager.entity.*;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.HoaDonService;
+import com.library.librarymanager.service.Interface.KhachHangService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     private final KhachHangRepository khachHangRepository;
     private final SachRepository sachRepository;
     private final ChiTietHoaDonRepository chiTietHoaDonRepository;
+    private final KhachHangService khachHangService;
     @Override
     public List<HoaDon> getAll() {
         return hoaDonRepository.findAll();
@@ -78,8 +80,11 @@ public class HoaDonServiceImpl implements HoaDonService {
         chiTietHoaDonRepository.saveAll(list);
         newHoaDon.setDanhSachChiTiet(list);
         newHoaDon.setNgayBan(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
-        newHoaDon.setTongTien(tongTien);
+        khachHangService.capNhatHangThanhVien(khachHang);
+        BigDecimal tongTienSauGiamGia = khachHangService.tinhTongTienSauGiamGia(khachHang, tongTien);
+        newHoaDon.setTongTien(tongTienSauGiamGia);
         hoaDonRepository.save(newHoaDon);
+        khachHangService.congDiemTuHoaDon(khachHang, tongTienSauGiamGia);
         return newHoaDon;
     }
 
@@ -197,7 +202,8 @@ public class HoaDonServiceImpl implements HoaDonService {
 
         chiTietHoaDonRepository.saveAll(newDetails);
         hoaDon.setDanhSachChiTiet(newDetails);
-        hoaDon.setTongTien(tongTien);
+        khachHangService.capNhatHangThanhVien(hoaDon.getKhachHang());
+        hoaDon.setTongTien(khachHangService.tinhTongTienSauGiamGia(hoaDon.getKhachHang(), tongTien));
 
         return hoaDonRepository.save(hoaDon);
     }

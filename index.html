@@ -344,11 +344,22 @@
   .bar-track { height: 9px; background: var(--bg); border-radius: 20px; overflow: hidden; }
   .bar-fill { height: 100%; background: var(--text); border-radius: 20px; min-width: 3px; }
   .bar-value { text-align: right; color: var(--text-muted); font-weight: 700; }
+  .spa-page-container { min-height: 420px; }
+  .toast {
+    position: fixed; right: 24px; bottom: 24px; z-index: 200;
+    max-width: min(360px, calc(100vw - 32px)); padding: 12px 14px;
+    border-radius: 10px; background: var(--text); color: #fff;
+    box-shadow: var(--shadow-md); font-weight: 700; font-size: 13px;
+    opacity: 0; transform: translateY(10px); pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
   @media (max-width: 1100px) {
     .report-grid.two,
     .report-grid.charts { grid-template-columns: 1fr; }
   }
 </style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -370,19 +381,19 @@
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f6f7ed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Tổng quan
     </div>
-    <div class="nav-item">
+    <div class="nav-item" data-view="books">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
       Sách
     </div>
-    <div class="nav-item">
+    <div class="nav-item" data-view="categories">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
       Danh mục <span class="nav-arrow">›</span>
     </div>
-    <div class="nav-item">
+    <div class="nav-item" data-view="customers">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Khách Hàng
     </div>
-    <div class="nav-item">
+    <div class="nav-item" data-view="staff">
       <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Nhân viên
     </div>
@@ -762,7 +773,24 @@
       </div>
     </section>
 
+    <section class="view-panel" id="booksView">
+      <div class="spa-page-container" data-page-container="books"></div>
+    </section>
+
+    <section class="view-panel" id="categoriesView">
+      <div class="spa-page-container" data-page-container="categories"></div>
+    </section>
+
+    <section class="view-panel" id="customersView">
+      <div class="spa-page-container" data-page-container="customers"></div>
+    </section>
+
+    <section class="view-panel" id="staffView">
+      <div class="spa-page-container" data-page-container="staff"></div>
+    </section>
+
   </div>
+  <div class="toast" id="appToast"></div>
 </div>
 
 <script>
@@ -851,12 +879,24 @@
 })();
 
 const API_BASE = 'https://doanjava-production.up.railway.app';
+window.API_BASE_URL = API_BASE;
 const viewTitles = {
   dashboard: ['Tổng quan', 'Chào mừng bạn trở lại, Admin!'],
+  books: ['Sách', 'Quản lý toàn bộ đầu sách trong kho'],
+  categories: ['Danh mục', 'Quản lý thể loại sách'],
+  customers: ['Khách hàng', 'Quản lý thông tin khách hàng'],
+  staff: ['Nhân viên', 'Quản lý nhân sự cửa hàng'],
   revenue: ['Doanh thu', 'Báo cáo doanh thu từ backend'],
   inventory: ['Tồn kho', 'Báo cáo tồn kho từ backend']
 };
 const loadedViews = { dashboard: false, revenue: false, inventory: false };
+const externalPages = {
+  books: { file: 'pages/inventory.html', init: 'initBooks' },
+  categories: { file: 'pages/categories.html', init: 'initCategories' },
+  customers: { file: 'pages/customers.html', init: 'initCustomers' },
+  staff: { file: 'pages/staff.html', init: 'initStaff' }
+};
+const externalPageCache = {};
 const dashboardState = {
   todayRevenue: 0,
   dailyKpiTarget: 0,
@@ -952,6 +992,54 @@ async function apiRequest(path, options = {}) {
   return text ? JSON.parse(text) : null;
 }
 
+function showToast(message) {
+  const toast = document.getElementById('appToast');
+  if (!toast) {
+    alert(message);
+    return;
+  }
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+window.showToast = showToast;
+
+function showConfirm(message, onConfirm) {
+  if (window.confirm(message)) onConfirm?.();
+}
+window.showConfirm = showConfirm;
+
+async function loadExternalPage(view) {
+  const config = externalPages[view];
+  if (!config) return;
+
+  const container = document.querySelector(`[data-page-container="${view}"]`);
+  if (!container) return;
+
+  try {
+    container.innerHTML = externalPageCache[view] || '<div class="state-text">Đang tải...</div>';
+    if (!externalPageCache[view]) {
+      const response = await fetch(config.file);
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      externalPageCache[view] = await response.text();
+      container.innerHTML = externalPageCache[view];
+    }
+
+    container.querySelectorAll('script').forEach(script => {
+      const executable = document.createElement('script');
+      executable.textContent = script.textContent;
+      script.replaceWith(executable);
+    });
+
+    const init = window[config.init];
+    if (typeof init === 'function') init();
+  }
+  catch (error) {
+    container.innerHTML = `<div class="empty-state">Không thể tải trang ${view}: ${escapeHtml(error.message)}</div>`;
+  }
+}
+
 function setView(view) {
   document.querySelectorAll('[data-view]').forEach(item => {
     item.classList.toggle('active', item.dataset.view === view);
@@ -968,6 +1056,7 @@ function setView(view) {
   if (view === 'dashboard' && !loadedViews.dashboard) loadDashboard();
   if (view === 'revenue' && !loadedViews.revenue) loadRevenue();
   if (view === 'inventory' && !loadedViews.inventory) loadInventory();
+  if (externalPages[view]) loadExternalPage(view);
 }
 
 function money(value) {

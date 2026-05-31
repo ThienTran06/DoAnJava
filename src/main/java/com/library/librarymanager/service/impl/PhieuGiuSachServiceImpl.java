@@ -3,6 +3,7 @@ package com.library.librarymanager.service.impl;
 import com.library.librarymanager.entity.*;
 import com.library.librarymanager.enums.TrangThaiGiu;
 import com.library.librarymanager.repository.*;
+import com.library.librarymanager.service.Interface.KhachHangService;
 import com.library.librarymanager.service.Interface.PhieuGiuSachService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
     private final KhachHangRepository khachHangRepository;
     private final NguoiDungRepository nguoiDungRepository;
     private final SachRepository sachRepository;
+    private final KhachHangService khachHangService;
 
     public PhieuGiuSachServiceImpl(
             ChiTietPhieuGiuRepository ctRepo,
@@ -31,7 +33,8 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
             ChiTietHoaDonRepository cthdRepo,
             KhachHangRepository khachHangRepository,
             NguoiDungRepository nguoiDungRepository,
-            SachRepository sachRepository
+            SachRepository sachRepository,
+            KhachHangService khachHangService
     ) {
         this.ctRepo = ctRepo;
         this.phieuRepo = phieuRepo;
@@ -40,6 +43,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
         this.khachHangRepository = khachHangRepository;
         this.nguoiDungRepository = nguoiDungRepository;
         this.sachRepository = sachRepository;
+        this.khachHangService = khachHangService;
     }
 
     @Override
@@ -123,9 +127,12 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
             );
         }
 
-        hd.setTongTien(tongTien);
+        khachHangService.capNhatHangThanhVien(kh);
+        BigDecimal tongTienSauGiamGia = khachHangService.tinhTongTienSauGiamGia(kh, tongTien);
+        hd.setTongTien(tongTienSauGiamGia);
 
         hoaDonRepo.save(hd);
+        khachHangService.congDiemTuHoaDon(kh, tongTienSauGiamGia);
 
         p.setTrangThai(TrangThaiGiu.CONFIRMED);
 

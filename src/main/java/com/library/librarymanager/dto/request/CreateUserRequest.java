@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -36,4 +37,14 @@ public class CreateUserRequest {
     private String tenNhom;
 
     private List<@Positive(message = "Permission id phai lon hon 0") Integer> permissionIds;
+
+    private String email;
+
+    private String avatar;
+
+    private String diaChi;
+
+    private BigDecimal luongCoBan;
+
+    private String ghiChu;
 }

@@ -107,6 +107,11 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         nd.setHoTen(req.getHoTen());
 
         nd.setNhom(nhom);
+        nd.setEmail(req.getEmail());
+        nd.setAvatar(req.getAvatar());
+        nd.setDiaChi(req.getDiaChi());
+        nd.setLuongCoBan(req.getLuongCoBan());
+        nd.setGhiChu(req.getGhiChu());
 
         NguoiDung saved = repo.save(nd);
 
@@ -149,6 +154,11 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 
         nd.setSDT(req.getSdt());
         nd.setNhom(nhom);
+        nd.setEmail(req.getEmail());
+        nd.setAvatar(req.getAvatar());
+        nd.setDiaChi(req.getDiaChi());
+        nd.setLuongCoBan(req.getLuongCoBan());
+        nd.setGhiChu(req.getGhiChu());
 
         if(nhom.getTenNhom().equals("ADMIN")){
             addAllPermissions(nd.getId());
