@@ -150,6 +150,146 @@
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ─── SETTINGS LAYOUT ─── */
+  .settings-page-title {
+    font-size: 13px; color: var(--text-muted); margin-bottom: 24px; font-weight: 400;
+  }
+
+  .settings-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .settings-card-header {
+    padding: 16px 20px 0;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .settings-card-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .settings-card-title {
+    font-size: 14px; font-weight: 700; letter-spacing: -0.2px;
+  }
+
+  .settings-card-desc {
+    font-size: 12px; color: var(--text-muted); margin-top: 2px; font-weight: 400;
+  }
+
+  .settings-divider {
+    height: 1px; background: var(--border); margin: 14px 0 0;
+  }
+
+  /* ─── SETTINGS ROW ─── */
+  .settings-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; gap: 16px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row:hover { background: var(--bg); }
+
+  .settings-row-label { flex: 1; }
+  .settings-row-name { font-size: 13.5px; font-weight: 600; }
+  .settings-row-hint { font-size: 12px; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+
+  /* ─── TOGGLE SWITCH ─── */
+  .toggle-wrap { flex-shrink: 0; }
+
+  .toggle-switch {
+    position: relative; display: inline-block;
+    width: 44px; height: 24px; cursor: pointer;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-track {
+    position: absolute; inset: 0;
+    background: var(--border);
+    border-radius: 24px;
+    transition: background 0.2s;
+  }
+  .toggle-switch input:checked + .toggle-track { background: var(--text); }
+
+  .toggle-thumb {
+    position: absolute;
+    width: 18px; height: 18px;
+    top: 3px; left: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .toggle-switch input:checked + .toggle-track .toggle-thumb {
+    transform: translateX(20px);
+  }
+
+  /* ─── VOLUME SLIDER ─── */
+  .volume-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 20px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .volume-row:last-child { border-bottom: none; }
+
+  .volume-label { font-size: 12px; color: var(--text-muted); font-weight: 500; min-width: 60px; }
+  .volume-val { font-size: 12px; font-weight: 700; min-width: 28px; text-align: right; }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    flex: 1; height: 5px;
+    background: var(--border); border-radius: 5px; outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--text); cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: background 0.2s;
+  }
+
+  /* ─── LANGUAGE BUTTONS ─── */
+  .lang-grid {
+    display: flex; gap: 10px; padding: 14px 20px;
+  }
+
+  .lang-btn {
+    flex: 1; padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; gap: 10px;
+    font-family: inherit; font-size: 13.5px; font-weight: 600;
+    color: var(--text-muted);
+  }
+  .lang-btn:hover { border-color: var(--text); color: var(--text); }
+  .lang-btn.active {
+    background: var(--text); border-color: var(--text);
+    color: #f6f7ed;
+  }
+  .lang-flag { font-size: 20px; line-height: 1; }
+
+  /* ─── NOTICE TOAST ─── */
+  .notice {
+    display: none; align-items: center; gap: 8px;
+    background: var(--green-light); border: 1px solid var(--green);
+    border-radius: var(--radius-sm); padding: 10px 14px;
+    font-size: 12.5px; color: var(--green); font-weight: 500;
+    margin: 0 20px 14px;
+  }
+  .notice.show { display: flex; }
 </style>
 </head>
 <body>
@@ -255,8 +395,97 @@
   </header>
 
   <div class="content">
-    <!-- Settings sections will be added in next commit -->
-    <p style="color: var(--text-muted); font-size: 13px;">Đang tải...</p>
+
+    <!-- ── APPEARANCE ────────────────────────────── -->
+    <div class="settings-card">
+      <div class="settings-card-header">
+        <div class="settings-card-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888880" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </div>
+        <div>
+          <div class="settings-card-title">Giao diện</div>
+          <div class="settings-card-desc">Chọn màu nền và chế độ hiển thị</div>
+        </div>
+      </div>
+      <div class="settings-divider"></div>
+      <div class="settings-row">
+        <div class="settings-row-label">
+          <div class="settings-row-name">Chế độ tối</div>
+          <div class="settings-row-hint">Chuyển giao diện sang nền đen, giảm mỏi mắt ban đêm</div>
+        </div>
+        <div class="toggle-wrap">
+          <label class="toggle-switch">
+            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MUSIC ──────────────────────────────────── -->
+    <div class="settings-card">
+      <div class="settings-card-header">
+        <div class="settings-card-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888880" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <div>
+          <div class="settings-card-title">Âm nhạc nền</div>
+          <div class="settings-card-desc">Nhạc nền nhẹ khi sử dụng hệ thống</div>
+        </div>
+      </div>
+      <div class="settings-divider"></div>
+      <div class="settings-row">
+        <div class="settings-row-label">
+          <div class="settings-row-name">Bật nhạc nền</div>
+          <div class="settings-row-hint">Phát nhạc nền khi bạn đang làm việc</div>
+        </div>
+        <div class="toggle-wrap">
+          <label class="toggle-switch">
+            <input type="checkbox" id="musicToggle" onchange="toggleMusic()">
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+      </div>
+      <div class="volume-row">
+        <span class="volume-label">Âm lượng</span>
+        <input type="range" id="volumeSlider" min="0" max="100" value="50" oninput="changeVolume(this.value)">
+        <span class="volume-val" id="volumeVal">50%</span>
+      </div>
+    </div>
+
+    <!-- ── LANGUAGE ───────────────────────────────── -->
+    <div class="settings-card">
+      <div class="settings-card-header">
+        <div class="settings-card-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888880" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div>
+          <div class="settings-card-title">Ngôn ngữ</div>
+          <div class="settings-card-desc">Chọn ngôn ngữ hiển thị của hệ thống</div>
+        </div>
+      </div>
+      <div class="settings-divider"></div>
+      <div class="lang-grid">
+        <button class="lang-btn" id="langVi" onclick="setLanguage('vi')">
+          <span class="lang-flag">🇻🇳</span>
+          Tiếng Việt
+        </button>
+        <button class="lang-btn" id="langEn" onclick="setLanguage('en')">
+          <span class="lang-flag">🇬🇧</span>
+          English
+        </button>
+      </div>
+      <div class="notice" id="langNotice">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
+        Tải lại trang để áp dụng ngôn ngữ mới
+      </div>
+    </div>
+
+    <!-- hidden audio element -->
+    <audio id="bgAudio" loop preload="none">
+      <source src="music/background.mp3" type="audio/mpeg">
+    </audio>
+
   </div>
 </div>
 
