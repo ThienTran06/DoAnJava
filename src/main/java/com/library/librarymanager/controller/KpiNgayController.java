@@ -11,15 +11,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/kpi-ngay")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('XEM_BAO_CAO')")
+
 public class KpiNgayController {
     private final KpiNgayService kpiNgayService;
-
     @GetMapping("/hom-nay")
     public KpiNgay getHomNay() {
         return kpiNgayService.getHomNay();
     }
-
+    @PreAuthorize("hasAuthority('XEM_BAO_CAO')")
     @PostMapping("/hom-nay")
     public KpiNgay datKpiHomNay(@Valid @RequestBody KpiNgayRequest request) {
         return kpiNgayService.datKpiHomNay(request.getMucTieuDoanhThu());

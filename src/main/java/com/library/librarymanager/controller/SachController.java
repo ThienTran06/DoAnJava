@@ -2,21 +2,24 @@ package com.library.librarymanager.controller;
 
 import com.library.librarymanager.dto.response.SachTonKhoResponse;
 import com.library.librarymanager.entity.Sach;
+import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.SachService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
+import java.util.Map;
 @RestController
 @RequestMapping("/api/sach")
 @RequiredArgsConstructor
 @PreAuthorize("hasAuthority('QUAN_LY_SACH')")
 public class SachController {
     private final SachService sachService;
-
+    private final CloudinaryService cloudinaryService;
     @GetMapping
     List<Sach> getAll(){return sachService.getAll();}
 
@@ -32,17 +35,39 @@ public class SachController {
         return sachService.search(tenSach, tenTheLoai, tenTacGia, namXuatBan);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     Sach create(@Valid @RequestBody Sach sach){return  sachService.create(sach);}
 
-    @PutMapping("/{id}")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    Sach createWithImage(
+            @Valid @RequestPart("sach") Sach sach,
+            @RequestPart(value = "fileAnh", required = false) MultipartFile fileAnh
+    ) {
+        return sachService.create(sach, fileAnh);
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     Sach updateById(@PathVariable int id, @RequestBody Sach sach){return sachService.updateById(id,sach);}
+
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    Sach updateByIdWithImage(
+            @PathVariable int id,
+            @RequestPart("sach") Sach sach,
+            @RequestPart(value = "fileAnh", required = false) MultipartFile fileAnh
+    ) {
+        return sachService.updateById(id, sach, fileAnh);
+    }
 
     @DeleteMapping("/{id}")
     void deleteById(@PathVariable int id){sachService.deleteById(id);}
     @GetMapping("/ton-kho")
     List<SachTonKhoResponse>getSachTonKho(@RequestParam String tenSach){
         return sachService.getStockByName(tenSach);
+    }
+    @PostMapping("/upload-image")
+    public Map<String, String> uploadImage(@RequestParam MultipartFile fileAnh) {
+        String url = cloudinaryService.uploadFile(fileAnh);
+        return Map.of("url", url);
     }
 }
 

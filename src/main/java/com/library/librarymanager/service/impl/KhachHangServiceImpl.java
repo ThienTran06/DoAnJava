@@ -35,6 +35,10 @@ public class KhachHangServiceImpl implements KhachHangService {
         res.setSDT(khachHang.getSDT());
         res.setEmail(khachHang.getEmail());
         res.setHoTen(khachHang.getHoTen());
+        res.setAvatar(khachHang.getAvatar());
+        res.setDiemTichLuy(khachHang.getDiemTichLuy());
+        res.setHangThanhVien(khachHang.getHangThanhVien());
+        res.setVip(khachHang.isVip());
         khachHangRepository.save(res);
         return res;
     }

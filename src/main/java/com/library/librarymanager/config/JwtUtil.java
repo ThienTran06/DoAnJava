@@ -26,7 +26,8 @@ public class JwtUtil {
         this.secret = secret.getBytes(StandardCharsets.UTF_8);
     }
 
-    public String generateToken(String username,
+    public String generateToken(Integer id,
+                                String username,
                                 String role,
                                 List<String> permissions) {
 
@@ -38,6 +39,7 @@ public class JwtUtil {
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
 
                     .subject(username)
+                    .claim("id", id)
 
                     .claim("role", role)
 

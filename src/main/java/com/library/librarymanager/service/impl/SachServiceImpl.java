@@ -3,10 +3,12 @@ package com.library.librarymanager.service.impl;
 import com.library.librarymanager.dto.response.SachTonKhoResponse;
 import com.library.librarymanager.entity.Sach;
 import com.library.librarymanager.repository.SachRepository;
+import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.SachService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
 public class SachServiceImpl implements SachService
 {
     private final SachRepository sachRepository;
+    private final CloudinaryService cloudinaryService;
     @Override
     public List<Sach> getAll() {
         return sachRepository.findAll();
@@ -31,10 +34,21 @@ public class SachServiceImpl implements SachService
     }
 
     @Override
+    public Sach create(Sach sach, MultipartFile fileAnh) {
+        String imageUrl = uploadImageIfPresent(fileAnh);
+        if (imageUrl != null) {
+            sach.setHinhAnh(imageUrl);
+        }
+        return sachRepository.save(sach);
+    }
+
+    @Override
     public Sach updateById(int id, Sach sach) {
         Sach res = sachRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy sách có id = "+id));
         res.setTenSach(sach.getTenSach());
-        res.setHinhAnh(sach.getHinhAnh());
+        if (sach.getHinhAnh() != null) {
+            res.setHinhAnh(sach.getHinhAnh());
+        }
         res.setGiaBan(sach.getGiaBan());
         res.setNamXuatBan(sach.getNamXuatBan());
         res.setNhaXuatBan(sach.getNhaXuatBan());
@@ -42,6 +56,15 @@ public class SachServiceImpl implements SachService
         res.setDanhSachTacGia(sach.getDanhSachTacGia());
         sachRepository.save(res);
         return res;
+    }
+
+    @Override
+    public Sach updateById(int id, Sach sach, MultipartFile fileAnh) {
+        String imageUrl = uploadImageIfPresent(fileAnh);
+        if (imageUrl != null) {
+            sach.setHinhAnh(imageUrl);
+        }
+        return updateById(id, sach);
     }
 
     @Override
@@ -69,6 +92,20 @@ public class SachServiceImpl implements SachService
     @Override
     public Integer getTongSoLuongTon(){
         return sachRepository.getTongSoLuongTon();
+    }
+
+    private String uploadImageIfPresent(MultipartFile fileAnh) {
+        if (fileAnh == null || fileAnh.isEmpty()) {
+            return null;
+        }
+        String contentType = fileAnh.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File phai la anh");
+        }
+        if (fileAnh.getSize() > 5 * 1024 * 1024) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Anh vuot qua 5MB");
+        }
+        return cloudinaryService.uploadFile(fileAnh);
     }
 
 }
