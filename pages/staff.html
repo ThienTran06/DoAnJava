@@ -1,4 +1,4 @@
-<div class="page-shell page-transition active">
+﻿<div class="page-shell page-transition active">
   <div class="header-row" style="margin-bottom:18px;align-items:flex-end">
     <div>
       <div style="font-size:28px;font-weight:800;letter-spacing:-.8px;margin-bottom:4px">Nhân viên</div>
@@ -9,7 +9,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b5b5ae" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="staffSearch" placeholder="Tìm kiếm nhân viên...">
       </div>
-      <select id="positionFilter" class="select"><option value="">Tất cả chức vụ</option><option>Quản lý</option><option>Thu ngân</option><option>Nhân viên bán hàng</option><option>Kho</option></select>
+      <select id="positionFilter" class="select"><option value="">Tất cả chức vụ</option><option>Quản lý</option><option>Thu ngân</option><option>Nhân viên bán hàng</option><option>Kho</option><option>Biên mục</option><option>Kế toán</option><option>Nhân sự</option></select>
       <button class="btn primary" id="btnAddStaff">Thêm nhân viên</button>
     </div>
   </div>
@@ -28,7 +28,7 @@
     </div>
     <div class="empty-state" id="staffEmptyState" style="display:none;margin-top:16px">Chưa có nhân viên nào.</div>
   </div>
-  <div class="modal-overlay" id="staffModal"><div class="modal"><div class="modal-head"><div class="modal-title">🧑‍💼 Thêm nhân viên</div><button class="close" id="closeStaffModal">×</button></div><form id="staffForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống</div></div><div class="field"><div class="label">Mã nhân viên</div><input class="input" name="code" required><div class="helper">Ví dụ: NV001</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ</div></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Chức vụ</div><select class="select" name="role"><option>Quản lý</option><option>Thu ngân</option><option>Nhân viên bán hàng</option><option>Kho</option></select></div><div class="field"><div class="label">Ca làm việc</div><select class="select" name="shift" required><option value="Ca 1">Ca 1 (6h - 12h)</option><option value="Ca 2">Ca 2 (12h - 18h)</option><option value="Ca 3">Ca 3 (18h - 24h)</option></select></div><div class="field"><div class="label">Ngày vào làm</div><input class="input" type="date" name="joinDate"></div><div class="field"><div class="label">Lương cơ bản</div><input class="input" type="number" name="salary" min="0" step="1000"></div><div class="field full"><div class="label">Avatar nhân viên</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="staffPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelStaff">Hủy</button><button type="submit" class="btn primary" id="saveStaff"><span class="txt">Lưu nhân viên</span><span class="spin"></span></button></div></form></div></div>
+  <div class="modal-overlay" id="staffModal"><div class="modal"><div class="modal-head"><div class="modal-title">🧑‍💼 Thêm nhân viên</div><button class="close" id="closeStaffModal">×</button></div><form id="staffForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống</div></div><div class="field"><div class="label">Mã nhân viên</div><input class="input" name="code" required><div class="helper">Ví dụ: NV001</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ</div></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Chức vụ</div><select class="select" name="role"><option>Quản lý</option><option>Thu ngân</option><option>Nhân viên bán hàng</option><option>Kho</option><option>Biên mục</option><option>Kế toán</option><option>Nhân sự</option></select></div><div class="field"><div class="label">Ca làm việc</div><select class="select" name="shift" required><option value="Ca 1">Ca 1 (6h - 12h)</option><option value="Ca 2">Ca 2 (12h - 18h)</option><option value="Ca 3">Ca 3 (18h - 24h)</option></select></div><div class="field"><div class="label">Ngày vào làm</div><input class="input" type="date" name="joinDate"></div><div class="field"><div class="label">Lương cơ bản</div><input class="input" type="number" name="salary" min="0" step="1000"></div><div class="field full"><div class="label">Avatar nhân viên</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="staffPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelStaff">Hủy</button><button type="submit" class="btn primary" id="saveStaff"><span class="txt">Lưu nhân viên</span><span class="spin"></span></button></div></form></div></div>
   <div class="modal-overlay" id="staffDetailModal"><div class="modal" style="max-width:600px"><div class="modal-head"><div class="modal-title">🧑‍💼 Hồ sơ nhân viên</div><button class="close" id="closeProfileModal">×</button></div><div class="modal-body"><div style="text-align:center;margin-bottom:20px" id="profileAvatarContainer"><div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto">A</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px"><div><div style="font-size:12px;color:var(--muted)">Họ tên</div><div style="font-weight:700" id="profileName">—</div></div><div><div style="font-size:12px;color:var(--muted)">Mã nhân viên</div><div style="font-weight:700" id="profileCode">—</div></div><div><div style="font-size:12px;color:var(--muted)">Email</div><div style="font-weight:700" id="profileEmail">—</div></div><div><div style="font-size:12px;color:var(--muted)">Số điện thoại</div><div style="font-weight:700" id="profilePhone">—</div></div><div><div style="font-size:12px;color:var(--muted)">Chức vụ</div><div style="font-weight:700" id="profileRole">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ca làm việc</div><div style="font-weight:700" id="profileShift">—</div></div><div><div style="font-size:12px;color:var(--muted)">Địa chỉ</div><div style="font-weight:700" id="profileAddress">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ngày vào làm</div><div style="font-weight:700" id="profileJoinDate">—</div></div><div><div style="font-size:12px;color:var(--muted)">Lương cơ bản</div><div style="font-weight:700" id="profileSalary">—</div></div><div><div style="font-size:12px;color:var(--muted)">Trạng thái</div><div style="font-weight:700" id="profileStatus">—</div></div><div style="grid-column:1/-1"><div style="font-size:12px;color:var(--muted)">Ghi chú</div><div style="font-weight:700" id="profileNote">—</div></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="closeProfileBtn">Đóng</button></div></div></div>
 </div>
 
@@ -76,14 +76,20 @@ window.initStaff = function() {
     STAFF: 'Nhân viên bán hàng',
     NHAN_VIEN_BAN_HANG: 'Nhân viên bán hàng',
     THU_NGAN: 'Thu ngân',
-    KHO: 'Kho'
+    KHO: 'Kho',
+    BIEN_MUC: 'Biên mục',
+    KE_TOAN: 'Kế toán',
+    NHAN_SU: 'Nhân sự'
   };
 
   const groupMap = {
     'Quản lý': 'ADMIN',
     'Nhân viên bán hàng': 'NHAN_VIEN_BAN_HANG',
     'Thu ngân': 'THU_NGAN',
-    'Kho': 'KHO'
+    'Kho': 'KHO',
+    'Biên mục': 'BIEN_MUC',
+    'Kế toán': 'KE_TOAN',
+    'Nhân sự': 'NHAN_SU'
   };
 
   const toRoleLabel = role => roleMap[role] || role || 'Nhân viên bán hàng';

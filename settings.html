@@ -113,6 +113,13 @@
     padding: 10px; border-radius: var(--radius-sm); cursor: pointer;
   }
   .user-card:hover { background: var(--bg); }
+  .logout-btn {
+    width: 100%; margin-top: 8px; border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); background: var(--surface); color: var(--red);
+    font: inherit; font-size: 12.5px; font-weight: 800; padding: 9px 10px;
+    cursor: pointer; text-align: left;
+  }
+  .logout-btn:hover { background: var(--red-light); border-color: #f3c6c0; }
   .avatar {
     width: 32px; height: 32px; background: var(--text);
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -376,6 +383,7 @@
         <div class="user-role" id="userRole">Quản trị viên</div>
       </div>
     </div>
+    <button class="logout-btn" type="button" id="logoutBtn">Đăng xuất</button>
   </div>
 </aside>
 
@@ -607,11 +615,30 @@
   }
 
   /* ─── PAGE INIT ─── */
+  async function logout() {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    try {
+      if (token) {
+        await fetch('https://doanjava-production.up.railway.app/auth/logout', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+      }
+    } catch (error) {
+      console.warn('Logout request failed', error);
+    }
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    window.location.href = 'login.html';
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initUser();
     applyTheme(localStorage.getItem('darkMode') === '1');
     restoreMusic();
     restoreLanguage();
+    document.getElementById('logoutBtn')?.addEventListener('click', logout);
   });
 </script>
 </body>
