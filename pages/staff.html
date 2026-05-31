@@ -86,7 +86,13 @@ window.initStaff = function() {
         return;
       }
 
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      if (response.status === 403) {
+        throw new Error('Bạn không có quyền QUAN_LY_NGUOI_DUNG hoặc role ADMIN để xem nhân viên.');
+      }
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `HTTP ${response.status}`);
+      }
 
       const data = await response.json();
       state.items = Array.isArray(data) ? data.map(mapStaff) : [];
@@ -95,7 +101,7 @@ window.initStaff = function() {
       render();
     } catch (error) {
       staffLoading = false;
-      tableBody.innerHTML = `<tr><td colspan="10"><div class="empty-state">Không thể tải danh sách nhân viên từ backend.</div></td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="10"><div class="empty-state">Không thể tải danh sách nhân viên từ backend: ${error.message}</div></td></tr>`;
     }
   };
   const modal = document.getElementById('staffModal');

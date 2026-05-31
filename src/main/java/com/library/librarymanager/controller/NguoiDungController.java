@@ -11,7 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@PreAuthorize("hasAuthority('QUAN_LY_NGUOI_DUNG')")
+@PreAuthorize("hasAnyAuthority('QUAN_LY_NGUOI_DUNG','ADMIN')")
 @RestController
 @RequestMapping("/api/nguoi-dung")
 public class NguoiDungController {
