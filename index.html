@@ -797,7 +797,7 @@
       <div class="report-toolbar">
         <div>
           <h2 style="font-size:22px;letter-spacing:-0.5px;margin-bottom:4px;">Tồn kho</h2>
-          <div class="report-note">Kiểm tra tổng tồn kho và danh sách sách tồn kho nhiều nhất.</div>
+          <div class="report-note">Kiểm tra tổng tồn kho, sách tồn nhiều và sách sắp hết hàng.</div>
         </div>
         <button class="report-btn" id="loadInventoryBtn" type="button">Tải lại</button>
       </div>
@@ -815,12 +815,21 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header"><span class="card-title">Tồn kho nhiều nhất</span></div>
-        <table class="tbl">
-          <thead><tr><th>#</th><th>Tên sách</th><th>Số lượng tồn</th></tr></thead>
-          <tbody id="inventoryRows"><tr><td colspan="3" class="state-text">Chưa tải dữ liệu</td></tr></tbody>
-        </table>
+      <div class="report-grid two">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Tồn kho nhiều nhất</span></div>
+          <table class="tbl">
+            <thead><tr><th>#</th><th>Tên sách</th><th>Số lượng tồn</th></tr></thead>
+            <tbody id="inventoryRows"><tr><td colspan="3" class="state-text">Chưa tải dữ liệu</td></tr></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Sách sắp hết hàng</span></div>
+          <table class="tbl">
+            <thead><tr><th>#</th><th>Tên sách</th><th>Số lượng tồn</th></tr></thead>
+            <tbody id="lowInventoryRows"><tr><td colspan="3" class="state-text">Chưa tải dữ liệu</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -1781,33 +1790,41 @@ function renderCategoryRevenue(rows) {
     : '<div class="state-text">Không có dữ liệu</div>';
 }
 
+function renderInventoryTable(targetId, rows) {
+  document.getElementById(targetId).innerHTML = rows && rows.length
+    ? rows.map((row, index) => `
+        <tr>
+          <td style="font-weight:700">${index + 1}</td>
+          <td>${escapeHtml(row.tenSach || '')}</td>
+          <td style="font-weight:700">${Number(row.soLuongTonKho || 0).toLocaleString('vi-VN')}</td>
+        </tr>
+      `).join('')
+    : '<tr><td colspan="3" class="state-text">Không có dữ liệu</td></tr>';
+}
+
 async function loadInventory() {
   document.getElementById('inventoryRows').innerHTML = '<tr><td colspan="3" class="state-text">Đang tải...</td></tr>';
+  document.getElementById('lowInventoryRows').innerHTML = '<tr><td colspan="3" class="state-text">Đang tải...</td></tr>';
   document.getElementById('inventoryApiState').textContent = 'Đang tải';
 
   try {
-    const [total, topInventory] = await Promise.all([
+    const [total, topInventory, lowInventory] = await Promise.all([
       apiGet('/api/bao-cao/tong-ton-kho'),
-      apiGet('/api/bao-cao/ton-kho-nhieu-nhat')
+      apiGet('/api/bao-cao/ton-kho-nhieu-nhat'),
+      apiGet('/api/bao-cao/ton-kho-it')
     ]);
 
     document.getElementById('totalInventory').textContent = Number(total || 0).toLocaleString('vi-VN');
     document.getElementById('inventoryApiState').textContent = 'OK';
-    document.getElementById('inventoryRows').innerHTML = topInventory.length
-      ? topInventory.map((row, index) => `
-          <tr>
-            <td style="font-weight:700">${index + 1}</td>
-            <td>${escapeHtml(row.tenSach || '')}</td>
-            <td style="font-weight:700">${Number(row.soLuongTonKho || 0).toLocaleString('vi-VN')}</td>
-          </tr>
-        `).join('')
-      : '<tr><td colspan="3" class="state-text">Không có dữ liệu</td></tr>';
+    renderInventoryTable('inventoryRows', topInventory);
+    renderInventoryTable('lowInventoryRows', lowInventory);
 
     loadedViews.inventory = true;
   }
   catch (error) {
     document.getElementById('inventoryApiState').textContent = 'Lỗi';
     setError('inventoryRows', 3, error);
+    setError('lowInventoryRows', 3, error);
   }
 }
 

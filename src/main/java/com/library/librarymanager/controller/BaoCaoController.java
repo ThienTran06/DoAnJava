@@ -37,7 +37,7 @@ public class BaoCaoController {
     }
     @GetMapping("/ton-kho-it")
     List<SachTonKhoResponse> getTonKhoIt(){
-        return null;
+        return sachService.getTonKhoIt();
     }
 
     @GetMapping("/doanh-thu-thang")
