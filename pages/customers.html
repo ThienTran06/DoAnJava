@@ -52,7 +52,7 @@ window.initCustomers = function() {
   const mapCustomer = (item) => ({
     id: item?.id,
     name: item?.hoTen || item?.name || '—',
-    phone: item?.sdt || item?.phone || '',
+    phone: item?.sdt || item?.SDT || item?.phone || '',
     email: item?.email || '',
     tongDonHang: item?.tongDonHang ?? item?.orders ?? 0,
     diemTichLuy: item?.diemTichLuy ?? item?.points ?? 0,
@@ -170,7 +170,7 @@ window.initCustomers = function() {
         <td class="inline-points" data-id="${item.id}" data-value="${item.diemTichLuy ?? 0}">${item.diemTichLuy ?? 0}</td>
         <td class="tier-cell"><span class="badge ${badgeClass(item.hangThanhVien)}">${item.hangThanhVien || 'Đồng'}${item.isVip ? ' + VIP' : ''}</span></td>
         <td><span class="badge ${item.trangThai ? 'paid' : 'bad'}">${item.trangThai ? 'Hoạt động' : 'Ngừng hoạt động'}</span></td>
-        <td><div class="ops"><button class="link js-view-customer" data-name="${item.name}">Xem chi tiết</button><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td>
+        <td><div class="ops"><button class="link js-view-customer" data-id="${item.id}">Xem chi tiết</button><button class="link customer-edit" data-id="${item.id}">Sửa</button><button class="link danger customer-delete" data-id="${item.id}">Xóa</button></div></td>
       </tr>
     `).join('') : '';
     emptyState.style.display = rows.length ? 'none' : 'block';
@@ -233,7 +233,10 @@ window.initCustomers = function() {
       window.location.href = 'login.html';
       return null;
     }
-    if (!response.ok) throw new Error('Request failed');
+    if (!response.ok) {
+      const message = await response.text();
+      throw new Error(message || 'Request failed');
+    }
     const saved = await response.json();
     const mapped = mapCustomer(saved);
     updateCustomerInState(id, mapped);
@@ -336,7 +339,10 @@ window.initCustomers = function() {
         return;
       }
 
-      if (!response.ok) throw new Error('Request failed');
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || 'Request failed');
+      }
 
       const saved = await response.json();
       const mapped = mapCustomer(saved);
@@ -357,14 +363,14 @@ window.initCustomers = function() {
       form.reset();
       window.showToast(isEdit ? 'Đã cập nhật khách hàng' : 'Đã thêm khách hàng');
     } catch (err) {
-      window.showToast('Không thể lưu khách hàng');
+      window.showToast('Không thể lưu khách hàng: ' + err.message);
     }
   };
 
   // Handle edit and delete buttons in table
   tableBody.addEventListener('click', async e => {
-    const editBtn = e.target.closest('.ops .link:not(.danger):not(.js-view-customer)');
-    const deleteBtn = e.target.closest('.ops .link.danger');
+    const editBtn = e.target.closest('.customer-edit');
+    const deleteBtn = e.target.closest('.customer-delete');
     const toggle = e.target.closest('.status-toggle');
     const pointsCell = e.target.closest('.inline-points');
     if (toggle) {
@@ -426,10 +432,9 @@ window.initCustomers = function() {
     }
     if (!editBtn && !deleteBtn) return;
 
-    const row = e.target.closest('tr');
-    const cells = row.querySelectorAll('td');
-    const customerName = cells[2].textContent.trim();
-    const itemIndex = state.items.findIndex(i => i.name === customerName);
+    const id = editBtn ? editBtn.dataset.id : deleteBtn.dataset.id;
+    const itemIndex = state.items.findIndex(i => String(i.id) === String(id));
+    if (itemIndex < 0) return;
 
     if (editBtn) {
       // Open edit modal
@@ -498,8 +503,7 @@ window.initCustomers = function() {
   tableBody.addEventListener('click', e => {
     const btn = e.target.closest('.js-view-customer');
     if (!btn) return;
-    const customerName = btn.dataset.name;
-    const customer = state.items.find(x => x.name === customerName);
+    const customer = state.items.find(x => String(x.id) === String(btn.dataset.id));
     if (!customer) return;
 
     // Populate detail modal

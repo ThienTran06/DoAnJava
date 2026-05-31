@@ -1,7 +1,10 @@
 package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.dto.response.SachTonKhoResponse;
+import com.library.librarymanager.dto.response.SachBanChayResponse;
+import com.library.librarymanager.dto.response.SachThongKeResponse;
 import com.library.librarymanager.entity.Sach;
+import com.library.librarymanager.repository.ChiTietHoaDonRepository;
 import com.library.librarymanager.repository.SachRepository;
 import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.SachService;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
@@ -18,6 +22,7 @@ public class SachServiceImpl implements SachService
 {
     private final SachRepository sachRepository;
     private final CloudinaryService cloudinaryService;
+    private final ChiTietHoaDonRepository chiTietHoaDonRepository;
     @Override
     public List<Sach> getAll() {
         return sachRepository.findAll();
@@ -92,6 +97,23 @@ public class SachServiceImpl implements SachService
     @Override
     public Integer getTongSoLuongTon(){
         return sachRepository.getTongSoLuongTon();
+    }
+
+    @Override
+    public SachThongKeResponse getThongKeSach() {
+        List<SachBanChayResponse> sachBanChay = chiTietHoaDonRepository.sachBanChay();
+        SachBanChayResponse top = sachBanChay.isEmpty() ? null : sachBanChay.get(0);
+        Integer tongSoLuongTon = sachRepository.getTongSoLuongTon();
+        BigDecimal giaTriKho = sachRepository.getGiaTriKho();
+
+        return new SachThongKeResponse(
+                sachRepository.count(),
+                tongSoLuongTon == null ? 0 : tongSoLuongTon,
+                sachRepository.countBySoLuongTon(0),
+                giaTriKho == null ? BigDecimal.ZERO : giaTriKho,
+                top == null ? null : top.getTenSach(),
+                top == null ? 0 : top.getSoLuongDaBan()
+        );
     }
 
     private String uploadImageIfPresent(MultipartFile fileAnh) {

@@ -1,6 +1,7 @@
 package com.library.librarymanager.entity;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +24,8 @@ public class KhachHang {
 
     private String hoTen;
 
+    @JsonProperty("sdt")
+    @JsonAlias({"SDT", "phone"})
     private String SDT;
 
     private String email;

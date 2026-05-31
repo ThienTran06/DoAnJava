@@ -37,6 +37,7 @@ window.initBooks = function() {
   let categories = [];
   let publishers = [];
   let authors = [];
+  let bookStats = null;
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem('token')
@@ -160,6 +161,7 @@ window.initBooks = function() {
       booksLoaded = true;
       booksLoading = false;
       renderTable();
+      loadBookStatsFromApi();
     } catch (error) {
       booksLoading = false;
       if (error.message === '401') {
@@ -175,9 +177,28 @@ window.initBooks = function() {
 
   const closeModal = () => overlay.classList.remove('open');
 
+  const formatMoney = value => Number(value || 0).toLocaleString('vi-VN') + ' đ';
+
+  const loadBookStatsFromApi = async () => {
+    try {
+      const response = await fetch(`${BOOKS_API}/thong-ke`, {
+        headers: {
+          Accept: 'application/json',
+          ...getAuthHeaders(),
+        },
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      bookStats = await response.json();
+      updateBookStats();
+    } catch (error) {
+      bookStats = null;
+      updateBookStats();
+    }
+  };
+
   const updateBookStats = () => {
     const books = window.allBooks || [];
-    const totalBooks = books.reduce((sum, b) => sum + (+b.stock), 0);
+    const totalBooks = bookStats ? Number(bookStats.tongSoLuongTon || 0) : books.reduce((sum, b) => sum + (+b.stock), 0);
     let maxStock = 0;
     let bestSellerName = "—";
     books.forEach(b => {
@@ -186,8 +207,8 @@ window.initBooks = function() {
         bestSellerName = b.name;
       }
     });
-    const outOfStockCount = books.filter(b => +b.stock === 0).length;
-    const inventoryVal = books.reduce((sum, b) => sum + (+b.price * +b.stock), 0);
+    const outOfStockCount = bookStats ? Number(bookStats.soSachHetHang || 0) : books.filter(b => +b.stock === 0).length;
+    const inventoryVal = bookStats ? Number(bookStats.giaTriKho || 0) : books.reduce((sum, b) => sum + (+b.price * +b.stock), 0);
     
     const statTotalEl = document.getElementById('statTotalBooks');
     const statBestEl = document.getElementById('statBestSeller');
@@ -196,20 +217,16 @@ window.initBooks = function() {
     
     if (statTotalEl) statTotalEl.textContent = totalBooks.toLocaleString('vi-VN');
     if (statBestEl) {
-      statBestEl.textContent = maxStock.toLocaleString('vi-VN');
+      statBestEl.textContent = bookStats
+        ? Number(bookStats.soLuongDaBanNhieuNhat || 0).toLocaleString('vi-VN')
+        : maxStock.toLocaleString('vi-VN');
       const labelEl = statBestEl.nextElementSibling;
       if (labelEl && labelEl.classList.contains('stat-label')) {
-        labelEl.textContent = `Bán chạy nhất (${bestSellerName})`;
+        labelEl.textContent = `Bán chạy nhất (${bookStats?.tenSachBanChay || bestSellerName})`;
       }
     }
     if (statOutOfStockEl) statOutOfStockEl.textContent = outOfStockCount;
-    if (statValEl) {
-      if (inventoryVal >= 1000) {
-        statValEl.textContent = (inventoryVal / 1000).toFixed(1) + 'M đ';
-      } else {
-        statValEl.textContent = inventoryVal + 'k đ';
-      }
-    }
+    if (statValEl) statValEl.textContent = formatMoney(inventoryVal);
   };
 
   // Render table based on filter and search

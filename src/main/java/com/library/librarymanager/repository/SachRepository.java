@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +41,12 @@ public interface SachRepository extends JpaRepository<Sach,Integer> {
     List<SachTonKhoResponse> tonKhoTheoTen(@Param("tenSach")String tenSach);
     @Query("SELECT SUM(s.soLuongTon) FROM Sach s")
     Integer getTongSoLuongTon();
+
+    long countBySoLuongTon(int soLuongTon);
+
+    @Query("SELECT COALESCE(SUM(s.giaBan * s.soLuongTon), 0) FROM Sach s")
+    BigDecimal getGiaTriKho();
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
         select s from Sach s

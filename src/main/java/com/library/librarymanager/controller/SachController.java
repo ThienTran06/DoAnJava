@@ -1,6 +1,7 @@
 package com.library.librarymanager.controller;
 
 import com.library.librarymanager.dto.response.SachTonKhoResponse;
+import com.library.librarymanager.dto.response.SachThongKeResponse;
 import com.library.librarymanager.entity.Sach;
 import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.SachService;
@@ -33,6 +34,11 @@ public class SachController {
             @RequestParam(required = false) String tenTacGia,
             @RequestParam(required = false) Integer namXuatBan) {
         return sachService.search(tenSach, tenTheLoai, tenTacGia, namXuatBan);
+    }
+
+    @GetMapping("/thong-ke")
+    SachThongKeResponse getThongKeSach() {
+        return sachService.getThongKeSach();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -1,6 +1,7 @@
 package com.library.librarymanager.service.Interface;
 
 import com.library.librarymanager.dto.response.SachTonKhoResponse;
+import com.library.librarymanager.dto.response.SachThongKeResponse;
 import com.library.librarymanager.entity.Sach;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,4 +20,5 @@ public interface SachService {
          List<SachTonKhoResponse> getTonKhoNhieuNhat();
          Integer getTongSoLuongTon();
          List<SachTonKhoResponse> getTonKhoIt();
+         SachThongKeResponse getThongKeSach();
 }
