@@ -42,6 +42,8 @@ public class CreateUserRequest {
 
     private String avatar;
 
+    private String caLamViec;
+
     private String diaChi;
 
     private BigDecimal luongCoBan;

@@ -109,6 +109,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         nd.setNhom(nhom);
         nd.setEmail(req.getEmail());
         nd.setAvatar(req.getAvatar());
+        nd.setCaLamViec(req.getCaLamViec());
         nd.setDiaChi(req.getDiaChi());
         nd.setLuongCoBan(req.getLuongCoBan());
         nd.setGhiChu(req.getGhiChu());
@@ -156,6 +157,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         nd.setNhom(nhom);
         nd.setEmail(req.getEmail());
         nd.setAvatar(req.getAvatar());
+        nd.setCaLamViec(req.getCaLamViec());
         nd.setDiaChi(req.getDiaChi());
         nd.setLuongCoBan(req.getLuongCoBan());
         nd.setGhiChu(req.getGhiChu());
