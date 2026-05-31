@@ -168,7 +168,13 @@
     background: var(--bg); display: flex; align-items: center; justify-content: center;
   }
   .dark .stat-icon-wrap { background: rgba(255,255,255,0.12); }
-  .stat-more { font-size: 18px; opacity: 0.3; cursor: pointer; font-weight: 700; line-height: 1; }
+  .stat-more {
+    border: 0; background: transparent; color: inherit;
+    font: inherit; font-size: 18px; opacity: 0.3; cursor: pointer;
+    font-weight: 700; line-height: 1; padding: 2px 4px; border-radius: 6px;
+  }
+  .stat-more:hover { opacity: 0.75; background: rgba(31,31,31,0.07); }
+  .dark .stat-more:hover { background: rgba(255,255,255,0.12); }
   .stat-value {
     font-size: 23px; font-weight: 800; letter-spacing: -1px;
     line-height: 1; margin-bottom: 5px;
@@ -217,8 +223,45 @@
   .card:hover { box-shadow: var(--shadow-md); }
   .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
   .card-title { font-size: 14.5px; font-weight: 700; letter-spacing: -0.3px; }
-  .card-action { font-size: 12.5px; color: var(--text-muted); cursor: pointer; font-weight: 500; }
+  .card-action {
+    border: 0; background: transparent; font: inherit;
+    font-size: 12.5px; color: var(--text-muted); cursor: pointer; font-weight: 500;
+  }
   .card-action:hover { color: var(--text); }
+  .list-modal-backdrop {
+    position: fixed; inset: 0; z-index: 300;
+    display: none; align-items: center; justify-content: center;
+    padding: 24px; background: rgba(31,31,31,0.34);
+  }
+  .list-modal-backdrop.open { display: flex; }
+  .list-modal {
+    width: min(860px, calc(100vw - 32px)); max-height: min(760px, calc(100vh - 48px));
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius); box-shadow: 0 18px 60px rgba(0,0,0,0.18);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .list-modal-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 18px 20px; border-bottom: 1.5px solid var(--border);
+  }
+  .list-modal-title { font-size: 18px; font-weight: 800; letter-spacing: -0.4px; }
+  .list-modal-subtitle { margin-top: 3px; font-size: 12.5px; color: var(--text-muted); font-weight: 500; }
+  .list-modal-close {
+    width: 34px; height: 34px; border-radius: 8px; border: 1.5px solid var(--border);
+    background: var(--surface); cursor: pointer; font-size: 20px; line-height: 1;
+  }
+  .list-modal-close:hover { background: var(--bg); }
+  .list-modal-body { padding: 12px 20px 20px; overflow: auto; }
+  .modal-list-row {
+    display: grid; grid-template-columns: minmax(54px, 110px) 1fr 140px;
+    align-items: center; gap: 14px; padding: 12px 4px;
+    border-bottom: 1px solid var(--border); font-size: 13.5px;
+  }
+  .modal-list-row:last-child { border-bottom: 0; }
+  .modal-list-rank { color: var(--text-subtle); font-weight: 800; white-space: nowrap; }
+  .modal-list-name { min-width: 0; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .modal-list-value { text-align: right; font-weight: 800; }
+  .modal-list-sub { color: var(--text-muted); font-size: 12px; font-weight: 500; margin-top: 3px; }
 
   .chart-wrap { position: relative; height: 140px; }
 
@@ -483,7 +526,7 @@
           <div class="stat-icon-wrap">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f6f7ed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           </div>
-          <span class="stat-more">···</span>
+          <button class="stat-more" type="button" data-stat-view="revenue" aria-label="Xem báo cáo doanh thu">···</button>
         </div>
         <div class="stat-value">12,450,000 đ</div>
         <div class="stat-label">Doanh thu hôm nay</div>
@@ -495,7 +538,7 @@
           <div class="stat-icon-wrap">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
           </div>
-          <span class="stat-more">···</span>
+          <button class="stat-more" type="button" data-stat-view="inventory" aria-label="Xem báo cáo tồn kho">···</button>
         </div>
         <div class="stat-value">24</div>
         <div class="stat-label">Hóa đơn hôm nay</div>
@@ -507,7 +550,7 @@
           <div class="stat-icon-wrap">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
           </div>
-          <span class="stat-more">···</span>
+          <button class="stat-more" type="button" data-stat-view="revenue" aria-label="Xem báo cáo doanh thu">···</button>
         </div>
         <div class="stat-value">58</div>
         <div class="stat-label">Sách đã bán</div>
@@ -519,7 +562,7 @@
           <div class="stat-icon-wrap">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
           </div>
-          <span class="stat-more">···</span>
+          <button class="stat-more" type="button" data-stat-view="revenue" aria-label="Xem báo cáo doanh thu">···</button>
         </div>
         <div class="stat-value">2,453</div>
         <div class="stat-label">Tồn kho hiện tại</div>
@@ -531,7 +574,7 @@
           <div class="stat-icon-wrap">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1f1f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/><path d="M14 9h5v5"/></svg>
           </div>
-          <span class="stat-more" id="kpiEditBtn">···</span>
+          <button class="stat-more" type="button" id="kpiEditBtn" aria-label="Đặt KPI doanh thu hôm nay">···</button>
         </div>
         <div class="stat-value" id="dailyKpiPercent">--</div>
         <div class="stat-label" id="dailyKpiLabel">KPI doanh thu hôm nay</div>
@@ -578,7 +621,7 @@
       <div class="card">
         <div class="card-header">
           <span class="card-title">Sách bán chạy</span>
-          <span class="card-action">Xem tất cả ›</span>
+          <button class="card-action" type="button" data-list-modal="bestSellers">Xem tất cả ›</button>
         </div>
         <div class="rank-list">
           <div class="rank-item"><span class="rank-num">1</span><div class="rank-bar-wrap"><div class="rank-name">Dám bị ghét</div></div><span class="rank-count">123</span></div>
@@ -595,7 +638,7 @@
       <div class="card">
         <div class="card-header">
           <span class="card-title">Tồn kho nhiều nhất</span>
-          <span class="card-action">Xem tất cả ›</span>
+          <button class="card-action" type="button" data-list-modal="inventory">Xem tất cả ›</button>
         </div>
         <div class="inv-list">
           <div class="inv-item"><div class="inv-num">1</div><div class="inv-name">Đắc nhân tâm</div><span class="inv-count">186</span></div>
@@ -609,13 +652,13 @@
       <div class="card">
         <div class="card-header">
           <span class="card-title">Hóa đơn mới nhất</span>
-          <span class="card-action">Xem tất cả ›</span>
+          <button class="card-action" type="button" data-list-modal="invoices">Xem tất cả ›</button>
         </div>
         <table class="tbl">
           <thead>
             <tr><th>Mã HD</th><th>Khách hàng</th><th>Thời gian</th><th>Trạng thái</th></tr>
           </thead>
-          <tbody>
+          <tbody id="latestInvoiceRows">
             <tr><td style="font-weight:700">HD000126</td><td style="color:var(--text-muted)">Khách lẻ</td><td style="color:var(--text-muted)">10/05 10:45</td><td><span class="badge paid">Đã thanh toán</span></td></tr>
             <tr><td style="font-weight:700">HD000125</td><td>Nguyễn Văn An</td><td style="color:var(--text-muted)">10/05 10:15</td><td><span class="badge paid">Đã thanh toán</span></td></tr>
             <tr><td style="font-weight:700">HD000124</td><td>Trần Thị Mai</td><td style="color:var(--text-muted)">10/05 09:50</td><td><span class="badge paid">Đã thanh toán</span></td></tr>
@@ -790,6 +833,18 @@
     </section>
 
   </div>
+  <div class="list-modal-backdrop" id="dashboardListModal" aria-hidden="true">
+    <div class="list-modal" role="dialog" aria-modal="true" aria-labelledby="dashboardListModalTitle">
+      <div class="list-modal-header">
+        <div>
+          <div class="list-modal-title" id="dashboardListModalTitle">Danh sách</div>
+          <div class="list-modal-subtitle" id="dashboardListModalSubtitle">Dữ liệu từ dashboard</div>
+        </div>
+        <button class="list-modal-close" type="button" id="dashboardListModalClose" aria-label="Đóng">×</button>
+      </div>
+      <div class="list-modal-body" id="dashboardListModalBody"></div>
+    </div>
+  </div>
   <div class="toast" id="appToast"></div>
 </div>
 
@@ -901,7 +956,10 @@ const dashboardState = {
   todayRevenue: 0,
   dailyKpiTarget: 0,
   sevenDays: [],
-  thirtyDays: []
+  thirtyDays: [],
+  bestSellers: [],
+  inventoryTop: [],
+  latestInvoices: []
 };
 
 const todayDateEl = document.getElementById('todayDate');
@@ -1395,6 +1453,110 @@ function renderDashboardInventory(rows) {
   `).join('') : '<div class="state-text">Kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u</div>';
 }
 
+function normalizeInvoiceRows(response) {
+  const rows = response?.data || response?.content || (Array.isArray(response) ? response : []);
+  return (rows || []).slice().sort((a, b) => {
+    const dateA = new Date(a.ngayLap || a.createdAt || a.thoiGian || 0).getTime();
+    const dateB = new Date(b.ngayLap || b.createdAt || b.thoiGian || 0).getTime();
+    if (Number.isFinite(dateA) && Number.isFinite(dateB) && dateA !== dateB) return dateB - dateA;
+    return Number(b.id || 0) - Number(a.id || 0);
+  });
+}
+
+function getInvoiceCustomer(row) {
+  return row.tenKhachHang || row.khachHang?.hoTen || row.khachHang?.tenKhachHang || row.khachHang?.ten || 'Kh\u00e1ch l\u1ebb';
+}
+
+function getInvoiceCode(row) {
+  return row.maHoaDon || row.maHD || (row.id ? `HD${String(row.id).padStart(6, '0')}` : '--');
+}
+
+function formatInvoiceDate(row) {
+  const raw = row.ngayLap || row.createdAt || row.thoiGian || row.ngayTao;
+  const date = raw ? new Date(raw) : null;
+  if (!date || Number.isNaN(date.getTime())) return '--';
+  return date.toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+
+function getInvoiceStatus(row) {
+  return row.trangThai || row.status || 'Đã thanh toán';
+}
+
+function renderDashboardInvoices(rows) {
+  const tbody = document.getElementById('latestInvoiceRows');
+  if (!tbody) return;
+  tbody.innerHTML = rows && rows.length ? rows.slice(0, 5).map(row => `
+    <tr>
+      <td style="font-weight:700">${escapeHtml(getInvoiceCode(row))}</td>
+      <td style="color:var(--text-muted)">${escapeHtml(getInvoiceCustomer(row))}</td>
+      <td style="color:var(--text-muted)">${escapeHtml(formatInvoiceDate(row))}</td>
+      <td><span class="badge paid">${escapeHtml(getInvoiceStatus(row))}</span></td>
+    </tr>
+  `).join('') : '<tr><td colspan="4" class="state-text">Kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u</td></tr>';
+}
+
+function renderModalRows(rows, type) {
+  if (!rows || !rows.length) return '<div class="state-text">Kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u</div>';
+  return rows.map((row, index) => {
+    if (type === 'bestSellers') {
+      return `
+        <div class="modal-list-row">
+          <div class="modal-list-rank">${index + 1}</div>
+          <div class="modal-list-name" title="${escapeHtml(row.tenSach || '')}">${escapeHtml(row.tenSach || '')}</div>
+          <div class="modal-list-value">${Number(row.soLuongDaBan || 0).toLocaleString('vi-VN')} cu\u1ed1n</div>
+        </div>
+      `;
+    }
+    if (type === 'inventory') {
+      return `
+        <div class="modal-list-row">
+          <div class="modal-list-rank">${index + 1}</div>
+          <div class="modal-list-name" title="${escapeHtml(row.tenSach || '')}">${escapeHtml(row.tenSach || '')}</div>
+          <div class="modal-list-value">${Number(row.soLuongTonKho || 0).toLocaleString('vi-VN')} t\u1ed3n</div>
+        </div>
+      `;
+    }
+    return `
+      <div class="modal-list-row">
+        <div class="modal-list-rank">${escapeHtml(getInvoiceCode(row))}</div>
+        <div class="modal-list-name" title="${escapeHtml(getInvoiceCustomer(row))}">
+          ${escapeHtml(getInvoiceCustomer(row))}
+          <div class="modal-list-sub">${escapeHtml(formatInvoiceDate(row))}</div>
+        </div>
+        <div class="modal-list-value">${escapeHtml(getInvoiceStatus(row))}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openDashboardListModal(type) {
+  const modal = document.getElementById('dashboardListModal');
+  const title = document.getElementById('dashboardListModalTitle');
+  const subtitle = document.getElementById('dashboardListModalSubtitle');
+  const body = document.getElementById('dashboardListModalBody');
+  if (!modal || !title || !subtitle || !body) return;
+
+  const configs = {
+    bestSellers: ['S\u00e1ch b\u00e1n ch\u1ea1y', 'Danh s\u00e1ch \u0111\u1ea7y \u0111\u1ee7 theo s\u1ed1 l\u01b0\u1ee3ng \u0111\u00e3 b\u00e1n', dashboardState.bestSellers],
+    inventory: ['T\u1ed3n kho nhi\u1ec1u nh\u1ea5t', 'Danh s\u00e1ch \u0111\u1ea7y \u0111\u1ee7 theo s\u1ed1 l\u01b0\u1ee3ng t\u1ed3n', dashboardState.inventoryTop],
+    invoices: ['H\u00f3a \u0111\u01a1n m\u1edbi nh\u1ea5t', 'Danh s\u00e1ch h\u00f3a \u0111\u01a1n g\u1ea7n \u0111\u00e2y', dashboardState.latestInvoices]
+  };
+  const config = configs[type];
+  if (!config) return;
+  title.textContent = config[0];
+  subtitle.textContent = config[1];
+  body.innerHTML = renderModalRows(config[2], type);
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeDashboardListModal() {
+  const modal = document.getElementById('dashboardListModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+}
+
 async function loadDashboard() {
   getDashboardStatCards().forEach((card, index) => {
     const valueEl = card.querySelector('.stat-value');
@@ -1411,10 +1573,11 @@ async function loadDashboard() {
     apiGet('/api/bao-cao/doanh-thu-theo-the-loai'),
     apiGet('/api/bao-cao/sach-ban-chay'),
     apiGet('/api/bao-cao/ton-kho-nhieu-nhat'),
+    apiGet('/api/hoa-don'),
     loadDailyKpiTarget()
   ]);
 
-  const [todayResult, stockResult, sevenResult, thirtyResult, categoryResult, bestSellerResult, inventoryResult, kpiResult] = results;
+  const [todayResult, stockResult, sevenResult, thirtyResult, categoryResult, bestSellerResult, inventoryResult, invoiceResult, kpiResult] = results;
   setDashboardStat(0, todayResult.status === 'fulfilled' ? money(todayResult.value) : 'L\u1ed7i', 'Doanh thu h\u00f4m nay', todayResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
   setDashboardStat(1, stockResult.status === 'fulfilled' ? Number(stockResult.value || 0).toLocaleString('vi-VN') : 'L\u1ed7i', 'T\u1ed3n kho hi\u1ec7n t\u1ea1i', stockResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
 
@@ -1429,10 +1592,12 @@ async function loadDashboard() {
   renderDashboardLineChart(dashboardState.sevenDays);
   if (categoryResult.status === 'fulfilled') renderDashboardDonut(categoryResult.value);
   else renderDashboardDonut([]);
-  if (bestSellerResult.status === 'fulfilled') renderDashboardBestSellers(bestSellerResult.value);
-  else renderDashboardBestSellers([]);
-  if (inventoryResult.status === 'fulfilled') renderDashboardInventory(inventoryResult.value);
-  else renderDashboardInventory([]);
+  dashboardState.bestSellers = bestSellerResult.status === 'fulfilled' ? (bestSellerResult.value || []) : [];
+  dashboardState.inventoryTop = inventoryResult.status === 'fulfilled' ? (inventoryResult.value || []) : [];
+  dashboardState.latestInvoices = invoiceResult.status === 'fulfilled' ? normalizeInvoiceRows(invoiceResult.value) : [];
+  renderDashboardBestSellers(dashboardState.bestSellers);
+  renderDashboardInventory(dashboardState.inventoryTop);
+  renderDashboardInvoices(dashboardState.latestInvoices);
 
   loadedViews.dashboard = true;
 }
@@ -1621,6 +1786,26 @@ async function loadInventory() {
 
 document.querySelectorAll('[data-view]').forEach(item => {
   item.addEventListener('click', () => setView(item.dataset.view));
+});
+document.querySelectorAll('[data-stat-view]').forEach(item => {
+  item.addEventListener('click', event => {
+    event.stopPropagation();
+    setView(item.dataset.statView);
+  });
+});
+document.querySelectorAll('[data-list-modal]').forEach(item => {
+  item.addEventListener('click', () => openDashboardListModal(item.dataset.listModal));
+});
+const dashboardListModal = document.getElementById('dashboardListModal');
+const dashboardListModalClose = document.getElementById('dashboardListModalClose');
+if (dashboardListModalClose) dashboardListModalClose.addEventListener('click', closeDashboardListModal);
+if (dashboardListModal) {
+  dashboardListModal.addEventListener('click', event => {
+    if (event.target === dashboardListModal) closeDashboardListModal();
+  });
+}
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeDashboardListModal();
 });
 document.getElementById('loadRevenueBtn').addEventListener('click', () => {
   loadedViews.revenue = false;
