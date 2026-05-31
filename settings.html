@@ -76,6 +76,7 @@
     display: flex; align-items: center; justify-content: center;
     transition: background 0.2s;
   }
+  .logo-mark svg { stroke: var(--bg); }
   .logo-text { font-weight: 800; font-size: 15.5px; letter-spacing: -0.5px; line-height: 1.1; }
   .logo-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
 
@@ -94,8 +95,8 @@
     text-decoration: none;
   }
   .nav-item:hover { background: var(--bg); color: var(--text); }
-  .nav-item.active { background: var(--text); color: #f6f7ed; font-weight: 600; }
-  .nav-item.active svg { stroke: #f6f7ed !important; }
+  .nav-item.active { background: var(--text); color: var(--bg); font-weight: 600; }
+  .nav-item.active svg { stroke: var(--bg) !important; }
   .nav-badge {
     margin-left: auto; background: var(--text); color: white;
     font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px;
@@ -115,7 +116,7 @@
   .avatar {
     width: 32px; height: 32px; background: var(--text);
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    color: #f6f7ed; font-size: 12px; font-weight: 700; flex-shrink: 0;
+    color: var(--bg); font-size: 12px; font-weight: 700; flex-shrink: 0;
     transition: background 0.2s;
   }
   .user-name { font-weight: 700; font-size: 13px; }
@@ -277,7 +278,7 @@
   .lang-btn:hover { border-color: var(--text); color: var(--text); }
   .lang-btn.active {
     background: var(--text); border-color: var(--text);
-    color: #f6f7ed;
+    color: var(--bg);
   }
   .lang-flag { font-size: 20px; line-height: 1; }
 
@@ -291,6 +292,7 @@
   }
   .notice.show { display: flex; }
 </style>
+<script>(function(){if(localStorage.getItem('darkMode')==='1')document.documentElement.setAttribute('data-theme','dark');})();</script>
 </head>
 <body>
 
