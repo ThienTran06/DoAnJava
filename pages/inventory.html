@@ -258,7 +258,7 @@ window.initBooks = function() {
         <td><img src="${book.image || ''}" style="width:40px;height:50px;object-fit:cover;border-radius:4px;background:#f0f0f0" alt="Ảnh sách"></td>
         <td>${book.name}</td>
         <td>${book.category}</td>
-        <td>${book.price}</td>
+        <td>${book.price} đ</td>
         <td>${book.stock}</td>
         <td><span class="badge ${book.status === 'Còn hàng' ? 'ok' : 'bad'}">${book.status}</span></td>
         <td><div class="ops"><button class="link book-edit" data-id="${book.id}">Sửa</button><button class="link danger book-delete" data-id="${book.id}">Xóa</button></div></td>
