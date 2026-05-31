@@ -2,6 +2,7 @@ package com.library.librarymanager.controller;
 
 import com.library.librarymanager.dto.request.CreateUserRequest;
 import com.library.librarymanager.dto.request.UpdatePermissionsRequest;
+import com.library.librarymanager.dto.response.NhanVienXuatSacResponse;
 import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.service.Interface.NguoiDungService;
 import com.library.librarymanager.service.impl.NguoiDungServiceImpl;
@@ -33,6 +34,14 @@ public class NguoiDungController {
     public List<NguoiDung> findAll() {
 
         return sv.getAll();
+    }
+
+    @GetMapping("/xuat-sac")
+    public List<NhanVienXuatSacResponse> getNhanVienXuatSac(
+            @RequestParam(defaultValue = "5") int limit
+    ) {
+
+        return sv.getNhanVienXuatSac(limit);
     }
 
     @PutMapping("/{id}")

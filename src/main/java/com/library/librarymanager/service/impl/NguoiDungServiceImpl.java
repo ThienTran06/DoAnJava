@@ -2,17 +2,20 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.Exception.AuthException;
 import com.library.librarymanager.dto.request.CreateUserRequest;
+import com.library.librarymanager.dto.response.NhanVienXuatSacResponse;
 import com.library.librarymanager.entity.ChucNang;
 import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.entity.NhomNguoiDung;
 import com.library.librarymanager.entity.PhanQuyen;
 import com.library.librarymanager.repository.ChucNangRepository;
+import com.library.librarymanager.repository.HoaDonRepository;
 import com.library.librarymanager.repository.NguoiDungRepository;
 import com.library.librarymanager.repository.NhomNguoiDungRepository;
 import com.library.librarymanager.repository.PhanQuyenRepository;
 import com.library.librarymanager.service.Interface.NguoiDungService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +30,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     private final NhomNguoiDungRepository nhomRepo;
     private final PhanQuyenRepository phanQuyenRepo;
     private final ChucNangRepository chucNangRepo;
+    private final HoaDonRepository hoaDonRepo;
     private final BCryptPasswordEncoder encoder;
     private static final String ROLE_ADMIN = "ADMIN";
     private static final Map<String, List<String>> ROLE_PERMISSION_NAMES = Map.of(
@@ -233,6 +237,12 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         NguoiDung nd = repo.findById(id)
                 .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
         applyRolePermissions(nd, nd.getNhom().getTenNhom());
+    }
+
+    @Override
+    public List<NhanVienXuatSacResponse> getNhanVienXuatSac(int limit) {
+        int safeLimit = Math.max(1, Math.min(limit, 20));
+        return hoaDonRepo.findNhanVienXuatSac(PageRequest.of(0, safeLimit));
     }
 
 

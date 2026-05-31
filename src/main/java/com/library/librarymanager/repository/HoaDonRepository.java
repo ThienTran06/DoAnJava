@@ -3,8 +3,10 @@ package com.library.librarymanager.repository;
 import com.library.librarymanager.dto.response.DoanhThuNamResponse;
 import com.library.librarymanager.dto.response.DoanhThuNgayResponse;
 import com.library.librarymanager.dto.response.DoanhThuThangResponse;
+import com.library.librarymanager.dto.response.NhanVienXuatSacResponse;
 import com.library.librarymanager.entity.HoaDon;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -80,4 +82,18 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Integer> {
         +"WHERE a.trangThai IN ('HOAN THANH', 'PAID') "
     )
     BigDecimal getTongDoanhThu();
+
+    @Query("""
+            SELECT h.nhanVien.id AS nhanVienId,
+                   h.nhanVien.hoTen AS hoTen,
+                   h.nhanVien.username AS username,
+                   COUNT(h.id) AS soHoaDon,
+                   COALESCE(SUM(h.tongTien), 0) AS doanhThu
+            FROM HoaDon h
+            WHERE h.nhanVien IS NOT NULL
+              AND h.trangThai IN ('HOAN THANH', 'PAID')
+            GROUP BY h.nhanVien.id, h.nhanVien.hoTen, h.nhanVien.username
+            ORDER BY COALESCE(SUM(h.tongTien), 0) DESC, COUNT(h.id) DESC
+            """)
+    List<NhanVienXuatSacResponse> findNhanVienXuatSac(Pageable pageable);
 }

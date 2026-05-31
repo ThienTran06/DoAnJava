@@ -17,7 +17,27 @@
     <div class="stat-card"><div class="stat-value" id="staffTotal">32</div><div class="stat-label">Tổng nhân viên</div></div>
     <div class="stat-card dark"><div class="stat-value" id="staffWorking">28</div><div class="stat-label">Đang làm việc</div></div>
     <div class="stat-card"><div class="stat-value" id="staffManager">3</div><div class="stat-label">Quản lý</div></div>
-    <div class="stat-card"><div class="stat-value" id="staffTop">5</div><div class="stat-label">Nhân viên bán hàng xuất sắc</div></div>
+    <div class="stat-card"><div class="stat-value" id="staffTop">0</div><div class="stat-label">Hóa đơn của NV xuất sắc</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
+    <div class="table-card">
+      <div style="font-size:15px;font-weight:800;margin-bottom:10px">Nhân viên xuất sắc</div>
+      <div class="table-wrap">
+        <table class="tbl-books" style="min-width:520px">
+          <thead><tr><th>#</th><th>Nhân viên</th><th>Hóa đơn</th><th>Doanh thu</th></tr></thead>
+          <tbody id="topStaffRows"><tr><td colspan="4"><div class="empty-state">Chưa tải dữ liệu.</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="table-card">
+      <div style="font-size:15px;font-weight:800;margin-bottom:10px">Quyền lợi theo chức vụ</div>
+      <div class="table-wrap">
+        <table class="tbl-books" style="min-width:640px">
+          <thead><tr><th>Chức vụ</th><th>Quyền lợi / quyền truy cập</th></tr></thead>
+          <tbody id="roleBenefitRows"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
   <div class="table-card">
     <div class="table-wrap">
@@ -35,7 +55,7 @@
 <script>
 // Initialize Staff page
 window.initStaff = function() {
-  const state = { items: window.allStaff || [] };
+  const state = { items: window.allStaff || [], topPerformers: [] };
 
   const API_BASE = window.API_BASE_URL || 'http://localhost:8081';
   const STAFF_API = `${API_BASE}/api/nguoi-dung`;
@@ -96,6 +116,18 @@ window.initStaff = function() {
 
   const toGroupName = role => groupMap[role] || 'NHAN_VIEN_BAN_HANG';
 
+  const roleBenefits = [
+    ['Quản lý', 'Toàn bộ 11 chức năng trong hệ thống'],
+    ['Thu ngân', 'Hóa đơn, khách hàng, phiếu giữ'],
+    ['Nhân viên bán hàng', 'Sách, hóa đơn, khách hàng, phiếu giữ'],
+    ['Kho', 'Sách, phiếu nhập, nhà cung cấp'],
+    ['Biên mục', 'Sách, thể loại, tác giả, nhà xuất bản'],
+    ['Kế toán', 'Xem báo cáo, hóa đơn, phiếu nhập'],
+    ['Nhân sự', 'Quản lý người dùng']
+  ];
+
+  const money = value => Number(value || 0).toLocaleString('vi-VN') + ' đ';
+
   const mapStaff = (item) => ({
   id: item?.id,
   name: item?.hoTen || item?.ten || '—',
@@ -151,6 +183,33 @@ window.initStaff = function() {
       tableBody.innerHTML = `<tr><td colspan="10"><div class="empty-state">Không thể tải danh sách nhân viên từ backend: ${error.message}</div></td></tr>`;
     }
   };
+  const loadTopStaffFromApi = async () => {
+    const topRows = document.getElementById('topStaffRows');
+    if (topRows) topRows.innerHTML = `<tr><td colspan="4"><div class="empty-state">Đang tải nhân viên xuất sắc...</div></td></tr>`;
+    try {
+      const response = await fetch(`${STAFF_API}/xuat-sac?limit=5`, {
+        headers: {
+          Accept: 'application/json',
+          ...getAuthHeaders(),
+        },
+      });
+      if (response.status === 401) {
+        window.location.href = 'login.html';
+        return;
+      }
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `HTTP ${response.status}`);
+      }
+      state.topPerformers = await response.json();
+      renderTopStaff();
+      updateStaffStats();
+    } catch (error) {
+      state.topPerformers = [];
+      if (topRows) topRows.innerHTML = `<tr><td colspan="4"><div class="empty-state">Không thể tải nhân viên xuất sắc: ${error.message}</div></td></tr>`;
+      updateStaffStats();
+    }
+  };
   const modal = document.getElementById('staffModal');
   const form = document.getElementById('staffForm');
   const tableBody = document.getElementById('staffTableBody');
@@ -166,7 +225,7 @@ window.initStaff = function() {
     const total = state.items.length;
     const working = state.items.filter(x => getShiftStatus(x.shift).text === 'Đang làm').length;
     const managers = state.items.filter(x => x.role === 'Quản lý').length;
-    const salesStaff = state.items.filter(x => x.role === 'Nhân viên bán hàng').length;
+    const topInvoiceCount = Number(state.topPerformers[0]?.soHoaDon || 0);
 
     const statTotalEl = document.getElementById('staffTotal');
     const statWorkingEl = document.getElementById('staffWorking');
@@ -176,7 +235,34 @@ window.initStaff = function() {
     if (statTotalEl) statTotalEl.textContent = total;
     if (statWorkingEl) statWorkingEl.textContent = working;
     if (statManagerEl) statManagerEl.textContent = managers;
-    if (statTopEl) statTopEl.textContent = salesStaff;
+    if (statTopEl) statTopEl.textContent = topInvoiceCount.toLocaleString('vi-VN');
+  };
+
+  const renderTopStaff = () => {
+    const topRows = document.getElementById('topStaffRows');
+    if (!topRows) return;
+    topRows.innerHTML = state.topPerformers.length ? state.topPerformers.map((item, index) => `
+      <tr>
+        <td style="font-weight:800">${index + 1}</td>
+        <td>
+          <div style="font-weight:800">${item.hoTen || item.username || '—'}</div>
+          <div style="font-size:12px;color:var(--muted)">${item.username || ''}</div>
+        </td>
+        <td style="font-weight:800">${Number(item.soHoaDon || 0).toLocaleString('vi-VN')}</td>
+        <td style="font-weight:800">${money(item.doanhThu)}</td>
+      </tr>
+    `).join('') : `<tr><td colspan="4"><div class="empty-state">Chưa có hóa đơn hoàn thành để xếp hạng.</div></td></tr>`;
+  };
+
+  const renderRoleBenefits = () => {
+    const rows = document.getElementById('roleBenefitRows');
+    if (!rows) return;
+    rows.innerHTML = roleBenefits.map(([role, benefit]) => `
+      <tr>
+        <td style="font-weight:800">${role}</td>
+        <td style="color:var(--muted)">${benefit}</td>
+      </tr>
+    `).join('');
   };
 
   const render = () => {
@@ -418,7 +504,10 @@ if (avatarFile) {
   }
 
   render();
+  renderTopStaff();
+  renderRoleBenefits();
   loadStaffFromApi();
+  loadTopStaffFromApi();
   clearInterval(window.staffShiftStatusTimer);
   window.staffShiftStatusTimer = setInterval(render, 60000);
 };
