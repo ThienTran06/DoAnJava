@@ -20,6 +20,8 @@ public interface SachService {
                 Integer theLoaiId,
                 Integer nhaXuatBanId,
                 List<Integer> tacGiaIds,
+                String tenNhaXuatBanMoi,
+                String tenTacGiaMoi,
                 MultipartFile hinhAnh
         );
 
@@ -32,6 +34,8 @@ public interface SachService {
                 Integer theLoaiId,
                 Integer nhaXuatBanId,
                 List<Integer> tacGiaIds,
+                String tenNhaXuatBanMoi,
+                String tenTacGiaMoi,
                 MultipartFile hinhAnh
         );
 

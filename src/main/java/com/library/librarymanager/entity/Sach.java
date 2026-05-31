@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
+
 
 @Getter
 @Setter
@@ -23,15 +23,13 @@ public class Sach {
     @ManyToOne
     @JoinColumn(name = "the_loai_id")
     private TheLoai theLoai;
+
     @ManyToOne
-    @JoinColumn(name="nha_xuat_ban_id")
+    @JoinColumn(name = "tac_gia_id")
+    private TacGia tacGia;
+
+    @ManyToOne
+    @JoinColumn(name = "nha_xuat_ban_id")
     private NhaXuatBan nhaXuatBan;
-    @ManyToMany
-    @JoinTable(
-            name = "sach_tac_gia",
-            joinColumns = @JoinColumn(name = "sach_id"),
-            inverseJoinColumns = @JoinColumn(name = "tac_gia_id")
-    )
-    private List<TacGia> danhSachTacGia;
 
 }

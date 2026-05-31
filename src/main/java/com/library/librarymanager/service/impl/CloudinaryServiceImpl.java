@@ -20,7 +20,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
         try {
 
-            Map data = cloudinary.uploader().upload(
+            Map<String, Object> data = cloudinary.uploader().upload(
                     file.getBytes(),
                     ObjectUtils.emptyMap()
             );

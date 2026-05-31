@@ -17,7 +17,6 @@
     <div class="stat-card"><div class="stat-value" id="staffTotal">32</div><div class="stat-label">Tổng nhân viên</div></div>
     <div class="stat-card dark"><div class="stat-value" id="staffWorking">28</div><div class="stat-label">Đang làm việc</div></div>
     <div class="stat-card"><div class="stat-value" id="staffManager">3</div><div class="stat-label">Quản lý</div></div>
-    <div class="stat-card"><div class="stat-value" id="staffTop">5</div><div class="stat-label">Nhân viên bán hàng xuất sắc</div></div>
   </div>
   <div class="table-card">
     <div class="table-wrap">
@@ -46,24 +45,25 @@ window.initStaff = function() {
       || sessionStorage.getItem('token')
       || window.localStorage.token
       || window.sessionStorage.token;
+      console.log('Token hiện tại:', token);
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
   const mapStaff = (item) => ({
-  id: item?.id,
-  name: item?.hoTen || item?.ten || '—',
-  code: item?.username || item?.maNhanVien || item?.code || '',
-  role: item?.nhom?.tenNhom || item?.vaiTro || item?.role || '',
-  email: item?.email || '',
-  phone: item?.SDT || item?.sdt || '',
-  shift: item?.caLamViec || item?.shift || '',
-  status: item?.trangThai || item?.status || 'Đang làm',
-  avatar: item?.avatar || '',
-  address: item?.diaChi || item?.address || '',
-  joinDate: item?.ngayVaoLam || item?.joinDate || '',
-  salary: item?.luongCoBan || item?.salary || '',
-  note: item?.ghiChu || item?.note || ''
-});
+    id: item?.id,
+    name: item?.hoTen || item?.ten || '—',
+    code: item?.username || item?.maNhanVien || item?.code || '',
+    role: item?.chucVu || item?.nhom?.tenNhom || item?.vaiTro || item?.role || '',
+    email: item?.email || '',
+    phone: item?.SDT || item?.sdt || '',
+    shift: item?.caLamViec || item?.shift || '',
+    status: item?.trangThai || item?.status || 'Đang làm',
+    avatar: item?.avatar || '',
+    address: item?.diaChi || item?.address || '',
+    joinDate: item?.ngayVaoLam || item?.joinDate || '',
+    salary: item?.luongCoBan || item?.salary || '',
+    note: item?.ghiChu || item?.note || ''
+  });
 
   const renderLoadingState = () => {
     tableBody.innerHTML = `<tr><td colspan="10"><div class="empty-state">Đang tải danh sách nhân viên...</div></td></tr>`;
@@ -113,17 +113,14 @@ window.initStaff = function() {
     const total = state.items.length;
     const working = state.items.filter(x => x.status === 'Đang làm').length;
     const managers = state.items.filter(x => x.role === 'Quản lý').length;
-    const salesStaff = state.items.filter(x => x.role === 'Nhân viên bán hàng').length;
 
     const statTotalEl = document.getElementById('staffTotal');
     const statWorkingEl = document.getElementById('staffWorking');
     const statManagerEl = document.getElementById('staffManager');
-    const statTopEl = document.getElementById('staffTop');
 
     if (statTotalEl) statTotalEl.textContent = total;
     if (statWorkingEl) statWorkingEl.textContent = working;
     if (statManagerEl) statManagerEl.textContent = managers;
-    if (statTopEl) statTopEl.textContent = salesStaff;
   };
 
   const render = () => {
@@ -184,51 +181,34 @@ window.initStaff = function() {
   const staffId = isEdit ? state.items[window.currentEditStaffIndex]?.id : null;
   const url = isEdit ? `${STAFF_API}/${staffId}` : `${STAFF_API}/create`;
   const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  const avatarFile = form.avatar.files && form.avatar.files[0];
 
-  // Upload ảnh lên Cloudinary nếu có file mới
-let avatarUrl = isEdit ? (state.items[window.currentEditStaffIndex]?.avatar || '') : '';
-const avatarFile = form.avatar.files && form.avatar.files[0];
-if (avatarFile) {
-  const cloudinaryFormData = new FormData();
-  cloudinaryFormData.append('file', avatarFile);
-  cloudinaryFormData.append('upload_preset', 'ml_default');
-  cloudinaryFormData.append('cloud_name', 'ddjcg7c8y');
-  try {
-    const cloudRes = await fetch('https://api.cloudinary.com/v1_1/ddjcg7c8y/image/upload', {
-      method: 'POST',
-      body: cloudinaryFormData,
-    });
-    const cloudData = await cloudRes.json();
-    if (cloudData.secure_url) avatarUrl = cloudData.secure_url;
-  } catch (err) {
-    console.error('Upload ảnh thất bại', err);
+  const formData = new FormData();
+  formData.append('tenDangNhap', form.code.value.trim());
+  formData.append('matKhau', '123456');
+  formData.append('hoTen', form.name.value.trim());
+  formData.append('sdt', form.phone.value.trim());
+  formData.append('tenNhom', form.role.value === 'Quản lý' ? 'ADMIN' : 'STAFF');
+  formData.append('permissionIds', '1');
+  formData.append('email', form.email.value.trim());
+  formData.append('caLamViec', form.shift.value || '');
+  formData.append('diaChi', form.address.value || '');
+  formData.append('ngayVaoLam', form.joinDate.value || '');
+  formData.append('chucVu', form.role.value);
+  formData.append('tenNhom', form.role.value === 'Quản lý' ? 'ADMIN' : 'STAFF');
+  formData.append('luongCoBan', String(Number(form.salary.value) || 0));
+  formData.append('ghiChu', form.note.value || '');
+  if (avatarFile) {
+    formData.append('avatar', avatarFile);
   }
-}
-
-  const payload = {
-  tenDangNhap: form.code.value.trim(),
-  matKhau: '123456',
-  hoTen: form.name.value.trim(),
-  sdt: form.phone.value.trim(),
-  tenNhom: form.role.value === 'Quản lý' ? 'ADMIN' : 'STAFF',
-  permissionIds: [1],
-  email: form.email.value.trim(),
-  caLamViec: form.shift.value || '',
-  diaChi: form.address.value || '',
-  ngayVaoLam: form.joinDate.value || '',
-  luongCoBan: Number(form.salary.value) || 0,
-  ghiChu: form.note.value || '',
-  avatar: avatarUrl
-};
 
   try {
     const response = await fetch(url, {
       method: isEdit ? 'PUT' : 'POST',
       headers: {
-        'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {})
       },
-      body: JSON.stringify(payload),
+      body: formData,
     });
     if (response.status === 401) { window.location.href = 'login.html'; return; }
     if (!response.ok) throw new Error('Request failed');
@@ -258,106 +238,98 @@ if (avatarFile) {
 
     const row = e.target.closest('tr');
     const cells = row.querySelectorAll('td');
-    const staffName = cells[2].textContent.trim();
-    const itemIndex = state.items.findIndex(i => i.name === staffName);
-
+    const currentStaff = {
+      avatar: cells[1].querySelector('.avatar img') ? cells[1].querySelector('.avatar img').src : cells[1].querySelector('.avatar')?.textContent || '',
+      name: cells[2].textContent.trim(),
+      code: cells[3].textContent.trim(),
+      role: cells[4].textContent.trim(),
+      email: cells[5].textContent.trim(),
+      phone: cells[6].textContent.trim(),
+      shift: cells[7].textContent.trim(),
+      status: cells[8].textContent.trim(),
+      address: '',
+      joinDate: '',
+      salary: '',
+      note: ''
+    };
     if (editBtn) {
-      // Open edit modal
-      const item = state.items[itemIndex];
-      form.name.value = item.name;
-      form.code.value = item.code;
-      form.email.value = item.email;
-      form.phone.value = item.phone;
-      form.role.value = item.role;
-      form.shift.value = item.shift;
-      form.address.value = item.address || '';
-      form.joinDate.value = item.joinDate || '';
-      form.salary.value = item.salary || '';
-      form.note.value = item.note || '';
-      
-      if (item.avatar && item.avatar.length > 1) {
-        preview.src = item.avatar;
+      const idx = Array.from(row.parentNode.children).indexOf(row);
+      const found = state.items[idx];
+      if (!found) return;
+      window.currentEditStaffIndex = idx;
+      form.name.value = found.name || '';
+      form.code.value = found.code || '';
+      form.email.value = found.email || '';
+      form.phone.value = found.phone || '';
+      form.address.value = found.address || '';
+      form.role.value = found.role || 'Quản lý';
+      form.shift.value = found.shift || '';
+      form.joinDate.value = found.joinDate || '';
+      form.salary.value = found.salary || '';
+      form.note.value = found.note || '';
+      if (found.avatar) {
+        preview.src = found.avatar;
         preview.style.display = 'block';
         preview.nextElementSibling.style.display = 'none';
-      } else {
-        preview.removeAttribute('src');
-        preview.style.display = 'none';
-        preview.nextElementSibling.style.display = 'block';
       }
-
       document.querySelector('#staffModal .modal-title').textContent = '🧑‍💼 Sửa nhân viên';
       document.getElementById('saveStaff').querySelector('.txt').textContent = 'Cập nhật';
-      window.currentEditStaffIndex = itemIndex;
       modal.classList.add('open');
-    } else if (deleteBtn) {
-  const item = state.items[itemIndex];
-  window.showConfirm('Bạn chắc chắn muốn xóa nhân viên này?', async () => {
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    try {
-      const response = await fetch(`${STAFF_API}/${item.id}`, {
-        method: 'DELETE',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      if (response.status === 401) { window.location.href = 'login.html'; return; }
-      if (!response.ok) throw new Error('Delete failed');
-      state.items.splice(itemIndex, 1);
-      window.allStaff = state.items;
-      render();
-      window.showToast('Đã xóa nhân viên');
-    } catch (err) {
-      window.showToast('Không thể xóa nhân viên');
     }
-  });
-}
-});
-
-  // View profile modal
-  const detailModal = document.getElementById('staffDetailModal');
-  const closeProfileBtn = document.getElementById('closeProfileModal');
-  const closeProfileBtn2 = document.getElementById('closeProfileBtn');
-  
-  if (closeProfileBtn) closeProfileBtn.onclick = () => detailModal.classList.remove('open');
-  if (closeProfileBtn2) closeProfileBtn2.onclick = () => detailModal.classList.remove('open');
-  
-  tableBody.addEventListener('click', e => {
-    const btn = e.target.closest('.js-view-staff');
-    if (!btn) return;
-    const staffName = btn.dataset.name;
-    const staff = state.items.find(x => x.name === staffName);
-    if (!staff) return;
-
-    // Populate profile modal
-    document.getElementById('profileName').textContent = staff.name;
-    document.getElementById('profileCode').textContent = staff.code;
-    document.getElementById('profileEmail').textContent = staff.email;
-    document.getElementById('profilePhone').textContent = staff.phone;
-    document.getElementById('profileRole').textContent = staff.role;
-    document.getElementById('profileShift').textContent = staff.shift;
-    document.getElementById('profileAddress').textContent = staff.address || '—';
-    document.getElementById('profileJoinDate').textContent = staff.joinDate || '—';
-    document.getElementById('profileSalary').textContent = staff.salary ? staff.salary.toLocaleString() + ' đ' : '—';
-    document.getElementById('profileStatus').textContent = staff.status;
-    document.getElementById('profileNote').textContent = staff.note || '—';
-
-    const avatarContainer = document.getElementById('profileAvatarContainer');
-    if (avatarContainer) {
-      if (staff.avatar && staff.avatar.length > 1) {
-        avatarContainer.innerHTML = `<img src="${staff.avatar}" class="avatar" style="width:80px;height:80px;object-fit:cover;margin:0 auto;" alt="Avatar">`;
-      } else {
-        avatarContainer.innerHTML = `<div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto;display:flex;align-items:center;justify-content:center;">${staff.avatar || (staff.name[0] || 'E').toUpperCase()}</div>`;
+    if (deleteBtn) {
+      const idx = Array.from(row.parentNode.children).indexOf(row);
+      if (confirm('Xóa nhân viên này?')) {
+        state.items.splice(idx, 1);
+        window.allStaff = state.items;
+        render();
+        window.showToast('Đã xóa nhân viên');
       }
     }
-    
+  });
+
+  // View profile modal handling
+  const detailModal = document.getElementById('staffDetailModal');
+  const closeProfileBtn = document.getElementById('closeProfileBtn');
+  const closeProfileModal = document.getElementById('closeProfileModal');
+  const profileAvatarContainer = document.getElementById('profileAvatarContainer');
+  const profileName = document.getElementById('profileName');
+  const profileCode = document.getElementById('profileCode');
+  const profileEmail = document.getElementById('profileEmail');
+  const profilePhone = document.getElementById('profilePhone');
+  const profileRole = document.getElementById('profileRole');
+  const profileShift = document.getElementById('profileShift');
+  const profileAddress = document.getElementById('profileAddress');
+  const profileJoinDate = document.getElementById('profileJoinDate');
+  const profileSalary = document.getElementById('profileSalary');
+  const profileStatus = document.getElementById('profileStatus');
+  const profileNote = document.getElementById('profileNote');
+
+  const closeProfile = () => detailModal.classList.remove('open');
+  closeProfileBtn.onclick = closeProfile;
+  closeProfileModal.onclick = closeProfile;
+  detailModal.addEventListener('click', e => { if (e.target === detailModal) closeProfile(); });
+
+  tableBody.addEventListener('click', e => {
+    const viewBtn = e.target.closest('.js-view-staff');
+    if (!viewBtn) return;
+    const idx = Number(viewBtn.dataset.idx || '0');
+    const item = state.items[idx];
+    if (!item) return;
+    profileName.textContent = item.name || '—';
+    profileCode.textContent = item.code || '—';
+    profileEmail.textContent = item.email || '—';
+    profilePhone.textContent = item.phone || '—';
+    profileRole.textContent = item.role || '—';
+    profileShift.textContent = item.shift || '—';
+    profileAddress.textContent = item.address || '—';
+    profileJoinDate.textContent = item.joinDate || '—';
+    profileSalary.textContent = item.salary || '—';
+    profileStatus.textContent = item.status || '—';
+    profileNote.textContent = item.note || '—';
+    profileAvatarContainer.innerHTML = item.avatar ? `<img src="${item.avatar}" class="avatar" style="width:80px;height:80px;object-fit:cover;margin:0 auto">` : `<div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto">${(item.name?.[0] || 'A').toUpperCase()}</div>`;
     detailModal.classList.add('open');
   });
 
-  function markField(input, message) {
-    const field = input.closest('.field');
-    field.classList.add('error');
-    field.querySelector('.helper').textContent = message;
-  }
-
-  render();
   loadStaffFromApi();
 };
 </script>

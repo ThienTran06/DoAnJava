@@ -51,8 +51,10 @@ public class SachController {
             @RequestParam Integer soLuongTon,
             @RequestParam Integer namXuatBan,
             @RequestParam Integer theLoaiId,
-            @RequestParam Integer nhaXuatBanId,
-            @RequestParam List<Integer> tacGiaIds,
+            @RequestParam(required = false) Integer nhaXuatBanId,
+            @RequestParam(required = false) List<Integer> tacGiaIds,
+            @RequestParam(required = false) String tenNhaXuatBanMoi,
+            @RequestParam(required = false) String tenTacGiaMoi,
             @RequestParam MultipartFile hinhAnh
     ) {
 
@@ -64,6 +66,8 @@ public class SachController {
                 theLoaiId,
                 nhaXuatBanId,
                 tacGiaIds,
+                tenNhaXuatBanMoi,
+                tenTacGiaMoi,
                 hinhAnh
         );
     }
@@ -76,8 +80,10 @@ public class SachController {
             @RequestParam Integer soLuongTon,
             @RequestParam Integer namXuatBan,
             @RequestParam Integer theLoaiId,
-            @RequestParam Integer nhaXuatBanId,
-            @RequestParam List<Integer> tacGiaIds,
+            @RequestParam(required = false) Integer nhaXuatBanId,
+            @RequestParam(required = false) List<Integer> tacGiaIds,
+            @RequestParam(required = false) String tenNhaXuatBanMoi,
+            @RequestParam(required = false) String tenTacGiaMoi,
             @RequestParam(required = false) MultipartFile hinhAnh
     ) {
 
@@ -90,6 +96,8 @@ public class SachController {
                 theLoaiId,
                 nhaXuatBanId,
                 tacGiaIds,
+                tenNhaXuatBanMoi,
+                tenTacGiaMoi,
                 hinhAnh
         );
     }

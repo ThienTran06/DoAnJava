@@ -16,7 +16,7 @@ public interface SachRepository extends JpaRepository<Sach,Integer> {
     +"FROM Sach s "
     +"ORDER BY s.soLuongTon DESC ")
     List<SachTonKhoResponse> tonKhoNhieuNhat();
-    @Query("SELECT s FROM Sach s LEFT JOIN s.danhSachTacGia tg WHERE " +
+    @Query("SELECT s FROM Sach s LEFT JOIN s.tacGia tg WHERE " +
             "(:tenSach IS NULL OR s.tenSach LIKE %:tenSach%) AND " +
             "(:tenTheLoai IS NULL OR s.theLoai.tenTheLoai LIKE %:tenTheLoai%) AND " +
             "(:tenTacGia IS NULL OR tg.hoTen LIKE %:tenTacGia%) AND " +

@@ -47,6 +47,50 @@ public class SachServiceImpl implements SachService {
                 );
     }
 
+    private boolean hasText(String text) {
+        return text != null && !text.trim().isEmpty();
+    }
+
+    private NhaXuatBan resolveNhaXuatBan(Integer nhaXuatBanId, String tenNhaXuatBanMoi) {
+        if (nhaXuatBanId != null) {
+            return nhaXuatBanRepository.findById(nhaXuatBanId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy nhà xuất bản"));
+        }
+
+        if (hasText(tenNhaXuatBanMoi)) {
+            String ten = tenNhaXuatBanMoi.trim();
+            NhaXuatBan nhaXuatBan = nhaXuatBanRepository.findByTenNXBIgnoreCase(ten);
+            if (nhaXuatBan == null) {
+                nhaXuatBan = new NhaXuatBan();
+                nhaXuatBan.setTenNXB(ten);
+                nhaXuatBan = nhaXuatBanRepository.save(nhaXuatBan);
+            }
+            return nhaXuatBan;
+        }
+
+        throw new RuntimeException("Vui lòng chọn hoặc nhập nhà xuất bản");
+    }
+
+    private TacGia resolveTacGia(List<Integer> tacGiaIds, String tenTacGiaMoi) {
+        if (tacGiaIds != null && !tacGiaIds.isEmpty()) {
+            return tacGiaRepository.findById(tacGiaIds.get(0))
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy tác giả"));
+        }
+
+        if (hasText(tenTacGiaMoi)) {
+            String ten = tenTacGiaMoi.trim();
+            TacGia tacGia = tacGiaRepository.findByHoTenIgnoreCase(ten);
+            if (tacGia == null) {
+                tacGia = new TacGia();
+                tacGia.setHoTen(ten);
+                tacGia = tacGiaRepository.save(tacGia);
+            }
+            return tacGia;
+        }
+
+        return null;
+    }
+
     @Override
     @Transactional
     public Sach create(
@@ -57,6 +101,8 @@ public class SachServiceImpl implements SachService {
             Integer theLoaiId,
             Integer nhaXuatBanId,
             List<Integer> tacGiaIds,
+            String tenNhaXuatBanMoi,
+            String tenTacGiaMoi,
             MultipartFile hinhAnh
     ) {
 
@@ -81,19 +127,8 @@ public class SachServiceImpl implements SachService {
                         new RuntimeException("Không tìm thấy thể loại")
                 );
 
-        NhaXuatBan nhaXuatBan = nhaXuatBanRepository.findById(nhaXuatBanId)
-                .orElseThrow(() ->
-                        new RuntimeException("Không tìm thấy nhà xuất bản")
-                );
-
-        List<TacGia> dsTacGia =
-                tacGiaRepository.findAllById(tacGiaIds);
-
-        if (dsTacGia.size() != tacGiaIds.size()) {
-            throw new RuntimeException("Có tác giả không tồn tại");
-        }
-
-
+        NhaXuatBan nhaXuatBan = resolveNhaXuatBan(nhaXuatBanId, tenNhaXuatBanMoi);
+        TacGia tacGia = resolveTacGia(tacGiaIds, tenTacGiaMoi);
 
         sach.setTenSach(tenSach);
         sach.setGiaBan(giaBan);
@@ -103,8 +138,8 @@ public class SachServiceImpl implements SachService {
 
 
         sach.setTheLoai(theLoai);
+        sach.setTacGia(tacGia);
         sach.setNhaXuatBan(nhaXuatBan);
-        sach.setDanhSachTacGia(dsTacGia);
 
         return sachRepository.save(sach);
     }
@@ -120,6 +155,8 @@ public class SachServiceImpl implements SachService {
             Integer theLoaiId,
             Integer nhaXuatBanId,
             List<Integer> tacGiaIds,
+            String tenNhaXuatBanMoi,
+            String tenTacGiaMoi,
             MultipartFile hinhAnh
     ) {
 
@@ -136,17 +173,8 @@ public class SachServiceImpl implements SachService {
                         new RuntimeException("Không tìm thấy thể loại")
                 );
 
-        NhaXuatBan nhaXuatBan = nhaXuatBanRepository.findById(nhaXuatBanId)
-                .orElseThrow(() ->
-                        new RuntimeException("Không tìm thấy nhà xuất bản")
-                );
-
-        List<TacGia> dsTacGia =
-                tacGiaRepository.findAllById(tacGiaIds);
-
-        if (dsTacGia.size() != tacGiaIds.size()) {
-            throw new RuntimeException("Có tác giả không tồn tại");
-        }
+        NhaXuatBan nhaXuatBan = resolveNhaXuatBan(nhaXuatBanId, tenNhaXuatBanMoi);
+        TacGia tacGia = resolveTacGia(tacGiaIds, tenTacGiaMoi);
 
         sach.setTenSach(tenSach);
         sach.setGiaBan(giaBan);
@@ -168,8 +196,8 @@ public class SachServiceImpl implements SachService {
             sach.setHinhAnh(url);
         }
         sach.setTheLoai(theLoai);
+        sach.setTacGia(tacGia);
         sach.setNhaXuatBan(nhaXuatBan);
-        sach.setDanhSachTacGia(dsTacGia);
 
         return sachRepository.save(sach);
     }

@@ -233,6 +233,13 @@ CREATE TABLE `nguoi_dung` (
   `role` varchar(255) DEFAULT NULL,
   `sdt` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
+  `ca_lam_viec` varchar(100) DEFAULT NULL,
+  `dia_chi` varchar(255) DEFAULT NULL,
+  `ngay_vao_lam` varchar(50) DEFAULT NULL,
+  `luong_co_ban` bigint DEFAULT NULL,
+  `ghi_chu` text,
   PRIMARY KEY (`id`),
   KEY `FKpgps79lcn7imp5cdisg2v1wqp` (`ten_nhom`),
   CONSTRAINT `FKpgps79lcn7imp5cdisg2v1wqp` FOREIGN KEY (`ten_nhom`) REFERENCES `nhom_nguoi_dung` (`id`)
@@ -245,7 +252,7 @@ CREATE TABLE `nguoi_dung` (
 
 LOCK TABLES `nguoi_dung` WRITE;
 /*!40000 ALTER TABLE `nguoi_dung` DISABLE KEYS */;
-INSERT INTO `nguoi_dung` VALUES (1,1,'Admin','$2a$10$xR22tfHwe4dxhP1uCJoNh.DGHTtpC5l3u3jFUsgrIXtyouabCNkCe',NULL,'0814750791','admin'),(3,2,'Nhan vien 01','$2a$10$N33eW5IXDDSdSJtqkCGf0O6xOrp2uxU7v85JPau0og6TW.ykCTlBi',NULL,'0900000001','staff01');
+INSERT INTO `nguoi_dung` VALUES (1,1,'Admin','$2a$10$xR22tfHwe4dxhP1uCJoNh.DGHTtpC5l3u3jFUsgrIXtyouabCNkCe',NULL,'0814750791','admin',NULL,NULL,NULL,NULL,NULL,NULL,NULL),(3,2,'Nhan vien 01','$2a$10$N33eW5IXDDSdSJtqkCGf0O6xOrp2uxU7v85JPau0og6TW.ykCTlBi',NULL,'0900000001','staff01',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `nguoi_dung` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -638,4 +645,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-28 17:56:42
+-- Dump completed on 2026-05-31 15:14:25

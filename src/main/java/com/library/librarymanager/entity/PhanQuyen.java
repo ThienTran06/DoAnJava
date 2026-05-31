@@ -1,7 +1,12 @@
 package com.library.librarymanager.entity;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,12 +24,12 @@ public class PhanQuyen {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "ma_nguoi_dung")
+    @JoinColumn(name = "ma_nguoi_dung", referencedColumnName = "id")
     private NguoiDung nguoiDung;
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "ma_chuc_nang")
+    @JoinColumn(name = "ma_chuc_nang", referencedColumnName = "ma_chuc_nang")
     private ChucNang chucNang;
 
 

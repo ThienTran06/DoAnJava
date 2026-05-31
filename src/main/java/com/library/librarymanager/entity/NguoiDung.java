@@ -1,8 +1,10 @@
 package com.library.librarymanager.entity;
+
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,20 +24,39 @@ public class NguoiDung {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "ho_ten")
     private String hoTen;
+
     private String username;
     private String password;
+
+    @Column(name = "sdt")
     private String SDT;
+
     private String email;
     private String avatar;
+
+    @Column(name = "ca_lam_viec")
     private String caLamViec;
+
+    @Column(name = "chuc_vu")
+    private String chucVu;
+
+    @Column(name = "dia_chi")
     private String diaChi;
+
+    @Column(name = "ngay_vao_lam")
     private String ngayVaoLam;
+
+    @Column(name = "luong_co_ban")
     private Long luongCoBan;
+
+    @Column(name = "ghi_chu")
     private String ghiChu;
 
     @ManyToOne
-    @JoinColumn(name = "tenNhom")
+    @JoinColumn(name = "ten_nhom", referencedColumnName = "id")
     private NhomNguoiDung nhom;
 
     @JsonIgnore

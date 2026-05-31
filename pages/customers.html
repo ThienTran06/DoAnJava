@@ -32,6 +32,49 @@
   <div class="modal-overlay" id="customerDetailModal"><div class="modal" style="max-width:500px"><div class="modal-head"><div class="modal-title">👤 Chi tiết khách hàng</div><button class="close" id="closeDetailModal">×</button></div><div class="modal-body"><div style="text-align:center;margin-bottom:20px" id="detailAvatarContainer"><div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto">A</div></div><div style="display:grid;gap:12px"><div><div style="font-size:12px;color:var(--muted)">Họ tên</div><div style="font-weight:700" id="detailName">—</div></div><div><div style="font-size:12px;color:var(--muted)">Số điện thoại</div><div style="font-weight:700" id="detailPhone">—</div></div><div><div style="font-size:12px;color:var(--muted)">Email</div><div style="font-weight:700" id="detailEmail">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ngày sinh</div><div style="font-weight:700" id="detailDOB">—</div></div><div><div style="font-size:12px;color:var(--muted)">Địa chỉ</div><div style="font-weight:700" id="detailAddress">—</div></div><div><div style="font-size:12px;color:var(--muted)">Hạng thành viên</div><div style="font-weight:700" id="detailTier">—</div></div><div><div style="font-size:12px;color:var(--muted)">Tổng đơn hàng</div><div style="font-weight:700" id="detailOrders">—</div></div><div><div style="font-size:12px;color:var(--muted)">Điểm tích lũy</div><div style="font-weight:700" id="detailPoints">—</div></div><div><div style="font-size:12px;color:var(--muted)">Trạng thái</div><div style="font-weight:700" id="detailStatus">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ghi chú</div><div style="font-weight:700" id="detailNote">—</div></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="closeDetailBtn">Đóng</button></div></div></div>
 </div>
 
+<div class="modal-overlay" id="filterModal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-head">
+      <div class="modal-title">🔍 Lọc khách hàng</div>
+      <button class="close" id="closeFilterModal">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="grid">
+        <div class="field">
+          <div class="label">Hạng thành viên</div>
+          <select class="input" id="filterHang">
+            <option value="">Tất cả</option>
+            <option value="Đồng">Đồng</option>
+            <option value="Bạc">Bạc</option>
+            <option value="Vàng">Vàng</option>
+            <option value="Bạch Kim">Bạch Kim</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="label">Trạng thái</div>
+          <select class="input" id="filterTrangThai">
+            <option value="">Tất cả</option>
+            <option value="1">Hoạt động</option>
+            <option value="0">Ngừng hoạt động</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="label">Điểm tích lũy từ</div>
+          <input class="input" type="number" id="filterDiemMin" min="0" placeholder="0">
+        </div>
+        <div class="field">
+          <div class="label">Điểm tích lũy đến</div>
+          <input class="input" type="number" id="filterDiemMax" min="0" placeholder="Không giới hạn">
+        </div>
+      </div>
+    </div>
+    <div class="footer-actions">
+      <button type="button" class="btn ghost" id="resetFilter">Xóa bộ lọc</button>
+      <button type="button" class="btn primary" id="applyFilter">Áp dụng</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // Initialize Customers page
 window.initCustomers = function() {
@@ -40,6 +83,7 @@ window.initCustomers = function() {
   const API_BASE = window.API_BASE_URL || 'http://localhost:8081';
   const CUSTOMER_API = `${API_BASE}/api/khach-hang`;
   let customersLoading = false;
+  let filterState = { hang: '', trangThai: '', diemMin: '', diemMax: '' };
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem('token')
@@ -59,7 +103,7 @@ window.initCustomers = function() {
     hangThanhVien: item?.hangThanhVien || item?.tier || 'Đồng',
     trangThai: typeof item?.trangThai === 'boolean' ? item.trangThai : (item?.status ? item.status === 'Hoạt động' : true),
     avatar: item?.avatar || '',
-    dob: item?.dob || null,
+    dob: item?.ngaySinh || item?.dob || null,
     address: item?.address || '',
     note: item?.note || '',
     joinDate: item?.joinDate || null
@@ -153,7 +197,14 @@ window.initCustomers = function() {
   const render = (q = '') => {
     if (customersLoading) return;
     const query = q.trim().toLowerCase();
-    const rows = state.items.filter(x => !query || x.name.toLowerCase().includes(query) || x.phone.includes(query) || x.email.toLowerCase().includes(query));
+    const rows = state.items.filter(x => {
+      if (query && !x.name.toLowerCase().includes(query) && !x.phone.includes(query) && !x.email.toLowerCase().includes(query)) return false;
+      if (filterState.hang && x.hangThanhVien !== filterState.hang) return false;
+      if (filterState.trangThai !== '' && String(x.trangThai ? '1' : '0') !== filterState.trangThai) return false;
+      if (filterState.diemMin !== '' && (x.diemTichLuy ?? 0) < Number(filterState.diemMin)) return false;
+      if (filterState.diemMax !== '' && (x.diemTichLuy ?? 0) > Number(filterState.diemMax)) return false;
+      return true;
+    });
     tableBody.innerHTML = rows.length ? rows.map((item, idx) => `
       <tr>
         <td>${idx + 1}</td>
@@ -266,6 +317,35 @@ window.initCustomers = function() {
   };
   if (closeBtn) closeBtn.onclick = closeModal;
   if (cancelBtn) cancelBtn.onclick = closeModal;
+
+  const filterModal = document.getElementById('filterModal');
+  const btnFilter = document.getElementById('btnFilterCustomer');
+  const closeFilterBtn = document.getElementById('closeFilterModal');
+  const applyFilterBtn = document.getElementById('applyFilter');
+  const resetFilterBtn = document.getElementById('resetFilter');
+
+  if (btnFilter) btnFilter.onclick = () => filterModal.classList.add('open');
+  if (closeFilterBtn) closeFilterBtn.onclick = () => filterModal.classList.remove('open');
+  filterModal.addEventListener('click', e => { if (e.target === filterModal) filterModal.classList.remove('open'); });
+
+  if (applyFilterBtn) applyFilterBtn.onclick = () => {
+    filterState.hang = document.getElementById('filterHang').value;
+    filterState.trangThai = document.getElementById('filterTrangThai').value;
+    filterState.diemMin = document.getElementById('filterDiemMin').value;
+    filterState.diemMax = document.getElementById('filterDiemMax').value;
+    filterModal.classList.remove('open');
+    render(search ? search.value : '');
+  };
+
+  if (resetFilterBtn) resetFilterBtn.onclick = () => {
+    filterState = { hang: '', trangThai: '', diemMin: '', diemMax: '' };
+    document.getElementById('filterHang').value = '';
+    document.getElementById('filterTrangThai').value = '';
+    document.getElementById('filterDiemMin').value = '';
+    document.getElementById('filterDiemMax').value = '';
+    filterModal.classList.remove('open');
+    render(search ? search.value : '');
+  };
   
   modal.removeEventListener('click', window.customerModalHandler);
   window.customerModalHandler = e => { if (e.target === modal) closeModal(); };
@@ -303,6 +383,7 @@ window.initCustomers = function() {
     formData.append('hoTen', name);
     formData.append('sdt', phone);
     formData.append('email', email);
+    formData.append('ngaySinh', form.dob.value || '');
 
     const diemVal = document.getElementById('editDiemTichLuy');
     const trangThaiVal = document.getElementById('editTrangThai');
@@ -455,11 +536,23 @@ window.initCustomers = function() {
       window.currentEditCustomerIndex = itemIndex;
       modal.classList.add('open');
     } else if (deleteBtn) {
-      // Delete confirmation
-      window.showConfirm('Bạn chắc chắn muốn xóa khách hàng này?', () => {
-        state.items.splice(itemIndex, 1);
-        render(search.value);
-        window.showToast('Đã xóa khách hàng');
+      window.showConfirm('Bạn chắc chắn muốn xóa khách hàng này?', async () => {
+        const item = state.items[itemIndex];
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        try {
+          const response = await fetch(`${CUSTOMER_API}/${item.id}`, {
+            method: 'DELETE',
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          });
+          if (response.status === 401) { window.location.href = 'login.html'; return; }
+          if (!response.ok) throw new Error('Delete failed');
+          state.items.splice(itemIndex, 1);
+          window.allCustomers = state.items;
+          render(search.value);
+          window.showToast('Đã xóa khách hàng');
+        } catch (err) {
+          window.showToast('Không thể xóa khách hàng');
+        }
       });
     }
   });
