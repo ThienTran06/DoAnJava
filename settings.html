@@ -511,7 +511,7 @@
     applyTheme(isDark);
   }
 
-  // Topbar button calls this too (acts as a toggle from current state)
+  // Topbar button acts as a toggle from current state
   window._toggleDarkMode = function() {
     const current = document.documentElement.getAttribute('data-theme') === 'dark';
     const isDark = !current;
@@ -521,6 +521,44 @@
   };
   // Redefine topbar onclick
   document.getElementById('topbarThemeBtn').onclick = window._toggleDarkMode;
+
+  /* ─── MUSIC ─── */
+  function toggleMusic() {
+    const audio = document.getElementById('bgAudio');
+    const enabled = document.getElementById('musicToggle').checked;
+    localStorage.setItem('musicEnabled', enabled ? '1' : '0');
+    if (enabled) {
+      // audio.play() may fail if music file doesn't exist — catch silently
+      audio.play().catch(() => {});
+    } else {
+      audio.pause();
+    }
+  }
+
+  function changeVolume(val) {
+    const audio = document.getElementById('bgAudio');
+    audio.volume = val / 100;
+    document.getElementById('volumeVal').textContent = val + '%';
+    localStorage.setItem('musicVolume', val);
+  }
+
+  function restoreMusic() {
+    const enabled = localStorage.getItem('musicEnabled') === '1';
+    const vol = parseInt(localStorage.getItem('musicVolume') ?? '50', 10);
+
+    const toggle = document.getElementById('musicToggle');
+    const slider = document.getElementById('volumeSlider');
+    const audio = document.getElementById('bgAudio');
+
+    toggle.checked = enabled;
+    slider.value = vol;
+    document.getElementById('volumeVal').textContent = vol + '%';
+    audio.volume = vol / 100;
+
+    if (enabled) {
+      audio.play().catch(() => {});
+    }
+  }
 </script>
 </body>
 </html>
