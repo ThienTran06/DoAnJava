@@ -5,11 +5,15 @@ import com.library.librarymanager.dto.response.DoanhThuNgayResponse;
 import com.library.librarymanager.dto.response.DoanhThuThangResponse;
 import com.library.librarymanager.entity.HoaDon;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,4 +43,29 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Integer> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT h FROM HoaDon h WHERE h.id = :id")
     Optional<HoaDon> findByIdForUpdate(@Param("id") int id);
+    @Query("""
+    SELECT h
+    FROM HoaDon h
+    WHERE (:id IS NULL OR h.id = :id)
+      AND (
+            :tuNgay IS NULL
+            OR h.ngayBan >= :tuNgay
+               AND h.ngayBan < :denNgay
+      )
+""")
+    Page<HoaDon> getAll(
+            @Param("id") Integer id,
+            @Param("tuNgay") LocalDateTime tuNgay,
+            @Param("denNgay") LocalDateTime denNgay,
+            Pageable pageable
+    );
+    @Query("""
+        select
+            count(h),
+            sum(case when date(h.ngayBan) = current_date then 1 else 0 end),
+            sum(case when date(h.ngayBan) = current_date then h.tongTien else 0 end),
+            sum(h.tongTien)
+        from HoaDon h
+    """)
+    Object getThongKeHoaDon();
 }

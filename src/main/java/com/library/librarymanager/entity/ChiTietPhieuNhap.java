@@ -17,6 +17,12 @@ public class ChiTietPhieuNhap {
     private int id;
     private int soLuong;
     private BigDecimal giaNhap;
+
+    private String tenSach;
+
+    private String hinhAnh;
+
+    private BigDecimal thanhTien;
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name="phieu_nhap_id")

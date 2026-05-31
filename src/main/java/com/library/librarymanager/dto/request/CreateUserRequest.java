@@ -2,6 +2,7 @@ package com.library.librarymanager.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,7 @@ public class CreateUserRequest {
     @NotBlank(message = "tên nhóm không được trống")
     private String tenNhom;
 
-    @NotBlank(message = "List quyền không được trống")
+    @NotEmpty(message = "List quyền không được trống")
     private List<Integer> permissionIds;
 }
 

@@ -12,6 +12,9 @@ import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.SachService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,7 +74,7 @@ public class SachServiceImpl implements SachService {
                 throw new RuntimeException("Ảnh vượt quá 5MB");
             }
 
-             String url = cloudinaryService.uploadFile(hinhAnh);
+            String url = cloudinaryService.uploadFile(hinhAnh);
             sach.setHinhAnh(url);
 
         }
@@ -94,12 +97,10 @@ public class SachServiceImpl implements SachService {
         }
 
 
-
         sach.setTenSach(tenSach);
         sach.setGiaBan(giaBan);
         sach.setSoLuongTon(soLuongTon);
         sach.setNamXuatBan(namXuatBan);
-
 
 
         sach.setTheLoai(theLoai);
@@ -202,6 +203,33 @@ public class SachServiceImpl implements SachService {
                 tenTheLoai,
                 tenTacGia,
                 namXuatBan
+        );
+
+    }
+//get so luong>0
+    @Override
+    public Page<Sach> getDanhSachSach(
+            String keyword,
+            int page,
+            int size
+    ) {
+
+        return sachRepository.search(
+                keyword,
+                PageRequest.of(page, size)
+        );
+    }
+    //get all
+    public Page<Sach> getTatCaSach(
+            String keyword,
+            int page,
+            int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return sachRepository.searchAll(
+                keyword,
+                pageable
         );
     }
 }

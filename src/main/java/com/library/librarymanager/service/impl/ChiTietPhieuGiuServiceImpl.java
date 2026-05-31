@@ -50,13 +50,13 @@ public class ChiTietPhieuGiuServiceImpl implements ChiTietPhieuGiuService {
             throw new RuntimeException("Vuợt giới hạn số lượng sách");
         }
 
-        boolean daGiu = ctRepo.existsBySach_IdAndPhieuGiu_IdNotAndPhieuGiu_TrangThai(
-                sachId, phieuId, TrangThaiGiu.PENDING
-        );
-
-        if (daGiu) {
-            throw new RuntimeException("Sách đã được giữ");
-        }
+//        boolean daGiu = ctRepo.existsBySach_IdAndPhieuGiu_IdNotAndPhieuGiu_TrangThai(
+//                sachId, phieuId, TrangThaiGiu.PENDING
+//        );
+//
+//        if (daGiu) {
+//            throw new RuntimeException("Sách đã được giữ");
+//        }
 
         Sach s = sachRepo.findByIdForUpdate(sachId) .orElseThrow(() -> new RuntimeException("Không tìm thấy sách"));;
 

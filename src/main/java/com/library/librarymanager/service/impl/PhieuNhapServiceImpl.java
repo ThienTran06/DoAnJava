@@ -2,16 +2,20 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.dto.request.ChiTietPhieuNhapRequest;
 import com.library.librarymanager.dto.request.PhieuNhapRequest;
+import com.library.librarymanager.dto.response.ThongKePhieuNhapResponse;
 import com.library.librarymanager.entity.*;
 import com.library.librarymanager.repository.*;
 ;
 import com.library.librarymanager.service.Interface.PhieuNhapService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +27,7 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
     private final NguoiDungRepository nhanVienRepository;
     private final SachRepository sachRepository;
     private final ChiTietPhieuNhapRepository chiTietPhieuNhapRepository;
-    @Override
-    public List<PhieuNhap> getAll() {
-        return phieuNhapRepository.findAll();
-    }
+
 
     @Override
     public PhieuNhap getById(int id) {
@@ -48,10 +49,25 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
         for(ChiTietPhieuNhapRequest chiTietPhieuNhapRequest : request.getList()){
             Sach sach = sachRepository.findById(chiTietPhieuNhapRequest.getSachId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy sách có id = "+chiTietPhieuNhapRequest.getSachId()));
             ChiTietPhieuNhap chiTietPhieuNhap = new ChiTietPhieuNhap();
+
             chiTietPhieuNhap.setPhieuNhap(phieuNhap);
             chiTietPhieuNhap.setSach(sach);
-            chiTietPhieuNhap.setSoLuong(chiTietPhieuNhapRequest.getSoLuongNhap());
-            chiTietPhieuNhap.setGiaNhap(chiTietPhieuNhapRequest.getGiaNhap());
+
+            chiTietPhieuNhap.setTenSach(sach.getTenSach());
+            chiTietPhieuNhap.setHinhAnh(sach.getHinhAnh());
+
+            chiTietPhieuNhap.setSoLuong(
+                    chiTietPhieuNhapRequest.getSoLuongNhap());
+
+            chiTietPhieuNhap.setGiaNhap(
+                    chiTietPhieuNhapRequest.getGiaNhap());
+
+            chiTietPhieuNhap.setThanhTien(
+                    chiTietPhieuNhapRequest.getGiaNhap()
+                            .multiply(BigDecimal.valueOf(
+                                    chiTietPhieuNhapRequest.getSoLuongNhap()
+                            ))
+            );
             list.add(chiTietPhieuNhap);
             sach.setSoLuongTon(sach.getSoLuongTon()+chiTietPhieuNhapRequest.getSoLuongNhap());
             tongTienNhap = tongTienNhap.add(chiTietPhieuNhapRequest.getGiaNhap().multiply(BigDecimal.valueOf(chiTietPhieuNhapRequest.getSoLuongNhap())));
@@ -79,4 +95,36 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
     public void deleteById(int id) {
         phieuNhapRepository.deleteById(id);
     }
-}
+    @Override
+    public Page<PhieuNhap> getAll(Integer ma, LocalDate ngay, int page, int size) {
+
+        LocalDateTime tuNgay = null;
+        LocalDateTime denNgay = null;
+
+        if (ngay != null) {
+            tuNgay = ngay.atStartOfDay();
+            denNgay = ngay.plusDays(1).atStartOfDay();
+        }
+
+        return phieuNhapRepository.getAll(
+                ma,
+                tuNgay,
+                denNgay,
+                PageRequest.of(page, size)
+        );
+
+    }
+    @Override
+    public ThongKePhieuNhapResponse getThongKe() {
+
+        Object[] rs = (Object[]) phieuNhapRepository.getThongKePhieuNhap();
+
+        return new ThongKePhieuNhapResponse(
+                rs[1] == null ? 0 : ((Number) rs[1]).longValue(),
+                rs[0] == null ? 0 : ((Number) rs[0]).longValue(),
+                rs[2] == null ? 0 : ((Number) rs[2]).doubleValue(),
+                rs[3] == null ? 0 : ((Number) rs[3]).doubleValue()
+        );
+    }
+    }
+

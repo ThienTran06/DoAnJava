@@ -4,6 +4,9 @@ import com.library.librarymanager.entity.NhaCungCap;
 import com.library.librarymanager.repository.NhaCungCapRepository;
 import com.library.librarymanager.service.Interface.NhaCungCapService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,8 +17,18 @@ import java.util.List;
 public class NhaCungCapServiceImpl implements NhaCungCapService {
     private final NhaCungCapRepository nhaCungCapRepository;
     @Override
-    public List<NhaCungCap> getAll() {
-        return nhaCungCapRepository.findAll();
+    public Page<NhaCungCap> getDanhSachNhaCungCap(
+            String keyword,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return nhaCungCapRepository.getDanhSachNhaCungCap(
+                keyword,
+                pageable
+        );
     }
 
     @Override

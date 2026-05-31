@@ -3,6 +3,8 @@ package com.library.librarymanager.controller;
 import com.library.librarymanager.entity.Sach;
 import com.library.librarymanager.service.Interface.SachService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -97,5 +99,35 @@ public class SachController {
     @DeleteMapping("/{id}")
     void deleteById(@PathVariable int id) {
         sachService.deleteById(id);
+    }
+    //Get sách cho giỏ hàng
+    @GetMapping("/page")
+    public ResponseEntity<Page<Sach>> getDanhSachSach(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        return ResponseEntity.ok(
+                sachService.getDanhSachSach(
+                        keyword,
+                        page,
+                        size
+                )
+        );
+    }
+    @GetMapping("/get_all")
+    public ResponseEntity<Page<Sach>> getTatCaSach(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(
+                sachService.getTatCaSach(
+                        keyword,
+                        page,
+                        size
+                )
+        );
     }
 }

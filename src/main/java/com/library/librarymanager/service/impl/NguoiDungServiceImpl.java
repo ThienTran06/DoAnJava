@@ -50,9 +50,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 
         for (ChucNang cn : dsChucNang) {
 
-            if (phanQuyenRepo.existsByNguoiDungAndChucNang(nd, cn)) {
-                continue;
-            }
+
 
             PhanQuyen pq = new PhanQuyen();
             pq.setNguoiDung(nd);
@@ -71,7 +69,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 
         for (ChucNang cn : ds) {
 
-            if (phanQuyenRepo.existsByNguoiDungAndChucNang(nd, cn)) {
+            if (phanQuyenRepo.checkExist(nd, cn)) {
                 continue;
             }
 

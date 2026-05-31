@@ -2,16 +2,21 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.dto.request.ChiTietHoaDonRequest;
 import com.library.librarymanager.dto.request.HoaDonRequest;
+import com.library.librarymanager.dto.response.ThongKeHoaDon;
 import com.library.librarymanager.entity.*;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.HoaDonService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +31,23 @@ public class HoaDonServiceImpl implements HoaDonService {
     private final SachRepository sachRepository;
     private final ChiTietHoaDonRepository chiTietHoaDonRepository;
     @Override
-    public List<HoaDon> getAll() {
-        return hoaDonRepository.findAll();
-    }
+    public Page<HoaDon> getAll(Integer ma, LocalDate ngay, int page, int size) {
 
+        LocalDateTime tuNgay = null;
+        LocalDateTime denNgay = null;
+
+        if (ngay != null) {
+            tuNgay = ngay.atStartOfDay();
+            denNgay = ngay.plusDays(1).atStartOfDay();
+        }
+
+        return hoaDonRepository.getAll(
+                ma,
+                tuNgay,
+                denNgay,
+                PageRequest.of(page, size)
+        );
+    }
     @Override
     public HoaDon getById(int id) {
         return hoaDonRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy nhà cung cấp có id = "+id));
@@ -108,5 +126,26 @@ public class HoaDonServiceImpl implements HoaDonService {
         hoaDon.setTrangThai("DA HUY");
         hoaDonRepository.save(hoaDon);
     }
+    @Transactional
+    @Override
+    public ThongKeHoaDon getThongKe() {
 
-}
+        Object result = hoaDonRepository.getThongKeHoaDon();
+        Object[] row = (Object[]) result;
+
+        long tongHoaDon = ((Number) row[0]).longValue();
+        long hoaDonTrongNgay = ((Number) row[1]).longValue();
+        BigDecimal doanhThuTrongNgay = (BigDecimal) row[2];
+        BigDecimal tongDoanhThu = (BigDecimal) row[3];
+
+        if (doanhThuTrongNgay == null) doanhThuTrongNgay = BigDecimal.ZERO;
+        if (tongDoanhThu == null) tongDoanhThu = BigDecimal.ZERO;
+
+        return new ThongKeHoaDon(
+                tongHoaDon,
+                hoaDonTrongNgay,
+                doanhThuTrongNgay,
+                tongDoanhThu
+        );
+    }}
+

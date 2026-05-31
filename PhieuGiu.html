@@ -1,11 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BookHouse – Quản lý phiếu giữ sách</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap"
+            rel="stylesheet"
+    />
     <style>
         :root {
           --bg: #f6f7ed;
@@ -14,21 +17,27 @@
           --text: #1f1f1f;
           --text-muted: #888880;
           --text-subtle: #b5b5ae;
-          --purple: #722ed1;
-          --purple-light: #f9f0ff;
-          --green: #27ae60;
+          --purple: #1f1f1f;
+          --purple-light: #f5f5f5;
+          --green: #3a7d44;
           --green-light: #e8f5eb;
           --red: #c0392b;
           --red-light: #fdecea;
           --orange: #e67e22;
           --orange-light: #fdf2e9;
+          --blue: #1890ff;
+          --blue-light: #e6f7ff;
           --radius: 14px;
           --radius-sm: 8px;
-          --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+          --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
         body {
-          font-family: 'DM Sans', sans-serif;
+          font-family: "DM Sans", sans-serif;
           background: var(--bg);
           color: var(--text);
           display: flex;
@@ -38,213 +47,622 @@
           font-weight: 500;
         }
 
-        .ico { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .ico svg { display: block; }
+        .ico {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .ico svg {
+          display: block;
+        }
 
-        /* ─── SIDEBAR ─── */
+        /* ─── SIDEBAR CHUẨN ĐỒNG BỘ ĐẦY ĐỦ 100% ─── */
         .sidebar {
-          width: 224px; min-width: 224px;
+          width: 224px;
+          min-width: 224px;
           background: var(--surface);
           border-right: 1px solid var(--border);
-          display: flex; flex-direction: column;
-          overflow-y: auto; padding: 0 0 24px;
+          display: flex;
+          flex-direction: column;
+          overflow-y: auto;
+          padding: 0 0 24px;
         }
         .sidebar-logo {
-          display: flex; align-items: center; gap: 11px;
+          display: flex;
+          align-items: center;
+          gap: 11px;
           padding: 22px 20px 18px;
           border-bottom: 1px solid var(--border);
         }
         .logo-mark {
-          width: 34px; height: 34px;
+          width: 34px;
+          height: 34px;
           background: var(--text);
           border-radius: 9px;
-          display: flex; align-items: center; justify-content: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        .logo-text { font-weight: 800; font-size: 15.5px; letter-spacing: -0.5px; line-height: 1.1; }
-        .logo-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+        .logo-text {
+          font-weight: 800;
+          font-size: 15.5px;
+          letter-spacing: -0.5px;
+          line-height: 1.1;
+        }
+        .logo-sub {
+          font-size: 10px;
+          color: var(--text-muted);
+          margin-top: 2px;
+          font-weight: 400;
+        }
 
-        .nav-section { padding: 18px 12px 4px; }
+        .nav-section {
+          padding: 18px 12px 4px;
+        }
         .nav-label {
-          font-size: 10px; font-weight: 700;
-          letter-spacing: 0.09em; text-transform: uppercase;
-          color: var(--text-subtle); padding: 0 8px; margin-bottom: 4px;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+          color: var(--text-subtle);
+          padding: 0 8px;
+          margin-bottom: 4px;
         }
         .nav-item {
-          display: flex; align-items: center; gap: 9px;
-          padding: 8px 10px; border-radius: var(--radius-sm);
-          cursor: pointer; color: var(--text-muted);
-          font-size: 13.5px; font-weight: 500;
-          transition: all 0.15s; user-select: none;
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          padding: 8px 10px;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+          color: var(--text-muted);
+          font-size: 13.5px;
+          font-weight: 500;
+          transition: all 0.15s;
+          user-select: none;
         }
-        .nav-item:hover { background: var(--bg); color: var(--text); }
-        .nav-item.active { background: var(--text); color: #f6f7ed; font-weight: 600; }
-        .nav-item.active svg { stroke: #f6f7ed !important; }
+        .nav-item:hover {
+          background: var(--bg);
+          color: var(--text);
+        }
+        .nav-item.active {
+          background: var(--text);
+          color: #f6f7ed;
+          font-weight: 600;
+        }
+        .nav-item.active svg {
+          stroke: #f6f7ed !important;
+        }
         .nav-badge {
-          margin-left: auto; background: var(--text); color: white;
-          font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px;
+          margin-left: auto;
+          background: var(--text);
+          color: white;
+          font-size: 10px;
+          font-weight: 700;
+          padding: 1px 6px;
+          border-radius: 20px;
+        }
+        .nav-item.active .nav-badge {
+          background: rgba(255, 255, 255, 0.25);
+        }
+        .nav-arrow {
+          margin-left: auto;
+          font-size: 11px;
+          opacity: 0.35;
         }
 
         .sidebar-footer {
-          margin-top: auto; padding: 14px 16px 0;
+          margin-top: auto;
+          padding: 14px 16px 0;
           border-top: 1px solid var(--border);
         }
         .user-card {
-          display: flex; align-items: center; gap: 10px;
-          padding: 10px; border-radius: var(--radius-sm); cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
         }
-        .user-card:hover { background: var(--bg); }
+        .user-card:hover {
+          background: var(--bg);
+        }
         .avatar {
-          width: 32px; height: 32px; background: var(--text);
-          border-radius: 50%; display: flex; align-items: center; justify-content: center;
-          color: #f6f7ed; font-size: 12px; font-weight: 700; flex-shrink: 0;
+          width: 32px;
+          height: 32px;
+          background: var(--text);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #f6f7ed;
+          font-size: 12px;
+          font-weight: 700;
+          flex-shrink: 0;
         }
-        .user-name { font-weight: 700; font-size: 13px; }
-        .user-role { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+        .user-name {
+          font-weight: 700;
+          font-size: 13px;
+        }
+        .user-role {
+          font-size: 11px;
+          color: var(--text-muted);
+          font-weight: 400;
+        }
 
         /* ─── MAIN ZONE ─── */
-        .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+        .main {
+          flex: 1;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+        }
         .topbar {
-          background: var(--surface); border-bottom: 1px solid var(--border);
-          padding: 0 28px; height: 62px;
-          display: flex; align-items: center; gap: 16px;
-          flex-shrink: 0; position: sticky; top: 0; z-index: 10;
+          background: var(--surface);
+          border-bottom: 1px solid var(--border);
+          padding: 0 28px;
+          height: 62px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          flex-shrink: 0;
+          position: sticky;
+          top: 0;
+          z-index: 10;
         }
-        .topbar-left { flex: 1; }
-        .topbar-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
-        .topbar-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: 1px; }
+        .topbar-left {
+          flex: 1;
+        }
+        .topbar-title {
+          font-size: 18px;
+          font-weight: 800;
+          letter-spacing: -0.5px;
+        }
+        .topbar-subtitle {
+          font-size: 12px;
+          color: var(--text-muted);
+          font-weight: 400;
+          margin-top: 1px;
+        }
 
-        .content { padding: 22px 28px; flex: 1; display: flex; flex-direction: column; gap: 18px; }
+        .content {
+          padding: 22px 28px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          overflow: hidden;
+        }
 
-        /* ─── CONTROLS & CARDS ─── */
+        /* ─── CONTROLS LAYOUT ─── */
+        .card-header-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+        }
+        .page-title {
+          font-size: 16px;
+          font-weight: 700;
+        }
+        .controls-group {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        /* ─── CARDS & GRIDS ─── */
         .card {
-          background: var(--surface); border: 1.5px solid var(--border);
-          border-radius: var(--radius); padding: 20px;
-          transition: box-shadow 0.2s;
+          background: var(--surface);
+          border: 1.5px solid var(--border);
+          border-radius: var(--radius);
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          min-height: 0;
+          position: relative;
         }
-        .card:hover { box-shadow: var(--shadow-md); }
-        .card-header-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .page-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+        .section-card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          padding: 16px;
+          margin-bottom: 14px;
+        }
+        .section-title {
+          font-size: 14px;
+          font-weight: 700;
+          margin-bottom: 10px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .create-grid {
+          display: grid;
+          grid-template-columns: 1.3fr 1fr;
+          gap: 20px;
+          height: calc(100vh - 220px);
+          min-height: 0;
+        }
 
-        .controls-group { display: flex; align-items: center; gap: 10px; }
+        /* ─── INPUTS & BUTTONS ─── */
         .input-text {
-          background: var(--bg); border: 1px solid var(--border);
-          border-radius: 9px; padding: 8px 14px; font-family: inherit;
-          font-size: 13.5px; font-weight: 500; color: var(--text); outline: none;
-          transition: all 0.2s; width: 100%;
+          background: #fff;
+          border: 1.5px solid var(--border);
+          border-radius: var(--radius-sm);
+          padding: 8px 12px;
+          outline: none;
+          font-family: inherit;
+          font-size: 13.5px;
+          color: var(--text);
+          transition: border-color 0.15s;
+          width: 100%;
         }
-        .input-text:focus { border-color: var(--text); background: var(--surface); }
+        .input-text:focus {
+          border-color: var(--text);
+        }
 
         .btn {
-          display: inline-flex; align-items: center; gap: 6px;
-          padding: 8px 14px; border-radius: 9px; font-family: inherit;
-          font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all 0.15s;
-          border: 1.5px solid var(--border); background: var(--surface); color: var(--text);
-          white-space: nowrap; user-select: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: #fff;
+          border: 1.5px solid var(--border);
+          padding: 8px 14px;
+          border-radius: var(--radius-sm);
+          font-family: inherit;
+          font-size: 13.5px;
+          font-weight: 600;
+          color: var(--text);
+          cursor: pointer;
+          transition: all 0.1s;
+          user-select: none;
+          white-space: nowrap;
         }
-        .btn:hover { background: var(--bg); }
-        .btn-primary { background: var(--text); color: #f6f7ed; border-color: var(--text); }
-        .btn-primary:hover { background: #333; color: #fff; }
-        .btn-danger-ghost { border-color: var(--red); color: var(--red); background: transparent; }
-        .btn-danger-ghost:hover { background: var(--red-light); }
-        .btn-success { background: var(--green); color: #fff; border-color: var(--green); }
-        .btn-success:hover { background: #1e8449; }
-        .btn-icon { width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 50%; }
+        .btn:hover {
+          background: var(--bg);
+          border-color: var(--text-subtle);
+        }
+        .btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          background: #fafafa !important;
+        }
+        .btn-primary {
+          background: var(--text);
+          border-color: var(--text);
+          color: #fff;
+        }
+        .btn-primary:hover {
+          background: #333;
+          border-color: #333;
+        }
+        .btn-success {
+          background: var(--green);
+          border-color: var(--green);
+          color: #fff;
+        }
+        .btn-success:hover {
+          background: #2d6135;
+          border-color: #2d6135;
+        }
+        .btn-icon {
+          padding: 6px 10px;
+          justify-content: center;
+        }
+        .btn-danger-ghost {
+          background: transparent;
+          border: 1px solid transparent;
+          color: var(--red);
+        }
+        .btn-danger-ghost:hover {
+          background: var(--red-light);
+          border-color: var(--red);
+        }
 
-        /* ─── TABLES & BADGES ─── */
-        .table-wrap { width: 100%; overflow-x: auto; margin-top: 10px; }
-        .tbl { width: 100%; border-collapse: collapse; text-align: left; }
+        /* ─── TABLES ─── */
+        .table-wrap {
+          flex: 1;
+          overflow-y: auto;
+        }
+        .tbl {
+          width: 100%;
+          border-collapse: collapse;
+          text-align: left;
+        }
         .tbl th {
-          font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
-          text-transform: uppercase; color: var(--text-subtle);
-          padding: 12px 8px; border-bottom: 1.5px solid var(--border);
+          background: var(--bg);
+          padding: 12px 16px;
+          font-size: 12px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: var(--text-muted);
+          border-bottom: 1px solid var(--border);
+          position: sticky;
+          top: 0;
+          z-index: 1;
         }
-        .tbl td { padding: 12px 8px; font-size: 13.5px; border-bottom: 1px solid var(--border); vertical-align: middle; font-weight: 500; }
-        .tbl tr:last-child td { border-bottom: none; }
-        .tbl tr:hover td { background: var(--bg); }
-
-        .badge { display: inline-flex; padding: 3px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
-        .badge.purple-tag { background: var(--purple-light); color: var(--purple); border: 1px solid #d3adf7; border-radius: 4px; }
-        .badge.success { background: var(--green-light); color: var(--green); }
-        .badge.danger { background: var(--red-light); color: var(--red); }
-        .badge.warning { background: var(--orange-light); color: var(--orange); }
-        .badge.id-tag { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; border-radius: 4px; }
-
-        /* ─── STRUCTURAL MODALS ─── */
-        .modal-overlay {
-          position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(0,0,0,0.4); display: flex; align-items: center;
-          justify-content: center; z-index: 100; opacity: 0; pointer-events: none;
-          transition: opacity 0.2s ease;
+        .tbl td {
+          padding: 12px 16px;
+          border-bottom: 1px solid var(--border);
+          font-size: 13.5px;
         }
-        .modal-overlay.open { opacity: 1; pointer-events: auto; }
-        .modal-box {
-          background: var(--surface); border-radius: var(--radius);
-          width: 90%; max-width: 1050px; max-height: 85vh;
-          display: flex; flex-direction: column; overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-          transform: translateY(15px); transition: transform 0.2s ease;
+        .tbl tbody tr:hover td {
+          background: #fafafa;
         }
-        .modal-overlay.open .modal-box { transform: translateY(0); }
-        .modal-header {
-          padding: 16px 24px; border-bottom: 1px solid var(--border);
-          display: flex; align-items: center; justify-content: space-between;
+
+        /* ─── BADGES ─── */
+        .badge {
+          display: inline-flex;
+          padding: 3px 8px;
+          border-radius: 6px;
+          font-size: 11.5px;
+          font-weight: 700;
         }
-        .modal-title { font-size: 16px; font-weight: 700; }
-        .modal-body { padding: 20px 24px; overflow-y: auto; flex: 1; }
-        .modal-footer { padding: 12px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+        .badge.warning {
+          background: var(--orange-light);
+          color: var(--orange);
+        }
+        .badge.success {
+          background: var(--green-light);
+          color: var(--green);
+        }
+        .badge.danger {
+          background: var(--red-light);
+          color: var(--red);
+        }
+        .badge.id-tag {
+          background: var(--purple-light);
+          color: var(--text-muted);
+          border: 1px solid var(--border);
+        }
+        .badge.purple-tag {
+          background: var(--text);
+          color: #fff;
+        }
 
-        .create-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; height: 100%; }
-        .section-card { border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 14px; }
-        .section-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-
-        .cart-container { display: flex; flex-direction: column; height: 530px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 16px; background: #fff; }
-        .cart-items-list { flex: 1; overflow-y: auto; margin-bottom: 12px; padding-right: 4px; }
-
+        /* ─── CART ZONE ─── */
+        .cart-container {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          border: 1.5px solid var(--border);
+          border-radius: var(--radius-sm);
+          padding: 16px;
+          overflow: hidden;
+          background: #fff;
+        }
+        .cart-items-list {
+          flex: 1;
+          overflow-y: auto;
+          margin-bottom: 12px;
+          padding-right: 4px;
+        }
         .mini-card {
-          display: flex; gap: 10px; border: 1px solid var(--border);
-          border-radius: var(--radius-sm); padding: 8px; margin-bottom: 10px;
+          display: flex;
+          gap: 10px;
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          padding: 8px;
+          margin-bottom: 10px;
         }
-        .mini-card img { width: 50px; height: 68px; object-fit: cover; border-radius: 4px; background: #eee; }
-        .mini-card-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .mini-card-title { font-size: 13px; font-weight: 600; line-height: 1.2; }
+        .mini-card img {
+          width: 50px;
+          height: 68px;
+          object-fit: cover;
+          border-radius: 4px;
+          background: #eee;
+        }
+        .mini-card-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+        .mini-card-title {
+          font-size: 13px;
+          font-weight: 600;
+          line-height: 1.2;
+        }
 
-        /* ─── DRAWER RIGHT PANEL ─── */
-        .drawer-overlay {
-          position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(0,0,0,0.3); z-index: 90; opacity: 0; pointer-events: none;
+        /* ─── MODAL OVERLAYS ─── */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.4);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 100;
+          opacity: 0;
+          pointer-events: none;
           transition: opacity 0.2s ease;
         }
-        .drawer-overlay.open { opacity: 1; pointer-events: auto; }
-        .drawer-box {
-          position: fixed; top: 0; right: 0; bottom: 0; width: 620px;
-          background: var(--surface); border-left: 1px solid var(--border);
-          z-index: 91; transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.1, 0.7, 0.1, 1);
-          display: flex; flex-direction: column;
+        .modal-overlay.open {
+          opacity: 1;
+          pointer-events: auto;
         }
-        .drawer-overlay.open + .drawer-box { transform: translateX(0); }
+        .modal-box {
+          background: var(--surface);
+          border-radius: var(--radius);
+          width: 90%;
+          max-width: 950px;
+          max-height: 90vh;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          box-shadow: var(--shadow-md);
+        }
+        .modal-header {
+          padding: 16px 20px;
+          border-bottom: 1px solid var(--border);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-shrink: 0;
+        }
+        .modal-title {
+          font-size: 15px;
+          font-weight: 700;
+        }
+        .modal-body {
+          padding: 20px;
+          overflow-y: auto;
+          flex: 1;
+        }
+        .modal-footer {
+          padding: 14px 20px;
+          border-top: 1px solid var(--border);
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+          background: #fafafa;
+          flex-shrink: 0;
+        }
 
-        .form-item { margin-bottom: 12px; }
-        .form-item label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+        /* ─── DRAWER PANEL ─── */
+        .drawer-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.3);
+          z-index: 90;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.2s ease;
+        }
+        .drawer-overlay.open {
+          opacity: 1;
+          pointer-events: auto;
+        }
+        .drawer-box {
+          position: fixed;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 620px;
+          background: var(--surface);
+          border-left: 1px solid var(--border);
+          z-index: 91;
+          transform: translateX(100%);
+          transition: transform 0.25s cubic-bezier(0.1, 0.7, 0.1, 1);
+          display: flex;
+          flex-direction: column;
+        }
+        .drawer-box.open {
+          transform: translateX(0);
+        }
 
-        .space-compact { display: flex; width: 100%; }
-        .space-compact input { border-top-right-radius: 0; border-bottom-right-radius: 0; flex: 1; }
-        .space-compact .btn { border-top-left-radius: 0; border-bottom-left-radius: 0; margin-left: -1px; }
+        /* ─── FORMS & SUGGESTIONS ─── */
+        .form-item {
+          margin-bottom: 12px;
+        }
+        .form-item label {
+          display: block;
+          font-size: 12.5px;
+          font-weight: 600;
+          color: var(--text-muted);
+          margin-bottom: 4px;
+        }
+        .space-compact {
+          display: flex;
+          width: 100%;
+          gap: 8px;
+        }
+        .suggestions-dropdown {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          box-shadow: var(--shadow-md);
+          max-height: 180px;
+          overflow-y: auto;
+          z-index: 1000;
+          display: none;
+        }
+        .suggestion-item {
+          padding: 10px 14px;
+          cursor: pointer;
+          font-size: 13px;
+          border-bottom: 1px solid var(--border);
+          transition: background 0.15s;
+        }
+        .suggestion-item:hover {
+          background: var(--bg);
+        }
 
-        .detail-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fafafa; padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 1px solid var(--border); }
-        .summary-label { font-size: 12px; color: var(--text-muted); font-weight: 400; }
-        .summary-value { font-size: 13.5px; font-weight: 600; margin-top: 1px; }
+        /* ─── PAGINATION & SUMMARIES ─── */
+        .pagination-container {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .pagination-buttons {
+          display: flex;
+          gap: 4px;
+        }
+        .detail-summary-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+          background: #fafafa;
+          padding: 12px;
+          border-radius: 8px;
+          margin-bottom: 16px;
+          border: 1px solid var(--border);
+        }
+        .summary-label {
+          font-size: 12px;
+          color: var(--text-muted);
+          font-weight: 400;
+        }
+        .summary-value {
+          font-size: 13.5px;
+          font-weight: 600;
+          margin-top: 1px;
+        }
 
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar {
+          width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: var(--border);
+          border-radius: 3px;
+        }
     </style>
 </head>
 <body>
-
 <aside class="sidebar">
     <div class="sidebar-logo">
         <div class="logo-mark">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f6f7ed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#f6f7ed"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path
+                        d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+                />
+            </svg>
         </div>
         <div>
             <div class="logo-text">BookHouse</div>
@@ -255,40 +673,241 @@
     <div class="nav-section">
         <div class="nav-label">Quản lý</div>
         <div class="nav-item">
-            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+            </svg>
             Tổng quan
         </div>
         <div class="nav-item">
-            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path
+                        d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+                />
+            </svg>
             Sách
         </div>
         <div class="nav-item">
-            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <path
+                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                />
+            </svg>
             Danh mục <span class="nav-arrow">›</span>
         </div>
         <div class="nav-item">
-            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+            </svg>
             Khách hàng
         </div>
         <div class="nav-item">
-            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
             Nhân viên
         </div>
     </div>
 
     <div class="nav-section">
         <div class="nav-label">Nghiệp vụ</div>
-        <div class="nav-item">
-            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <div class="nav-item" onclick="location.href = 'ban-hang.html'">
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path
+                        d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                />
+            </svg>
             Bán hàng
         </div>
-        <div class="nav-item">
-            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            Hóa đơn
+        <div class="nav-item" onclick="location.href = 'hoa-don.html'">
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <path
+                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+            </svg>
+            Hóa đơn <span class="nav-badge" id="sidebar-invoice-count">0</span>
         </div>
-        <div class="nav-item active">
-            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f6f7ed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            Phiếu giữ sách <span class="nav-badge" id="sidebar-reserve-count">0</span>
+        <div
+                class="nav-item active"
+                onclick="location.href = 'dat-giu-sach.html'"
+        >
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+            </svg>
+            Đặt giữ sách
+            <span class="nav-badge" id="sidebar-reserve-count">0</span>
+        </div>
+        <div class="nav-item" onclick="location.href = 'nhap-hang.html'">
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <polyline points="8 17 12 21 16 17" />
+                <line x1="12" y1="12" x2="12" y2="21" />
+                <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29" />
+            </svg>
+            Nhập hàng
+        </div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-label">Báo cáo</div>
+        <div class="nav-item">
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
+            Doanh thu
+        </div>
+        <div class="nav-item">
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
+            Tồn kho
+        </div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-label">Hệ thống</div>
+        <div class="nav-item">
+            <svg
+                    class="ico"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <circle cx="12" cy="12" r="3" />
+                <path
+                        d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"
+                />
+            </svg>
+            Cài đặt
         </div>
     </div>
 
@@ -307,7 +926,9 @@
     <header class="topbar">
         <div class="topbar-left">
             <div class="topbar-title">Phiếu giữ sách</div>
-            <div class="topbar-subtitle">Hệ thống xử lý đặt giữ sách trước cho khách hàng</div>
+            <div class="topbar-subtitle">
+                Hệ thống xử lý đặt giữ sách trước cho khách hàng
+            </div>
         </div>
     </header>
 
@@ -316,17 +937,43 @@
             <div class="card-header-row">
                 <div class="page-title">📚 Quản lý phiếu giữ sách</div>
                 <div class="controls-group">
-                    <input type="text" class="input-text" id="searchReservationInput" placeholder="Tìm mã phiếu giữ (ID)..." style="width: 240px;">
-                    <input type="date" class="input-text" id="datePickerInput">
+                    <input
+                            type="text"
+                            class="input-text"
+                            id="searchReservationInput"
+                            placeholder="Tìm mã phiếu giữ (ID)..."
+                            style="width: 240px"
+                    />
+                    <input
+                            type="date"
+                            class="input-text"
+                            id="datePickerInput"
+                            style="width: auto"
+                    />
                     <button class="btn btn-primary" id="btnOpenCreateModal">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                                stroke-linecap="round"
+                                style="pointer-events: none"
+                        >
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
                         Tạo phiếu giữ sách
                     </button>
                 </div>
             </div>
         </div>
 
-        <div class="card" style="flex: 1; display: flex; flex-direction: column;">
+        <div
+                class="card"
+                style="flex: 1; display: flex; flex-direction: column"
+        >
             <div class="table-wrap">
                 <table class="tbl" id="reservationTable">
                     <thead>
@@ -335,127 +982,243 @@
                         <th>Ngày lập</th>
                         <th>Số lượng sách</th>
                         <th>Trạng thái</th>
-                        <th style="text-align: center;">Thao tác</th>
+                        <th style="text-align: center">Thao tác</th>
                     </tr>
                     </thead>
-                    <tbody id="reservationTableBody">
-                    </tbody>
+                    <tbody id="reservationTableBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
 
+<!-- MODAL LẬP PHIẾU GIỮ SÁCH -->
 <div class="modal-overlay" id="createReservationModal">
     <div class="modal-box">
         <div class="modal-header">
             <div class="modal-title">📚 Lập phiếu giữ sách mới</div>
-            <button class="btn btn-icon" onclick="closeCreateModal()" style="border:none; background:transparent;">✕</button>
+            <button
+                    class="btn btn-icon"
+                    id="btnCloseCreateModal"
+                    style="border: none; background: transparent"
+            >
+                ✕
+            </button>
         </div>
         <div class="modal-body">
             <div class="create-grid">
-
                 <div>
                     <div class="section-card">
-                        <div class="section-title">👤 Khách hàng</div>
-                        <div class="space-compact">
-                            <input type="text" class="input-text" id="customerPhoneInput" placeholder="Nhập số điện thoại khách hàng...">
-                            <button class="btn" id="btnFindCustomer" onclick="handleFindCustomer()">Tìm</button>
-                            <button class="btn btn-primary" id="btnOpenCustPopup" onclick="openCreateCustomerModal()">Tạo KH</button>
+                        <div class="section-title">👤 Tìm kiếm khách hàng</div>
+                        <div class="space-compact" style="position: relative">
+                            <input
+                                    type="text"
+                                    class="input-text"
+                                    id="customerSearchInput"
+                                    placeholder="Nhập họ tên hoặc số điện thoại khách hàng..."
+                                    autocomplete="off"
+                            />
+                            <button class="btn btn-primary" id="btnOpenCustPopup">
+                                Tạo KH
+                            </button>
+                            <div
+                                    class="suggestions-dropdown"
+                                    id="customerSuggestions"
+                            ></div>
                         </div>
 
-                        <div id="selectedCustomerCard" style="display: none; margin-top: 12px; padding: 12px; background: #fafafa; border-radius: 10px; border: 1px solid var(--border);">
-                        </div>
+                        <div
+                                id="selectedCustomerCard"
+                                style="
+                    display: none;
+                    margin-top: 12px;
+                    padding: 12px;
+                    background: #fafafa;
+                    border-radius: 10px;
+                    border: 1px solid var(--border);
+                  "
+                        ></div>
                     </div>
 
                     <div class="section-card">
-                        <div class="section-title">📚 Tìm kiếm sách</div>
-                        <input type="text" class="input-text" id="searchBookInput" placeholder="Tìm sách..." style="margin-bottom:14px;">
-                        <div style="max-height: 230px; overflow-y:auto; border:1px solid var(--border); border-radius:6px;">
-                            <table class="tbl" style="font-size:12.5px;">
+                        <div class="section-title">📚 Tìm kiếm sách giữ</div>
+                        <input
+                                type="text"
+                                class="input-text"
+                                id="searchBookInput"
+                                placeholder="Tìm tên sách nhanh..."
+                                style="margin-bottom: 14px"
+                        />
+                        <div
+                                style="
+                    max-height: 230px;
+                    overflow-y: auto;
+                    border: 1px solid var(--border);
+                    border-radius: 6px;
+                  "
+                        >
+                            <table class="tbl" style="font-size: 12.5px">
                                 <thead>
                                 <tr>
                                     <th>Sách</th>
                                     <th>Giá</th>
-                                    <th style="text-align:center;">Hành động</th>
+                                    <th style="text-align: center">Hành động</th>
                                 </tr>
                                 </thead>
-                                <tbody id="bookSearchTableBody">
-                                </tbody>
+                                <tbody id="bookSearchTableBody"></tbody>
                             </table>
+                        </div>
+
+                        <div
+                                class="pagination-container"
+                                style="
+                    margin-top: 8px;
+                    font-size: 12px;
+                    padding-top: 6px;
+                    flex-shrink: 0;
+                  "
+                        >
+                  <span id="bookPaginationInfo" style="color: var(--text-muted)"
+                  >Trang 1</span
+                  >
+                            <div class="pagination-buttons">
+                                <button
+                                        class="btn"
+                                        id="btnPrevBookPage"
+                                        style="padding: 2px 6px; font-size: 11px"
+                                >
+                                    ‹
+                                </button>
+                                <button
+                                        class="btn"
+                                        id="btnNextBookPage"
+                                        style="padding: 2px 6px; font-size: 11px"
+                                >
+                                    ›
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="cart-container" id="basketFrame">
-                    <div class="section-title">🛒 Giỏ hàng (<span id="cartCount">0</span>)</div>
+                    <div class="section-title">
+                        🛒 Giỏ hàng đặt giữ (<span id="cartCount">0</span>)
+                    </div>
                     <div class="cart-items-list" id="cartItemsList">
-                        <div style="color: #bfbfbf; text-align: center; padding-top: 100px; font-size:13.5px;">
-                            Hoàn thành Bước 1 để sinh mã phiếu giữ trong database.
+                        <div
+                                style="color: #999; text-align: center; padding-top: 150px"
+                        >
+                            Chưa có sản phẩm trong giỏ hàng giữ sách
                         </div>
                     </div>
 
-                    <div>
-                        <div style="height:1px; background:var(--border); margin: 12px 0;"></div>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-weight:700;">Tổng số lượng sách giữ</span>
-                            <span style="color:var(--red); font-size:16px; font-weight:800;" id="cartTotalQtyDisplay">0 quyển</span>
+                    <div style="flex-shrink: 0">
+                        <div
+                                style="height: 1px; background: var(--border); margin: 12px 0"
+                        ></div>
+                        <div
+                                style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 16px;
+                  "
+                        >
+                            <span style="font-weight: 700">Tổng số lượng giữ</span>
+                            <span
+                                    style="color: var(--red); font-size: 18px; font-weight: 800"
+                                    id="cartTotalQtyDisplay"
+                            >0 quyển</span
+                            >
                         </div>
+                        <button
+                                class="btn btn-primary"
+                                style="
+                    width: 100%;
+                    justify-content: center;
+                    padding: 12px;
+                    font-size: 14px;
+                  "
+                                id="btnSubmitReservation"
+                        >
+                            🚀 XÁC NHẬN LẬP PHIẾU GIỮ
+                        </button>
                     </div>
                 </div>
-
             </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" onclick="closeCreateModal()">Hoàn tất & Đóng</button>
         </div>
     </div>
 </div>
 
-<div class="modal-overlay" id="createCustomerModal" style="background: rgba(0,0,0,0.5); z-index: 110;">
-    <div class="modal-box" style="max-width: 450px;">
+<!-- MODAL TẠO KHÁCH HÀNG MỚI -->
+<div
+        class="modal-overlay"
+        id="createCustomerModal"
+        style="background: rgba(0, 0, 0, 0.5); z-index: 1100"
+>
+    <div class="modal-box" style="max-width: 450px">
         <div class="modal-header">
             <div class="modal-title">👤 Tạo tài khoản khách hàng mới</div>
-            <button class="btn btn-icon" onclick="closeCreateCustomerModal()" style="border:none; background:transparent;">✕</button>
+            <button
+                    class="btn btn-icon"
+                    id="btnCloseCustModal"
+                    style="border: none; background: transparent"
+            >
+                ✕
+            </button>
         </div>
         <div class="modal-body">
-            <form id="customerForm" onsubmit="event.preventDefault();">
+            <form id="customerForm" onsubmit="event.preventDefault()">
                 <div class="form-item">
                     <label>Họ tên *</label>
-                    <input type="text" class="input-text" id="custName" required>
+                    <input type="text" class="input-text" id="custName" required />
                 </div>
                 <div class="form-item">
                     <label>Số điện thoại *</label>
-                    <input type="text" class="input-text" id="custPhone" required>
+                    <input type="text" class="input-text" id="custPhone" required />
                 </div>
                 <div class="form-item">
                     <label>Email</label>
-                    <input type="email" class="input-text" id="custEmail">
+                    <input type="email" class="input-text" id="custEmail" />
                 </div>
             </form>
         </div>
         <div class="modal-footer">
-            <button class="btn" onclick="closeCreateCustomerModal()">Đóng</button>
-            <button class="btn btn-primary" onclick="submitCreateCustomer()">Tạo khách hàng</button>
+            <button class="btn" id="btnCancelCustModal">Đóng</button>
+            <button class="btn btn-primary" id="btnSubmitCustModal">
+                Tạo khách hàng
+            </button>
         </div>
     </div>
 </div>
 
-<div class="drawer-overlay" id="detailDrawerOverlay" onclick="closeDetailDrawer()"></div>
+<!-- DETAIL DRAWER -->
+<div class="drawer-overlay" id="detailDrawerOverlay"></div>
 <div class="drawer-box" id="detailDrawer">
     <div class="modal-header">
-        <div class="modal-title" style="display:flex; align-items:center; gap:8px;">
+        <div
+                class="modal-title"
+                style="display: flex; align-items: center; gap: 8px"
+        >
             <span>🧾 Chi tiết phiếu giữ sách</span>
             <span class="badge purple-tag" id="drawerReservationId">#...</span>
         </div>
-        <button class="btn btn-icon" onclick="closeDetailDrawer()" style="border:none; background:transparent;">✕</button>
+        <button
+                class="btn btn-icon"
+                id="btnCloseDrawer"
+                style="border: none; background: transparent"
+        >
+            ✕
+        </button>
     </div>
     <div class="modal-body">
-
         <div class="detail-summary-grid">
             <div>
                 <div class="summary-label">Mã khách hàng:</div>
-                <div class="summary-value"><span class="badge id-tag" id="dtCustId">#N/A</span></div>
+                <div class="summary-value">
+                    <span class="badge id-tag" id="dtCustId">#N/A</span>
+                </div>
             </div>
             <div>
                 <div class="summary-label">Trạng thái phiếu:</div>
@@ -467,96 +1230,238 @@
             </div>
             <div>
                 <div class="summary-label">Hạn lấy sách:</div>
-                <div class="summary-value" style="color:var(--red); font-weight:700;" id="dtDateExpired">...</div>
+                <div
+                        class="summary-value"
+                        style="color: var(--red); font-weight: 700"
+                        id="dtDateExpired"
+                >
+                    ...
+                </div>
             </div>
         </div>
 
-        <div style="font-weight:700; font-size:14px; margin-bottom:12px; color:#434343;">📦 Danh sách sản phẩm giữ</div>
-        <div id="drawerProductsList" style="display:flex; flex-direction:column; gap:10px; max-height:calc(100vh - 350px); overflow-y:auto; padding-right:4px;">
+        <div
+                style="
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #434343;
+          "
+        >
+            📦 Danh sách sản phẩm giữ
         </div>
-
+        <div
+                id="drawerProductsList"
+                style="
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: calc(100vh - 350px);
+            overflow-y: auto;
+            padding-right: 4px;
+          "
+        ></div>
     </div>
-    <div class="modal-footer" id="drawerFooterAction">
-    </div>
+    <div class="modal-footer" id="drawerFooterAction"></div>
 </div>
 
 <script>
-    /* ================= GATEWAY INTEGRATION SERVER BOUNDS ================= */
-    const API_BASE_URL = 'https://doanjava-production.up.railway.app';
+    const API_BASE_URL = "https://doanjava-production.up.railway.app";
 
-    /* ================= STATE CONTAINERS SYSTEM ================= */
     let reservations = [];
     let books = [];
-    let customers = [];
-
-    let activeReservation = null;
+    let selectedCartItems = [];
     let selectedCustomer = null;
     let currentUser = null;
 
+    let currentBookPage = 0;
+    let bookPageSize = 5;
+    let totalBookPages = 0;
+
     let searchReservationQuery = "";
     let searchBookQuery = "";
+    let searchDateQuery = "";
+    let customerTypingTimeout = null;
 
-    /* ================= HELPER FUNCTION TO GET AUTH HEADERS ================= */
-    function getAuthHeaders(contentType = 'application/json') {
+    const imgPlaceholder =
+      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='54' viewBox='0 0 40 54' style='background:%23eee;'><text x='50%' y='50%' font-size='9' font-family='sans-serif' fill='%23999' dominant-baseline='middle' text-anchor='middle'>No Image</text></svg>";
+
+    function getAuthHeaders(contentType = "application/json") {
       const token = localStorage.getItem("token");
       const headers = {};
-      if (contentType) {
-        headers['Content-Type'] = contentType;
-      }
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
+      if (contentType) headers["Content-Type"] = contentType;
+      if (token) headers["Authorization"] = `Bearer ${token}`;
       return headers;
     }
 
-    /* ================= APPLICATION LIFECYCLE CONTROLLERS ================= */
-    window.addEventListener('DOMContentLoaded', () => {
+    /* ================= INITIALIZATION & LIFECYCLE ================= */
+    window.addEventListener("DOMContentLoaded", () => {
       loadCurrentUser();
       fetchReservations();
-      fetchBooks();
-      fetchCustomers();
+      fetchSidebarInvoiceCount();
       setupEventListeners();
     });
 
+    async function fetchSidebarInvoiceCount() {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/hoa-don?page=0&size=1`,
+          {
+            method: "GET",
+            headers: getAuthHeaders(null),
+          },
+        );
+        const pageData = await response.json();
+        const countBadge = document.getElementById("sidebar-invoice-count");
+        if (countBadge) countBadge.innerText = pageData.totalElements || 0;
+      } catch {}
+    }
+
     function setupEventListeners() {
-      document.getElementById('btnOpenCreateModal').addEventListener('click', () => {
-        document.getElementById('createReservationModal').classList.add('open');
+      // Kích hoạt mở Modal Lập phiếu
+      document
+        .getElementById("btnOpenCreateModal")
+        .addEventListener("click", () => {
+          document
+            .getElementById("createReservationModal")
+            .classList.add("open");
+          currentBookPage = 0;
+          fetchBooks();
+        });
+
+      // Đóng modal lập phiếu giữ
+      document
+        .getElementById("btnCloseCreateModal")
+        .addEventListener("click", closeCreateModal);
+
+      // Kích hoạt lưu phiếu giữ sách
+      document
+        .getElementById("btnSubmitReservation")
+        .addEventListener("click", submitCreateReservation);
+
+      // Kích hoạt nút mở popup tạo nhanh khách hàng trong modal lập phiếu
+      document
+        .getElementById("btnOpenCustPopup")
+        .addEventListener("click", openCreateCustomerModal);
+
+      // Các hành động đóng modal khách hàng
+      document
+        .getElementById("btnCloseCustModal")
+        .addEventListener("click", closeCreateCustomerModal);
+      document
+        .getElementById("btnCancelCustModal")
+        .addEventListener("click", closeCreateCustomerModal);
+      document
+        .getElementById("btnSubmitCustModal")
+        .addEventListener("click", submitCreateCustomer);
+
+      // Đóng Drawer chi tiết phiếu
+      document
+        .getElementById("btnCloseDrawer")
+        .addEventListener("click", closeDetailDrawer);
+      document
+        .getElementById("detailDrawerOverlay")
+        .addEventListener("click", closeDetailDrawer);
+
+      document
+        .getElementById("searchReservationInput")
+        .addEventListener("input", (e) => {
+          searchReservationQuery = e.target.value.trim();
+          renderReservationsTable();
+        });
+
+      document
+        .getElementById("datePickerInput")
+        .addEventListener("change", (e) => {
+          searchDateQuery = e.target.value;
+          renderReservationsTable();
+        });
+
+      document
+        .getElementById("searchBookInput")
+        .addEventListener("input", (e) => {
+          searchBookQuery = e.target.value;
+          currentBookPage = 0;
+          clearTimeout(window.bookTimeout);
+          window.bookTimeout = setTimeout(() => {
+            fetchBooks();
+          }, 300);
+        });
+
+      document
+        .getElementById("customerSearchInput")
+        .addEventListener("input", (e) => {
+          const keyword = e.target.value.trim();
+          clearTimeout(customerTypingTimeout);
+          if (keyword.length < 2) {
+            document.getElementById("customerSuggestions").style.display =
+              "none";
+            return;
+          }
+          customerTypingTimeout = setTimeout(() => {
+            fetchCustomerSuggestions(keyword);
+          }, 300);
+        });
+
+      document.addEventListener("click", (e) => {
+        if (
+          !e.target.closest("#customerSearchInput") &&
+          !e.target.closest("#customerSuggestions")
+        ) {
+          document.getElementById("customerSuggestions").style.display =
+            "none";
+        }
       });
-      document.getElementById('searchReservationInput').addEventListener('input', (e) => {
-        searchReservationQuery = e.target.value;
-        renderReservationsTable();
-      });
-      document.getElementById('searchBookInput').addEventListener('input', (e) => {
-        searchBookQuery = e.target.value;
-        renderBookSearchList();
-      });
+
+      document
+        .getElementById("btnPrevBookPage")
+        .addEventListener("click", () => {
+          if (currentBookPage > 0) {
+            currentBookPage--;
+            fetchBooks();
+          }
+        });
+      document
+        .getElementById("btnNextBookPage")
+        .addEventListener("click", () => {
+          if (currentBookPage < totalBookPages - 1) {
+            currentBookPage++;
+            fetchBooks();
+          }
+        });
     }
 
     function loadCurrentUser() {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
         currentUser = user;
-        if(user) {
-          document.getElementById('user-display-name').innerText = user.hoTen || "Admin";
-          document.getElementById('avatar-box').innerText = String(user.hoTen || "A").charAt(0).toUpperCase();
+        if (user) {
+          document.getElementById("user-display-name").innerText =
+            user.hoTen || "Admin";
+          document.getElementById("avatar-box").innerText = String(
+            user.hoTen || "A",
+          )
+            .charAt(0)
+            .toUpperCase();
         }
       } catch {
         currentUser = null;
       }
     }
 
-    /* ================= ENDPOINT REPOSITORIES SERVICE HOOKS ================= */
+    /* ================= DATA API INTERACTION HOOKS ================= */
     async function fetchReservations() {
       try {
         const response = await fetch(`${API_BASE_URL}/api/phieu-giu`, {
-          method: 'GET',
-          headers: getAuthHeaders(null)
+          method: "GET",
+          headers: getAuthHeaders(null),
         });
-        if(!response.ok) throw new Error();
         const json = await response.json();
-        reservations = json?.data || json?.content || (Array.isArray(json) ? json : []);
+        reservations =
+          json?.data || json?.content || (Array.isArray(json) ? json : []);
         renderReservationsTable();
-        document.getElementById('sidebar-reserve-count').innerText = reservations.length;
+        document.getElementById("sidebar-reserve-count").innerText =
+          reservations.length;
       } catch (err) {
         reservations = [];
         renderReservationsTable();
@@ -565,34 +1470,77 @@
 
     async function fetchBooks() {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/sach`, {
-          method: 'GET',
-          headers: getAuthHeaders(null)
+        let url = `${API_BASE_URL}/api/sach/page?page=${currentBookPage}&size=${bookPageSize}`;
+        if (searchBookQuery)
+          url += `&keyword=${encodeURIComponent(searchBookQuery)}`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: getAuthHeaders(null),
         });
-        if(!response.ok) throw new Error();
-        const json = await response.json();
-        books = json?.data || json?.content || (Array.isArray(json) ? json : []);
+        const pageData = await response.json();
+        books = pageData.content || [];
+        totalBookPages = pageData.totalPages || 0;
+
         renderBookSearchList();
+        document.getElementById("bookPaginationInfo").innerText =
+          `Trang ${currentBookPage + 1} / ${totalBookPages || 1}`;
+        document.getElementById("btnPrevBookPage").disabled =
+          currentBookPage === 0;
+        document.getElementById("btnNextBookPage").disabled =
+          currentBookPage >= totalBookPages - 1 || totalBookPages === 0;
       } catch (err) {
         books = [];
+        renderBookSearchList();
       }
     }
 
-    async function fetchCustomers() {
+    async function fetchCustomerSuggestions(keyword) {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/khach-hang`, {
-          method: 'GET',
-          headers: getAuthHeaders(null)
+        let url = `${API_BASE_URL}/api/khach-hang/page?keyword=${encodeURIComponent(keyword)}&page=0&size=10`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: getAuthHeaders(null),
         });
-        if(!response.ok) throw new Error();
-        const json = await response.json();
-        customers = json?.data || json?.content || (Array.isArray(json) ? json : []);
+        const pageData = await response.json();
+        renderCustomerSuggestions(pageData.content || []);
       } catch (err) {
-        customers = [];
+        renderCustomerSuggestions([]);
       }
     }
 
-    /* ================= RUNTIME DATE FORMAT DATA CONVERTERS ================= */
+    function renderCustomerSuggestions(list) {
+      const dropdown = document.getElementById("customerSuggestions");
+      dropdown.innerHTML = "";
+      if (!list || list.length === 0) {
+        dropdown.innerHTML = `<div class="suggestion-item" style="color:var(--text-muted); cursor:default; padding:10px 14px;">Không tìm thấy khách hàng</div>`;
+        dropdown.style.display = "block";
+        return;
+      }
+      list.forEach((kh) => {
+        const div = document.createElement("div");
+        div.className = "suggestion-item";
+        div.innerHTML = `<strong>${kh.hoTen}</strong> - SĐT: ${kh.sdt || kh.soDienThoai || "N/A"}`;
+        div.addEventListener("click", () => selectCustomer(kh));
+        dropdown.appendChild(div);
+      });
+      dropdown.style.display = "block";
+    }
+
+    function selectCustomer(kh) {
+      selectedCustomer = kh;
+      document.getElementById("customerSearchInput").value = kh.hoTen;
+      document.getElementById("customerSuggestions").style.display = "none";
+      const card = document.getElementById("selectedCustomerCard");
+      card.innerHTML = `
+        <div>
+          <div style="font-weight:700; font-size:13.5px;">📋 Đã chọn: ${kh.hoTen}</div>
+          <div style="margin: 4px 0;"><span class="badge id-tag">KH#${kh.id}</span></div>
+          <div style="font-size:12px; color:var(--text-muted)">SĐT: ${kh.sdt} | Email: ${kh.email || "N/A"}</div>
+        </div>
+      `;
+      card.style.display = "block";
+    }
+
     function formatDateTime(v) {
       if (!v) return "";
       const d = new Date(v);
@@ -602,45 +1550,62 @@
 
     /* ================= DOM DATA RENDERING FLOWS ================= */
     function renderReservationsTable() {
-      const tbody = document.getElementById('reservationTableBody');
+      const tbody = document.getElementById("reservationTableBody");
       tbody.innerHTML = "";
 
-      const filtered = reservations.filter(x =>
-        String(x.id || "").toLowerCase().includes(searchReservationQuery.toLowerCase())
-      );
+      let filtered = reservations;
+      if (searchReservationQuery) {
+        filtered = filtered.filter((x) =>
+          String(x.id || "")
+            .toLowerCase()
+            .includes(searchReservationQuery.toLowerCase()),
+        );
+      }
+      if (searchDateQuery) {
+        filtered = filtered.filter(
+          (x) => x.createdAt && x.createdAt.startsWith(searchDateQuery),
+        );
+      }
 
-      if(filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Không tìm thấy bản ghi dữ liệu phiếu giữ thích hợp</td></tr>`;
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:40px 0;">Không tìm thấy phiếu đặt giữ sách nào thích hợp</td></tr>`;
         return;
       }
 
-      filtered.forEach(item => {
-        const tr = document.createElement('tr');
-
-        const totalQty = item.danhSachSach?.reduce((acc, curr) => acc + (curr.soLuong || 0), 0) || 0;
+      filtered.forEach((item) => {
+        const tr = document.createElement("tr");
+        const totalQty =
+          item.danhSachSach?.reduce(
+            (acc, curr) => acc + (curr.soLuong || 0),
+            0,
+          ) || 0;
 
         let statusMarkup = "";
         if (item.trangThai === "CHO_LAY" || item.trangThai === "PENDING") {
           statusMarkup = `<span class="badge warning">Chờ lấy</span>`;
-        } else if (item.trangThai === "DA_XAC_NHAN" || item.trangThai === "HOAN_THANH") {
+        } else if (
+          item.trangThai === "DA_XAC_NHAN" ||
+          item.trangThai === "HOAN_THANH"
+        ) {
           statusMarkup = `<span class="badge success">Hoàn thành</span>`;
         } else {
           statusMarkup = `<span class="badge danger">Đã hủy</span>`;
         }
 
-        const isPending = (item.trangThai === "CHO_LAY" || item.trangThai === "PENDING");
-        const actionCancelBtn = isPending ?
-          `<button class="btn btn-icon btn-danger-ghost" onclick="triggerCancelReservation(${item.id})" title="Hủy phiếu giữ">✕</button>` :
-          `<button class="btn btn-icon" disabled style="background:#f5f5f5; color:var(--text-subtle); border-color:var(--border);">✕</button>`;
+        const isPending =
+          item.trangThai === "CHO_LAY" || item.trangThai === "PENDING";
+        const actionCancelBtn = isPending
+          ? `<button class="btn btn-icon btn-danger-ghost" onclick="triggerCancelReservation(${item.id})" title="Hủy phiếu giữ">✕</button>`
+          : `<button class="btn btn-icon" disabled style="background:#f5f5f5; color:var(--text-subtle); border-color:var(--border);">✕</button>`;
 
         tr.innerHTML = `
-          <td><span class="badge purple-tag">#${item.id}</span></td>
+          <td><span class="badge id-tag">#${item.id}</span></td>
           <td style="color:#595959;"><span>📅 </span>${formatDateTime(item.createdAt)}</td>
           <td><span style="font-weight:700; color:#111;">${totalQty} quyển</span></td>
           <td>${statusMarkup}</td>
           <td style="text-align: center;">
             <div style="display:inline-flex; gap:8px;">
-              <button class="btn btn-icon" onclick="viewDetailDrawer(${item.id})" style="border-color:#1890ff; color:#1890ff;" title="Xem chi tiết">👁</button>
+              <button class="btn btn-icon" onclick="viewDetailDrawer(${item.id})" style="border-color:#1890ff; color:#1890ff;">👁</button>
               ${actionCancelBtn}
             </div>
           </td>
@@ -650,29 +1615,22 @@
     }
 
     function renderBookSearchList() {
-      const tbody = document.getElementById('bookSearchTableBody');
+      const tbody = document.getElementById("bookSearchTableBody");
       tbody.innerHTML = "";
 
-      const filtered = books.filter(b =>
-        b.tenSach?.toLowerCase().includes(searchBookQuery.toLowerCase())
-      );
-
-      if(filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Không tìm thấy đầu sách khả dụng</td></tr>`;
+      if (books.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px 0;">Không tìm thấy sách phù hợp</td></tr>`;
         return;
       }
 
-      filtered.forEach(b => {
-        const tr = document.createElement('tr');
-        const imgUrl = b.hinhAnh || "https://via.placeholder.com/55x75";
-
-        const isDisabled = (!activeReservation || b.soLuongTon <= 0);
-        const actionBtnMarkup = `<button class="btn btn-primary" style="padding:4px 8px; font-size:12px;" ${isDisabled ? 'disabled' : ''} onclick="handleAddBookToDetail(${b.id})">Thêm</button>`;
+      books.forEach((b) => {
+        const tr = document.createElement("tr");
+        const imgUrl = b.hinhAnh || imgPlaceholder;
 
         tr.innerHTML = `
           <td>
             <div style="display:flex; gap:8px; align-items:start;">
-              <img src="${imgUrl}" style="width:40px; height:54px; object-fit:cover; border-radius:4px;" onerror="this.src='https://via.placeholder.com/40x54'">
+              <img src="${imgUrl}" style="width:38px; height:50px; object-fit:cover; border-radius:4px;" onerror="this.onerror=null; this.src=imgPlaceholder;">
               <div>
                 <div style="font-weight:600; line-height:1.2;">${b.tenSach}</div>
                 <div style="color:var(--text-muted); font-size:11px; margin-top:2px;">Tồn kho: ${b.soLuongTon}</div>
@@ -680,323 +1638,310 @@
             </div>
           </td>
           <td style="white-space:nowrap;">${(b.giaBan || 0).toLocaleString()} đ</td>
-          <td style="text-align:center;">${actionBtnMarkup}</td>
+          <td style="text-align:center;"><button class="btn" style="padding:4px 8px; font-size:12px;" onclick="addBookToCart(${b.id})">Thêm</button></td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function renderActiveReservationBasket() {
-      const container = document.getElementById('cartItemsList');
-      const totalQtyDisplay = document.getElementById('cartTotalQtyDisplay');
-      const countDisplay = document.getElementById('cartCount');
-      const basketFrame = document.getElementById('basketFrame');
+    function renderCartItems() {
+      const container = document.getElementById("cartItemsList");
+      const totalQtyDisplay = document.getElementById("cartTotalQtyDisplay");
+      const countDisplay = document.getElementById("cartCount");
 
-      if(!activeReservation) {
-        basketFrame.style.borderColor = "#f0f0f0";
-        container.innerHTML = `<div style="color: #bfbfbf; text-align: center; padding-top: 100px; font-size:13.5px;">Hoàn thành Bước 1 để sinh mã phiếu giữ trong database.</div>`;
-        totalQtyDisplay.innerText = "0 quyển";
-        countDisplay.innerText = "0";
-        return;
-      }
+      countDisplay.innerText = selectedCartItems.length;
 
-      basketFrame.style.borderColor = "var(--purple)";
-      const items = activeReservation.danhSachSach || [];
-      countDisplay.innerText = items.length;
-
-      if(items.length === 0) {
-        container.innerHTML = `<div style="color: #999; text-align: center; padding-top: 100px;">Chưa có sản phẩm nào được nạp vào DB</div>`;
+      if (selectedCartItems.length === 0) {
+        container.innerHTML = `<div style="color: #999; text-align: center; padding-top: 150px">Chưa có sản phẩm trong giỏ hàng giữ sách</div>`;
         totalQtyDisplay.innerText = "0 quyển";
         return;
       }
-
       container.innerHTML = "";
-      let aggregatedTotalQty = 0;
-
-      items.forEach(item => {
-        aggregatedTotalQty += (item.soLuong || 0);
-        const card = document.createElement('div');
+      let totalQty = 0;
+      selectedCartItems.forEach((item) => {
+        totalQty += item.sl;
+        const card = document.createElement("div");
         card.className = "mini-card";
-
-        const targetBook = item.sachSach || item.sach || {};
-        const bookTitle = targetBook.tenSach || `Mã Sách: #${item.sachId}`;
-        const thumb = targetBook.hinhAnh || "https://via.placeholder.com/50x68";
-
         card.innerHTML = `
-          <img src="${thumb}" onerror="this.src='https://via.placeholder.com/50x68'">
+          <img src="${item.hinhAnh || imgPlaceholder}" onerror="this.onerror=null; this.src=imgPlaceholder;">
           <div class="mini-card-info">
-            <div class="mini-card-title">${bookTitle}</div>
-            <div style="color:var(--red); font-size:12.5px; font-weight:600; margin-top:2px;">Số lượng: ${item.soLuong} quyển</div>
-            <div style="display:flex; justify-content:flex-end; margin-top:4px;">
-              <button class="btn btn-danger-ghost" style="padding:1px 4px; font-size:11px; border:none; height:auto;" onclick="handleRemoveBookFromDetail(${item.id})">Xóa dòng</button>
+            <div class="mini-card-title">${item.tenSach}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+              <input type="number" class="input-text" min="1" max="${item.tonKho}" value="${item.sl}" style="width:60px; padding:2px 4px; font-size:12px;" onchange="updateCartQuantity(${item.id}, this.value)">
+              <button class="btn btn-danger-ghost" style="padding:2px 6px; font-size:11px; border:none;" onclick="removeCartItem(${item.id})">Xóa</button>
             </div>
           </div>
         `;
         container.appendChild(card);
       });
-
-      totalQtyDisplay.innerText = `${aggregatedTotalQty} quyển`;
+      totalQtyDisplay.innerText = totalQty + " quyển";
     }
 
-    /* ================= REALTIME INTERACTION ACTION CONTEXTS ================= */
+    function addBookToCart(bookId) {
+      const book = books.find((b) => b.id === bookId);
+      if (!book) return;
+      const existing = selectedCartItems.find((x) => x.id === bookId);
+      if (existing) {
+        if (existing.sl < book.soLuongTon) {
+          existing.sl += 1;
+        } else {
+          alert("Số lượng vượt quá giới hạn tồn kho hiện tại.");
+        }
+      } else {
+        selectedCartItems.push({
+          id: book.id,
+          tenSach: book.tenSach,
+          sl: 1,
+          hinhAnh: book.hinhAnh,
+          tonKho: book.soLuongTon,
+        });
+      }
+      renderCartItems();
+    }
 
-    // BƯỚC 1: Khởi tạo phiếu rỗng lưu trên DB
-    async function handleStartReservation() {
-      if(!selectedCustomer) {
-        alert("Vui lòng chọn khách hàng trước khi sinh phiếu");
+    function updateCartQuantity(itemId, numericValue) {
+      let parsed = parseInt(numericValue) || 1;
+      const target = selectedCartItems.find((x) => x.id === itemId);
+      if (target) {
+        if (parsed > target.tonKho) {
+          parsed = target.tonKho;
+          alert(`Chỉ có thể đặt tối đa ${target.tonKho} sản phẩm.`);
+        }
+        if (parsed < 1) parsed = 1;
+        target.sl = parsed;
+      }
+      renderCartItems();
+    }
+
+    function removeCartItem(itemId) {
+      selectedCartItems = selectedCartItems.filter((x) => x.id !== itemId);
+      renderCartItems();
+    }
+
+    /* ================= TIMELINE RUNTIME MUTATIONS ================= */
+    async function submitCreateReservation() {
+      if (selectedCartItems.length === 0) {
+        alert("Giỏ hàng đặt giữ đang trống!");
         return;
       }
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/phieu-giu/tao/${selectedCustomer.id}`, {
-          method: 'POST',
-          headers: getAuthHeaders(null)
-        });
-        if(!response.ok) throw new Error();
-        const generatedId = await response.text();
-
-        activeReservation = {
-          id: parseInt(generatedId),
-          khachHangId: selectedCustomer.id,
-          danhSachSach: []
-        };
-
-        alert(`Đã khởi tạo thành công mã phiếu giữ mới #${generatedId} trên hệ thống!`);
-
-        document.getElementById('customerPhoneInput').disabled = true;
-        document.getElementById('btnFindCustomer').disabled = true;
-        document.getElementById('btnOpenCustPopup').disabled = true;
-
-        document.getElementById('customerProfileRightActionArea').innerHTML = `
-          <span class="badge purple-tag" style="font-size: 12px; padding: 4px 8px;">Đang nạp phiếu: #${generatedId}</span>
-        `;
-
-        renderBookSearchList();
-        renderActiveReservationBasket();
-      } catch(err) {
-        alert("Lỗi khởi tạo phiếu giữ mới trên phân hệ dữ liệu");
+      if (!selectedCustomer) {
+        alert("Vui lòng lựa chọn khách hàng đích danh");
+        return;
       }
-    }
 
-    // BƯỚC 2: Nạp dữ liệu cấu trúc cuốn sách qua PathVariable
-    async function handleAddBookToDetail(bookId) {
-      if(!activeReservation) return;
-      const targetBook = books.find(b => b.id === bookId);
+      const btnSubmit = document.getElementById("btnSubmitReservation");
+      btnSubmit.disabled = true;
+      btnSubmit.innerText = "⏳ ĐANG XỬ LÝ LƯU PHIẾU...";
 
       try {
-        const pId = activeReservation.id;
-        const response = await fetch(`${API_BASE_URL}/api/chi-tiet-phieu-giu/them/${pId}/${bookId}/1`, {
-          method: 'POST',
-          headers: getAuthHeaders(null)
+        const startResponse = await fetch(
+          `${API_BASE_URL}/api/phieu-giu/tao/${selectedCustomer.id}`,
+          {
+            method: "POST",
+            headers: getAuthHeaders(null),
+          },
+        );
+        if (!startResponse.ok)
+          throw new Error(
+            `Backend từ chối tạo phiếu rỗng. Mã phản hồi: ${startResponse.status}`,
+          );
+
+        const generatedId = await startResponse.text();
+        const phieuId = parseInt(generatedId.trim(), 10);
+
+        if (isNaN(phieuId))
+          throw new Error(
+            `Server trả về ID phiếu không phải số: "${generatedId}"`,
+          );
+
+        const detailRequests = selectedCartItems.map((item) => {
+          return fetch(
+            `${API_BASE_URL}/api/chi-tiet-phieu-giu/them/${phieuId}/${item.id}/${item.sl}`,
+            {
+              method: "POST",
+              headers: getAuthHeaders(null),
+            },
+          ).then(async (res) => {
+            if (!res.ok) {
+              const errText = await res.text().catch(() => "");
+              throw new Error(
+                `Lỗi nạp sách "${item.tenSach}" (Mã: #${item.id}). Chi tiết: ${errText || res.status}`,
+              );
+            }
+            return res;
+          });
         });
-        if(!response.ok) throw new Error();
-        alert(`Đã thêm sách "${targetBook?.tenSach || bookId}" vào database phiếu giữ`);
-        refreshActiveReservation(pId);
+
+        await Promise.all(detailRequests);
+
+        alert(
+          `Lập phiếu đặt giữ sách thành công!\nMã số phiếu của bạn là: #${phieuId}`,
+        );
+        closeCreateModal();
       } catch (err) {
-        alert("Lỗi nạp sách trực tiếp vào chi tiết thực tế của phiếu");
+        console.error("Chi tiết lỗi:", err);
+        alert(`Tạo phiếu thất bại!\nNguyên nhân: ${err.message}`);
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = "🚀 XÁC NHẬN LẬP PHIẾU GIỮ";
       }
     }
 
-    // BƯỚC 3: Xóa thực tế bản ghi chi tiết sách khỏi database
-    async function handleRemoveBookFromDetail(chiTietId) {
-      const check = confirm("Xác nhận xóa chi tiết bản ghi sách này ra khỏi cấu trúc dữ liệu database?");
-      if(!check) return;
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/chi-tiet-phieu-giu/xoa/${chiTietId}`, {
-          method: 'DELETE',
-          headers: getAuthHeaders(null)
-        });
-        if(!response.ok) throw new Error();
-        alert("Đã xóa bản ghi sách ra khỏi database phiếu giữ");
-        refreshActiveReservation(activeReservation.id);
-      } catch(err) {
-        alert("Lỗi khi thực hiện xóa chi tiết sách.");
-      }
-    }
-
-    async function refreshActiveReservation(currentId) {
-      if(!currentId) return;
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/phieu-giu/${currentId}`, {
-          method: 'GET',
-          headers: getAuthHeaders(null)
-        });
-        if(!response.ok) throw new Error();
-        const rawData = await response.json();
-        const updatedPhieu = rawData?.data || rawData;
-        if(updatedPhieu) {
-          activeReservation = updatedPhieu;
-          renderActiveReservationBasket();
-        }
-      } catch(err) {
-        console.error("Gặp sự cố đồng bộ luồng giỏ hàng", err);
-      }
-    }
-
-    /* ================= GLOBAL TRANSACTION STATUS MUTATIONS ================= */
     async function triggerConfirmReservation(id) {
-      if(!currentUser?.id) {
+      if (!currentUser?.id) {
         alert("Không lấy được thông tin định danh nhân viên phiên hiện hữu.");
         return;
       }
       try {
-        const response = await fetch(`${API_BASE_URL}/api/phieu-giu/confirm/${id}?nhanVienId=${currentUser.id}`, {
-          method: 'POST',
-          headers: getAuthHeaders(null)
-        });
-        if(!response.ok) throw new Error();
-        alert("Xác nhận khách đến nhận và hoàn tất chu kỳ giữ sách thành công");
+        const response = await fetch(
+          `${API_BASE_URL}/api/phieu-giu/confirm/${id}/${currentUser.id}`,
+          {
+            method: "POST",
+            headers: getAuthHeaders(null),
+          },
+        );
+        if (!response.ok) throw new Error();
+        alert("Xác nhận khách lấy sách và hoàn tất chu kỳ giữ thành công!");
         closeDetailDrawer();
         fetchReservations();
-      } catch(err) {
+      } catch (err) {
         alert("Xác nhận lấy sách thất bại.");
       }
     }
 
     async function triggerCancelReservation(id, isFromDrawer = false) {
-      const confirmation = confirm("Hành động này sẽ thay đổi vĩnh viễn trạng thái phiếu sang Đã Hủy và hoàn trả lại số lượng tồn kho. Tiếp tục?");
-      if(!confirmation) return;
+      const confirmation = confirm(
+        "Bạn chắc chắn muốn hủy phiếu đặt giữ này chứ? Số lượng tồn kho sẽ tự động hoàn trả.",
+      );
+      if (!confirmation) return;
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/phieu-giu/huy/${id}`, {
-          method: 'POST',
-          headers: getAuthHeaders(null)
-        });
-        if(!response.ok) throw new Error();
-        alert("Đã hủy phiếu giữ sách thành công");
-        if(isFromDrawer) closeDetailDrawer();
+        const response = await fetch(
+          `${API_BASE_URL}/api/phieu-giu/huy/${id}`,
+          {
+            method: "POST",
+            headers: getAuthHeaders(null),
+          },
+        );
+        if (!response.ok) throw new Error();
+        alert("Đã hủy phiếu giữ sách thành công!");
+        if (isFromDrawer) closeDetailDrawer();
         fetchReservations();
-      } catch(err) {
-        alert("Lủy tác vụ phiếu giữ thất bại.");
+      } catch (err) {
+        alert("Quy trình hủy phiếu thất bại.");
       }
     }
 
-    /* ================= CUSTOMERS MANAGEMENT CONTROLS ================= */
-    function handleFindCustomer() {
-      const phoneInput = document.getElementById('customerPhoneInput').value.trim();
-      const kh = customers.find(x => x.sdt === phoneInput);
-      if(!kh) {
-        alert("Không tìm thấy thông tin khách hàng");
-        selectedCustomer = null;
-        document.getElementById('selectedCustomerCard').style.display = 'none';
-        return;
-      }
-      selectedCustomer = kh;
-      const card = document.getElementById('selectedCustomerCard');
-      card.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div style="font-weight:700; font-size:13.5px;">${kh.hoTen}</div>
-            <div style="margin: 4px 0;"><span class="badge id-tag" style="font-size:11px;">KH#${kh.id}</span></div>
-            <div style="font-size:12px; color:var(--text-muted)">SĐT: ${kh.sdt} | Email: ${kh.email || 'N/A'}</div>
-          </div>
-          <div id="customerProfileRightActionArea">
-            <button class="btn btn-primary" style="background:#e74c3c; border-color:#e74c3c; color:#fff;" onclick="handleStartReservation()">Khởi tạo phiếu ngay</button>
-          </div>
-        </div>
-      `;
-      card.style.display = 'block';
+    function openCreateCustomerModal() {
+      document.getElementById("createCustomerModal").classList.add("open");
     }
-
-    function openCreateCustomerModal() { document.getElementById('createCustomerModal').classList.add('open'); }
     function closeCreateCustomerModal() {
-      document.getElementById('createCustomerModal').classList.remove('open');
-      document.getElementById('customerForm').reset();
+      document.getElementById("createCustomerModal").classList.remove("open");
+      document.getElementById("customerForm").reset();
     }
 
     async function submitCreateCustomer() {
-      const hoTen = document.getElementById('custName').value.trim();
-      const sdt = document.getElementById('custPhone').value.trim();
-      const email = document.getElementById('custEmail').value.trim();
+      const hoTen = document.getElementById("custName").value.trim();
+      const sdt = document.getElementById("custPhone").value.trim();
+      const email = document.getElementById("custEmail").value.trim();
 
-      if(!hoTen || !sdt) {
-        alert("Vui lòng bổ sung đầy đủ trường dữ liệu yêu cầu (*)");
+      if (!hoTen || !sdt) {
+        alert("Vui lòng bổ sung đầy đủ thông tin bắt buộc.");
         return;
       }
 
       try {
         const response = await fetch(`${API_BASE_URL}/api/khach-hang`, {
-          method: 'POST',
-          headers: getAuthHeaders('application/json'),
-          body: JSON.stringify({ hoTen, sdt, email })
+          method: "POST",
+          headers: getAuthHeaders("application/json"),
+          body: JSON.stringify({ hoTen, sdt, email }),
         });
-        if(!response.ok) throw new Error();
-        const newCustomer = await response.json();
+        const jsonResponse = await response.json();
+        const newCustomer = jsonResponse?.data || jsonResponse;
 
-        customers.push(newCustomer);
-        selectedCustomer = newCustomer;
-        document.getElementById('customerPhoneInput').value = newCustomer.sdt;
-        handleFindCustomer();
+        selectCustomer(newCustomer);
         closeCreateCustomerModal();
-        alert("Tạo tài khoản khách hàng thành công");
+        alert("Tạo liên kết thông tin khách hàng thành công!");
       } catch (err) {
-        alert("Gặp lỗi cục bộ trong quá trình đăng ký khách hàng");
+        alert("Lỗi khởi tạo tài khoản.");
       }
     }
 
-    /* ================= RESET STATE CLOSURE ================= */
     function resetCartState() {
-      activeReservation = null;
+      selectedCartItems = [];
       selectedCustomer = null;
       searchBookQuery = "";
-      document.getElementById('customerPhoneInput').disabled = false;
-      document.getElementById('btnFindCustomer').disabled = false;
-      document.getElementById('btnOpenCustPopup').disabled = false;
-      document.getElementById('customerPhoneInput').value = "";
-      document.getElementById('searchBookInput').value = "";
-      document.getElementById('selectedCustomerCard').style.display = 'none';
-      renderActiveReservationBasket();
+      document.getElementById("customerSearchInput").disabled = false;
+      document.getElementById("btnOpenCustPopup").disabled = false;
+      document.getElementById("customerSearchInput").value = "";
+      document.getElementById("searchBookInput").value = "";
+      document.getElementById("selectedCustomerCard").style.display = "none";
+      renderCartItems();
       renderBookSearchList();
     }
 
     function closeCreateModal() {
-      document.getElementById('createReservationModal').classList.remove('open');
+      document
+        .getElementById("createReservationModal")
+        .classList.remove("open");
       resetCartState();
       fetchReservations();
     }
 
-    /* ================= Chi tiết & Điều phối trạng thái ================= */
+    /* ================= DRAWER RENDER ACTIONS ================= */
     function viewDetailDrawer(id) {
-      const target = reservations.find(x => x.id === id);
-      if(!target) return;
+      const target = reservations.find((x) => x.id === id);
+      if (!target) return;
 
-      document.getElementById('drawerReservationId').innerText = `#${target.id}`;
-      document.getElementById('dtCustId').innerText = `#${target.khachHangId || "N/A"}`;
-      document.getElementById('dtDateCreated').innerText = formatDateTime(target.createdAt);
-      document.getElementById('dtDateExpired').innerText = formatDateTime(target.expiredAt);
+      document.getElementById("drawerReservationId").innerText =
+        `#${target.id}`;
+      document.getElementById("dtCustId").innerText =
+        `#${target.khachHangId || (target.khachHang && target.khachHang.id) || "N/A"}`;
+      document.getElementById("dtDateCreated").innerText = formatDateTime(
+        target.createdAt || target.ngayLap,
+      );
+      document.getElementById("dtDateExpired").innerText = formatDateTime(
+        target.expiredAt || target.hanLaySach || target.ngayHetHan,
+      );
 
-      const wrapBadge = document.getElementById('dtStatusBadgeWrap');
+      const wrapBadge = document.getElementById("dtStatusBadgeWrap");
       if (target.trangThai === "CHO_LAY" || target.trangThai === "PENDING") {
         wrapBadge.innerHTML = `<span class="badge warning">Chờ lấy</span>`;
-      } else if (target.trangThai === "DA_XAC_NHAN" || target.trangThai === "HOAN_THANH") {
+      } else if (
+        target.trangThai === "DA_XAC_NHAN" ||
+        target.trangThai === "HOAN_THANH"
+      ) {
         wrapBadge.innerHTML = `<span class="badge success">Hoàn thành</span>`;
       } else {
         wrapBadge.innerHTML = `<span class="badge danger">Đã hủy</span>`;
       }
 
-      const listWrapper = document.getElementById('drawerProductsList');
+      const listWrapper = document.getElementById("drawerProductsList");
       listWrapper.innerHTML = "";
 
-      const items = target.danhSachSach || [];
-      items.forEach(c => {
-        const pCard = document.createElement('div');
+      const items = target.danhSachSach || target.chiTietPhieuGius || [];
+      items.forEach((c) => {
+        const pCard = document.createElement("div");
         pCard.className = "section-card";
         pCard.style.margin = "0";
         pCard.style.background = "#fff";
 
         const bookInfo = c.sachSach || c.sach || {};
         const title = bookInfo.tenSach || `Mã Sách: #${c.sachId}`;
-        const thumb = bookInfo.hinhAnh || "https://via.placeholder.com/64x84";
-        const originalPrice = bookInfo.giaBan ? `${bookInfo.giaBan.toLocaleString()} đ` : '0 đ';
+        const thumb = bookInfo.hinhAnh || imgPlaceholder;
+        const originalPrice = bookInfo.giaBan
+          ? `${bookInfo.giaBan.toLocaleString()} đ`
+          : "0 đ";
+        const qty = c.soLuong || c.soLuongGiu || 0;
 
         pCard.innerHTML = `
           <div style="display:flex; gap:12px; align-items:start;">
-            <img src="${thumb}" style="width:48px; height:64px; object-fit:cover; border-radius:6px;" onerror="this.src='https://via.placeholder.com/64x84'">
+            <img src="${thumb}" style="width:48px; height:64px; object-fit:cover; border-radius:6px;" onerror="this.src='${imgPlaceholder}'">
             <div style="flex:1;">
               <div style="font-weight:600; font-size:14px; color:var(--text);">${title}</div>
               <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-top:6px; color:var(--text-muted);">
-                <span>Số lượng đăng ký giữ: <strong style="color:var(--text);">${c.soLuong} quyển</strong></span>
-                <span>Đơn giá gốc: ${originalPrice}</span>
+                <span>Số lượng giữ: <strong style="color:var(--text);">${qty} quyển</strong></span>
+                <span>Đơn giá niêm yết: ${originalPrice}</span>
               </div>
             </div>
           </div>
@@ -1004,9 +1949,10 @@
         listWrapper.appendChild(pCard);
       });
 
-      const footerArea = document.getElementById('drawerFooterAction');
-      const isPending = (target.trangThai === "CHO_LAY" || target.trangThai === "PENDING");
-      if(isPending) {
+      const footerArea = document.getElementById("drawerFooterAction");
+      const isPending =
+        target.trangThai === "CHO_LAY" || target.trangThai === "PENDING";
+      if (isPending) {
         footerArea.innerHTML = `
           <button class="btn btn-success" style="border-radius:6px; font-weight:700;" onclick="triggerConfirmReservation(${target.id})">Xác nhận lấy sách</button>
           <button class="btn btn-danger-ghost" style="border-radius:6px; font-weight:700;" onclick="triggerCancelReservation(${target.id}, true)">Hủy phiếu giữ</button>
@@ -1015,13 +1961,13 @@
         footerArea.innerHTML = `<button class="btn" disabled style="border-radius:6px;">Phiếu đã đóng quy trình</button>`;
       }
 
-      document.getElementById('detailDrawerOverlay').classList.add('open');
-      document.getElementById('detailDrawer').classList.add('open');
+      document.getElementById("detailDrawerOverlay").classList.add("open");
+      document.getElementById("detailDrawer").classList.add("open");
     }
 
     function closeDetailDrawer() {
-      document.getElementById('detailDrawerOverlay').classList.remove('open');
-      document.getElementById('detailDrawer').classList.remove('open');
+      document.getElementById("detailDrawerOverlay").classList.remove("open");
+      document.getElementById("detailDrawer").classList.remove("open");
     }
 </script>
 </body>

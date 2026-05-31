@@ -16,6 +16,7 @@ public class Sach {
     private int id;
     private String tenSach;
     private BigDecimal giaBan;
+
     private int soLuongTon;
     private String hinhAnh;
     private int namXuatBan;
