@@ -269,6 +269,20 @@
   .modal-list-name { min-width: 0; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .modal-list-value { text-align: right; font-weight: 800; }
   .modal-list-sub { color: var(--text-muted); font-size: 12px; font-weight: 500; margin-top: 3px; }
+  .modal-list-row.invoice-row {
+    grid-template-columns: minmax(170px, 1fr) minmax(220px, 1.2fr) minmax(130px, 0.7fr);
+  }
+  .modal-list-row.invoice-row .modal-list-rank,
+  .modal-list-row.invoice-row .modal-list-name,
+  .modal-list-row.invoice-row .modal-list-value {
+    min-width: 0;
+  }
+  .modal-list-row.invoice-row .modal-list-rank {
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .modal-list-row.invoice-row .modal-list-value {
+    white-space: normal; overflow-wrap: anywhere; line-height: 1.25;
+  }
 
   .chart-wrap { position: relative; height: 140px; }
 
@@ -1553,8 +1567,8 @@ function renderModalRows(rows, type) {
       `;
     }
     return `
-      <div class="modal-list-row">
-        <div class="modal-list-rank">${escapeHtml(getInvoiceCode(row))}</div>
+      <div class="modal-list-row invoice-row">
+        <div class="modal-list-rank" title="${escapeHtml(getInvoiceCode(row))}">${escapeHtml(getInvoiceCode(row))}</div>
         <div class="modal-list-name" title="${escapeHtml(getInvoiceCustomer(row))}">
           ${escapeHtml(getInvoiceCustomer(row))}
           <div class="modal-list-sub">${escapeHtml(formatInvoiceDate(row))}</div>
