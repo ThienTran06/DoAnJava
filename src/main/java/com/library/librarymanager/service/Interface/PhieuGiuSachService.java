@@ -15,4 +15,5 @@ public interface PhieuGiuSachService {
 
     void huy(int phieuId);
     List<PhieuDatGiuSach> getAll();
+    PhieuDatGiuSach getById(int id);
 }

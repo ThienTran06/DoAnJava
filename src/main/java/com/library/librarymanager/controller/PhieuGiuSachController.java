@@ -55,4 +55,8 @@ public class PhieuGiuSachController {
 
         return "Expire thanh cong";
     }
+    @GetMapping("/{id}")
+    PhieuDatGiuSach getById(@PathVariable int id){
+        return phieuService.getById(id);
+    }
 }

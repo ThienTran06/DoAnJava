@@ -20,7 +20,6 @@ public interface PhieuDatGiuSachRepository extends JpaRepository<PhieuDatGiuSach
             LocalDateTime time
     );
     boolean existsByKhachHangIdAndTrangThai(int khachHangId, TrangThaiGiu tt);
-
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM PhieuDatGiuSach p WHERE p.id = :id")
     Optional<PhieuDatGiuSach> findByIdForUpdate(@Param("id") int id);

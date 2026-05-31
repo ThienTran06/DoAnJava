@@ -91,8 +91,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
             throw new RuntimeException("Tài khoản đã tồn tại");
         }
 
-        NhomNguoiDung nhom = nhomRepo.findByTenNhom(req.getTenNhom())
-                .orElseThrow(() -> new AuthException("Nhóm không tồn tại"));
+        NhomNguoiDung nhom = getOrCreateNhom(req.getTenNhom());
 
         NguoiDung nd = new NguoiDung();
 
@@ -139,8 +138,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
             throw new RuntimeException("Tài khoản đã tồn tại");
         }
 
-        NhomNguoiDung nhom = nhomRepo.findByTenNhom(req.getTenNhom())
-                .orElseThrow(() -> new AuthException("Nhóm không tồn tại"));
+        NhomNguoiDung nhom = getOrCreateNhom(req.getTenNhom());
 
         nd.setUsername(req.getTenDangNhap());
 
@@ -179,6 +177,17 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 
         repo.delete(nd);
     }
+
+    private NhomNguoiDung getOrCreateNhom(String tenNhom) {
+        String normalizedTenNhom = tenNhom == null || tenNhom.isBlank() ? "STAFF" : tenNhom.trim();
+        return nhomRepo.findByTenNhom(normalizedTenNhom)
+                .orElseGet(() -> {
+                    NhomNguoiDung nhom = new NhomNguoiDung();
+                    nhom.setTenNhom(normalizedTenNhom);
+                    return nhomRepo.save(nhom);
+                });
+    }
+
     @Transactional
     @Override
     public void updatePermissions(int id, List<Integer> permissionIds) {

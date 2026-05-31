@@ -181,4 +181,8 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
     public List<PhieuDatGiuSach> getAll() {
         return phieuRepo.findAll();
     }
+    @Override
+    public PhieuDatGiuSach getById(int id){
+        return phieuRepo.getById(id);
+    }
 }

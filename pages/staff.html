@@ -71,11 +71,19 @@ window.initStaff = function() {
     };
   };
 
+  const toRoleLabel = role => {
+    if (role === 'ADMIN') return 'Quản lý';
+    if (role === 'STAFF') return 'Nhân viên bán hàng';
+    return role || 'Nhân viên bán hàng';
+  };
+
+  const toGroupName = role => role === 'Quản lý' ? 'ADMIN' : 'STAFF';
+
   const mapStaff = (item) => ({
   id: item?.id,
   name: item?.hoTen || item?.ten || '—',
   code: item?.username || item?.maNhanVien || item?.code || '',
-  role: item?.nhom?.tenNhom || item?.vaiTro || item?.role || '',
+  role: toRoleLabel(item?.nhom?.tenNhom || item?.vaiTro || item?.role || ''),
   email: item?.email || '',
   phone: item?.SDT || item?.sdt || '',
   shift: normalizeShift(item?.caLamViec || item?.shift || ''),
@@ -242,8 +250,8 @@ if (avatarFile) {
   matKhau: '123456',
   hoTen: form.name.value.trim(),
   sdt: form.phone.value.trim(),
-  tenNhom: form.role.value === 'Quản lý' ? 'ADMIN' : 'STAFF',
-  permissionIds: [1],
+  tenNhom: toGroupName(form.role.value),
+  permissionIds: [],
   email: form.email.value.trim(),
   caLamViec: form.shift.value || '',
   diaChi: form.address.value || '',
@@ -263,7 +271,10 @@ if (avatarFile) {
       body: JSON.stringify(payload),
     });
     if (response.status === 401) { window.location.href = 'login.html'; return; }
-    if (!response.ok) throw new Error('Request failed');
+    if (!response.ok) {
+      const message = await response.text();
+      throw new Error(message || 'Request failed');
+    }
     const saved = await response.json();
     const mapped = mapStaff(saved);
     if (isEdit) {
@@ -279,7 +290,7 @@ if (avatarFile) {
     closeModal();
     window.showToast(isEdit ? 'Đã cập nhật nhân viên' : 'Đã thêm nhân viên');
   } catch (err) {
-    window.showToast('Không thể lưu nhân viên. Kiểm tra lại backend.');
+    window.showToast('Không thể lưu nhân viên: ' + err.message);
   }
 };
   // Handle edit and delete buttons in table
