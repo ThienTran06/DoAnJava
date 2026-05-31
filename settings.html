@@ -559,6 +559,58 @@
       audio.play().catch(() => {});
     }
   }
+
+  /* ─── LANGUAGE ─── */
+  function setLanguage(lang) {
+    localStorage.setItem('language', lang);
+    document.getElementById('langVi').classList.toggle('active', lang === 'vi');
+    document.getElementById('langEn').classList.toggle('active', lang === 'en');
+    document.documentElement.lang = lang === 'en' ? 'en' : 'vi';
+    document.getElementById('langNotice').classList.add('show');
+  }
+
+  function restoreLanguage() {
+    const lang = localStorage.getItem('language') || 'vi';
+    document.getElementById('langVi').classList.toggle('active', lang === 'vi');
+    document.getElementById('langEn').classList.toggle('active', lang === 'en');
+    document.documentElement.lang = lang === 'en' ? 'en' : 'vi';
+  }
+
+  /* ─── AUTH GUARD + JWT USER INFO ─── */
+  function parseJwtPayload(token) {
+    try {
+      const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(base64));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function initUser() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+      return;
+    }
+    const payload = parseJwtPayload(token);
+    if (!payload) {
+      window.location.href = 'login.html';
+      return;
+    }
+    const name = payload.sub || payload.username || payload.name || 'Admin';
+    const role = payload.role || payload.roles || payload.vaiTro || 'Nhân viên';
+    document.getElementById('userName').textContent = name;
+    document.getElementById('userRole').textContent = Array.isArray(role) ? role[0] : role;
+    document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
+  }
+
+  /* ─── PAGE INIT ─── */
+  document.addEventListener('DOMContentLoaded', function () {
+    initUser();
+    applyTheme(localStorage.getItem('darkMode') === '1');
+    restoreMusic();
+    restoreLanguage();
+  });
 </script>
 </body>
 </html>
