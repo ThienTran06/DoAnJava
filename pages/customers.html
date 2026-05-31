@@ -120,6 +120,19 @@ window.initCustomers = function() {
   }[tier] || { cls: 'tier-bronze' });
 
   const badgeClass = tier => tierMeta(tier).cls;
+  const customerFrameClass = item => {
+    const classes = ['customer-tier-row', `customer-${badgeClass(item.hangThanhVien)}`];
+    if (item.isVip) classes.push('customer-tier-vip');
+    return classes.join(' ');
+  };
+  const updateCustomerRowFrame = (row, item) => {
+    if (!row || !item) return;
+    row.className = customerFrameClass(item);
+    const tierCell = row.querySelector('.tier-cell');
+    if (tierCell) {
+      tierCell.innerHTML = `<span class="badge ${badgeClass(item.hangThanhVien)}">${item.hangThanhVien || 'Đồng'}${item.isVip ? ' + VIP' : ''}</span>`;
+    }
+  };
   const calculateTier = (points = 0) => {
     const p = Number(points) || 0;
     if (p >= 50000) return 'Kim Cương';
@@ -158,7 +171,7 @@ window.initCustomers = function() {
     const query = q.trim().toLowerCase();
     const rows = state.items.filter(x => !query || x.name.toLowerCase().includes(query) || x.phone.includes(query) || x.email.toLowerCase().includes(query));
     tableBody.innerHTML = rows.length ? rows.map((item, idx) => `
-      <tr>
+      <tr class="${customerFrameClass(item)}">
         <td>${idx + 1}</td>
         <td>
           ${item.avatar && item.avatar.length > 1 ? `<img src="${item.avatar}" class="avatar" style="object-fit:cover;" alt="Avatar">` : `<div class="avatar">${item.avatar || (item.name[0] || 'C').toUpperCase()}</div>`}
@@ -382,8 +395,7 @@ window.initCustomers = function() {
         const updated = getCustomerById(id);
         const row = toggle.closest('tr');
         if (row && updated) {
-          const tierCell = row.querySelector('.tier-cell');
-          if (tierCell) tierCell.innerHTML = `<span class="badge ${badgeClass(updated.hangThanhVien)}">${updated.hangThanhVien || 'Đồng'}</span>`;
+          updateCustomerRowFrame(row, updated);
         }
         showInlineToast('Đã cập nhật trạng thái');
       } catch (err) {
@@ -414,7 +426,7 @@ window.initCustomers = function() {
               pointsTd.dataset.value = updated.diemTichLuy ?? newPoints;
               pointsTd.textContent = updated.diemTichLuy ?? newPoints;
             }
-            if (tierCell) tierCell.innerHTML = `<span class="badge ${badgeClass(updated.hangThanhVien)}">${updated.hangThanhVien || 'Đồng'}</span>`;
+            updateCustomerRowFrame(row, updated);
           }
           showInlineToast('Đã cập nhật điểm tích lũy');
         } catch (err) {

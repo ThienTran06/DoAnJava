@@ -249,6 +249,30 @@ body {
 .badge.paid { background: var(--green-light); color: var(--green); }
 .badge.ok { background: var(--green-light); color: var(--green); }
 .badge.bad { background: var(--red-light); color: var(--red); }
+.badge.tier-bronze { background: #f4eee7; color: #7a5634; border: 1px solid #dec7ad; }
+.badge.tier-silver { background: #eef2f5; color: #53616d; border: 1px solid #c8d1d9; }
+.badge.tier-gold { background: #fff5cf; color: #8a6200; border: 1px solid #f0c84d; }
+.badge.tier-platinum { background: #eef7fb; color: #1f6f86; border: 1px solid #9bd5e3; }
+.customer-tier-bronze td { background: linear-gradient(90deg, rgba(122,86,52,.08), transparent 42%); }
+.customer-tier-silver td { background: linear-gradient(90deg, rgba(83,97,109,.1), transparent 42%); }
+.customer-tier-gold td { background: linear-gradient(90deg, rgba(240,200,77,.18), transparent 48%); }
+.customer-tier-platinum td { background: linear-gradient(90deg, rgba(31,111,134,.13), transparent 48%); }
+.customer-tier-bronze td:first-child { border-left: 3px solid #b78a5c; }
+.customer-tier-silver td:first-child { border-left: 3px solid #91a0ad; }
+.customer-tier-gold td:first-child { border-left: 3px solid #d6a900; }
+.customer-tier-platinum td:first-child { border-left: 3px solid #56b7cf; }
+.customer-tier-vip td {
+  position: relative;
+  background-image:
+    linear-gradient(110deg, transparent 0%, rgba(255,255,255,.85) 18%, transparent 34%),
+    linear-gradient(90deg, rgba(255,215,92,.22), rgba(86,183,207,.16) 55%, transparent);
+  background-size: 240% 100%, 100% 100%;
+  animation: vipShimmer 2.4s linear infinite;
+}
+.customer-tier-vip td:first-child { border-left: 4px solid #d6a900; }
+.customer-tier-vip .badge {
+  box-shadow: 0 0 0 1px rgba(214,169,0,.18), 0 0 14px rgba(214,169,0,.28);
+}
 
 /* Quick Actions */
 .quick-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
@@ -349,6 +373,7 @@ select {
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: none; } }
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes vipShimmer { from { background-position: 180% 0, 0 0; } to { background-position: -80% 0, 0 0; } }
 
 /* Page load progress bar */
 @keyframes loadBar { from { width: 0%; } to { width: 70%; } }
