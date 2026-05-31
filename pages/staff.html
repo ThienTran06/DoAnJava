@@ -71,13 +71,24 @@ window.initStaff = function() {
     };
   };
 
-  const toRoleLabel = role => {
-    if (role === 'ADMIN') return 'Quản lý';
-    if (role === 'STAFF') return 'Nhân viên bán hàng';
-    return role || 'Nhân viên bán hàng';
+  const roleMap = {
+    ADMIN: 'Quản lý',
+    STAFF: 'Nhân viên bán hàng',
+    NHAN_VIEN_BAN_HANG: 'Nhân viên bán hàng',
+    THU_NGAN: 'Thu ngân',
+    KHO: 'Kho'
   };
 
-  const toGroupName = role => role === 'Quản lý' ? 'ADMIN' : 'STAFF';
+  const groupMap = {
+    'Quản lý': 'ADMIN',
+    'Nhân viên bán hàng': 'NHAN_VIEN_BAN_HANG',
+    'Thu ngân': 'THU_NGAN',
+    'Kho': 'KHO'
+  };
+
+  const toRoleLabel = role => roleMap[role] || role || 'Nhân viên bán hàng';
+
+  const toGroupName = role => groupMap[role] || 'NHAN_VIEN_BAN_HANG';
 
   const mapStaff = (item) => ({
   id: item?.id,

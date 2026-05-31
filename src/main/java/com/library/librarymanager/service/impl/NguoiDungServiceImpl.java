@@ -50,7 +50,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 
         for (ChucNang cn : dsChucNang) {
 
-            if (phanQuyenRepo.existsByNguoiDungAndChucNang(nd, cn)) {
+            if (phanQuyenRepo.countByNguoiDungIdAndChucNangId(nd.getId(), cn.getMaChucNang()) > 0) {
                 continue;
             }
 
@@ -71,7 +71,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 
         for (ChucNang cn : ds) {
 
-            if (phanQuyenRepo.existsByNguoiDungAndChucNang(nd, cn)) {
+            if (phanQuyenRepo.countByNguoiDungIdAndChucNangId(nd.getId(), cn.getMaChucNang()) > 0) {
                 continue;
             }
 
@@ -173,7 +173,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         NguoiDung nd = repo.findById(id)
                 .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
 
-        phanQuyenRepo.deleteAllByNguoiDung(nd);
+        phanQuyenRepo.deleteAllByNguoiDungId(nd.getId());
 
         repo.delete(nd);
     }
@@ -220,7 +220,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
             throw new AuthException("Có quyền không tồn tại");
         }
 
-        phanQuyenRepo.deleteAllByNguoiDung(nd);
+        phanQuyenRepo.deleteAllByNguoiDungId(nd.getId());
 
         for (ChucNang cn : permissions) {
             PhanQuyen pq = new PhanQuyen();
