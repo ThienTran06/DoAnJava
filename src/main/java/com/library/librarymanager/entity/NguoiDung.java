@@ -32,7 +32,7 @@ public class NguoiDung {
     private BigDecimal luongCoBan;
     private String ghiChu;
     @ManyToOne
-    @JoinColumn(name = "tenNhom", referencedColumnName = "tenNhom")
+    @JoinColumn(name = "ten_nhom", referencedColumnName = "id")
     private NhomNguoiDung nhom;
     @JsonIgnore
     @OneToMany(mappedBy = "nguoiDung")

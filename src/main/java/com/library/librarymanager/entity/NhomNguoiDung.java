@@ -22,8 +22,9 @@ public class NhomNguoiDung {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(unique = true)
+    @Column(name = "ten_nhom", unique = true)
     private String tenNhom;
+
     @OneToMany(mappedBy = "nhom")
     @JsonIgnore
     private List<NguoiDung> dsNguoiDung;
