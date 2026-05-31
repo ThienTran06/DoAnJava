@@ -28,7 +28,7 @@
     </div>
     <div class="empty-state" id="staffEmptyState" style="display:none;margin-top:16px">Chưa có nhân viên nào.</div>
   </div>
-  <div class="modal-overlay" id="staffModal"><div class="modal"><div class="modal-head"><div class="modal-title">🧑‍💼 Thêm nhân viên</div><button class="close" id="closeStaffModal">×</button></div><form id="staffForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống</div></div><div class="field"><div class="label">Mã nhân viên</div><input class="input" name="code" required><div class="helper">Ví dụ: NV001</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ</div></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Chức vụ</div><select class="select" name="role"><option>Quản lý</option><option>Thu ngân</option><option>Nhân viên bán hàng</option><option>Kho</option></select></div><div class="field"><div class="label">Ca làm việc</div><input class="input" name="shift" placeholder="Sáng / Chiều / Tối"></div><div class="field"><div class="label">Ngày vào làm</div><input class="input" type="date" name="joinDate"></div><div class="field"><div class="label">Lương cơ bản</div><input class="input" type="number" name="salary" min="0" step="1000"></div><div class="field full"><div class="label">Avatar nhân viên</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="staffPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelStaff">Hủy</button><button type="submit" class="btn primary" id="saveStaff"><span class="txt">Lưu nhân viên</span><span class="spin"></span></button></div></form></div></div>
+  <div class="modal-overlay" id="staffModal"><div class="modal"><div class="modal-head"><div class="modal-title">🧑‍💼 Thêm nhân viên</div><button class="close" id="closeStaffModal">×</button></div><form id="staffForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống</div></div><div class="field"><div class="label">Mã nhân viên</div><input class="input" name="code" required><div class="helper">Ví dụ: NV001</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ</div></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Chức vụ</div><select class="select" name="role"><option>Quản lý</option><option>Thu ngân</option><option>Nhân viên bán hàng</option><option>Kho</option></select></div><div class="field"><div class="label">Ca làm việc</div><select class="select" name="shift" required><option value="Ca 1">Ca 1 (6h - 12h)</option><option value="Ca 2">Ca 2 (12h - 18h)</option><option value="Ca 3">Ca 3 (18h - 24h)</option></select></div><div class="field"><div class="label">Ngày vào làm</div><input class="input" type="date" name="joinDate"></div><div class="field"><div class="label">Lương cơ bản</div><input class="input" type="number" name="salary" min="0" step="1000"></div><div class="field full"><div class="label">Avatar nhân viên</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="staffPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelStaff">Hủy</button><button type="submit" class="btn primary" id="saveStaff"><span class="txt">Lưu nhân viên</span><span class="spin"></span></button></div></form></div></div>
   <div class="modal-overlay" id="staffDetailModal"><div class="modal" style="max-width:600px"><div class="modal-head"><div class="modal-title">🧑‍💼 Hồ sơ nhân viên</div><button class="close" id="closeProfileModal">×</button></div><div class="modal-body"><div style="text-align:center;margin-bottom:20px" id="profileAvatarContainer"><div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto">A</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px"><div><div style="font-size:12px;color:var(--muted)">Họ tên</div><div style="font-weight:700" id="profileName">—</div></div><div><div style="font-size:12px;color:var(--muted)">Mã nhân viên</div><div style="font-weight:700" id="profileCode">—</div></div><div><div style="font-size:12px;color:var(--muted)">Email</div><div style="font-weight:700" id="profileEmail">—</div></div><div><div style="font-size:12px;color:var(--muted)">Số điện thoại</div><div style="font-weight:700" id="profilePhone">—</div></div><div><div style="font-size:12px;color:var(--muted)">Chức vụ</div><div style="font-weight:700" id="profileRole">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ca làm việc</div><div style="font-weight:700" id="profileShift">—</div></div><div><div style="font-size:12px;color:var(--muted)">Địa chỉ</div><div style="font-weight:700" id="profileAddress">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ngày vào làm</div><div style="font-weight:700" id="profileJoinDate">—</div></div><div><div style="font-size:12px;color:var(--muted)">Lương cơ bản</div><div style="font-weight:700" id="profileSalary">—</div></div><div><div style="font-size:12px;color:var(--muted)">Trạng thái</div><div style="font-weight:700" id="profileStatus">—</div></div><div style="grid-column:1/-1"><div style="font-size:12px;color:var(--muted)">Ghi chú</div><div style="font-weight:700" id="profileNote">—</div></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="closeProfileBtn">Đóng</button></div></div></div>
 </div>
 
@@ -49,6 +49,28 @@ window.initStaff = function() {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
+  const normalizeShift = value => {
+    const text = String(value || '').trim();
+    if (/^ca\s*1$/i.test(text) || text === '1') return 'Ca 1';
+    if (/^ca\s*2$/i.test(text) || text === '2') return 'Ca 2';
+    if (/^ca\s*3$/i.test(text) || text === '3') return 'Ca 3';
+    return text;
+  };
+
+  const getShiftStatus = shift => {
+    const normalized = normalizeShift(shift);
+    const hour = new Date().getHours();
+    const working =
+      (normalized === 'Ca 1' && hour >= 6 && hour < 12) ||
+      (normalized === 'Ca 2' && hour >= 12 && hour < 18) ||
+      (normalized === 'Ca 3' && hour >= 18 && hour < 24);
+
+    return {
+      text: working ? 'Đang làm' : 'Không làm',
+      cls: working ? 'paid' : 'bad'
+    };
+  };
+
   const mapStaff = (item) => ({
   id: item?.id,
   name: item?.hoTen || item?.ten || '—',
@@ -56,8 +78,8 @@ window.initStaff = function() {
   role: item?.nhom?.tenNhom || item?.vaiTro || item?.role || '',
   email: item?.email || '',
   phone: item?.SDT || item?.sdt || '',
-  shift: item?.caLamViec || item?.shift || '',
-  status: item?.trangThai || item?.status || 'Đang làm',
+  shift: normalizeShift(item?.caLamViec || item?.shift || ''),
+  status: item?.trangThai || item?.status || '',
   avatar: item?.avatar || '',
   address: item?.diaChi || item?.address || '',
   joinDate: item?.ngayVaoLam || item?.joinDate || '',
@@ -117,7 +139,7 @@ window.initStaff = function() {
 
   const updateStaffStats = () => {
     const total = state.items.length;
-    const working = state.items.filter(x => x.status === 'Đang làm').length;
+    const working = state.items.filter(x => getShiftStatus(x.shift).text === 'Đang làm').length;
     const managers = state.items.filter(x => x.role === 'Quản lý').length;
     const salesStaff = state.items.filter(x => x.role === 'Nhân viên bán hàng').length;
 
@@ -137,7 +159,9 @@ window.initStaff = function() {
     const q = search.value.trim().toLowerCase();
     const roleFilter = positionFilter.value;
     const rows = state.items.filter(x => (!q || x.name.toLowerCase().includes(q) || x.code.toLowerCase().includes(q) || x.email.toLowerCase().includes(q)) && (!roleFilter || x.role === roleFilter));
-    tableBody.innerHTML = rows.length ? rows.map((item, idx) => `
+    tableBody.innerHTML = rows.length ? rows.map((item, idx) => {
+      const shiftStatus = getShiftStatus(item.shift);
+      return `
       <tr>
         <td>${idx + 1}</td>
         <td>
@@ -149,16 +173,18 @@ window.initStaff = function() {
         <td style="color:var(--muted)">${item.email}</td>
         <td>${item.phone}</td>
         <td>${item.shift}</td>
-        <td><span class="badge ${item.status === 'Đang làm' ? 'paid' : item.status === 'Nghỉ phép' ? 'ok' : 'bad'}">${item.status}</span></td>
+        <td><span class="badge ${shiftStatus.cls}">${shiftStatus.text}</span></td>
         <td><div class="ops"><button class="link js-view-staff" data-name="${item.name}">Xem hồ sơ</button><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td>
       </tr>
-    `).join('') : `<tr><td colspan="10"><div class="empty-state">Không tìm thấy nhân viên phù hợp.</div></td></tr>`;
+    `;
+    }).join('') : `<tr><td colspan="10"><div class="empty-state">Không tìm thấy nhân viên phù hợp.</div></td></tr>`;
     updateStaffStats();
   };
 
   const closeModal = () => { modal.classList.remove('open'); form.reset(); preview.removeAttribute('src'); preview.style.display='none'; preview.nextElementSibling.style.display='block'; };
   openBtn.onclick = () => {
     form.reset();
+    form.shift.value = 'Ca 1';
     preview.removeAttribute('src');
     preview.style.display = 'none';
     preview.nextElementSibling.style.display = 'block';
@@ -275,7 +301,7 @@ if (avatarFile) {
       form.email.value = item.email;
       form.phone.value = item.phone;
       form.role.value = item.role;
-      form.shift.value = item.shift;
+      form.shift.value = normalizeShift(item.shift) || 'Ca 1';
       form.address.value = item.address || '';
       form.joinDate.value = item.joinDate || '';
       form.salary.value = item.salary || '';
@@ -342,7 +368,7 @@ if (avatarFile) {
     document.getElementById('profileAddress').textContent = staff.address || '—';
     document.getElementById('profileJoinDate').textContent = staff.joinDate || '—';
     document.getElementById('profileSalary').textContent = staff.salary ? staff.salary.toLocaleString() + ' đ' : '—';
-    document.getElementById('profileStatus').textContent = staff.status;
+    document.getElementById('profileStatus').textContent = getShiftStatus(staff.shift).text;
     document.getElementById('profileNote').textContent = staff.note || '—';
 
     const avatarContainer = document.getElementById('profileAvatarContainer');
@@ -365,5 +391,7 @@ if (avatarFile) {
 
   render();
   loadStaffFromApi();
+  clearInterval(window.staffShiftStatusTimer);
+  window.staffShiftStatusTimer = setInterval(render, 60000);
 };
 </script>
