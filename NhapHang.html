@@ -693,6 +693,7 @@
         }
     </style>
 <script src="js/app-settings.js"></script>
+<script>(function(){if(localStorage.getItem('darkMode')==='1')document.documentElement.setAttribute('data-theme','dark');})();</script>
 </head>
 <body>
 <aside class="sidebar">
@@ -2108,5 +2109,6 @@
     item.addEventListener('click', () => { location.href = route[1]; });
   });
 </script>
+<script src="shared.js"></script>
 </body>
 </html>
