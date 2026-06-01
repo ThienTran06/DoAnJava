@@ -70,7 +70,7 @@
     audio.loop      = true;
     audio.style.display = 'none';
     audio.innerHTML = '<source src="music/Come My Way.mp3" type="audio/mpeg">';
-    audio.volume    = parseFloat(localStorage.getItem('musicVolume') || '0.5');
+    audio.volume    = parseFloat(localStorage.getItem('musicVolume') || '50') / 100;
     document.body.appendChild(audio);
     window._bgAudio = audio;
 
