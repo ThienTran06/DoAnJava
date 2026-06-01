@@ -27,10 +27,27 @@ public class PhieuGiuSachController {
         return phieuService.taoPhieu(khachHangId);
     }
 
+    @PostMapping("/tao/{khachHangId}")
+    public int taoPhieuByPath(@PathVariable int khachHangId) {
+
+        return phieuService.taoPhieu(khachHangId);
+    }
+
     @PostMapping("/confirm/{phieuId}")
     public String confirm(
             @PathVariable int phieuId,
             @RequestParam int nhanVienId
+    ) {
+
+        phieuService.confirm(phieuId, nhanVienId);
+
+        return "Xac nhan thanh cong";
+    }
+
+    @PostMapping("/confirm/{phieuId}/{nhanVienId}")
+    public String confirmByPath(
+            @PathVariable int phieuId,
+            @PathVariable int nhanVienId
     ) {
 
         phieuService.confirm(phieuId, nhanVienId);

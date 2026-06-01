@@ -1,6 +1,7 @@
 package com.library.librarymanager.service.Interface;
 
 import com.library.librarymanager.entity.NhaCungCap;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -10,4 +11,9 @@ public interface NhaCungCapService {
     NhaCungCap create(NhaCungCap nhaCungCap);
     NhaCungCap updateById(int id,NhaCungCap nhaCungCap);
     void deleteById(int id);
+    Page<NhaCungCap> getDanhSachNhaCungCap(
+            String keyword,
+            int page,
+            int size
+    );
 }

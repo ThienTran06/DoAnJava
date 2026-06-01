@@ -3,6 +3,7 @@ package com.library.librarymanager.service.impl;
 import com.library.librarymanager.dto.request.ChiTietPhieuNhapRequest;
 import com.library.librarymanager.dto.request.PhieuNhapRequest;
 import com.library.librarymanager.dto.request.UpdatePhieuNhapRequest;
+import com.library.librarymanager.dto.response.ThongKePhieuNhapResponse;
 import com.library.librarymanager.entity.ChiTietPhieuNhap;
 import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.entity.NhaCungCap;
@@ -16,12 +17,16 @@ import com.library.librarymanager.repository.SachRepository;
 import com.library.librarymanager.service.Interface.PhieuNhapService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +42,13 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
     @Override
     public List<PhieuNhap> getAll() {
         return phieuNhapRepository.findAll();
+    }
+
+    @Override
+    public Page<PhieuNhap> getAll(Integer id, LocalDate ngay, int page, int size) {
+        LocalDateTime tuNgay = ngay == null ? null : ngay.atStartOfDay();
+        LocalDateTime denNgay = ngay == null ? null : ngay.plusDays(1).atStartOfDay();
+        return phieuNhapRepository.getAll(id, tuNgay, denNgay, PageRequest.of(page, size));
     }
 
     @Override
@@ -209,5 +221,18 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
 
         chiTietPhieuNhapRepository.deleteAll(phieuNhap.getDanhSachChiTiet());
         phieuNhapRepository.delete(phieuNhap);
+    }
+    @Override
+    public ThongKePhieuNhapResponse getThongKe() {
+
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        Object[] rs = (Object[]) phieuNhapRepository.getThongKePhieuNhap(today.atStartOfDay(), today.plusDays(1).atStartOfDay());
+
+        return new ThongKePhieuNhapResponse(
+                rs[1] == null ? 0 : ((Number) rs[1]).longValue(),
+                rs[0] == null ? 0 : ((Number) rs[0]).longValue(),
+                rs[2] == null ? 0 : ((Number) rs[2]).doubleValue(),
+                rs[3] == null ? 0 : ((Number) rs[3]).doubleValue()
+        );
     }
 }

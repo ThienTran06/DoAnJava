@@ -6,6 +6,7 @@ import com.library.librarymanager.dto.response.DoanhThuThangResponse;
 import com.library.librarymanager.dto.response.NhanVienXuatSacResponse;
 import com.library.librarymanager.entity.HoaDon;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -96,4 +97,33 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Integer> {
             ORDER BY COALESCE(SUM(h.tongTien), 0) DESC, COUNT(h.id) DESC
             """)
     List<NhanVienXuatSacResponse> findNhanVienXuatSac(Pageable pageable);
+    @Query("""
+    SELECT h
+    FROM HoaDon h
+    WHERE (:id IS NULL OR h.id = :id)
+      AND (
+            :tuNgay IS NULL
+            OR h.ngayBan >= :tuNgay
+               AND h.ngayBan < :denNgay
+      )
+""")
+    Page<HoaDon> getAll(
+            @Param("id") Integer id,
+            @Param("tuNgay") LocalDateTime tuNgay,
+            @Param("denNgay") LocalDateTime denNgay,
+            Pageable pageable
+    );
+    @Query("""
+        select
+            count(h),
+            sum(case when h.ngayBan >= :startOfDay and h.ngayBan < :startOfNextDay then 1 else 0 end),
+            sum(case when h.ngayBan >= :startOfDay and h.ngayBan < :startOfNextDay then h.tongTien else 0 end),
+            sum(h.tongTien)
+        from HoaDon h
+        where h.trangThai in ('HOAN THANH', 'PAID')
+    """)
+    Object getThongKeHoaDon(
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("startOfNextDay") LocalDateTime startOfNextDay
+    );
 }

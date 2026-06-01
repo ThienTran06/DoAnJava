@@ -3,6 +3,7 @@ package com.library.librarymanager.service.Interface;
 import com.library.librarymanager.dto.response.SachTonKhoResponse;
 import com.library.librarymanager.dto.response.SachThongKeResponse;
 import com.library.librarymanager.entity.Sach;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -21,4 +22,14 @@ public interface SachService {
          Integer getTongSoLuongTon();
          List<SachTonKhoResponse> getTonKhoIt();
          SachThongKeResponse getThongKeSach();
+    Page<Sach> getDanhSachSach(
+            String keyword,
+            int page,
+            int size
+    );
+    public Page<Sach> getTatCaSach(
+            String keyword,
+            int page,
+            int size
+    );
 }

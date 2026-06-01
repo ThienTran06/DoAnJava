@@ -3,6 +3,9 @@ package com.library.librarymanager.repository;
 import com.library.librarymanager.dto.response.SachTonKhoResponse;
 import com.library.librarymanager.entity.Sach;
 import jakarta.persistence.LockModeType;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -52,6 +55,35 @@ public interface SachRepository extends JpaRepository<Sach,Integer> {
         select s from Sach s
         where s.id = :id
     """)
-    Optional<Sach> findByIdForUpdate(int id);
+    Optional<Sach> findByIdForUpdate(@Param("id") int id);
 
+    @Query("""
+    SELECT s
+    FROM Sach s
+    WHERE s.soLuongTon > 0
+    AND (
+        :keyword IS NULL
+        OR :keyword = ''
+        OR LOWER(s.tenSach)
+           LIKE LOWER(CONCAT('%', :keyword, '%'))
+    )
+""")
+    Page<Sach> search(
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
+    @Query("""
+    SELECT s
+    FROM Sach s
+    WHERE (
+        :keyword IS NULL
+        OR :keyword = ''
+        OR LOWER(s.tenSach)
+            LIKE LOWER(CONCAT('%', :keyword, '%'))
+    )
+""")
+    Page<Sach> searchAll(
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 }

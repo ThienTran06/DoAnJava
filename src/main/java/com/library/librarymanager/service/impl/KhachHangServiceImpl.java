@@ -5,6 +5,8 @@ import com.library.librarymanager.repository.KhachHangRepository;
 import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.KhachHangService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -159,5 +161,17 @@ public class KhachHangServiceImpl implements KhachHangService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Anh vuot qua 5MB");
         }
         return cloudinaryService.uploadFile(avatarFile);
+    }
+    @Override
+    public Page<KhachHang> getDanhSachKhachHang(
+            String keyword,
+            int page,
+            int size
+    ) {
+
+        return khachHangRepository.search(
+                keyword,
+                PageRequest.of(page, size)
+        );
     }
 }

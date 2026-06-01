@@ -3,7 +3,9 @@ package com.library.librarymanager.controller;
 import com.library.librarymanager.entity.KhachHang;
 import com.library.librarymanager.service.Interface.KhachHangService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,5 +56,20 @@ public class KhachHangController {
     ) {
         String url = khachHangService.uploadAvatar(avatarFile != null ? avatarFile : fileAnh);
         return Map.of("url", url);
+    }
+    @GetMapping("/page")
+    public ResponseEntity<Page<KhachHang>> getDanhSachKhachHang(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        return ResponseEntity.ok(
+                khachHangService.getDanhSachKhachHang(
+                        keyword,
+                        page,
+                        size
+                )
+        );
     }
 }

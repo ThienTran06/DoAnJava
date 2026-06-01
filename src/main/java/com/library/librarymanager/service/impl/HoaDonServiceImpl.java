@@ -3,16 +3,15 @@ package com.library.librarymanager.service.impl;
 import com.library.librarymanager.dto.request.ChiTietHoaDonRequest;
 import com.library.librarymanager.dto.request.HoaDonRequest;
 import com.library.librarymanager.dto.request.UpdateHoaDonRequest;
-import com.library.librarymanager.dto.response.DoanhThuNamResponse;
-import com.library.librarymanager.dto.response.DoanhThuNgayResponse;
-import com.library.librarymanager.dto.response.DoanhThuThangResponse;
-import com.library.librarymanager.dto.response.DoanhThuTheoTheLoaiResponse;
+import com.library.librarymanager.dto.response.*;
 import com.library.librarymanager.entity.*;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.HoaDonService;
 import com.library.librarymanager.service.Interface.KhachHangService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,6 +36,13 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public List<HoaDon> getAll() {
         return hoaDonRepository.findAll();
+    }
+
+    @Override
+    public Page<HoaDon> getAll(Integer id, LocalDate ngay, int page, int size) {
+        LocalDateTime tuNgay = ngay == null ? null : ngay.atStartOfDay();
+        LocalDateTime denNgay = ngay == null ? null : ngay.plusDays(1).atStartOfDay();
+        return hoaDonRepository.getAll(id, tuNgay, denNgay, PageRequest.of(page, size));
     }
 
     @Override
@@ -246,7 +252,29 @@ public class HoaDonServiceImpl implements HoaDonService {
     public BigDecimal getTongDoanhThu(){
         return hoaDonRepository.getTongDoanhThu();
     }
+    @Transactional
+    @Override
+    public ThongKeHoaDonResponse getThongKe() {
 
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        Object result = hoaDonRepository.getThongKeHoaDon(today.atStartOfDay(), today.plusDays(1).atStartOfDay());
+        Object[] row = (Object[]) result;
+
+        long tongHoaDon = row[0] == null ? 0 : ((Number) row[0]).longValue();
+        long hoaDonTrongNgay = row[1] == null ? 0 : ((Number) row[1]).longValue();
+        BigDecimal doanhThuTrongNgay = (BigDecimal) row[2];
+        BigDecimal tongDoanhThu = (BigDecimal) row[3];
+
+        if (doanhThuTrongNgay == null) doanhThuTrongNgay = BigDecimal.ZERO;
+        if (tongDoanhThu == null) tongDoanhThu = BigDecimal.ZERO;
+
+        return new ThongKeHoaDonResponse(
+                tongHoaDon,
+                hoaDonTrongNgay,
+                doanhThuTrongNgay,
+                tongDoanhThu
+        );
+    }
 
 
 

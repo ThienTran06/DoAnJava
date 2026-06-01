@@ -9,6 +9,9 @@ import com.library.librarymanager.repository.SachRepository;
 import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.SachService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -129,5 +132,29 @@ public class SachServiceImpl implements SachService
         }
         return cloudinaryService.uploadFile(fileAnh);
     }
+    @Override
+    public Page<Sach> getDanhSachSach(
+            String keyword,
+            int page,
+            int size
+    ) {
 
+        return sachRepository.search(
+                keyword,
+                PageRequest.of(page, size)
+        );
+    }
+    //get all
+    public Page<Sach> getTatCaSach(
+            String keyword,
+            int page,
+            int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return sachRepository.searchAll(
+                keyword,
+                pageable
+        );
+    }
 }

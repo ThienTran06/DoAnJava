@@ -1,6 +1,7 @@
 package com.library.librarymanager.service.Interface;
 
 import com.library.librarymanager.entity.KhachHang;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -18,4 +19,9 @@ public interface KhachHangService {
     void congDiemTuHoaDon(KhachHang khachHang, BigDecimal tongTienSauGiamGia);
     void capNhatHangThanhVien(KhachHang khachHang);
     String uploadAvatar(MultipartFile avatarFile);
+    Page<KhachHang> getDanhSachKhachHang(
+            String keyword,
+            int page,
+            int size
+    );
 }
