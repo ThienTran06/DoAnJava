@@ -264,11 +264,16 @@ window.initCustomers = function() {
   if (search) search.oninput = e => render(e.target.value);
 
   const diemInput = document.getElementById('editDiemTichLuy');
-  const hangInput = document.getElementById('editHangThanhVien');
-  if (diemInput && hangInput) {
-    diemInput.addEventListener('input', () => {
-      hangInput.value = calculateTier(diemInput.value);
-    });
+  let hangInput = document.getElementById('editHangThanhVien');
+  const tierOptions = ['Đồng', 'Bạc', 'Vàng', 'Bạch Kim', 'Kim Cương'];
+  if (hangInput && hangInput.tagName !== 'SELECT') {
+    const tierSelect = document.createElement('select');
+    tierSelect.className = hangInput.className || 'input';
+    tierSelect.name = 'hangThanhVien';
+    tierSelect.id = hangInput.id;
+    tierSelect.innerHTML = tierOptions.map(tier => `<option value="${tier}">${tier}</option>`).join('');
+    hangInput.replaceWith(tierSelect);
+    hangInput = tierSelect;
   }
   if (form && form.avatar) form.avatar.onchange = null;
   
@@ -321,7 +326,7 @@ window.initCustomers = function() {
     const diemVal = document.getElementById('editDiemTichLuy');
     const trangThaiVal = document.getElementById('editTrangThai');
     const points = Number(diemVal?.value || 0);
-    const tier = calculateTier(points);
+    const tier = form.hangThanhVien?.value || calculateTier(points);
     const isVip = form.isVip && form.isVip.value === '1';
     const formData = new FormData();
     formData.append('khachHang', new Blob([JSON.stringify({

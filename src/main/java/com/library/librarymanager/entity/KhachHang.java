@@ -36,9 +36,9 @@ public class KhachHang {
     private int diemTichLuy = 0;
 
     @Column(name = "hang_thanh_vien", columnDefinition = "varchar(50) default 'Đồng'")
-    private String hangThanhVien = "Đồng";
+    private String hangThanhVien;
 
-    @Column(name = "is_vip", columnDefinition = "boolean default false")
+    @Column(name = "vip", columnDefinition = "boolean default false")
     @JsonAlias({"isVip", "is_Vip", "is_vip"})
     private boolean vip = false;
 

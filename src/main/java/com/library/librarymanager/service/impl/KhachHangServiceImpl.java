@@ -36,7 +36,7 @@ public class KhachHangServiceImpl implements KhachHangService {
 
     @Override
     public KhachHang create(KhachHang khachHang) {
-        capNhatHangThanhVien(khachHang);
+        apDungHangThanhVienMacDinhNeuCan(khachHang);
         return khachHangRepository.save(khachHang);
     }
 
@@ -60,8 +60,9 @@ public class KhachHangServiceImpl implements KhachHangService {
             res.setAvatar(khachHang.getAvatar());
         }
         res.setDiemTichLuy(khachHang.getDiemTichLuy());
+        res.setHangThanhVien(khachHang.getHangThanhVien());
         res.setVip(khachHang.isVip());
-        capNhatHangThanhVien(res);
+        apDungHangThanhVienMacDinhNeuCan(res);
         khachHangRepository.save(res);
         return res;
     }
@@ -130,6 +131,12 @@ public class KhachHangServiceImpl implements KhachHangService {
         if (diemTichLuy >= 5000) return "Vàng";
         if (diemTichLuy >= 1000) return "Bạc";
         return "Đồng";
+    }
+
+    private void apDungHangThanhVienMacDinhNeuCan(KhachHang khachHang) {
+        if (khachHang.getHangThanhVien() == null || khachHang.getHangThanhVien().isBlank()) {
+            khachHang.setHangThanhVien(tinhHangThanhVien(khachHang.getDiemTichLuy()));
+        }
     }
 
     private BigDecimal getPhanTramGiamTheoHang(String hangThanhVien) {
