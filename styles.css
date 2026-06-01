@@ -319,6 +319,46 @@ body {
 .link { border: 0; background: none; font: inherit; font-weight: 700; cursor: pointer; padding: 0; }
 .link.danger { color: var(--red); }
 
+.customer-table {
+  table-layout: fixed;
+  min-width: 1280px;
+}
+.customer-table th,
+.customer-table td {
+  padding: 14px 10px;
+  vertical-align: middle;
+}
+.customer-table th:first-child,
+.customer-table td:first-child {
+  padding-left: 0;
+}
+.customer-table th:last-child,
+.customer-table td:last-child {
+  padding-right: 0;
+}
+.customer-col-stt { width: 48px; }
+.customer-col-avatar { width: 72px; }
+.customer-col-name { width: 170px; }
+.customer-col-phone { width: 130px; }
+.customer-col-email { width: 290px; }
+.customer-col-orders { width: 130px; }
+.customer-col-points { width: 130px; }
+.customer-col-tier { width: 170px; }
+.customer-col-status { width: 150px; }
+.customer-col-actions { width: 210px; }
+.customer-table td:nth-child(6),
+.customer-table td:nth-child(7) {
+  text-align: center;
+}
+.customer-table th:nth-child(6),
+.customer-table th:nth-child(7) {
+  text-align: center;
+}
+.customer-table .ops {
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+
 /* ============================================================
    Modal
    ============================================================ */
