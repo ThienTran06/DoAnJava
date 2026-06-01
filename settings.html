@@ -342,16 +342,6 @@
     color: var(--bg);
   }
   .lang-flag { font-size: 20px; line-height: 1; }
-
-  /* ─── NOTICE TOAST ─── */
-  .notice {
-    display: none; align-items: center; gap: 8px;
-    background: var(--green-light); border: 1px solid var(--green);
-    border-radius: var(--radius-sm); padding: 10px 14px;
-    font-size: 12.5px; color: var(--green); font-weight: 500;
-    margin: 0 20px 14px;
-  }
-  .notice.show { display: flex; }
 </style>
 <link rel="stylesheet" href="ui-polish.css">
 <script src="js/app-settings.js"></script>
@@ -446,8 +436,8 @@
 <div class="main">
   <header class="topbar">
     <div class="topbar-left">
-      <div class="topbar-title">Cài đặt</div>
-      <div class="topbar-subtitle">Tuỳ chỉnh trải nghiệm của bạn</div>
+      <div class="topbar-title" data-i18n="topbar-title">Cài đặt</div>
+      <div class="topbar-subtitle" data-i18n="topbar-subtitle">Tuỳ chỉnh trải nghiệm của bạn</div>
     </div>
     <div class="topbar-actions">
       <!-- Dark mode toggle button in topbar -->
@@ -464,15 +454,15 @@
       <div class="settings-card-header">
         
         <div>
-          <div class="settings-card-title">Giao diện</div>
-          <div class="settings-card-desc">Chọn màu nền và chế độ hiển thị</div>
+          <div class="settings-card-title" data-i18n="appearance-title">Giao diện</div>
+          <div class="settings-card-desc" data-i18n="appearance-desc">Chọn màu nền và chế độ hiển thị</div>
         </div>
       </div>
       <div class="settings-divider"></div>
       <div class="settings-row">
         <div class="settings-row-label">
-          <div class="settings-row-name">Chế độ tối</div>
-          <div class="settings-row-hint">Chuyển giao diện sang nền đen, giảm mỏi mắt ban đêm</div>
+          <div class="settings-row-name" data-i18n="dark-mode-name">Chế độ tối</div>
+          <div class="settings-row-hint" data-i18n="dark-mode-hint">Chuyển giao diện sang nền đen, giảm mỏi mắt ban đêm</div>
         </div>
         <div class="toggle-wrap">
           <label class="toggle-switch">
@@ -488,15 +478,15 @@
       <div class="settings-card-header">
         
         <div>
-          <div class="settings-card-title">Âm nhạc nền</div>
-          <div class="settings-card-desc">Nhạc nền nhẹ khi sử dụng hệ thống</div>
+          <div class="settings-card-title" data-i18n="music-title">Âm nhạc nền</div>
+          <div class="settings-card-desc" data-i18n="music-desc">Nhạc nền nhẹ khi sử dụng hệ thống</div>
         </div>
       </div>
       <div class="settings-divider"></div>
       <div class="settings-row">
         <div class="settings-row-label">
-          <div class="settings-row-name">Bật nhạc nền</div>
-          <div class="settings-row-hint">Phát nhạc nền khi bạn đang làm việc</div>
+          <div class="settings-row-name" data-i18n="music-name">Bật nhạc nền</div>
+          <div class="settings-row-hint" data-i18n="music-hint">Phát nhạc nền khi bạn đang làm việc</div>
         </div>
         <div class="toggle-wrap">
           <label class="toggle-switch">
@@ -506,7 +496,7 @@
         </div>
       </div>
       <div class="volume-row">
-        <span class="volume-label">Âm lượng</span>
+        <span class="volume-label" data-i18n="volume-label">Âm lượng</span>
         <input type="range" id="volumeSlider" min="0" max="100" value="50" oninput="changeVolume(this.value)">
         <span class="volume-val" id="volumeVal">50%</span>
       </div>
@@ -529,8 +519,8 @@
       <div class="settings-card-header">
         
         <div>
-          <div class="settings-card-title">Ngôn ngữ</div>
-          <div class="settings-card-desc">Chọn ngôn ngữ hiển thị của hệ thống</div>
+          <div class="settings-card-title" data-i18n="language-title">Ngôn ngữ</div>
+          <div class="settings-card-desc" data-i18n="language-desc">Chọn ngôn ngữ hiển thị của hệ thống</div>
         </div>
       </div>
       <div class="settings-divider"></div>
@@ -544,10 +534,6 @@
           English
         </button>
       </div>
-      <div class="notice" id="langNotice">
-        
-        Tải lại trang để áp dụng ngôn ngữ mới
-      </div>
     </div>
 
     <!-- hidden audio element -->
@@ -558,6 +544,7 @@
   </div>
 </div>
 
+<script src="shared.js"></script>
 <script>
   /* ─── DARK MODE ─── */
   function applyTheme(isDark) {
