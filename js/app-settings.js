@@ -665,6 +665,10 @@
     const next = checkbox ? checkbox.checked : !isDarkMode();
     setDarkMode(next);
   };
+  // Alias used by topbar button on all pages (settings.html overrides this locally)
+  window._toggleDarkMode = function () {
+    setDarkMode(!isDarkMode());
+  };
   window.toggleMusic = function () {
     const checkbox = document.getElementById('musicToggle');
     setMusicEnabled(checkbox ? checkbox.checked : localStorage.getItem(MUSIC_ENABLED_KEY) !== '1');
