@@ -2088,5 +2088,24 @@
       }
     }
 </script>
+<script>
+  document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+    if (item.getAttribute('onclick')) return;
+    const label = item.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+    const routes = [
+      ['tổng quan', 'index.html?view=dashboard'],
+      ['sách', 'index.html?view=books'],
+      ['danh mục', 'index.html?view=categories'],
+      ['khách hàng', 'index.html?view=customers'],
+      ['nhân viên', 'index.html?view=staff'],
+      ['doanh thu', 'index.html?view=revenue'],
+      ['tồn kho', 'index.html?view=inventory'],
+      ['cài đặt', 'settings.html'],
+    ];
+    const route = routes.find(([key]) => label.includes(key));
+    if (!route) return;
+    item.addEventListener('click', () => { location.href = route[1]; });
+  });
+</script>
 </body>
 </html>

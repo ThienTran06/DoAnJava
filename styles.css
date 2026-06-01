@@ -253,35 +253,25 @@ body {
 .badge.tier-silver { background: #eef2f5; color: #53616d; border: 1px solid #c8d1d9; }
 .badge.tier-gold { background: #fff5cf; color: #8a6200; border: 1px solid #f0c84d; }
 .badge.tier-platinum { background: #eef7fb; color: #1f6f86; border: 1px solid #9bd5e3; }
-.tbl-books tr.customer-tier-row {
-  position: relative;
-  isolation: isolate;
-}
 .tbl-books tr.customer-tier-row td {
-  position: relative;
-  z-index: 1;
-  background: transparent;
-}
-.tbl-books tr.customer-tier-row::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  border-left: 3px solid var(--tier-accent, var(--border));
   background: linear-gradient(90deg, var(--tier-bg, rgba(0,0,0,.04)), transparent 70%);
+}
+.tbl-books tr.customer-tier-row td:first-child {
+  box-shadow: inset 3px 0 0 var(--tier-accent, var(--border));
 }
 .customer-tier-bronze { --tier-accent: #b78a5c; --tier-bg: rgba(122,86,52,.08); }
 .customer-tier-silver { --tier-accent: #91a0ad; --tier-bg: rgba(83,97,109,.1); }
 .customer-tier-gold { --tier-accent: #d6a900; --tier-bg: rgba(240,200,77,.18); }
 .customer-tier-platinum { --tier-accent: #56b7cf; --tier-bg: rgba(31,111,134,.13); }
-.tbl-books tr.customer-tier-vip::before {
-  border-left-width: 4px;
+.tbl-books tr.customer-tier-vip td {
   background-image:
     linear-gradient(110deg, transparent 0%, rgba(255,255,255,.85) 18%, transparent 34%),
     linear-gradient(90deg, rgba(255,215,92,.22), rgba(86,183,207,.16) 55%, transparent);
   background-size: 240% 100%, 100% 100%;
   animation: vipShimmer 2.4s linear infinite;
+}
+.tbl-books tr.customer-tier-vip td:first-child {
+  box-shadow: inset 4px 0 0 var(--tier-accent, var(--border));
 }
 .customer-tier-vip .badge {
   box-shadow: 0 0 0 1px rgba(214,169,0,.18), 0 0 14px rgba(214,169,0,.28);
@@ -357,6 +347,12 @@ body {
 .customer-table .ops {
   justify-content: flex-start;
   white-space: nowrap;
+}
+.customer-table th:nth-child(1),
+.customer-table td:nth-child(1),
+.customer-table th:nth-child(2),
+.customer-table td:nth-child(2) {
+  text-align: center;
 }
 
 /* ============================================================

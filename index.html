@@ -1153,13 +1153,15 @@ async function loadExternalPage(view) {
 }
 
 function setView(view) {
+  if (!viewTitles[view]) view = 'dashboard';
   document.querySelectorAll('[data-view]').forEach(item => {
     item.classList.toggle('active', item.dataset.view === view);
   });
   document.querySelectorAll('.view-panel').forEach(panel => {
     panel.classList.remove('active');
   });
-  document.getElementById(view + 'View').classList.add('active');
+  const panel = document.getElementById(view + 'View') || document.getElementById('dashboardView');
+  panel.classList.add('active');
 
   const title = viewTitles[view] || viewTitles.dashboard;
   document.querySelector('.topbar-title').textContent = title[0];
@@ -1925,7 +1927,8 @@ if (dashboardRangeSelect) {
     renderDashboardLineChart(useThirtyDays ? dashboardState.thirtyDays : dashboardState.sevenDays);
   });
 }
-loadDashboard();
+const initialView = new URLSearchParams(window.location.search).get('view') || 'dashboard';
+setView(initialView);
 </script>
 </body>
 </html>
