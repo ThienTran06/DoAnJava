@@ -115,7 +115,6 @@
     html[data-theme="dark"] .btn.ghost,
     html[data-theme="dark"] button.btn.ghost,
     html[data-theme="dark"] .btn,
-    html[data-theme="dark"] .btn-icon,
     html[data-theme="dark"] .btn-danger-ghost,
     html[data-theme="dark"] .icon-btn,
     html[data-theme="dark"] .search-box,
@@ -126,7 +125,6 @@
       border-color: var(--border);
     }
     html[data-theme="dark"] .btn svg,
-    html[data-theme="dark"] .btn-icon svg,
     html[data-theme="dark"] .icon-btn svg {
       stroke: currentColor;
     }
@@ -224,6 +222,31 @@
     }
   `;
 
+  const iconlessCss = `
+    svg,
+    .ico,
+    .icon-btn,
+    .logo-mark,
+    .quick-icon-wrap,
+    .settings-card-icon,
+    .lang-flag {
+      display: none !important;
+    }
+    .nav-item,
+    .search-box,
+    .section-title,
+    .modal-title,
+    .settings-card-header,
+    .lang-btn,
+    .quick-grid {
+      gap: 0 !important;
+    }
+    .quick-btn {
+      min-height: 52px;
+      justify-content: center;
+    }
+  `;
+
   const translations = {
     'Tổng quan': 'Dashboard',
     'Sách': 'Books',
@@ -275,6 +298,7 @@
     ['Cài đặt', 'Settings'], ['Đăng xuất', 'Logout'], ['Quản lý', 'Management'],
     ['Tìm kiếm sách, hóa đơn, khách hàng...', 'Search books, invoices, customers...'],
     ['Tìm kiếm sách, hóa đơn, khách hàng…', 'Search books, invoices, customers...'],
+    ['BookHouse – Tổng quan', 'BookHouse - Dashboard'],
     ['Chào mừng bạn trở lại, Admin!', 'Welcome back, Admin!'],
     ['Tri thức trong tầm tay', 'Knowledge within reach'],
     ['Quản lý toàn bộ đầu sách trong kho', 'Manage all books in stock'],
@@ -287,10 +311,25 @@
     ['Sách đã bán', 'Books sold'], ['Tồn kho hiện tại', 'Current inventory'],
     ['KPI doanh thu hôm nay', 'Today revenue KPI'], ['KPI hôm nay', 'Today KPI'],
     ['Lưu', 'Save'], ['Lỗi', 'Error'], ['Lỗi API', 'API error'], ['Từ backend', 'From backend'],
+    ['Quản trị viên', 'Administrator'], ['Hôm nay:', 'Today:'], ['Hôm nay', 'Today'],
+    ['Cần quyền XEM BÁO CÁO để đặt KPI.', 'REPORT_VIEW permission is required to set KPI.'],
+    ['Doanh thu 7 ngày qua', 'Revenue over the last 7 days'], ['Theo danh mục', 'By category'],
+    ['Tổng', 'Total'], ['Khác', 'Other'], ['Thời gian', 'Time'], ['Khách lẻ', 'Walk-in customer'],
+    ['Đã thanh toán', 'Paid'], ['Thao tác nhanh', 'Quick actions'], ['Thông tin hệ thống', 'System information'],
+    ['Phiên bản', 'Version'], ['Cơ sở dữ liệu', 'Database'],
+    ['Dữ liệu lấy từ /api/bao-cao để test trên Vercel.', 'Data is loaded from /api/bao-cao for Vercel testing.'],
+    ['7 ngày gần nhất', 'Last 7 days'], ['30 ngày gần nhất', 'Last 30 days'],
+    ['Bộ lọc đang xem', 'Current filter'], ['Biểu đồ doanh thu 7 ngày', '7-day revenue chart'],
+    ['Biểu đồ doanh thu 30 ngày', '30-day revenue chart'], ['Doanh thu theo ngày', 'Revenue by day'],
+    ['Ngày', 'Date'], ['Chưa tải dữ liệu', 'Data not loaded'], ['Chưa tải dữ liệu.', 'Data not loaded.'],
+    ['Doanh thu theo thể loại', 'Revenue by category'],
+    ['Kiểm tra tổng tồn kho, sách tồn nhiều và sách sắp hết hàng.', 'Review total inventory, highest-stock books, and low-stock books.'],
+    ['Tổng tồn kho', 'Total inventory'], ['Trạng thái API', 'API status'], ['Sách sắp hết hàng', 'Low-stock books'],
+    ['Danh sách', 'List'], ['Dữ liệu từ dashboard', 'Dashboard data'],
     ['Đang tải', 'Loading'], ['Đang tải...', 'Loading...'], ['Chưa gọi API', 'API not called'],
     ['Chưa đặt KPI', 'KPI not set'], ['Đã đạt KPI', 'KPI reached'], ['Chưa đạt KPI', 'KPI not reached'],
     ['7 ngày qua', 'Last 7 days'], ['30 ngày qua', 'Last 30 days'],
-    ['Xem tất cả', 'View all'], ['Xem tất cả ›', 'View all ›'],
+    ['Xem tất cả', 'View all'],
     ['Thêm sách', 'Add book'], ['Tạo hóa đơn', 'Create invoice'],
     ['Năm', 'Year'], ['Tháng', 'Month'], ['Theo tháng', 'By month'],
     ['Từ ngày', 'From date'], ['Đến ngày', 'To date'], ['Theo khoảng', 'By range'],
@@ -362,6 +401,13 @@
     ['Chưa có sản phẩm trong giỏ hàng', 'No products in cart'],
     ['Thêm', 'Add'], ['Chọn', 'Select'], ['Tạo tài khoản khách hàng mới', 'Create new customer account'],
     ['Họ tên *', 'Full name *'], ['Số điện thoại *', 'Phone number *'],
+    ['BookHouse – Bán hàng', 'BookHouse - Sales'], ['Đặt giữ sách', 'Book reservation'],
+    ['Quầy Bán Hàng (POS)', 'Point of Sale (POS)'],
+    ['Hệ thống tạo đơn hàng và tính tiền nhanh tại quầy', 'Create orders and checkout quickly at the counter'],
+    ['Thông tin khách hàng', 'Customer information'], ['Tạo KH', 'Create customer'], ['+ Tạo KH', 'Create customer'],
+    ['Danh mục sản phẩm', 'Product catalog'], ['Hành động', 'Action'],
+    ['Giỏ hàng lập đơn (', 'Order cart ('], ['Tổng tiền thanh toán', 'Payment total'],
+    ['XÁC NHẬN LẬP HÓA ĐƠN', 'CONFIRM INVOICE CREATION'], ['Tạo mới', 'Create new'],
     ['Hóa đơn trong ngày', 'Invoices today'], ['Tổng hóa đơn', 'Total invoices'],
     ['Doanh thu trong ngày', 'Revenue today'], ['Tổng doanh thu', 'Total revenue'],
     ['Tìm ID hóa đơn (số)...', 'Search invoice ID (number)...'],
@@ -371,6 +417,13 @@
     ['Không tìm thấy hóa đơn tương thích', 'No matching invoices found'],
     ['Hủy hóa đơn', 'Cancel invoice'], ['Hoàn thành', 'Completed'], ['Đã hủy', 'Canceled'],
     ['Hóa đơn đã đóng', 'Invoice closed'],
+    ['BookHouse – Quản lý hóa đơn', 'BookHouse - Invoice management'],
+    ['Hệ thống quản lý quy trình tra cứu bán sách', 'Manage book sale lookup workflow'],
+    ['Quản lý hóa đơn', 'Invoice management'], ['Tạo hóa đơn mới', 'Create new invoice'],
+    ['Hiển thị 0-0 dòng trong tổng số 0 dòng', 'Showing 0-0 rows out of 0 rows'],
+    ['Trước', 'Previous'], ['Sau', 'Next'],
+    ['Chi tiết hóa đơn', 'Invoice details'], ['Danh sách sản phẩm', 'Product list'],
+    ['Thành tiền cần thanh toán', 'Amount due'],
     ['Phiếu nhập trong ngày', 'Purchase orders today'],
     ['Tổng phiếu nhập kho', 'Total purchase orders'], ['Vốn nhập trong ngày', 'Purchase cost today'],
     ['Tổng vốn đầu tư kho', 'Total inventory investment'],
@@ -386,6 +439,17 @@
     ['Không tìm thấy phiếu nhập kho tương thích', 'No matching purchase orders found'],
     ['Không tìm thấy nhà cung cấp nào', 'No suppliers found'], ['Chưa chọn mặt hàng nào để nhập kho', 'No items selected for stock-in'],
     ['Giá Nhập (đ)', 'Import price (VND)'], ['S.Lượng', 'Qty'], ['Xóa phiếu nhập', 'Delete purchase order'],
+    ['BookHouse – Quản lý phiếu nhập', 'BookHouse - Purchase order management'],
+    ['Quản kho', 'Warehouse management'], ['Kho quản trị viên', 'Warehouse administrator'],
+    ['Nhập hàng kho', 'Stock receiving'],
+    ['Hệ thống xử lý lưu trữ phiếu nhập đầu sách', 'Process and store book purchase orders'],
+    ['Quản lý nhập kho (Phiếu Nhập)', 'Stock receiving management'],
+    ['Thêm NCC', 'Add supplier'], ['Tìm sách cần nhập kho', 'Search books to receive'],
+    ['Danh sách hàng nhập (', 'Receiving list ('], ['Tổng vốn đầu tư', 'Total investment'],
+    ['Hoàn tất nhập kho', 'Complete stock-in'], ['Tạo đối tác', 'Create partner'],
+    ['Chi tiết phiếu nhập kho', 'Purchase order details'],
+    ['Danh sách mặt hàng chi tiết', 'Detailed item list'], ['Tổng dòng vốn thanh toán', 'Total payment amount'],
+    ['Ví dụ: Nhà sách Tuổi Trẻ', 'Example: Tuoi Tre Bookstore'], ['Ví dụ: 0912345678', 'Example: 0912345678'],
     ['Tìm mã phiếu giữ (ID)...', 'Search reservation ID...'], ['Ngày lập', 'Created date'],
     ['Số lượng sách', 'Book quantity'], ['Lập phiếu giữ sách mới', 'Create new book reservation'],
     ['Nhập họ tên hoặc số điện thoại khách hàng...', 'Enter customer name or phone...'],
@@ -395,6 +459,15 @@
     ['Chưa có sản phẩm trong giỏ hàng giữ sách', 'No products in reservation cart'],
     ['Chờ lấy', 'Waiting for pickup'], ['Xác nhận lấy sách', 'Confirm pickup'],
     ['Hủy phiếu giữ', 'Cancel reservation'], ['Phiếu đã đóng quy trình', 'Reservation closed'],
+    ['BookHouse – Quản lý phiếu giữ sách', 'BookHouse - Reservation management'],
+    ['Phiếu giữ sách', 'Book reservations'],
+    ['Hệ thống xử lý đặt giữ sách trước cho khách hàng', 'Manage advance book reservations for customers'],
+    ['Quản lý phiếu giữ sách', 'Reservation management'], ['Tạo phiếu giữ sách', 'Create reservation'],
+    ['Tìm kiếm sách giữ', 'Search reserved books'], ['Giỏ hàng đặt giữ (', 'Reservation cart ('],
+    ['Tổng số lượng giữ', 'Total reserved quantity'], ['0 quyển', '0 books'],
+    ['XÁC NHẬN LẬP PHIẾU GIỮ', 'CONFIRM RESERVATION CREATION'],
+    ['Tạo khách hàng', 'Create customer'], ['Chi tiết phiếu giữ sách', 'Reservation details'],
+    ['Danh sách sản phẩm giữ', 'Reserved product list'],
     ['Giao diện', 'Appearance'], ['Chế độ tối', 'Dark mode'],
     ['Chọn màu nền và chế độ hiển thị', 'Choose colors and display mode'],
     ['Chuyển giao diện sang nền đen, giảm mỏi mắt ban đêm', 'Use a dark interface to reduce eye strain at night'],
@@ -402,7 +475,26 @@
     ['Bật nhạc nền', 'Enable background music'], ['Phát nhạc nền khi bạn đang làm việc', 'Play background music while you work'],
     ['Âm lượng', 'Volume'], ['Chọn ngôn ngữ hiển thị của hệ thống', 'Choose the display language'],
     ['Tải lại trang để áp dụng ngôn ngữ mới', 'Reload the page to apply the new language'],
-    ['Chuyển chế độ sáng/tối', 'Toggle light/dark mode']
+    ['Chuyển chế độ sáng/tối', 'Toggle light/dark mode'],
+    ['BookHouse – Cài đặt', 'BookHouse - Settings'], ['Tuỳ chỉnh trải nghiệm của bạn', 'Customize your experience'],
+    ['BookHouse – Đăng nhập', 'BookHouse - Login'], ['hiệu sách', 'bookstore'], ['thông minh', 'smart'],
+    ['Theo dõi doanh thu, quản lý kho hàng, và xử lý hóa đơn nhanh chóng — tất cả trong một giao diện.', 'Track revenue, manage inventory, and process invoices quickly in one interface.'],
+    ['Đầu sách', 'Book titles'], ['Bán hôm nay', 'Sold today'], ['Chào mừng trở lại', 'Welcome back'],
+    ['Đăng nhập để tiếp tục quản lý cửa hàng', 'Log in to continue managing the store'],
+    ['Sai tài khoản hoặc mật khẩu', 'Incorrect username or password'],
+    ['Tên đăng nhập', 'Username'], ['Mật khẩu', 'Password'], ['Ghi nhớ đăng nhập', 'Remember me'],
+    ['Quên mật khẩu?', 'Forgot password?'], ['Đăng nhập', 'Log in'],
+    ['Đang đăng nhập...', 'Logging in...'], ['Hiện', 'Show'], ['Ẩn', 'Hide'],
+    ['Hệ thống quản lý nội bộ', 'Internal management system'],
+    ['Nhập tên đăng nhập', 'Enter username'], ['Nhập mật khẩu', 'Enter password'],
+    ['Hiện/ẩn mật khẩu', 'Show/hide password'],
+    ['Chưa có khách hàng nào.', 'No customers yet.'],
+    ['Quản lý sách – Danh sách đầu sách và kho hàng', 'Book management - Book list and inventory'],
+    ['Tất cả chức vụ', 'All roles'], ['Biên mục', 'Cataloging'], ['Kế toán', 'Accounting'], ['Nhân sự', 'Human resources'],
+    ['Hóa đơn của NV xuất sắc', 'Top staff invoices'], ['Quyền lợi theo chức vụ', 'Benefits by role'],
+    ['Quyền lợi / quyền truy cập', 'Benefits / access rights'], ['Chưa có nhân viên nào.', 'No staff yet.'],
+    ['Không được để trống', 'Required'], ['Ví dụ: NV001', 'Example: NV001'], ['SĐT hợp lệ', 'Valid phone number'],
+    ['Avatar nhân viên', 'Staff avatar'], ['Hồ sơ nhân viên', 'Staff profile']
   ];
 
   function normalizeText(value) {
@@ -418,7 +510,8 @@
   }
 
   const normalizedTranslations = translationPairs.reduce((map, pair) => {
-    map[normalizeText(pair[0])] = pair[1];
+    const key = normalizeText(pair[0]);
+    if (!map[key]) map[key] = pair[1];
     return map;
   }, {});
   const originalTextNodes = new WeakMap();
@@ -432,7 +525,7 @@
     if (document.getElementById('bookhouse-dark-css')) return;
     const style = document.createElement('style');
     style.id = 'bookhouse-dark-css';
-    style.textContent = darkCss;
+    style.textContent = darkCss + iconlessCss;
     document.head.appendChild(style);
   }
 

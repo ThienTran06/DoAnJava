@@ -1,4 +1,4 @@
-<div class="page-shell page-transition active">
+﻿<div class="page-shell page-transition active">
   <div class="table-card">
     <div class="header-row">
       <div>
@@ -8,7 +8,7 @@
       <button class="btn primary" id="btnAddCategory">Thêm thể loại</button>
     </div>
     <div class="search-box" style="margin-bottom:18px;width:100%">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b5b5ae" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      
       <input type="text" id="categorySearch" placeholder="Tìm kiếm thể loại...">
     </div>
     <div class="table-wrap">
@@ -18,7 +18,7 @@
       </table>
     </div>
   </div>
-  <div class="modal-overlay" id="categoryModal"><div class="modal"><div class="modal-head"><div class="modal-title">📚 Thêm thể loại</div><button class="close" id="closeCategoryModal">×</button></div><form id="categoryForm"><div class="modal-body"><div class="grid"><div class="field full" id="categoryNameField"><div class="label">Tên thể loại</div><input class="input" name="name" required><div class="helper">Nhập tên thể loại</div></div><div class="field full"><div class="label">Mô tả</div><textarea class="textarea" name="description"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelCategory">Hủy</button><button type="submit" class="btn primary" id="saveCategory"><span class="txt">Lưu thể loại</span><span class="spin"></span></button></div></form></div></div>
+  <div class="modal-overlay" id="categoryModal"><div class="modal"><div class="modal-head"><div class="modal-title"> Thêm thể loại</div><button class="close" id="closeCategoryModal">Đóng</button></div><form id="categoryForm"><div class="modal-body"><div class="grid"><div class="field full" id="categoryNameField"><div class="label">Tên thể loại</div><input class="input" name="name" required><div class="helper">Nhập tên thể loại</div></div><div class="field full"><div class="label">Mô tả</div><textarea class="textarea" name="description"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelCategory">Hủy</button><button type="submit" class="btn primary" id="saveCategory"><span class="txt">Lưu thể loại</span><span class="spin"></span></button></div></form></div></div>
 </div>
 
 <script>
@@ -125,7 +125,7 @@ window.initCategories = function() {
   if (openBtn) openBtn.onclick = () => {
     window.currentEditCategoryIndex = undefined;
     form.reset();
-    document.querySelector('#categoryModal .modal-title').textContent = '📚 Thêm thể loại';
+    document.querySelector('#categoryModal .modal-title').textContent = ' Thêm thể loại';
     document.getElementById('saveCategory').querySelector('.txt').textContent = 'Lưu thể loại';
     modal.classList.add('open');
   };
@@ -172,7 +172,7 @@ window.initCategories = function() {
       // Open edit modal
       form.name.value = item.name;
       form.description.value = item.description === '—' ? '' : item.description;
-      document.querySelector('#categoryModal .modal-title').textContent = '📚 Sửa thể loại';
+      document.querySelector('#categoryModal .modal-title').textContent = ' Sửa thể loại';
       document.getElementById('saveCategory').querySelector('.txt').textContent = 'Cập nhật thể loại';
       modal.classList.add('open');
       
@@ -232,7 +232,7 @@ window.initCategories = function() {
         state.items.unshift(saved);
       }
       window.currentEditCategoryIndex = undefined;
-      document.querySelector('#categoryModal .modal-title').textContent = '📚 Thêm thể loại';
+      document.querySelector('#categoryModal .modal-title').textContent = ' Thêm thể loại';
       document.getElementById('saveCategory').querySelector('.txt').textContent = 'Lưu thể loại';
       render(search.value);
       closeModal();
