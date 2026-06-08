@@ -47,7 +47,6 @@ public class AuthServiceImpl implements AuthService {
 
         String accessToken = jwtutil.generateToken(
                 user.getId(),
-
                 user.getUsername(),
                 user.getNhom().getTenNhom(),
                 permissions

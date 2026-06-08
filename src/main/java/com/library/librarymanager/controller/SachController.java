@@ -1,5 +1,7 @@
 package com.library.librarymanager.controller;
 
+import com.library.librarymanager.dto.response.SachTonKhoResponse;
+import com.library.librarymanager.dto.response.SachThongKeResponse;
 import com.library.librarymanager.entity.Sach;
 import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.SachService;
@@ -11,7 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 @RestController
@@ -19,7 +20,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @PreAuthorize("hasAuthority('QUAN_LY_SACH')")
 public class SachController {
-
     private final SachService sachService;
     private final CloudinaryService cloudinaryService;
 
@@ -42,83 +42,58 @@ public class SachController {
     }
 
     @GetMapping
-    List<Sach> getAll() {
-        return sachService.getAll();
-    }
+    List<Sach> getAll(){return sachService.getAll();}
 
     @GetMapping("/{id}")
-    Sach getById(@PathVariable int id) {
-        return sachService.getById(id);
-    }
+    Sach getById(@PathVariable int id){return sachService.getById(id);}
 
     @GetMapping("/search")
     List<Sach> search(
             @RequestParam(required = false) String tenSach,
             @RequestParam(required = false) String tenTheLoai,
             @RequestParam(required = false) String tenTacGia,
-            @RequestParam(required = false) Integer namXuatBan
-    ) {
-
-        return sachService.search(
-                tenSach,
-                tenTheLoai,
-                tenTacGia,
-                namXuatBan
-        );
+            @RequestParam(required = false) Integer namXuatBan) {
+        return sachService.search(tenSach, tenTheLoai, tenTacGia, namXuatBan);
     }
 
-    @PostMapping
-    Sach create(
-            @RequestParam String tenSach,
-            @RequestParam BigDecimal giaBan,
-            @RequestParam Integer soLuongTon,
-            @RequestParam Integer namXuatBan,
-            @RequestParam Integer theLoaiId,
-            @RequestParam Integer nhaXuatBanId,
-            @RequestParam List<Integer> tacGiaIds,
-            @RequestParam MultipartFile hinhAnh
-    ) {
-
-        return sachService.create(
-                tenSach,
-                giaBan,
-                soLuongTon,
-                namXuatBan,
-                theLoaiId,
-                nhaXuatBanId,
-                tacGiaIds,
-                hinhAnh
-        );
+    @GetMapping("/thong-ke")
+    SachThongKeResponse getThongKeSach() {
+        return sachService.getThongKeSach();
     }
 
-    @PutMapping("/{id}")
-    Sach updateById(
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    Sach create(@Valid @RequestBody Sach sach){return  sachService.create(sach);}
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    Sach createWithImage(
+            @Valid @RequestPart("sach") Sach sach,
+            @RequestPart(value = "fileAnh", required = false) MultipartFile fileAnh
+    ) {
+        return sachService.create(sach, fileAnh);
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    Sach updateById(@PathVariable int id, @RequestBody Sach sach){return sachService.updateById(id,sach);}
+
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    Sach updateByIdWithImage(
             @PathVariable int id,
-            @RequestParam String tenSach,
-            @RequestParam BigDecimal giaBan,
-            @RequestParam Integer soLuongTon,
-            @RequestParam Integer namXuatBan,
-            @RequestParam Integer theLoaiId,
-            @RequestParam Integer nhaXuatBanId,
-            @RequestParam List<Integer> tacGiaIds,
-            @RequestParam(required = false) MultipartFile hinhAnh
+            @RequestPart("sach") Sach sach,
+            @RequestPart(value = "fileAnh", required = false) MultipartFile fileAnh
     ) {
-
-        return sachService.updateById(
-                id,
-                tenSach,
-                giaBan,
-                soLuongTon,
-                namXuatBan,
-                theLoaiId,
-                nhaXuatBanId,
-                tacGiaIds,
-                hinhAnh
-        );
+        return sachService.updateById(id, sach, fileAnh);
     }
 
     @DeleteMapping("/{id}")
-    void deleteById(@PathVariable int id) {
-        sachService.deleteById(id);
+    void deleteById(@PathVariable int id){sachService.deleteById(id);}
+    @GetMapping("/ton-kho")
+    List<SachTonKhoResponse>getSachTonKho(@RequestParam String tenSach){
+        return sachService.getStockByName(tenSach);
+    }
+    @PostMapping("/upload-image")
+    public Map<String, String> uploadImage(@RequestParam MultipartFile fileAnh) {
+        String url = cloudinaryService.uploadFile(fileAnh);
+        return Map.of("url", url);
     }
 }
+
