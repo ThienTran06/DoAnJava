@@ -17,12 +17,13 @@ public class PhieuNhap {
     private int id;
     private LocalDateTime ngayNhap;
     private BigDecimal tongTien;
+    private String trangThai;
     @ManyToOne
     @JoinColumn(name="nha_cung_cap_id")
     private NhaCungCap nhaCungCap;
     @ManyToOne
     @JoinColumn(name = "nhan_vien_id")
     private NguoiDung nhanVien;
-    @OneToMany
+    @OneToMany(mappedBy = "phieuNhap")
     private List<ChiTietPhieuNhap> danhSachChiTiet;
 }

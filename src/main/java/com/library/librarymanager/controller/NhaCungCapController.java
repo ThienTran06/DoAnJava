@@ -3,6 +3,7 @@ package com.library.librarymanager.controller;
 import com.library.librarymanager.entity.NhaCungCap;
 import com.library.librarymanager.service.Interface.NhaCungCapService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,15 @@ import java.util.List;
 @PreAuthorize("hasAuthority('QUAN_LY_NHA_CUNG_CAP')")
 public class NhaCungCapController {
     private final NhaCungCapService nhaCungCapService;
+
+    @GetMapping(params = {"page", "size"})
+    Page<NhaCungCap> getPage(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return nhaCungCapService.getDanhSachNhaCungCap(keyword, page, size);
+    }
 
     @GetMapping
     List<NhaCungCap> getAll(){return nhaCungCapService.getAll();}

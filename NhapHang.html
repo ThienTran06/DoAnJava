@@ -1,0 +1,2051 @@
+﻿<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BookHouse – Quản lý phiếu nhập</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap"
+            rel="stylesheet"
+    />
+    <style>
+        :root {
+          --bg: #f6f7ed;
+          --surface: #ffffff;
+          --border: #e8e8e2;
+          --text: #1f1f1f;
+          --text-muted: #888880;
+          --text-subtle: #b5b5ae;
+          --green: #3a7d44;
+          --green-light: #e8f5eb;
+          --red: #c0392b;
+          --red-light: #fdecea;
+          --cyan: #13c2c2;
+          --cyan-light: #e6fffb;
+          --radius: 14px;
+          --radius-sm: 8px;
+          --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          font-family: "DM Sans", sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          display: flex;
+          height: 100vh;
+          overflow: hidden;
+          font-size: 14.5px;
+          font-weight: 500;
+        }
+        .ico {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .ico svg {
+          display: block;
+        }
+
+        /* ─── SIDEBAR (ĐỒNG BỘ 100% VỚI HOA-DON) ─── */
+        .sidebar {
+          width: 224px;
+          min-width: 224px;
+          background: var(--surface);
+          border-right: 1px solid var(--border);
+          display: flex;
+          flex-direction: column;
+          overflow-y: auto;
+          padding: 0 0 24px;
+        }
+        .sidebar-logo {
+          display: flex;
+          align-items: center;
+          gap: 11px;
+          padding: 22px 20px 18px;
+          border-bottom: 1px solid var(--border);
+        }
+        .logo-mark {
+          width: 34px;
+          height: 34px;
+          background: var(--text);
+          border-radius: 9px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .logo-text {
+          font-weight: 800;
+          font-size: 15.5px;
+          letter-spacing: -0.5px;
+          line-height: 1.1;
+        }
+        .logo-sub {
+          font-size: 10px;
+          color: var(--text-muted);
+          margin-top: 2px;
+          font-weight: 400;
+        }
+
+        .nav-section {
+          padding: 18px 12px 4px;
+        }
+        .nav-label {
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.09em;
+          text-transform: uppercase;
+          color: var(--text-subtle);
+          padding: 0 8px;
+          margin-bottom: 4px;
+        }
+        .nav-item {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          padding: 8px 10px;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+          color: var(--text-muted);
+          font-size: 13.5px;
+          font-weight: 500;
+          transition: all 0.15s;
+          user-select: none;
+        }
+        .nav-item:hover {
+          background: var(--bg);
+          color: var(--text);
+        }
+        .nav-item.active {
+          background: var(--text);
+          color: #f6f7ed;
+          font-weight: 600;
+        }
+        .nav-item.active svg {
+          stroke: #f6f7ed !important;
+        }
+        .nav-badge {
+          margin-left: auto;
+          background: var(--text);
+          color: white;
+          font-size: 10px;
+          font-weight: 700;
+          padding: 1px 6px;
+          border-radius: 20px;
+        }
+        .nav-item.active .nav-badge {
+          background: rgba(255, 255, 255, 0.25);
+        }
+        .nav-arrow {
+          margin-left: auto;
+          font-size: 11px;
+          opacity: 0.35;
+        }
+
+        .sidebar-footer {
+          margin-top: auto;
+          padding: 14px 16px 0;
+          border-top: 1px solid var(--border);
+        }
+        .user-card {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+        }
+        .user-card:hover {
+          background: var(--bg);
+        }
+        .avatar {
+          width: 32px;
+          height: 32px;
+          background: var(--text);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #f6f7ed;
+          font-size: 12px;
+          font-weight: 700;
+          flex-shrink: 0;
+        }
+        .user-name {
+          font-weight: 700;
+          font-size: 13px;
+        }
+        .user-role {
+          font-size: 11px;
+          color: var(--text-muted);
+          font-weight: 400;
+        }
+
+        /* ─── MAIN LAYOUT ─── */
+        .main {
+          flex: 1;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* ─── TOPBAR ─── */
+        .topbar {
+          background: var(--surface);
+          border-bottom: 1px solid var(--border);
+          padding: 0 28px;
+          height: 62px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          flex-shrink: 0;
+          position: sticky;
+          top: 0;
+          z-index: 10;
+        }
+        .topbar-left {
+          flex: 1;
+        }
+        .topbar-title {
+          font-size: 18px;
+          font-weight: 800;
+          letter-spacing: -0.5px;
+        }
+        .topbar-subtitle {
+          font-size: 12px;
+          color: var(--text-muted);
+          font-weight: 400;
+          margin-top: 1px;
+        }
+
+        .content {
+          padding: 22px 28px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+        }
+
+        /* ─── DASHBOARD STATS ─── */
+        .stats-container {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+          margin-bottom: 2px;
+        }
+        .stat-card {
+          background: var(--surface);
+          border: 1.5px solid var(--border);
+          border-radius: var(--radius);
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          min-height: 95px;
+          transition: box-shadow 0.2s;
+        }
+        .stat-card:hover {
+          box-shadow: var(--shadow-md);
+        }
+        .stat-card.dark {
+          background: var(--text);
+          border-color: var(--text);
+          color: #f6f7ed;
+        }
+        .stat-card.dark .stat-label {
+          color: rgba(255, 255, 255, 0.45);
+        }
+        .stat-value {
+          font-size: 24px;
+          font-weight: 800;
+          letter-spacing: -0.5px;
+          line-height: 1.2;
+        }
+        .stat-label {
+          font-size: 12.5px;
+          color: var(--text-muted);
+          margin-top: 6px;
+          font-weight: 400;
+        }
+
+        /* ─── CARDS & CONTROLS ─── */
+        .card {
+          background: var(--surface);
+          border: 1.5px solid var(--border);
+          border-radius: var(--radius);
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+        }
+        .card-header-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+        .page-title {
+          font-size: 18px;
+          font-weight: 800;
+          letter-spacing: -0.5px;
+        }
+        .controls-group {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .input-text {
+          background: var(--bg);
+          border: 1px solid var(--border);
+          border-radius: 9px;
+          padding: 8px 14px;
+          font-family: inherit;
+          font-size: 13.5px;
+          font-weight: 500;
+          color: var(--text);
+          outline: none;
+          transition: all 0.2s;
+        }
+        .input-text:focus {
+          border-color: var(--text);
+          background: var(--surface);
+        }
+
+        /* ─── BUTTONS ─── */
+        .btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 14px;
+          border-radius: 9px;
+          font-family: inherit;
+          font-size: 13.5px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s;
+          border: 1.5px solid var(--border);
+          background: var(--surface);
+          color: var(--text);
+          white-space: nowrap;
+          user-select: none;
+        }
+        .btn:hover {
+          background: var(--bg);
+        }
+        .btn-primary {
+          background: var(--text);
+          color: #f6f7ed;
+          border-color: var(--text);
+        }
+        .btn-primary:hover {
+          background: #333;
+          color: #fff;
+        }
+        .btn-danger-ghost {
+          border-color: var(--red);
+          color: var(--red);
+          background: transparent;
+        }
+        .btn-danger-ghost:hover {
+          background: var(--red-light);
+        }.btn:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+          background: var(--border);
+          color: var(--text-subtle);
+          border-color: var(--border);
+        }
+
+        /* ─── TABLE ─── */
+        .table-wrap {
+          width: 100%;
+          overflow-x: auto;
+          margin-top: 10px;
+        }
+        .tbl {
+          width: 100%;
+          border-collapse: collapse;
+          text-align: left;
+        }
+        .tbl th {
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          color: var(--text-subtle);
+          padding: 12px 8px;
+          border-bottom: 1.5px solid var(--border);
+        }
+        .tbl td {
+          padding: 12px 8px;
+          font-size: 13.5px;
+          border-bottom: 1px solid var(--border);
+          vertical-align: middle;
+          font-weight: 500;
+        }
+        .tbl tr:last-child td {
+          border-bottom: none;
+        }
+        .tbl tr:hover td {
+          background: var(--bg);
+        }
+
+        .pagination-container {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 16px;
+          padding-top: 12px;
+          border-top: 1px solid var(--border);
+        }
+        .pagination-info {
+          font-size: 13px;
+          color: var(--text-muted);
+        }
+        .pagination-buttons {
+          display: flex;
+          gap: 6px;
+        }
+
+        /* ─── BADGES ─── */
+        .badge {
+          display: inline-flex;
+          padding: 3px 9px;
+          border-radius: 20px;
+          font-size: 11.5px;
+          font-weight: 600;
+        }
+        .badge.id-tag {
+          background: #e6f7ff;
+          color: #1890ff;
+          border: 1px solid #91d5ff;
+          border-radius: 4px;
+        }
+        .badge.cyan-tag {
+          background: var(--cyan-light);
+          color: var(--cyan);
+          border: 1px solid #87e8de;
+          border-radius: 4px;
+        }
+        .badge.purple-tag {
+          background: #f0f5ff;
+          color: #2f54eb;
+          border: 1px solid #adc6ff;
+          border-radius: 4px;
+        }
+
+        /* ─── MODALS & CONTAINER PANELS ─── */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.4);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 100;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.2s ease;
+        }
+        .modal-overlay.open {
+          opacity: 1;
+          pointer-events: auto;
+        }
+        .modal-box {
+          background: var(--surface);
+          border-radius: var(--radius);
+          width: 90%;
+          max-width: 1050px;
+          max-height: 85vh;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+          transform: translateY(15px);
+          transition: transform 0.2s ease;
+        }
+        .modal-overlay.open .modal-box {
+          transform: translateY(0);
+        }
+        .modal-header {
+          padding: 16px 24px;
+          border-bottom: 1px solid var(--border);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .modal-title {
+          font-size: 16px;
+          font-weight: 700;
+        }
+        .modal-body {
+          padding: 20px 24px;
+          overflow-y: auto;
+          flex: 1;
+        }
+        .modal-footer {
+          padding: 12px 24px;
+          border-top: 1px solid var(--border);
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+        }
+
+        .create-grid {
+          display: grid;
+          grid-template-columns: 1.3fr 1fr;
+          gap: 20px;
+          height: 100%;
+        }
+        .section-card {
+          border: 1.5px solid var(--border);
+          border-radius: var(--radius-sm);
+          padding: 14px;
+          margin-bottom: 14px;
+          position: relative;
+        }
+        .section-title {
+          font-size: 14px;
+          font-weight: 700;
+          margin-bottom: 10px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .space-compact {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+        .space-compact .input-text {
+          flex: 1;
+        }
+
+        /* Suggestions Dropdown */
+        .suggestions-dropdown {
+          position: absolute;
+          top: 100%;
+          left: 14px;
+          right: 14px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          max-height: 180px;
+          overflow-y: auto;
+          z-index: 105;
+          display: none;
+          box-shadow: var(--shadow-md);
+        }
+        .suggestion-item {
+          padding: 8px 12px;
+          cursor: pointer;
+          font-size: 13px;
+          border-bottom: 1px solid var(--border);
+        }
+        .suggestion-item:last-child {
+          border-bottom: none;
+        }
+        .suggestion-item:hover {
+          background: var(--bg);
+        }
+        .form-item {
+          margin-bottom: 12px;
+        }
+        .form-item label {
+          display: block;
+          font-size: 12px;
+          font-weight: 700;
+          margin-bottom: 4px;
+          color: var(--text-muted);
+        }
+        .form-item .input-text {
+          width: 100%;
+        }
+
+        /* Cart Layout Sticky behavior */
+        .cart-container {
+          display: flex;
+          flex-direction: column;
+          height: 530px;
+          border: 1.5px solid var(--border);
+          border-radius: var(--radius-sm);
+          padding: 16px;
+          background: #fff;
+        }
+        .cart-items-list {
+          flex: 1;
+          overflow-y: auto;
+          margin-bottom: 12px;
+          padding-right: 4px;
+        }
+
+        /* Cart Dynamic Items Card */
+        .mini-card {
+          display: flex;
+          gap: 10px;
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          padding: 8px;
+          margin-bottom: 10px;
+        }
+        .mini-card img {
+          width: 50px;
+          height: 68px;
+          object-fit: cover;
+          border-radius: 4px;
+          background: #eee;
+        }
+        .mini-card-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .mini-card-title {
+          font-size: 13px;
+          font-weight: 600;
+          line-height: 1.2;
+        }
+
+        .input-grid-mini {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+          gap: 6px;
+          align-items: center;
+        }
+        .input-grid-mini label {
+          font-size: 10.5px;
+          color: var(--text-muted);
+          font-weight: 600;
+          display: block;
+          margin-bottom: 2px;
+        }
+
+        /* ─── DRAWER RIGHT PANEL ─── */
+        .drawer-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.3);
+          z-index: 90;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.2s ease;
+        }
+        .drawer-overlay.open {
+          opacity: 1;
+          pointer-events: auto;
+        }
+        .drawer-box {
+          position: fixed;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 620px;
+          background: var(--surface);
+          border-left: 1px solid var(--border);
+          z-index: 91;
+          transform: translateX(100%);
+          transition: transform 0.25s cubic-bezier(0.1, 0.7, 0.1, 1);
+          display: flex;
+          flex-direction: column;
+        }
+        .drawer-overlay.open + .drawer-box,
+        .drawer-box.open {
+          transform: translateX(0) !important;
+        }
+        .detail-summary-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+          background: #fafafa;
+          padding: 12px;
+          border-radius: 8px;
+          margin-bottom: 16px;
+        }
+        .summary-label {
+          font-size: 12px;
+          color: var(--text-muted);
+          font-weight: 400;
+        }
+        .summary-value {
+          font-size: 13.5px;
+          font-weight: 600;
+          margin-top: 1px;
+        }
+    </style>
+    <link rel="stylesheet" href="ui-polish.css">
+<script src="js/app-settings.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-mark">
+            
+        </div>
+        <div>
+            <div class="logo-text">BookHouse</div>
+            <div class="logo-sub">Tri thức trong tầm tay</div>
+        </div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-label">Quản lý</div>
+        <div class="nav-item">
+            
+            Tổng quan
+        </div>
+        <div class="nav-item">
+            
+            Sách
+        </div>
+        <div class="nav-item">
+            
+            Danh mục 
+        </div>
+        <div class="nav-item">
+            
+            Khách hàng
+        </div>
+        <div class="nav-item">
+            
+            Nhân viên
+        </div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-label">Nghiệp vụ</div>
+        <div class="nav-item" onclick="location.href = 'BanHang.html'">
+            
+            Bán hàng
+        </div>
+        <div class="nav-item" onclick="location.href = 'HoaDon.html'">
+            
+            Hóa đơn
+        </div>
+        <div class="nav-item" onclick="location.href = 'PhieuGiu.html'">
+            
+            Đặt giữ sách
+        </div>
+        <div class="nav-item active" onclick="location.href = 'NhapHang.html'">
+            
+            Nhập hàng <span class="nav-badge" id="sidebar-order-count">0</span>
+        </div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-label">Báo cáo</div>
+        <div class="nav-item">
+            
+            Doanh thu
+        </div>
+        <div class="nav-item">
+            
+            Tồn kho
+        </div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-label">Hệ thống</div>
+        <div class="nav-item">
+            
+            Cài đặt
+        </div>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="user-card">
+            <div class="avatar" id="avatar-box">M</div>
+            <div>
+                <div class="user-name" id="user-display-name">Quản kho</div>
+                <div class="user-role">Kho quản trị viên</div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<div class="main">
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-title">Nhập hàng kho</div>
+            <div class="topbar-subtitle">
+                Hệ thống xử lý lưu trữ phiếu nhập đầu sách
+            </div>
+        </div>
+    </header>
+
+    <div class="content">
+        <div class="stats-container">
+            <div class="stat-card dark">
+                <div class="stat-value" id="statOrdersToday">0</div>
+                <div class="stat-label">Phiếu nhập trong ngày</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statTotalOrders">0</div>
+                <div class="stat-label">Tổng phiếu nhập kho</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statCostToday">0 đ</div>
+                <div class="stat-label">Vốn nhập trong ngày</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statTotalCost">0 đ</div>
+                <div class="stat-label">Tổng vốn đầu tư kho</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header-row">
+                <div class="page-title"> Danh sách nhà cung cấp</div>
+                <div class="controls-group">
+                    <input
+                            type="text"
+                            class="input-text"
+                            id="supplierListSearchInput"
+                            placeholder="Tìm NCC theo tên, SĐT, địa chỉ..."
+                            style="width: 280px"
+                    />
+                    <button class="btn" id="btnReloadSuppliers" style="padding: 7px 12px">
+                        Tải lại
+                    </button>
+                </div>
+            </div>
+            <div class="table-wrap" style="max-height: 260px">
+                <table class="tbl" id="supplierTable">
+                    <thead>
+                    <tr>
+                        <th>Mã NCC</th>
+                        <th>Tên nhà cung cấp</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ</th>
+                    </tr>
+                    </thead>
+                    <tbody id="supplierTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header-row">
+                <div class="page-title"> Quản lý nhập kho (Phiếu Nhập)</div>
+                <div class="controls-group">
+                    <input
+                            type="number"
+                            class="input-text"
+                            id="searchOrderInput"
+                            placeholder="Tìm ID phiếu nhập (số)..."
+                            style="width: 240px"
+                            min="1"
+                    />
+                    <input type="date" class="input-text" id="datePickerInput" />
+                    <button class="btn btn-primary" id="btnOpenCreateModal">
+                        
+                        Nhập hàng kho
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div
+                class="card"
+                style="flex: 1; display: flex; flex-direction: column"
+        >
+            <div class="table-wrap">
+                <table class="tbl" id="orderTable">
+                    <thead>
+                    <tr>
+                        <th>Mã Phiếu</th>
+                        <th>Nhà cung cấp</th>
+                        <th>Ngày nhập kho</th>
+                        <th>Tổng tiền nhập</th>
+                        <th style="text-align: center">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody id="orderTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="pagination-container">
+                <div class="pagination-info" id="paginationInfo">
+                    Hiển thị 0-0 dòng trong tổng số 0 dòng
+                </div>
+                <div class="pagination-buttons">
+                    <button
+                            class="btn"
+                            id="btnPrevPage"
+                            style="padding: 4px 10px; font-size: 13px"
+                    >
+                        Trước
+                    </button>
+                    <button
+                            class="btn"
+                            id="btnNextPage"
+                            style="padding: 4px 10px; font-size: 13px"
+                    >
+                        Sau
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="createOrderModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-title"> Lập phiếu nhập kho hàng</div>
+            <button
+                    class="btn"
+                    onclick="closeCreateModal()"
+                    style="border: none; background: transparent"
+            >
+                Đóng
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="create-grid">
+                <div>
+                    <div class="section-card">
+                        <div class="section-title"> Nhà cung cấp đối tác</div>
+                        <div class="space-compact">
+                            <input
+                                    type="text"
+                                    class="input-text"
+                                    id="supplierSearchInput"
+                                    placeholder="Nhập tên nhà cung cấp cần tìm..."
+                                    autocomplete="off"
+                            />
+                            <button
+                                    class="btn btn-primary"
+                                    onclick="openCreateSupplierModal()"
+                            >
+                                Thêm NCC
+                            </button>
+                        </div>
+                        <div
+                                class="suggestions-dropdown"
+                                id="supplierSuggestions"
+                        ></div>
+                        <div
+                                id="selectedSupplierCard"
+                                style="
+                    display: none;
+                    margin-top: 8px;
+                    padding: 10px;
+                    background: #fafafa;
+                    border-radius: 8px;
+                    border: 1px dashed var(--border);
+                  "
+                        ></div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-title"> Tìm sách cần nhập kho</div>
+                        <input
+                                type="text"
+                                class="input-text"
+                                id="searchBookInput"
+                                placeholder="Tìm kiếm sách..."
+                                style="margin-bottom: 12px"
+                        />
+                        <div
+                                style="
+                    max-height: 230px;
+                    overflow-y: auto;
+                    border: 1px solid var(--border);
+                    border-radius: 6px;
+                  "
+                        >
+                            <table class="tbl" style="font-size: 12.5px">
+                                <thead>
+                                <tr>
+                                    <th>Sách</th>
+                                    <th>Giá niêm yết</th>
+                                    <th style="text-align: right">Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody id="bookSearchTableBody"></tbody>
+                            </table>
+                        </div>
+
+                        <div
+                                class="pagination-container"
+                                style="margin-top: 8px; font-size: 12px; padding-top: 6px"
+                        >
+                  <span id="bookPaginationInfo" style="color: var(--text-muted)"
+                  >Trang 1</span
+                  >
+                            <div class="pagination-buttons">
+                                <button
+                                        class="btn"
+                                        id="btnPrevBookPage"
+                                        style="padding: 2px 6px; font-size: 11px"
+                                >Trước</button>
+                                <button
+                                        class="btn"
+                                        id="btnNextBookPage"
+                                        style="padding: 2px 6px; font-size: 11px"
+                                >Sau</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cart-container">
+                    <div class="section-title" style="color: var(--text)">
+                         Danh sách hàng nhập (<span id="cartCount">0</span>)
+                    </div>
+                    <div class="cart-items-list" id="cartItemsList">
+                        <div
+                                style="color: #999; text-align: center; padding-top: 100px"
+                        >
+                            Chưa chọn mặt hàng nào để nhập kho
+                        </div>
+                    </div>
+                    <div>
+                        <div
+                                style="height: 1px; background: var(--border); margin: 12px 0"
+                        ></div>
+                        <div
+                                style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  "
+                        >
+                            <span style="font-weight: 700">Tổng vốn đầu tư</span>
+                            <span
+                                    style="
+                      color: var(--text);
+                      font-size: 18px;
+                      font-weight: 800;
+                    "
+                                    id="cartTotalDisplay"
+                            >0 đ</span
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeCreateModal()">Hủy bỏ</button>
+            <button
+                    class="btn btn-primary"
+                    onclick="submitCreateOrder()"
+                    id="btnSubmitOrder"
+            >
+                Hoàn tất nhập kho
+            </button>
+        </div>
+    </div>
+</div>
+
+<div
+        class="modal-overlay"
+        id="createSupplierModal"
+        style="background: rgba(0, 0, 0, 0.5); z-index: 110"
+>
+    <div class="modal-box" style="max-width: 450px">
+        <div class="modal-header">
+            <div class="modal-title"> Thêm mới Nhà Cung Cấp đối tác</div>
+            <button
+                    class="btn"
+                    onclick="closeCreateSupplierModal()"
+                    style="border: none; background: transparent"
+            >
+                Đóng
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="supplierForm" onsubmit="event.preventDefault()">
+                <div class="form-item">
+                    <label>Tên nhà cung cấp *</label>
+                    <input
+                            type="text"
+                            class="input-text"
+                            id="supName"
+                            placeholder="Ví dụ: Nhà sách Tuổi Trẻ"
+                            required
+                    />
+                </div>
+                <div class="form-item">
+                    <label>Số điện thoại liên hệ *</label>
+                    <input
+                            type="text"
+                            class="input-text"
+                            id="supPhone"
+                            placeholder="Ví dụ: 0912345678"
+                            required
+                    />
+                </div>
+                <div class="form-item">
+                    <label>Địa chỉ trụ sở chính</label>
+                    <input
+                            type="text"
+                            class="input-text"
+                            id="supAddress"
+                            placeholder="Nhập địa chỉ nhà cung cấp..."
+                    />
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeCreateSupplierModal()">Đóng</button>
+            <button class="btn btn-primary" onclick="submitCreateSupplier()">
+                Tạo đối tác
+            </button>
+        </div>
+    </div>
+</div>
+
+<div
+        class="drawer-overlay"
+        id="detailDrawerOverlay"
+        onclick="closeDetailDrawer()"
+></div>
+<div class="drawer-box" id="detailDrawer">
+    <div class="modal-header">
+        <div
+                class="modal-title"
+                style="display: flex; align-items: center; gap: 8px"
+        >
+            <span> Chi tiết phiếu nhập kho</span>
+            <span class="badge purple-tag" id="drawerOrderId">#PN...</span>
+        </div>
+        <button
+                class="btn"
+                onclick="closeDetailDrawer()"
+                style="border: none; background: transparent"
+        >
+            Đóng
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="detail-summary-grid">
+            <div>
+                <div class="summary-label">Nhà cung cấp đối tác:</div>
+                <div class="summary-value" id="dtSupplierName">...</div>
+            </div>
+            <div>
+                <div class="summary-label">Mã NCC:</div>
+                <div class="summary-value">
+                    <span class="badge cyan-tag" id="dtSupplierId">#N/A</span>
+                </div>
+            </div>
+            <div>
+                <div class="summary-label">Nhân viên kho:</div>
+                <div class="summary-value" id="dtStaffName">...</div>
+            </div>
+            <div>
+                <div class="summary-label">Mã NV:</div>
+                <div class="summary-value">
+              <span class="badge" style="background: #f5f5f5" id="dtStaffId"
+              >#0</span
+              >
+                </div>
+            </div>
+            <div style="grid-column: span 2">
+                <div class="summary-label">Thời gian nhập:</div>
+                <div class="summary-value" id="dtDate">...</div>
+            </div>
+        </div>
+
+        <div
+                style="
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #434343;
+          "
+        >
+             Danh sách mặt hàng chi tiết
+        </div>
+        <div
+                id="drawerProductsList"
+                style="
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: calc(100vh - 350px);
+            overflow-y: auto;
+            padding-right: 4px;
+          "
+        ></div>
+
+        <div
+                style="
+            margin-top: 24px;
+            padding: 16px;
+            background: #fafafa;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <span style="font-weight: 700; color: var(--text); font-size: 15px"
+          >Tổng dòng vốn thanh toán</span
+          >
+            <span
+                    style="font-size: 20px; font-weight: 800; color: var(--text)"
+                    id="dtTotalAmount"
+            >0 đ</span
+            >
+        </div>
+    </div>
+    <div class="modal-footer" id="drawerFooterAction"></div>
+</div>
+
+<script>
+    const API_BASE_URL = window.location.origin;
+
+    let purchaseOrders = [];
+    let books = [];
+    let suppliers = [];
+    let selectedBooks = [];
+    let selectedSupplier = null;
+    let currentUser = null;
+
+    let currentPage = 0;
+    let pageSize = 10;
+    let totalPages = 0;
+    let totalElements = 0;
+
+    let currentBookPage = 0;
+    let bookPageSize = 5;
+    let totalBookPages = 0;
+
+    let searchOrderQuery = null;
+    let searchDateQuery = "";
+    let searchBookQuery = "";
+    let supplierTypingTimeout = null;
+
+    function getAuthHeaders(contentType = "application/json") {
+      const token = localStorage.getItem("token");
+      const headers = {};
+      if (contentType) headers["Content-Type"] = contentType;
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      return headers;
+    }
+
+    function getSafeBookImage(src, fallback = "https://via.placeholder.com/50x68") {
+      const value = String(src || "").trim();
+      if (!value) return fallback;
+      const lower = value.toLowerCase();
+      if (lower.includes("zalo") || lower.includes("zaloapp") || lower.includes("zalo.me")) {
+        return fallback;
+      }
+      return value;
+    }
+
+    function decodeJwtPayload() {
+      const token = localStorage.getItem("token");
+      if (!token) return null;
+      const parts = token.split(".");
+      if (parts.length < 2) return null;
+      try {
+        const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+        const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+        const bytes = Uint8Array.from(atob(padded), (char) =>
+          char.charCodeAt(0),
+        );
+        return JSON.parse(new TextDecoder("utf-8").decode(bytes));
+      } catch {
+        return null;
+      }
+    }
+
+    function getStoredCurrentUser() {
+      try {
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        if (user?.id) return user;
+      } catch {}
+
+      const payload = decodeJwtPayload();
+      if (!payload?.id) return null;
+      return {
+        id: payload.id,
+        username: payload.sub,
+        hoTen: payload.hoTen || payload.name || payload.sub || "Quản kho",
+        role: payload.role,
+      };
+    }
+
+    /* ================= LIFECYCLE INITIALIZATION ================= */
+    window.addEventListener("DOMContentLoaded", () => {
+      loadCurrentUser();
+      fetchPurchaseOrders();
+      fetchSuppliers();
+      fetchThongKe();
+      setupEventListeners();
+      if (new URLSearchParams(window.location.search).get("quick") === "create") {
+        setTimeout(() => document.getElementById("btnOpenCreateModal")?.click(), 120);
+      }
+    });
+
+    function setupEventListeners() {
+      document
+        .getElementById("btnOpenCreateModal")
+        .addEventListener("click", () => {
+          document.getElementById("createOrderModal").classList.add("open");
+          currentBookPage = 0;
+          fetchBooks();
+        });
+
+      document
+        .getElementById("btnReloadSuppliers")
+        ?.addEventListener("click", () => fetchSuppliers());
+
+      document
+        .getElementById("supplierListSearchInput")
+        ?.addEventListener("input", () => renderSuppliersTable());
+
+      document
+        .getElementById("searchOrderInput")
+        .addEventListener("input", (e) => {
+          const val = e.target.value.trim();
+          if (val === "") {
+            searchOrderQuery = null;
+          } else {
+            const parsed = parseInt(val, 10);
+            searchOrderQuery = isNaN(parsed) ? null : parsed;
+          }
+          currentPage = 0;
+          fetchPurchaseOrders();
+        });
+
+      document
+        .getElementById("datePickerInput")
+        .addEventListener("change", (e) => {
+          searchDateQuery = e.target.value;
+          currentPage = 0;
+          fetchPurchaseOrders();
+        });
+
+      document
+        .getElementById("searchBookInput")
+        .addEventListener("input", (e) => {
+          searchBookQuery = e.target.value;
+          currentBookPage = 0;
+          clearTimeout(window.bookOrderTimeout);
+          window.bookOrderTimeout = setTimeout(() => {
+            fetchBooks();
+          }, 300);
+        });
+
+      const supInput = document.getElementById("supplierSearchInput");
+      if (supInput) {
+        supInput.addEventListener("input", (e) => {
+          const keyword = e.target.value.trim();
+          clearTimeout(supplierTypingTimeout);
+          if (keyword.length === 0) {
+            document.getElementById("supplierSuggestions").style.display =
+              "none";
+            return;
+          }
+          supplierTypingTimeout = setTimeout(() => {
+            fetchSupplierSuggestions(keyword);
+          }, 300);
+        });
+      }
+
+      document.addEventListener("click", (e) => {
+        if (
+          !e.target.closest("#supplierSearchInput") &&
+          !e.target.closest("#supplierSuggestions")
+        ) {
+          document.getElementById("supplierSuggestions").style.display =
+            "none";
+        }
+      });
+
+      document.getElementById("btnPrevPage").addEventListener("click", () => {
+        if (currentPage > 0) {
+          currentPage--;
+          fetchPurchaseOrders();
+        }
+      });
+      document.getElementById("btnNextPage").addEventListener("click", () => {
+        if (currentPage < totalPages - 1) {
+          currentPage++;
+          fetchPurchaseOrders();
+        }
+      });
+
+      document
+        .getElementById("btnPrevBookPage")
+        .addEventListener("click", () => {
+          if (currentBookPage > 0) {
+            currentBookPage--;
+            fetchBooks();
+          }
+        });
+      document
+        .getElementById("btnNextBookPage")
+        .addEventListener("click", () => {
+          if (currentBookPage < totalBookPages - 1) {
+            currentBookPage++;
+            fetchBooks();
+          }
+        });
+    }
+
+    function loadCurrentUser() {
+      const user = getStoredCurrentUser();
+      currentUser = user;
+      if (user) {
+        document.getElementById("user-display-name").innerText =
+          user.hoTen || user.username || "Quản kho";
+        document.getElementById("avatar-box").innerText = String(
+          user.hoTen || user.username || "M",
+        )
+          .charAt(0)
+          .toUpperCase();
+      }
+    }
+
+    /* ================= GỌI API THỐNG KÊ KHO HÀNG ================= */
+    async function fetchThongKe() {
+      try {
+        const url = `${API_BASE_URL}/api/phieu-nhap/thong_ke`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: getAuthHeaders(null),
+        });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data) {
+          document.getElementById("statOrdersToday").innerText = (
+            data.phieuNhapTrongNgay || 0
+          ).toLocaleString();
+          document.getElementById("statTotalOrders").innerText = (
+            data.tongPhieuNhap || 0
+          ).toLocaleString();
+          document.getElementById("statCostToday").innerText =
+            (data.giaTriNhapTrongNgay || 0).toLocaleString() + " đ";
+          document.getElementById("statTotalCost").innerText =
+            (data.tongGiaTriNhap || 0).toLocaleString() + " đ";
+        }
+      } catch (err) {
+        console.warn("Chưa cấu hình API thống kê kho:", err);
+      }
+    }
+
+    /* ================= GỌI API PHIẾU NHẬP ================= */
+    async function fetchSuppliers() {
+      const tbody = document.getElementById("supplierTableBody");
+      if (tbody) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 24px 0;">Đang tải danh sách nhà cung cấp...</td></tr>`;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/nha-cung-cap?page=0&size=100`, {
+          method: "GET",
+          headers: getAuthHeaders(null),
+        });
+        if (!response.ok) throw new Error("ERR_SUPPLIERS");
+        const pageData = await response.json();
+        suppliers = pageData.content || (Array.isArray(pageData) ? pageData : []);
+      } catch (err) {
+        console.error("Lỗi tải danh sách nhà cung cấp:", err);
+        suppliers = [];
+      }
+
+      renderSuppliersTable();
+    }
+
+    function getSupplierPhone(supplier) {
+      return supplier?.sdt || supplier?.SDT || supplier?.phone || "";
+    }
+
+    function getSupplierName(supplier) {
+      return supplier?.tenNCC || supplier?.tenNhaCungCap || supplier?.ten || "";
+    }
+
+    function renderSuppliersTable() {
+      const tbody = document.getElementById("supplierTableBody");
+      if (!tbody) return;
+      const keyword = (document.getElementById("supplierListSearchInput")?.value || "")
+        .trim()
+        .toLowerCase();
+      const rows = suppliers.filter((s) => {
+        const haystack = [
+          String(s.id || ""),
+          getSupplierName(s),
+          getSupplierPhone(s),
+          s.diaChi || "",
+        ].join(" ").toLowerCase();
+        return !keyword || haystack.includes(keyword);
+      });
+
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 24px 0;">Không tìm thấy nhà cung cấp nào</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map((s) => `
+        <tr>
+          <td><span class="badge cyan-tag">#NCC${s.id || "N/A"}</span></td>
+          <td><strong>${getSupplierName(s) || "N/A"}</strong></td>
+          <td>${getSupplierPhone(s) || "N/A"}</td>
+          <td style="color:var(--text-muted);">${s.diaChi || "N/A"}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function fetchPurchaseOrders() {
+      try {
+        let url = `${API_BASE_URL}/api/phieu-nhap?page=${currentPage}&size=${pageSize}`;
+        if (searchOrderQuery !== null) url += `&ma=${searchOrderQuery}`;
+        if (searchDateQuery) url += `&ngay=${searchDateQuery}`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: getAuthHeaders(null),
+        });
+
+        if (!response.ok) {
+          purchaseOrders = [];
+          renderOrdersTable();
+          return;
+        }
+
+        const pageData = await response.json();
+
+        if (pageData && Array.isArray(pageData.content)) {
+          purchaseOrders = pageData.content;
+          totalPages = pageData.totalPages || 0;
+          totalElements = pageData.totalElements || 0;
+        } else if (Array.isArray(pageData)) {
+          purchaseOrders = pageData;
+          totalPages = 1;
+          totalElements = pageData.length;
+        } else {
+          purchaseOrders = [];
+        }
+
+        renderOrdersTable();
+        renderPaginationUI();
+      } catch (err) {
+        console.error("Lỗi fetch danh sách phiếu nhập:", err);
+        purchaseOrders = [];
+        renderOrdersTable();
+        renderPaginationUI();
+      }
+    }
+
+    /* ================= RENDER BẢNG PHIẾU NHẬP ================= */
+    function renderOrdersTable() {
+      const tbody = document.getElementById("orderTableBody");
+      tbody.innerHTML = "";
+
+      if (!purchaseOrders || purchaseOrders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding: 40px 0;">Không tìm thấy phiếu nhập kho tương thích</td></tr>`;
+        return;
+      }
+
+      purchaseOrders.forEach((item) => {
+        try {
+          const tr = document.createElement("tr");
+          let dateString = "N/A";
+          if (item.ngayNhap) {
+            const d = new Date(item.ngayNhap);
+            if (!isNaN(d.getTime())) {
+              dateString = `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+            }
+          }
+
+          let nccName = "Chưa rõ nhà cung cấp";
+          if (item.nhaCungCap) {
+            nccName =
+              item.nhaCungCap.tenNCC ||
+              item.nhaCungCap.tenNhaCungCap ||
+              item.nhaCungCap.ten ||
+              "N/A";
+          }
+
+          const totalAmount = item.tongTien || item.tongTienNhap || 0;
+
+          tr.innerHTML = `
+            <td><span class="badge id-tag">#PN${item.id}</span></td>
+            <td><strong style="color:#13c2c2;"> ${nccName}</strong></td>
+            <td style="color:#595959;"><span> </span>${dateString}</td>
+            <td><span style="color:var(--text); font-weight:700;">${totalAmount.toLocaleString()} đ</span></td>
+            <td style="text-align: center;">
+              <div style="display:inline-flex; gap:8px;">
+                <button class="btn" onclick="viewDetailDrawer(${item.id})" style="border-color:var(--text); color:var(--text);" title="Xem chi tiết">Xem</button>
+                <button class="btn btn-danger-ghost" onclick="triggerDeleteOrder(${item.id})" title="Xóa phiếu nhập">Xóa</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        } catch (err) {
+          console.error("Lỗi khi kết xuất dòng phiếu nhập:", err, item);
+        }
+      });
+    }
+
+    function renderPaginationUI() {
+      const info = document.getElementById("paginationInfo");
+      const start = totalElements === 0 ? 0 : currentPage * pageSize + 1;
+      const end = Math.min((currentPage + 1) * pageSize, totalElements);
+
+      info.innerText = `Hiển thị ${start}-${end} dòng trong tổng số ${totalElements} dòng`;
+      document.getElementById("btnPrevPage").disabled = currentPage === 0;
+      document.getElementById("btnNextPage").disabled =
+        currentPage >= totalPages - 1 || totalPages === 0;
+
+      const sidebarCount = document.getElementById("sidebar-order-count");
+      if (sidebarCount) sidebarCount.innerText = totalElements;
+    }
+
+    async function fetchBooks() {
+      try {
+        let url = `${API_BASE_URL}/api/sach/page?page=${currentBookPage}&size=${bookPageSize}`;
+        if (searchBookQuery)
+          url += `&keyword=${encodeURIComponent(searchBookQuery)}`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: getAuthHeaders(null),
+        });
+        if (!response.ok) throw new Error("ERR");
+
+        const pageData = await response.json();
+        books = pageData.content || [];
+        totalBookPages = pageData.totalPages || 0;
+
+        renderBookSearchList();
+
+        document.getElementById("bookPaginationInfo").innerText =
+          `Trang ${currentBookPage + 1} / ${totalBookPages || 1}`;
+        document.getElementById("btnPrevBookPage").disabled =
+          currentBookPage === 0;
+        document.getElementById("btnNextBookPage").disabled =
+          currentBookPage >= totalBookPages - 1 || totalBookPages === 0;
+      } catch (err) {
+        console.error(err);
+        books = [];
+        renderBookSearchList();
+      }
+    }
+
+    async function fetchSupplierSuggestions(keyword) {
+      try {
+        let url = `${API_BASE_URL}/api/nha-cung-cap?keyword=${encodeURIComponent(keyword)}&page=0&size=10`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: getAuthHeaders(null),
+        });
+        if (!response.ok) throw new Error("ERR_SUGGESTION");
+
+        const pageData = await response.json();
+        const suggestions = pageData.content || [];
+        renderSupplierSuggestions(suggestions);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderSupplierSuggestions(list) {
+      const dropdown = document.getElementById("supplierSuggestions");
+      if (!dropdown) return;
+      dropdown.innerHTML = "";
+
+      if (list.length === 0) {
+        dropdown.innerHTML = `<div class="suggestion-item" style="color:var(--text-muted); cursor:default;">Không tìm thấy nhà cung cấp nào</div>`;
+        dropdown.style.display = "block";
+        return;
+      }
+
+      list.forEach((s) => {
+        const div = document.createElement("div");
+        div.className = "suggestion-item";
+        div.innerHTML = `<strong>${getSupplierName(s) || "N/A"}</strong> - SĐT: ${getSupplierPhone(s) || "N/A"}`;
+        div.addEventListener("click", () => selectSupplier(s));
+        dropdown.appendChild(div);
+      });
+      dropdown.style.display = "block";
+    }
+
+    function selectSupplier(s) {
+      selectedSupplier = s;
+      document.getElementById("supplierSearchInput").value =
+        getSupplierName(s);
+      document.getElementById("supplierSuggestions").style.display = "none";
+
+      const card = document.getElementById("selectedSupplierCard");
+      card.innerHTML = `
+        <div style="font-weight:700; font-size:13.5px; color:var(--text);"> Đã chọn: ${getSupplierName(s) || "N/A"}</div>
+        <div style="font-size:12px; color:var(--text); margin-top:3px;"><b>Số điện thoại:</b> ${getSupplierPhone(s) || "N/A"}</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:1px;"><b>Địa chỉ:</b> ${s.diaChi || "N/A"}</div>
+      `;
+      card.style.display = "block";
+    }
+
+    function renderBookSearchList() {
+      const tbody = document.getElementById("bookSearchTableBody");
+      tbody.innerHTML = "";
+
+      if (books.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Không tìm thấy sách phù hợp</td></tr>`;
+        return;
+      }
+
+      books.forEach((b) => {
+        const tr = document.createElement("tr");
+        const imgUrl = getSafeBookImage(b.hinhAnh, "https://via.placeholder.com/50x68");
+        tr.innerHTML = `
+          <td>
+            <div style="display:flex; gap:8px; align-items:start;">
+              <img src="${imgUrl}" style="width:38px; height:50px; object-fit:cover; border-radius:4px;" onerror="this.src='https://via.placeholder.com/50x68'">
+              <div>
+                <div style="font-weight:600; line-height:1.2;">${b.tenSach}</div>
+                <div style="color:var(--text-muted); font-size:11px; margin-top:2px;">Tồn kho: ${b.soLuongTon}</div>
+              </div>
+            </div>
+          </td>
+          <td style="white-space:nowrap;">${(b.giaBan || 0).toLocaleString()} đ</td>
+          <td style="text-align:right;"><button class="btn" style="padding:4px 8px; font-size:12px; border-color:var(--text); color:var(--text);" onclick="addBookToCart(${b.id})">Chọn</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderCartItems() {
+      const container = document.getElementById("cartItemsList");
+      const totalDisplay = document.getElementById("cartTotalDisplay");
+      const countDisplay = document.getElementById("cartCount");
+
+      countDisplay.innerText = selectedBooks.length;
+
+      if (selectedBooks.length === 0) {
+        container.innerHTML = `<div style="color: #999; text-align: center; padding-top: 100px;">Chưa chọn mặt hàng nào để nhập kho</div>`;
+        totalDisplay.innerText = "0 đ";
+        return;
+      }
+
+      container.innerHTML = "";
+      let costSummary = 0;
+
+      selectedBooks.forEach((item) => {
+        costSummary += item.giaNhap * item.sl;
+        const card = document.createElement("div");
+        card.className = "mini-card";
+        const fallbackSrc =
+          getSafeBookImage(item.hinhAnh, "https://via.placeholder.com/50x68");
+
+        card.innerHTML = `
+          <img src="${fallbackSrc}" onerror="this.src='https://via.placeholder.com/50x68'">
+          <div class="mini-card-info">
+            <div class="mini-card-title">${item.tenSach}</div>
+            <div class="input-grid-mini" style="margin-top:4px;">
+              <div>
+                <label>Giá Nhập (đ)</label>
+                <input type="number" class="input-text" min="0" value="${item.giaNhap}"
+                  style="padding:2px 6px; font-size:12px;" onchange="updateCartPrice(${item.id}, this.value)">
+              </div>
+              <div>
+                <label>S.Lượng</label>
+                <input type="number" class="input-text" min="1" value="${item.sl}"
+                  style="padding:2px 6px; font-size:12px;" onchange="updateCartQuantity(${item.id}, this.value)">
+              </div>
+            </div>
+            <div style="text-align: right; margin-top: 2px;">
+              <button class="btn btn-danger-ghost" style="padding:0 4px; font-size:11px; border:none; height:auto;" onclick="removeCartItem(${item.id})">Xóa</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      totalDisplay.innerText = costSummary.toLocaleString() + " đ";
+    }
+
+    function addBookToCart(bookId) {
+      const book = books.find((b) => b.id === bookId);
+      if (!book) return;
+
+      const existing = selectedBooks.find((x) => x.id === bookId);
+      if (existing) {
+        existing.sl += 1;
+      } else {
+        const defaultPrice =
+          book.giaNhap || (book.giaBan ? book.giaBan * 0.6 : 50000);
+        selectedBooks.push({
+          id: book.id,
+          tenSach: book.tenSach,
+          giaNhap: defaultPrice,
+          sl: 1,
+          hinhAnh: book.hinhAnh,
+          tonKho: book.soLuongTon,
+        });
+      }
+      renderCartItems();
+    }
+
+    function updateCartQuantity(itemId, value) {
+      let parsed = parseInt(value) || 1;
+      if (parsed < 1) parsed = 1;
+      const target = selectedBooks.find((x) => x.id === itemId);
+      if (target) target.sl = parsed;
+      renderCartItems();
+    }
+
+    function updateCartPrice(itemId, value) {
+      let parsed = parseFloat(value) || 0;
+      if (parsed < 0) parsed = 0;
+      const target = selectedBooks.find((x) => x.id === itemId);
+      if (target) target.giaNhap = parsed;
+      renderCartItems();
+    }
+
+    function removeCartItem(itemId) {
+      selectedBooks = selectedBooks.filter((x) => x.id !== itemId);
+      renderCartItems();
+    }
+
+    function resetCartState() {
+      selectedBooks = [];
+      selectedSupplier = null;
+      searchBookQuery = "";
+      document.getElementById("supplierSearchInput").value = "";
+      document.getElementById("searchBookInput").value = "";
+      document.getElementById("selectedSupplierCard").style.display = "none";
+      document.getElementById("supplierSuggestions").style.display = "none";
+      currentBookPage = 0;
+      renderCartItems();
+    }
+
+    function openCreateSupplierModal() {
+      document.getElementById("createSupplierModal").classList.add("open");
+    }
+    function closeCreateSupplierModal() {
+      document.getElementById("createSupplierModal").classList.remove("open");
+      document.getElementById("supplierForm").reset();
+    }
+
+    async function submitCreateSupplier() {
+      const tenNCC = document.getElementById("supName").value.trim();
+      const sdt = document.getElementById("supPhone").value.trim();
+      const diaChi = document.getElementById("supAddress").value.trim();
+
+      if (!tenNCC || !sdt) {
+        alert("Vui lòng nhập đầy đủ các trường thông tin bắt buộc (*)");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/nha-cung-cap`, {
+          method: "POST",
+          headers: getAuthHeaders("application/json"),
+          body: JSON.stringify({ tenNCC, sdt, SDT: sdt, diaChi }),
+        });
+
+        if (!response.ok) {
+          const errJson = await response.json().catch(() => ({}));
+          throw new Error(errJson.message || "Không thể tạo nhà cung cấp");
+        }
+        const jsonResponse = await response.json();
+        const newSupplier = jsonResponse?.data || jsonResponse;
+
+        selectSupplier(newSupplier);
+        await fetchSuppliers();
+        closeCreateSupplierModal();
+        alert("Thêm đối tác nhà cung cấp thành công");
+      } catch (err) {
+        console.error(err);
+        alert(err.message || "Gặp lỗi trong quá trình khởi tạo nhà cung cấp");
+      }
+    }
+
+    async function submitCreateOrder() {
+      if (selectedBooks.length === 0) {
+        alert("Chưa lựa chọn mặt hàng nào để tiến hành nhập kho");
+        return;
+      }
+      if (!selectedSupplier) {
+        alert("Vui lòng lựa chọn nhà cung cấp đối tác");
+        return;
+      }
+      if (!currentUser?.id) {
+        alert("Không xác thực được danh tính nhân viên phiên hiện hữu.");
+        return;
+      }
+
+      try {
+        const payload = {
+          nhaCungCapId: selectedSupplier.id,
+          nhanVienId: Number(currentUser.id),
+          list: selectedBooks.map((x) => ({
+            sachId: x.id,
+            soLuongNhap: x.sl,
+            giaNhap: x.giaNhap,
+          })),
+        };
+
+        const response = await fetch(`${API_BASE_URL}/api/phieu-nhap`, {
+          method: "POST",
+          headers: getAuthHeaders("application/json"),
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errJson = await response.json().catch(() => ({}));
+          throw new Error(errJson.message || "Lỗi quy trình lưu phiếu");
+        }
+
+        alert("Tạo phiếu nhập kho thành công!");
+        closeCreateModal();
+        fetchPurchaseOrders();
+        fetchThongKe();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    function closeCreateModal() {
+      document.getElementById("createOrderModal").classList.remove("open");
+      resetCartState();
+    }
+
+    function viewDetailDrawer(orderId) {
+      const target = purchaseOrders.find((x) => x.id === orderId);
+      if (!target) return;
+
+      document.getElementById("drawerOrderId").innerText = `#PN${target.id}`;
+      document.getElementById("dtSupplierName").innerText =
+        target.nhaCungCap?.tenNCC ||
+        target.nhaCungCap?.tenNhaCungCap ||
+        "N/A";
+      document.getElementById("dtSupplierId").innerText =
+        `#${target.nhaCungCap?.id || "N/A"}`;
+
+      const staffName =
+        target.nhanVien?.hoTen ||
+        target.nhanVienNguoiDung?.hoTen ||
+        "Kho quản trị viên";
+      document.getElementById("dtStaffName").innerText = staffName;
+      document.getElementById("dtStaffId").innerText =
+        `#${target.nhanVien?.id || "N/A"}`;
+
+      let dateString = target.ngayNhap || "";
+      if (target.ngayNhap) {
+        const d = new Date(target.ngayNhap);
+        if (!isNaN(d.getTime())) {
+          dateString = `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+        }
+      }
+      document.getElementById("dtDate").innerText = dateString;
+
+      const listWrapper = document.getElementById("drawerProductsList");
+      listWrapper.innerHTML = "";
+
+      const detailsArray = target.danhSachChiTiet || [];
+      detailsArray.forEach((c) => {
+        const card = document.createElement("div");
+        card.className = "section-card";
+        card.style.margin = "0";
+        card.style.background = "#fff";
+
+        const bookObj = c.sach || {};
+        const name = c.tenSach || bookObj.tenSach || "Sách đối tác";
+        const imageSrc =
+          getSafeBookImage(c.hinhAnh || bookObj.hinhAnh, "https://via.placeholder.com/64x84");
+        const quantity = c.soLuong || c.soLuongNhap || 0;
+        const totalCost = quantity * (c.giaNhap || 0);
+
+        card.innerHTML = `
+          <div style="display:flex; gap:12px; align-items:start;">
+            <img src="${imageSrc}" style="width:48px; height:64px; object-fit:cover; border-radius:6px;" onerror="this.src='https://via.placeholder.com/64x84'">
+            <div style="flex:1;">
+              <div style="font-weight:600; font-size:14px; color:var(--text);">${name}</div>
+              <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-top:4px; color:var(--text-muted);">
+                <span>Số lượng nhập: <strong style="color:var(--text);">${quantity}</strong></span>
+                <span>Đơn giá nhập: ${(c.giaNhap || 0).toLocaleString()} đ</span>
+              </div>
+              <div style="height:1px; background:#f0f0f0; margin:6px 0;"></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
+                <span style="color:var(--text-muted);">Tổng chi phí vế này:</span>
+                <span style="font-weight:700; color:var(--text);">${totalCost.toLocaleString()} đ</span>
+              </div>
+            </div>
+          </div>
+        `;
+        listWrapper.appendChild(card);
+      });
+
+      document.getElementById("dtTotalAmount").innerText =
+        (target.tongTien || 0).toLocaleString() + " đ";
+
+      document.getElementById("drawerFooterAction").innerHTML = `
+        <button class="btn btn-danger-ghost" style="border-radius:6px; font-weight:700;" onclick="triggerDeleteOrder(${target.id}, true)">
+          Xóa phiếu nhập
+        </button>
+      `;
+
+      document.getElementById("detailDrawerOverlay").classList.add("open");
+      document.getElementById("detailDrawer").classList.add("open");
+    }
+
+    function closeDetailDrawer() {
+      document.getElementById("detailDrawerOverlay").classList.remove("open");
+      document.getElementById("detailDrawer").classList.remove("open");
+    }
+
+    async function triggerDeleteOrder(id, isFromDrawer = false) {
+      const confirmation = confirm(
+        "Bạn có chắc chắn muốn xóa vĩnh viễn phiếu nhập này khỏi kho dữ liệu? Hệ thống sẽ cập nhật lại số lượng tồn.",
+      );
+      if (!confirmation) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/phieu-nhap/${id}`, {
+          method: "DELETE",
+          headers: getAuthHeaders(null),
+        });
+
+        if (!response.ok) throw new Error("ERR_DELETE");
+
+        alert("Đã xóa phiếu nhập kho thành công");
+        if (isFromDrawer) closeDetailDrawer();
+        fetchPurchaseOrders();
+        fetchThongKe();
+      } catch (err) {
+        console.error(err);
+        alert("Quy trình xóa phiếu nhập kho thất bại");
+      }
+    }
+</script>
+<script>
+  document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+    if (item.getAttribute('onclick')) return;
+    const label = item.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+    const routes = [
+      ['tổng quan', 'index.html?view=dashboard'],
+      ['sách', 'index.html?view=books'],
+      ['danh mục', 'index.html?view=categories'],
+      ['khách hàng', 'index.html?view=customers'],
+      ['nhân viên', 'index.html?view=staff'],
+      ['doanh thu', 'index.html?view=revenue'],
+      ['tồn kho', 'index.html?view=inventory'],
+      ['cài đặt', 'settings.html'],
+    ];
+    const route = routes.find(([key]) => label.includes(key));
+    if (!route) return;
+    item.addEventListener('click', () => { location.href = route[1]; });
+  });
+</script>
+</body>
+</html>

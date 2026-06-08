@@ -21,10 +21,4 @@ public class ChiTietHoaDonController {
 
     @GetMapping("/{id}")
     ChiTietHoaDon getById(@PathVariable int id){return chiTietHoaDonService.getById(id);}
-    @PostMapping
-    ChiTietHoaDon create(@RequestBody ChiTietHoaDon chiTietHoaDon){return  chiTietHoaDonService.create(chiTietHoaDon);}
-    @PutMapping("/{id}")
-    ChiTietHoaDon updateById(@PathVariable int id, @RequestBody ChiTietHoaDon chiTietHoaDon){return chiTietHoaDonService.updateById(id,chiTietHoaDon);}
-    @DeleteMapping("/{id}")
-    void deleteById(@PathVariable int id){chiTietHoaDonService.deleteById(id);}
 }

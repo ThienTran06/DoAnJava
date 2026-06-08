@@ -2,21 +2,26 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.Exception.AuthException;
 import com.library.librarymanager.dto.request.CreateUserRequest;
+import com.library.librarymanager.dto.response.NhanVienXuatSacResponse;
 import com.library.librarymanager.entity.ChucNang;
 import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.entity.NhomNguoiDung;
 import com.library.librarymanager.entity.PhanQuyen;
 import com.library.librarymanager.repository.ChucNangRepository;
+import com.library.librarymanager.repository.HoaDonRepository;
 import com.library.librarymanager.repository.NguoiDungRepository;
 import com.library.librarymanager.repository.NhomNguoiDungRepository;
 import com.library.librarymanager.repository.PhanQuyenRepository;
 import com.library.librarymanager.service.Interface.NguoiDungService;
+import com.library.librarymanager.util.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +31,18 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     private final NhomNguoiDungRepository nhomRepo;
     private final PhanQuyenRepository phanQuyenRepo;
     private final ChucNangRepository chucNangRepo;
+    private final HoaDonRepository hoaDonRepo;
     private final BCryptPasswordEncoder encoder;
+    private static final String ROLE_ADMIN = "ADMIN";
+    private static final Map<String, List<String>> ROLE_PERMISSION_NAMES = Map.of(
+            "THU_NGAN", List.of("QUAN_LY_HOA_DON", "QUAN_LY_KHACH_HANG", "QUAN_LY_PHIEU_GIU"),
+            "NHAN_VIEN_BAN_HANG", List.of("QUAN_LY_SACH", "QUAN_LY_HOA_DON", "QUAN_LY_KHACH_HANG", "QUAN_LY_PHIEU_GIU"),
+            "KHO", List.of("QUAN_LY_SACH", "QUAN_LY_PHIEU_NHAP", "QUAN_LY_NHA_CUNG_CAP"),
+            "BIEN_MUC", List.of("QUAN_LY_SACH", "QUAN_LY_THE_LOAI", "QUAN_LY_TAC_GIA", "QUAN_LY_NHA_XUAT_BAN"),
+            "KE_TOAN", List.of("XEM_BAO_CAO", "QUAN_LY_HOA_DON", "QUAN_LY_PHIEU_NHAP"),
+            "NHAN_SU", List.of("QUAN_LY_NGUOI_DUNG"),
+            "STAFF", List.of("QUAN_LY_SACH")
+    );
 
     @Override
     public List<NguoiDung> getAll() {
@@ -46,11 +62,16 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         NguoiDung nd = repo.findById(id)
                 .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
 
+        if (!ROLE_ADMIN.equals(nd.getNhom().getTenNhom())) {
+            applyRolePermissions(nd, nd.getNhom().getTenNhom());
+            return;
+        }
+
         List<ChucNang> dsChucNang = chucNangRepo.findAll();
 
         for (ChucNang cn : dsChucNang) {
 
-            if (phanQuyenRepo.existsByNguoiDungAndChucNang(nd, cn)) {
+            if (phanQuyenRepo.countByNguoiDungIdAndChucNangId(nd.getId(), cn.getMaChucNang()) > 0) {
                 continue;
             }
 
@@ -65,34 +86,19 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     @Override
     @Transactional
     public void addStaffPermissions(NguoiDung nd) {
-
-        List<ChucNang> ds =
-                chucNangRepo.findByTenChucNangStartingWith("QUAN_LY");
-
-        for (ChucNang cn : ds) {
-
-            if (phanQuyenRepo.existsByNguoiDungAndChucNang(nd, cn)) {
-                continue;
-            }
-
-            PhanQuyen pq = new PhanQuyen();
-            pq.setNguoiDung(nd);
-            pq.setChucNang(cn);
-
-            phanQuyenRepo.save(pq);
-        }
+        applyRolePermissions(nd, "STAFF");
     }
 
     @Override
     @Transactional
     public NguoiDung create(CreateUserRequest req) {
+        validateUserRequest(req);
 
         if (repo.findByUsername(req.getTenDangNhap()).isPresent()) {
             throw new RuntimeException("Tài khoản đã tồn tại");
         }
 
-        NhomNguoiDung nhom = nhomRepo.findByTenNhom(req.getTenNhom())
-                .orElseThrow(() -> new AuthException("Nhóm không tồn tại"));
+        NhomNguoiDung nhom = getOrCreateNhom(req.getTenNhom());
 
         NguoiDung nd = new NguoiDung();
 
@@ -107,22 +113,24 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         nd.setHoTen(req.getHoTen());
 
         nd.setNhom(nhom);
+        nd.setEmail(req.getEmail());
+        nd.setAvatar(req.getAvatar());
+        nd.setCaLamViec(req.getCaLamViec());
+        nd.setDiaChi(req.getDiaChi());
+        nd.setLuongCoBan(req.getLuongCoBan());
+        nd.setGhiChu(req.getGhiChu());
 
         NguoiDung saved = repo.save(nd);
 
-        if (nhom.getTenNhom().equals("ADMIN")) {
-            addAllPermissions(saved.getId());
-        }
-        else if(req.getPermissionIds()!=null&&!req.getPermissionIds().isEmpty()) {
-            updatePermissions(saved.getId(),req.getPermissionIds());
-        }
+        applyRolePermissions(saved, nhom.getTenNhom());
 
         return saved;
     }
     @Transactional
     @Override
-    //Cập nhật các thông tin cơ bản của người dùng,list quyền sẽ cập nhật riêng
+    // Cập nhật thông tin người dùng và đồng bộ lại quyền theo chức vụ.
     public NguoiDung update(int id, CreateUserRequest req) {
+        validateUserRequest(req);
 
         NguoiDung nd = repo.findById(id)
                 .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
@@ -133,8 +141,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
             throw new RuntimeException("Tài khoản đã tồn tại");
         }
 
-        NhomNguoiDung nhom = nhomRepo.findByTenNhom(req.getTenNhom())
-                .orElseThrow(() -> new AuthException("Nhóm không tồn tại"));
+        NhomNguoiDung nhom = getOrCreateNhom(req.getTenNhom());
 
         nd.setUsername(req.getTenDangNhap());
 
@@ -149,12 +156,17 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 
         nd.setSDT(req.getSdt());
         nd.setNhom(nhom);
+        nd.setEmail(req.getEmail());
+        nd.setAvatar(req.getAvatar());
+        nd.setCaLamViec(req.getCaLamViec());
+        nd.setDiaChi(req.getDiaChi());
+        nd.setLuongCoBan(req.getLuongCoBan());
+        nd.setGhiChu(req.getGhiChu());
 
-        if(nhom.getTenNhom().equals("ADMIN")){
-            addAllPermissions(nd.getId());
-        }
+        NguoiDung saved = repo.save(nd);
+        applyRolePermissions(saved, nhom.getTenNhom());
 
-        return repo.save(nd);
+        return saved;
     }
     @Transactional
     @Override
@@ -163,43 +175,74 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         NguoiDung nd = repo.findById(id)
                 .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
 
-        phanQuyenRepo.deleteAllByNguoiDung(nd);
+        phanQuyenRepo.deleteAllByNguoiDungId(nd.getId());
 
         repo.delete(nd);
     }
-    @Transactional
-    @Override
-    public void updatePermissions(int id, List<Integer> permissionIds) {
 
-        NguoiDung nd = repo.findById(id)
-                .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
+    private NhomNguoiDung getOrCreateNhom(String tenNhom) {
+        String normalizedTenNhom = tenNhom == null || tenNhom.isBlank() ? "STAFF" : tenNhom.trim();
+        return nhomRepo.findByTenNhom(normalizedTenNhom)
+                .orElseGet(() -> {
+                    NhomNguoiDung nhom = new NhomNguoiDung();
+                    nhom.setTenNhom(normalizedTenNhom);
+                    return nhomRepo.save(nhom);
+                });
+    }
 
-        if (permissionIds == null) {
-            throw new AuthException("Danh sách quyền không được null");
+    private void validateUserRequest(CreateUserRequest req) {
+        if (req == null) {
+            throw ValidationUtils.badRequest("Du lieu nhan vien khong duoc de trong");
+        }
+        req.setTenDangNhap(ValidationUtils.requireText(req.getTenDangNhap(), "Ten dang nhap"));
+        req.setHoTen(ValidationUtils.requireText(req.getHoTen(), "Ho ten nhan vien"));
+        req.setSdt(ValidationUtils.requireText(req.getSdt(), "So dien thoai"));
+        ValidationUtils.requirePhone(req.getSdt(), "So dien thoai");
+        req.setTenNhom(ValidationUtils.requireText(req.getTenNhom(), "Nhom nguoi dung"));
+        req.setEmail(ValidationUtils.trimToNull(req.getEmail()));
+        ValidationUtils.validateOptionalEmail(req.getEmail());
+        if (req.getLuongCoBan() != null) {
+            ValidationUtils.requirePositiveOrZero(req.getLuongCoBan(), "Luong co ban");
+        }
+        req.setCaLamViec(ValidationUtils.trimToNull(req.getCaLamViec()));
+        req.setDiaChi(ValidationUtils.trimToNull(req.getDiaChi()));
+        req.setGhiChu(ValidationUtils.trimToNull(req.getGhiChu()));
+    }
+
+    private void applyRolePermissions(NguoiDung nd, String tenNhom) {
+        phanQuyenRepo.deleteAllByNguoiDungId(nd.getId());
+
+        String normalizedRole = tenNhom == null || tenNhom.isBlank() ? "STAFF" : tenNhom.trim();
+        if (ROLE_ADMIN.equals(normalizedRole)) {
+            addAllPermissions(nd.getId());
+            return;
         }
 
-        List<Integer> uniquePermissionIds = permissionIds.stream()
-                .distinct()
+        List<String> permissionNames = ROLE_PERMISSION_NAMES.getOrDefault(normalizedRole, List.of());
+        if (permissionNames.isEmpty()) {
+            return;
+        }
+
+        List<ChucNang> permissions = chucNangRepo.findByTenChucNangIn(permissionNames);
+        List<String> foundNames = permissions.stream()
+                .map(ChucNang::getTenChucNang)
+                .toList();
+        List<String> missingNames = permissionNames.stream()
+                .filter(name -> !foundNames.contains(name))
                 .toList();
 
-        List<ChucNang> permissions = chucNangRepo.findAllById(uniquePermissionIds);
-
-        if (permissions.size() != uniquePermissionIds.size()) {
-            List<Integer> foundIds = permissions.stream()
-                    .map(ChucNang::getMaChucNang)
-                    .toList();
-
-            List<Integer> missingIds = uniquePermissionIds.stream()
-                    .filter(permissionId -> !foundIds.contains(permissionId))
-                    .toList();
-
-            if (!missingIds.isEmpty()) {
-                throw new AuthException("Quyền không tồn tại: " + missingIds);
-            }
-            throw new AuthException("Có quyền không tồn tại");
+        if (!missingNames.isEmpty()) {
+            throw new AuthException("Quyền chưa được khai báo trong hệ thống: " + missingNames);
         }
 
-        phanQuyenRepo.deleteAllByNguoiDung(nd);
+        List<Integer> permissionIds = permissions.stream()
+                .map(ChucNang::getMaChucNang)
+                .toList();
+        addPermissionsByIds(nd, permissionIds);
+    }
+
+    private void addPermissionsByIds(NguoiDung nd, List<Integer> permissionIds) {
+        List<ChucNang> permissions = chucNangRepo.findAllById(permissionIds);
 
         for (ChucNang cn : permissions) {
             PhanQuyen pq = new PhanQuyen();
@@ -207,6 +250,21 @@ public class NguoiDungServiceImpl implements NguoiDungService {
             pq.setChucNang(cn);
             phanQuyenRepo.save(pq);
         }
+    }
+
+    @Transactional
+    @Override
+    public void updatePermissions(int id, List<Integer> permissionIds) {
+
+        NguoiDung nd = repo.findById(id)
+                .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
+        applyRolePermissions(nd, nd.getNhom().getTenNhom());
+    }
+
+    @Override
+    public List<NhanVienXuatSacResponse> getNhanVienXuatSac(int limit) {
+        int safeLimit = Math.max(1, Math.min(limit, 20));
+        return hoaDonRepo.findNhanVienXuatSac(PageRequest.of(0, safeLimit));
     }
 
 

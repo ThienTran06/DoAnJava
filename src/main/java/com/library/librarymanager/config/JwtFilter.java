@@ -1,6 +1,7 @@
 package com.library.librarymanager.config;
 
 
+import com.library.librarymanager.Exception.AuthException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -35,7 +37,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String uri = req.getRequestURI();
 
-        if (uri.startsWith("/auth")
+        if (isPublicResource(uri)
+                || uri.startsWith("/auth")
+                || uri.startsWith("/api/public")
                 || uri.startsWith("/swagger-ui")
                 || uri.startsWith("/Create")
                 || uri.startsWith("/v3/api-docs")) {
@@ -61,6 +65,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String username = jwtUtil.extractUsername(token);
+        String role = jwtUtil.extractRole(token);
 
         List<String> permissions = jwtUtil.extractPermissions(token);
 
@@ -68,11 +73,15 @@ public class JwtFilter extends OncePerRequestFilter {
             permissions = List.of();
         }
 
-        List<SimpleGrantedAuthority> authorities =
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>(
                 permissions.stream()
                         .filter(p -> p != null && !p.isBlank())
                         .map(SimpleGrantedAuthority::new)
-                        .toList();
+                        .toList()
+        );
+        if (role != null && !role.isBlank()) {
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
 
         UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(
@@ -86,5 +95,24 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
         chain.doFilter(req, res);
+    }
+
+    private boolean isPublicResource(String uri) {
+        return "/".equals(uri)
+                || uri.endsWith(".html")
+                || uri.endsWith(".css")
+                || uri.endsWith(".js")
+                || uri.endsWith(".png")
+                || uri.endsWith(".jpg")
+                || uri.endsWith(".jpeg")
+                || uri.endsWith(".gif")
+                || uri.endsWith(".svg")
+                || uri.endsWith(".ico")
+                || uri.endsWith(".mp3")
+                || uri.startsWith("/pages/")
+                || uri.startsWith("/js/")
+                || uri.startsWith("/music/")
+                || uri.startsWith("/images/")
+                || uri.startsWith("/assets/");
     }
 }

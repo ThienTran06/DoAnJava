@@ -1,6 +1,7 @@
 package com.library.librarymanager.service.Interface;
 
 import com.library.librarymanager.dto.request.CreateUserRequest;
+import com.library.librarymanager.dto.response.NhanVienXuatSacResponse;
 import com.library.librarymanager.entity.NguoiDung;
 
 import java.util.List;
@@ -14,5 +15,6 @@ public interface NguoiDungService {
     public NguoiDung update(int id, CreateUserRequest req);
     public void delete(int id);
     public void updatePermissions(int id,List<Integer> permissionIds);
+    public List<NhanVienXuatSacResponse> getNhanVienXuatSac(int limit);
 
 }

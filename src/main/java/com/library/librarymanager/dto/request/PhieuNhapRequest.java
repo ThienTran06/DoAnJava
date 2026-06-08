@@ -9,11 +9,14 @@ import java.util.List;
 
 @Getter
 @Setter
-@Positive
-@NotEmpty
-@Valid
 public class PhieuNhapRequest {
+    @Positive
     private int nhaCungCapId;
+
+    @Positive
     private int nhanVienId;
+
+    @NotEmpty(message = "Danh sach chi tiet phieu nhap khong duoc trong")
+    @Valid
     private List<ChiTietPhieuNhapRequest> list;
 }

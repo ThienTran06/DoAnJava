@@ -1,0 +1,693 @@
+﻿<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BookHouse – Cài đặt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap" rel="stylesheet">
+<style>
+  /* ─── VARIABLES (light mode defaults) ─── */
+  :root {
+    --bg: #f6f7ed;
+    --surface: #ffffff;
+    --border: #e8e8e2;
+    --text: #1f1f1f;
+    --text-muted: #888880;
+    --text-subtle: #b5b5ae;
+    --green: #3a7d44;
+    --green-light: #e8f5eb;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  /* ─── DARK MODE OVERRIDES ─── */
+  [data-theme="dark"] {
+    --bg: #1a1a1a;
+    --surface: #242424;
+    --border: #333333;
+    --text: #f0f0f0;
+    --text-muted: #aaaaaa;
+    --text-subtle: #666666;
+    --green-light: #1a3320;
+    --red-light: #3a1515;
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 14.5px;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  /* ─── SVG ICON HELPER ─── */
+  .ico { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ico svg { display: block; }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: 224px; min-width: 224px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow-y: auto; padding: 0 0 24px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 11px;
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-mark {
+    width: 34px; height: 34px;
+    background: var(--text);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .logo-mark svg { stroke: var(--bg); }
+  .logo-text { font-weight: 800; font-size: 15.5px; letter-spacing: -0.5px; line-height: 1.1; }
+  .logo-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+
+  .nav-section { padding: 18px 12px 4px; }
+  .nav-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--text-subtle); padding: 0 8px; margin-bottom: 4px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 10px; border-radius: var(--radius-sm);
+    cursor: pointer; color: var(--text-muted);
+    font-size: 13.5px; font-weight: 500;
+    transition: all 0.15s; user-select: none;
+    text-decoration: none;
+  }
+  .nav-item:hover { background: var(--bg); color: var(--text); }
+  .nav-item.active { background: var(--text); color: var(--bg); font-weight: 600; }
+  .nav-item.active svg { stroke: var(--bg) !important; }
+  .nav-badge {
+    margin-left: auto; background: var(--text); color: white;
+    font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px;
+  }
+  .nav-item.active .nav-badge { background: rgba(255,255,255,0.25); }
+  .nav-arrow { margin-left: auto; font-size: 11px; opacity: 0.35; }
+
+  .sidebar-footer {
+    margin-top: auto; padding: 14px 16px 0;
+    border-top: 1px solid var(--border);
+  }
+  .user-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px; border-radius: var(--radius-sm); cursor: pointer;
+  }
+  .user-card:hover { background: var(--bg); }
+  .logout-btn {
+    width: 100%; margin-top: 8px; border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); background: var(--surface); color: var(--red);
+    font: inherit; font-size: 12.5px; font-weight: 800; padding: 9px 10px;
+    cursor: pointer; text-align: left;
+  }
+  .logout-btn:hover { background: var(--red-light); border-color: #f3c6c0; }
+  .avatar {
+    width: 32px; height: 32px; background: var(--text);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: var(--bg); font-size: 12px; font-weight: 700; flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .user-name { font-weight: 700; font-size: 13px; }
+  .user-role { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+
+  /* ─── MAIN ─── */
+  .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+  /* ─── TOPBAR ─── */
+  .topbar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 28px; height: 62px;
+    display: flex; align-items: center; gap: 16px;
+    flex-shrink: 0; position: sticky; top: 0; z-index: 10;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .topbar-left { flex: 1; }
+  .topbar-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+  .topbar-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: 1px; }
+  .topbar-actions { display: flex; align-items: center; gap: 8px; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    border: 1.5px solid var(--border); background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.15s; position: relative;
+  }
+  .icon-btn:hover { background: var(--bg); border-color: #ccc; }
+
+  /* ─── CONTENT ─── */
+  .content { padding: 28px 28px; flex: 1; max-width: 720px; }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ─── SETTINGS LAYOUT ─── */
+  .settings-page-title {
+    font-size: 13px; color: var(--text-muted); margin-bottom: 24px; font-weight: 400;
+  }
+
+  .settings-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .settings-card-header {
+    padding: 16px 20px 0;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .settings-card-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .settings-card-title {
+    font-size: 14px; font-weight: 700; letter-spacing: -0.2px;
+  }
+
+  .settings-card-desc {
+    font-size: 12px; color: var(--text-muted); margin-top: 2px; font-weight: 400;
+  }
+
+  .settings-divider {
+    height: 1px; background: var(--border); margin: 14px 0 0;
+  }
+
+  /* ─── SETTINGS ROW ─── */
+  .settings-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; gap: 16px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row:hover { background: var(--bg); }
+
+  .settings-row-label { flex: 1; }
+  .settings-row-name { font-size: 13.5px; font-weight: 600; }
+  .settings-row-hint { font-size: 12px; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+
+  /* ─── TOGGLE SWITCH ─── */
+  .toggle-wrap { flex-shrink: 0; }
+
+  .toggle-switch {
+    position: relative; display: inline-block;
+    width: 44px; height: 24px; cursor: pointer;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-track {
+    position: absolute; inset: 0;
+    background: var(--border);
+    border-radius: 24px;
+    transition: background 0.2s;
+  }
+  .toggle-switch input:checked + .toggle-track { background: var(--text); }
+
+  .toggle-thumb {
+    position: absolute;
+    width: 18px; height: 18px;
+    top: 3px; left: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .toggle-switch input:checked + .toggle-track .toggle-thumb {
+    transform: translateX(20px);
+  }
+
+  /* ─── VOLUME SLIDER ─── */
+  .volume-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 20px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .volume-row:last-child { border-bottom: none; }
+
+  .volume-label { font-size: 12px; color: var(--text-muted); font-weight: 500; min-width: 60px; }
+  .volume-val { font-size: 12px; font-weight: 700; min-width: 28px; text-align: right; }
+  .music-seek-row {
+    padding: 14px 20px 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .music-track-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .music-seek-line {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) 42px;
+    align-items: center;
+    gap: 10px;
+  }
+  .music-time {
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+  #musicSeekSlider:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+  }
+  .music-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 12px 20px 16px;
+  }
+  .music-skip-btn {
+    min-height: 44px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 10px 14px;
+    transition: background .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+  }
+  .music-skip-btn:hover {
+    border-color: var(--text);
+    transform: translateY(-1px);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    flex: 1; height: 5px;
+    background: var(--border); border-radius: 5px; outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--text); cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    transition: background 0.2s;
+  }
+
+  /* ─── LANGUAGE BUTTONS ─── */
+  .lang-grid {
+    display: flex; gap: 10px; padding: 14px 20px;
+  }
+
+  .lang-btn {
+    flex: 1; padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; gap: 10px;
+    font-family: inherit; font-size: 13.5px; font-weight: 600;
+    color: var(--text-muted);
+  }
+  .lang-btn:hover { border-color: var(--text); color: var(--text); }
+  .lang-btn.active {
+    background: var(--text); border-color: var(--text);
+    color: var(--bg);
+  }
+  .lang-flag { font-size: 20px; line-height: 1; }
+
+  /* ─── NOTICE TOAST ─── */
+  .notice {
+    display: none; align-items: center; gap: 8px;
+    background: var(--green-light); border: 1px solid var(--green);
+    border-radius: var(--radius-sm); padding: 10px 14px;
+    font-size: 12.5px; color: var(--green); font-weight: 500;
+    margin: 0 20px 14px;
+  }
+  .notice.show { display: flex; }
+</style>
+<link rel="stylesheet" href="ui-polish.css">
+<script src="js/app-settings.js"></script>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      
+    </div>
+    <div>
+      <div class="logo-text">BookHouse</div>
+      <div class="logo-sub">Tri thức trong tầm tay</div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Quản lý</div>
+    <a class="nav-item" href="index.html?view=dashboard">
+      
+      Tổng quan
+    </a>
+    <a class="nav-item" href="index.html?view=books">
+      
+      Sách
+    </a>
+    <a class="nav-item" href="index.html?view=categories">
+      
+      Danh mục 
+    </a>
+    <a class="nav-item" href="index.html?view=customers">
+      
+      Khách Hàng
+    </a>
+    <a class="nav-item" href="index.html?view=staff">
+      
+      Nhân viên
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Nghiệp vụ</div>
+    <a class="nav-item" href="BanHang.html">
+      
+      Bán hàng
+    </a>
+    <a class="nav-item" href="HoaDon.html">
+      
+      Hóa đơn
+    </a>
+    <a class="nav-item" href="NhapHang.html">
+      
+      Nhập hàng 
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Báo cáo</div>
+    <a class="nav-item" href="index.html?view=revenue">
+      
+      Doanh thu
+    </a>
+    <a class="nav-item" href="index.html?view=inventory">
+      
+      Tồn kho
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Hệ thống</div>
+    <a class="nav-item active" href="settings.html">
+      
+      Cài đặt
+    </a>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar" id="userAvatar">A</div>
+      <div>
+        <div class="user-name" id="userName">Admin</div>
+        <div class="user-role" id="userRole">Quản trị viên</div>
+      </div>
+    </div>
+    <button class="logout-btn" type="button" id="logoutBtn">Đăng xuất</button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══════════════════════════════════════════ -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">Cài đặt</div>
+      <div class="topbar-subtitle">Tuỳ chỉnh trải nghiệm của bạn</div>
+    </div>
+    <div class="topbar-actions">
+      <!-- Dark mode toggle button in topbar -->
+      <div class="icon-btn" id="topbarThemeBtn" title="Chuyển chế độ sáng/tối" onclick="toggleDarkMode(true)">
+        
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ── APPEARANCE ────────────────────────────── -->
+    <div class="settings-card">
+      <div class="settings-card-header">
+        
+        <div>
+          <div class="settings-card-title">Giao diện</div>
+          <div class="settings-card-desc">Chọn màu nền và chế độ hiển thị</div>
+        </div>
+      </div>
+      <div class="settings-divider"></div>
+      <div class="settings-row">
+        <div class="settings-row-label">
+          <div class="settings-row-name">Chế độ tối</div>
+          <div class="settings-row-hint">Chuyển giao diện sang nền đen, giảm mỏi mắt ban đêm</div>
+        </div>
+        <div class="toggle-wrap">
+          <label class="toggle-switch">
+            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MUSIC ──────────────────────────────────── -->
+    <div class="settings-card">
+      <div class="settings-card-header">
+        
+        <div>
+          <div class="settings-card-title">Âm nhạc nền</div>
+          <div class="settings-card-desc">Nhạc nền nhẹ khi sử dụng hệ thống</div>
+        </div>
+      </div>
+      <div class="settings-divider"></div>
+      <div class="settings-row">
+        <div class="settings-row-label">
+          <div class="settings-row-name">Bật nhạc nền</div>
+          <div class="settings-row-hint">Phát nhạc nền khi bạn đang làm việc</div>
+        </div>
+        <div class="toggle-wrap">
+          <label class="toggle-switch">
+            <input type="checkbox" id="musicToggle" onchange="toggleMusic()">
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+      </div>
+      <div class="volume-row">
+        <span class="volume-label">Âm lượng</span>
+        <input type="range" id="volumeSlider" min="0" max="100" value="50" oninput="changeVolume(this.value)">
+        <span class="volume-val" id="volumeVal">50%</span>
+      </div>
+      <div class="music-seek-row">
+        <div class="music-track-title" id="musicTrackTitle">Come My Way</div>
+        <div class="music-seek-line">
+          <span class="music-time" id="musicCurrentTime">0:00</span>
+          <input type="range" id="musicSeekSlider" min="0" max="1000" value="0" oninput="seekMusicTrack(this.value)" aria-label="Tua bài hát">
+          <span class="music-time" id="musicDuration">0:00</span>
+        </div>
+      </div>
+      <div class="music-action-row">
+        <button class="music-skip-btn" id="musicPrevBtn" type="button" onclick="previousMusicTrack()" title="Quay lại bài trước">Bài trước</button>
+        <button class="music-skip-btn" id="musicNextBtn" type="button" onclick="skipMusicTrack()" title="Bỏ qua bài hiện tại">Bài tiếp theo</button>
+      </div>
+    </div>
+
+    <!-- ── LANGUAGE ───────────────────────────────── -->
+    <div class="settings-card">
+      <div class="settings-card-header">
+        
+        <div>
+          <div class="settings-card-title">Ngôn ngữ</div>
+          <div class="settings-card-desc">Chọn ngôn ngữ hiển thị của hệ thống</div>
+        </div>
+      </div>
+      <div class="settings-divider"></div>
+      <div class="lang-grid">
+        <button class="lang-btn" id="langVi" onclick="setLanguage('vi')">
+          
+          Tiếng Việt
+        </button>
+        <button class="lang-btn" id="langEn" onclick="setLanguage('en')">
+          
+          English
+        </button>
+      </div>
+      <div class="notice" id="langNotice">
+        
+        Tải lại trang để áp dụng ngôn ngữ mới
+      </div>
+    </div>
+
+    <!-- hidden audio element -->
+    <audio id="bgAudio" preload="none">
+      <source src="music/Come My Way.mp3" type="audio/mpeg">
+    </audio>
+
+  </div>
+</div>
+
+<script>
+  /* ─── DARK MODE ─── */
+  function applyTheme(isDark) {
+    window.BookHouseSettings?.applyTheme(isDark);
+  }
+
+  function toggleDarkMode(fromTopbar = false) {
+    const checkbox = document.getElementById('darkModeToggle');
+    const isDark = fromTopbar ? !window.BookHouseSettings?.isDarkMode() : checkbox.checked;
+    if (checkbox) checkbox.checked = isDark;
+    window.BookHouseSettings?.setDarkMode(isDark);
+  }
+
+  // Topbar button acts as a toggle from current state
+  window._toggleDarkMode = function() {
+    const current = document.documentElement.getAttribute('data-theme') === 'dark';
+    const isDark = !current;
+    document.getElementById('darkModeToggle').checked = isDark;
+    window.BookHouseSettings?.setDarkMode(isDark);
+  };
+  // Redefine topbar onclick
+  document.getElementById('topbarThemeBtn').onclick = window._toggleDarkMode;
+
+  /* ─── MUSIC ─── */
+  function toggleMusic() {
+    const enabled = document.getElementById('musicToggle').checked;
+    window.BookHouseSettings?.setMusicEnabled(enabled);
+  }
+
+  function changeVolume(val) {
+    window.BookHouseSettings?.setMusicVolume(val);
+  }
+
+  function skipMusicTrack() {
+    window.BookHouseSettings?.skipMusicTrack();
+  }
+
+  function previousMusicTrack() {
+    window.BookHouseSettings?.previousMusicTrack();
+  }
+
+  function seekMusicTrack(value) {
+    window.BookHouseSettings?.seekMusicTrack(value);
+  }
+
+  function updateMusicButtonLanguage(lang = localStorage.getItem('language') || 'vi') {
+    const prev = document.getElementById('musicPrevBtn');
+    const next = document.getElementById('musicNextBtn');
+    const seek = document.getElementById('musicSeekSlider');
+    if (prev) {
+      prev.textContent = lang === 'en' ? 'Previous track' : 'Bài trước';
+      prev.title = lang === 'en' ? 'Go to previous track' : 'Quay lại bài trước';
+    }
+    if (next) {
+      next.textContent = lang === 'en' ? 'Next track' : 'Bài tiếp theo';
+      next.title = lang === 'en' ? 'Skip current track' : 'Bỏ qua bài hiện tại';
+    }
+    if (seek) seek.setAttribute('aria-label', lang === 'en' ? 'Seek track' : 'Tua bài hát');
+  }
+
+  function restoreMusic() {
+    window.BookHouseSettings?.restoreMusic();
+  }
+
+  /* LANGUAGE ─── */
+  function setLanguage(lang) {
+    window.BookHouseSettings?.setLanguage(lang);
+    updateMusicButtonLanguage(lang);
+    document.getElementById('langNotice')?.classList.add('show');
+  }
+
+  function restoreLanguage() {
+    window.BookHouseSettings?.applyLanguage();
+    updateMusicButtonLanguage();
+  }
+
+  /* AUTH GUARD + JWT USER INFO ─── */
+  function parseJwtPayload(token) {
+    try {
+      const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(base64));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function initUser() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+      return;
+    }
+    const payload = parseJwtPayload(token);
+    if (!payload) {
+      window.location.href = 'login.html';
+      return;
+    }
+    const name = payload.sub || payload.username || payload.name || 'Admin';
+    const role = payload.role || payload.roles || payload.vaiTro || 'Nhân viên';
+    document.getElementById('userName').textContent = name;
+    document.getElementById('userRole').textContent = Array.isArray(role) ? role[0] : role;
+    document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
+  }
+
+  /* ─── PAGE INIT ─── */
+  async function logout() {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    try {
+      if (token) {
+        await fetch('/auth/logout', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+      }
+    } catch (error) {
+      console.warn('Logout request failed', error);
+    }
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    window.location.href = 'login.html';
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initUser();
+    applyTheme(localStorage.getItem('darkMode') === '1');
+    restoreMusic();
+    restoreLanguage();
+    document.getElementById('logoutBtn')?.addEventListener('click', logout);
+  });
+</script>
+</body>
+</html>

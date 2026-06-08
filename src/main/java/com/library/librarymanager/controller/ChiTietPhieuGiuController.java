@@ -33,6 +33,22 @@ public class ChiTietPhieuGiuController {
         return "Them sach thanh cong";
     }
 
+    @PostMapping("/them/{phieuId}/{sachId}/{soLuong}")
+    public String themSachByPath(
+            @PathVariable int phieuId,
+            @PathVariable int sachId,
+            @PathVariable int soLuong
+    ) {
+
+        ctService.themSach(
+                phieuId,
+                sachId,
+                soLuong
+        );
+
+        return "Them sach thanh cong";
+    }
+
     @DeleteMapping("/xoa/{chiTietId}")
     public String xoaSach(
             @PathVariable int chiTietId

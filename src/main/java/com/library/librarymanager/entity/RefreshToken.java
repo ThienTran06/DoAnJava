@@ -21,10 +21,16 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, length = 64)
     private String token;
 
+    @Transient
+    private String rawToken;
+
+    @Column(nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private Date expiryDate;
 
     private boolean revoked;

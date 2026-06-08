@@ -10,11 +10,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Positive
-@NotEmpty
-@Valid
 public class HoaDonRequest {
+     @Positive
      private int khachHangId;
+
+     @Positive
      private int nhanVienId;
-     List<ChiTietHoaDonRequest> danhSachChiTiet;
+
+     @NotEmpty(message = "Danh sach chi tiet khong duoc trong")
+     @Valid
+     private List<ChiTietHoaDonRequest> danhSachChiTiet;
 }

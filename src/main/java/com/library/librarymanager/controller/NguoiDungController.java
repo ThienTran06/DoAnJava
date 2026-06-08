@@ -2,6 +2,7 @@ package com.library.librarymanager.controller;
 
 import com.library.librarymanager.dto.request.CreateUserRequest;
 import com.library.librarymanager.dto.request.UpdatePermissionsRequest;
+import com.library.librarymanager.dto.response.NhanVienXuatSacResponse;
 import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.service.Interface.NguoiDungService;
 import com.library.librarymanager.service.impl.NguoiDungServiceImpl;
@@ -11,7 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@PreAuthorize("hasAuthority('QUAN_LY_NGUOI_DUNG')")
+@PreAuthorize("hasAnyAuthority('QUAN_LY_NGUOI_DUNG','ADMIN')")
 @RestController
 @RequestMapping("/api/nguoi-dung")
 public class NguoiDungController {
@@ -35,6 +36,14 @@ public class NguoiDungController {
         return sv.getAll();
     }
 
+    @GetMapping("/xuat-sac")
+    public List<NhanVienXuatSacResponse> getNhanVienXuatSac(
+            @RequestParam(defaultValue = "5") int limit
+    ) {
+
+        return sv.getNhanVienXuatSac(limit);
+    }
+
     @PutMapping("/{id}")
     public NguoiDung updateById(
             @Valid @RequestBody CreateUserRequest req,
@@ -56,7 +65,7 @@ public class NguoiDungController {
         sv.addAllPermissions(id);
     }
     @PutMapping("/{id}/permissions")
-    public void updatePermissions(@PathVariable int id, @RequestBody UpdatePermissionsRequest req ){
+    public void updatePermissions(@PathVariable int id, @Valid @RequestBody UpdatePermissionsRequest req ){
         sv.updatePermissions(id,req.getPermissionIds());
     }
 

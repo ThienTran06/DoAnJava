@@ -1,0 +1,592 @@
+﻿<div class="page-shell page-transition active">
+  <div class="header-row" style="margin-bottom:18px;align-items:flex-end">
+    <div>
+      <div style="font-size:28px;font-weight:800;letter-spacing:-.8px;margin-bottom:4px">Khách hàng</div>
+      <div style="font-size:13px;color:var(--muted)">Quản lý thông tin khách hàng</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="search-box" style="width:320px">
+        
+        <input type="text" id="customerSearch" placeholder="Tìm kiếm khách hàng...">
+      </div>
+      <button class="btn ghost" id="btnFilterCustomer">Lọc</button>
+      <button class="btn primary" id="btnAddCustomer">Thêm khách hàng</button>
+    </div>
+  </div>
+  <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="stat-card"><div class="stat-value" id="customerTotal">0</div><div class="stat-label">Tổng khách hàng</div></div>
+    <div class="stat-card dark"><div class="stat-value" id="customerVip">0</div><div class="stat-label">Khách hàng VIP</div></div>
+    <div class="stat-card"><div class="stat-value" id="customerNew">0</div><div class="stat-label">Khách hàng mới tháng này</div></div>
+    <div class="stat-card"><div class="stat-value" id="customerOrders">0</div><div class="stat-label">Tổng đơn hàng</div></div>
+  </div>
+  <div class="table-card">
+    <div class="table-wrap">
+      <table class="tbl-books customer-table">
+        <colgroup>
+          <col class="customer-col-stt">
+          <col class="customer-col-avatar">
+          <col class="customer-col-name">
+          <col class="customer-col-phone">
+          <col class="customer-col-email">
+          <col class="customer-col-orders">
+          <col class="customer-col-points">
+          <col class="customer-col-tier">
+          <col class="customer-col-status">
+          <col class="customer-col-actions">
+        </colgroup>
+        <thead><tr><th>STT</th><th>Avatar</th><th>Họ tên</th><th>Số điện thoại</th><th>Email</th><th>Tổng đơn hàng</th><th>Điểm tích lũy</th><th>Hạng thành viên</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <tbody id="customerTableBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="customerEmptyState" style="display:none;margin-top:16px">Chưa có khách hàng nào.</div>
+  </div>
+  <div class="modal-overlay" id="customerModal"><div class="modal"><div class="modal-head"><div class="modal-title"> Thêm khách hàng</div><button class="close" id="closeCustomerModal">Đóng</button></div><form id="customerForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống tên</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ, ví dụ 09xxxxxxxx</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Ngày sinh</div><input class="input" name="dob" type="date"></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Điểm tích lũy</div><input class="input" name="diemTichLuy" type="number" min="0" value="0" id="editDiemTichLuy"></div><div class="field"><div class="label">Hạng thành viên</div><input class="input" id="editHangThanhVien" readonly style="background:var(--bg);cursor:default"></div><div class="field"><div class="label">VIP</div><select class="input" name="isVip" id="editIsVip"><option value="0">Không</option><option value="1">Có</option></select></div><div class="field"><div class="label">Trạng thái</div><select class="input" name="trangThai" id="editTrangThai"><option value="1">Hoạt động</option><option value="0">Ngừng hoạt động</option></select></div><div class="field"><div class="label">Avatar khách hàng</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="customerPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelCustomer">Hủy</button><button type="submit" class="btn primary" id="saveCustomer"><span class="txt">Lưu khách hàng</span><span class="spin"></span></button></div></form></div></div>
+  <div class="modal-overlay" id="customerDetailModal"><div class="modal" style="max-width:500px"><div class="modal-head"><div class="modal-title"> Chi tiết khách hàng</div><button class="close" id="closeDetailModal">Đóng</button></div><div class="modal-body"><div style="text-align:center;margin-bottom:20px" id="detailAvatarContainer"><div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto">A</div></div><div style="display:grid;gap:12px"><div><div style="font-size:12px;color:var(--muted)">Họ tên</div><div style="font-weight:700" id="detailName">—</div></div><div><div style="font-size:12px;color:var(--muted)">Số điện thoại</div><div style="font-weight:700" id="detailPhone">—</div></div><div><div style="font-size:12px;color:var(--muted)">Email</div><div style="font-weight:700" id="detailEmail">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ngày sinh</div><div style="font-weight:700" id="detailDOB">—</div></div><div><div style="font-size:12px;color:var(--muted)">Địa chỉ</div><div style="font-weight:700" id="detailAddress">—</div></div><div><div style="font-size:12px;color:var(--muted)">Hạng thành viên</div><div style="font-weight:700" id="detailTier">—</div></div><div><div style="font-size:12px;color:var(--muted)">Tổng đơn hàng</div><div style="font-weight:700" id="detailOrders">—</div></div><div><div style="font-size:12px;color:var(--muted)">Điểm tích lũy</div><div style="font-weight:700" id="detailPoints">—</div></div><div><div style="font-size:12px;color:var(--muted)">Trạng thái</div><div style="font-weight:700" id="detailStatus">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ghi chú</div><div style="font-weight:700" id="detailNote">—</div></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="closeDetailBtn">Đóng</button></div></div></div>
+</div>
+
+<script>
+// Initialize Customers page
+window.initCustomers = function() {
+  const state = { items: window.allCustomers || [] };
+
+  const API_BASE = window.API_BASE_URL || window.location.origin;
+  const CUSTOMER_API = `${API_BASE}/api/khach-hang`;
+  let customersLoading = false;
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token')
+      || sessionStorage.getItem('token')
+      || window.localStorage.token
+      || window.sessionStorage.token;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  const normalizeCustomerTier = tier => ({
+    Close: 'Đồng',
+    Bronze: 'Đồng',
+    Silver: 'Bạc',
+    Gold: 'Vàng',
+    Platinum: 'Bạch Kim',
+    Diamond: 'Kim Cương',
+  }[tier] || tier || 'Đồng');
+
+  const mapCustomer = (item) => ({
+    id: item?.id,
+    name: item?.hoTen || item?.name || '—',
+    phone: item?.sdt || item?.SDT || item?.phone || '',
+    email: item?.email || '',
+    tongDonHang: item?.tongDonHang ?? item?.orders ?? 0,
+    diemTichLuy: item?.diemTichLuy ?? item?.points ?? 0,
+    hangThanhVien: normalizeCustomerTier(item?.hangThanhVien || item?.tier),
+    isVip: Boolean(item?.vip ?? item?.isVip ?? item?.is_vip ?? false),
+    trangThai: typeof item?.trangThai === 'boolean' ? item.trangThai : (item?.status ? item.status === 'Hoạt động' : true),
+    avatar: item?.avatar || '',
+    dob: item?.dob || null,
+    address: item?.address || '',
+    note: item?.note || '',
+    joinDate: item?.joinDate || null
+  });
+
+  const renderLoadingState = () => {
+    tableBody.innerHTML = `<tr><td colspan="10"><div class="empty-state">Đang tải danh sách khách hàng...</div></td></tr>`;
+    emptyState.style.display = 'none';
+  };
+
+  const loadCustomersFromApi = async () => {
+    customersLoading = true;
+    renderLoadingState();
+
+    try {
+      const response = await fetch(CUSTOMER_API, {
+        headers: {
+          Accept: 'application/json',
+          ...getAuthHeaders(),
+        },
+      });
+
+      if (response.status === 401) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const data = await response.json();
+      state.items = Array.isArray(data) ? data.map(mapCustomer) : [];
+      window.allCustomers = state.items;
+      customersLoading = false;
+      render(search ? search.value : '');
+    } catch (error) {
+      customersLoading = false;
+      tableBody.innerHTML = `<tr><td colspan="10"><div class="empty-state">Không thể tải danh sách khách hàng từ backend.</div></td></tr>`;
+    }
+  };
+  const tableBody = document.getElementById('customerTableBody');
+  const emptyState = document.getElementById('customerEmptyState');
+  const modal = document.getElementById('customerModal');
+  const form = document.getElementById('customerForm');
+  const search = document.getElementById('customerSearch');
+  const preview = document.getElementById('customerPreview');
+  const openBtn = document.getElementById('btnAddCustomer');
+  const closeBtn = document.getElementById('closeCustomerModal');
+  const cancelBtn = document.getElementById('cancelCustomer');
+  if (!tableBody || !modal || !form) return;
+
+  const tierMeta = tier => ({
+    'Đồng': { cls: 'tier-bronze' },
+    'Bạc': { cls: 'tier-silver' },
+    'Vàng': { cls: 'tier-gold' },
+    'Bạch Kim': { cls: 'tier-platinum' },
+    'Kim Cương': { cls: 'tier-platinum' },
+  }[tier] || { cls: 'tier-bronze' });
+
+  const badgeClass = tier => tierMeta(tier).cls;
+  const tierLabel = (tier, isVip = false) => {
+    const rawTier = normalizeCustomerTier(tier);
+    const label = localStorage.getItem('language') === 'en'
+      ? ({
+          'Đồng': 'Bronze',
+          'Bạc': 'Silver',
+          'Vàng': 'Gold',
+          'Bạch Kim': 'Platinum',
+          'Kim Cương': 'Diamond',
+        }[rawTier] || rawTier)
+      : rawTier;
+    return `${label}${isVip ? ' + VIP' : ''}`;
+  };
+  const customerFrameClass = item => {
+    const classes = ['customer-tier-row', `customer-${badgeClass(item.hangThanhVien)}`];
+    if (item.isVip) classes.push('customer-tier-vip');
+    return classes.join(' ');
+  };
+  const updateCustomerRowFrame = (row, item) => {
+    if (!row || !item) return;
+    row.className = customerFrameClass(item);
+    const tierCell = row.querySelector('.tier-cell');
+    if (tierCell) {
+      tierCell.innerHTML = `<span class="badge ${badgeClass(item.hangThanhVien)}">${tierLabel(item.hangThanhVien, item.isVip)}</span>`;
+    }
+  };
+  const calculateTier = (points = 0) => {
+    const p = Number(points) || 0;
+    if (p >= 50000) return 'Kim Cương';
+    if (p >= 20000) return 'Bạch Kim';
+    if (p >= 5000) return 'Vàng';
+    if (p >= 1000) return 'Bạc';
+    return 'Đồng';
+  };
+
+  const updateCustomerStats = () => {
+    const total = state.items.length;
+    const vip = state.items.filter(x => x.isVip).length;
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const newThisMonth = state.items.filter(x => {
+      if (!x.joinDate) return false;
+      const d = new Date(x.joinDate);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    }).length;
+    const totalOrders = state.items.reduce((sum, x) => sum + (+x.tongDonHang || 0), 0);
+
+    const statTotalEl = document.getElementById('customerTotal');
+    const statVipEl = document.getElementById('customerVip');
+    const statNewEl = document.getElementById('customerNew');
+    const statOrdersEl = document.getElementById('customerOrders');
+
+    if (statTotalEl) statTotalEl.textContent = total;
+    if (statVipEl) statVipEl.textContent = vip;
+    if (statNewEl) statNewEl.textContent = newThisMonth;
+    if (statOrdersEl) statOrdersEl.textContent = totalOrders.toLocaleString('vi-VN');
+  };
+
+  const render = (q = '') => {
+    if (customersLoading) return;
+    const query = q.trim().toLowerCase();
+    const rows = state.items.filter(x => !query || x.name.toLowerCase().includes(query) || x.phone.includes(query) || x.email.toLowerCase().includes(query));
+    tableBody.innerHTML = rows.length ? rows.map((item, idx) => `
+      <tr class="${customerFrameClass(item)}">
+        <td>${idx + 1}</td>
+        <td>
+          ${item.avatar && item.avatar.length > 1 ? `<img src="${item.avatar}" class="avatar" style="object-fit:cover;" alt="Avatar">` : `<div class="avatar">${item.avatar || (item.name[0] || 'C').toUpperCase()}</div>`}
+        </td>
+        <td style="font-weight:700">${item.name}</td>
+        <td>${item.phone}</td>
+        <td style="color:var(--muted)">${item.email}</td>
+        <td>${item.tongDonHang ?? 0}</td>
+        <td class="inline-points" data-id="${item.id}" data-value="${item.diemTichLuy ?? 0}">${item.diemTichLuy ?? 0}</td>
+        <td class="tier-cell"><span class="badge ${badgeClass(item.hangThanhVien)}">${tierLabel(item.hangThanhVien, item.isVip)}</span></td>
+        <td><span class="badge ${item.trangThai ? 'paid' : 'bad'}">${item.trangThai ? 'Hoạt động' : 'Ngừng hoạt động'}</span></td>
+        <td><div class="ops"><button class="link js-view-customer" data-id="${item.id}">Xem chi tiết</button><button class="link customer-edit" data-id="${item.id}">Sửa</button><button class="link danger customer-delete" data-id="${item.id}">Xóa</button></div></td>
+      </tr>
+    `).join('') : '';
+    emptyState.style.display = rows.length ? 'none' : 'block';
+    updateCustomerStats();
+  };
+
+  const closeModal = () => { modal.classList.remove('open'); form.reset(); preview.removeAttribute('src'); preview.style.display='none'; preview.nextElementSibling.style.display='block'; };
+
+  const showInlineToast = (message, success = true) => {
+    let toast = document.getElementById('inlineToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'inlineToast';
+      toast.style.cssText = 'position:fixed;right:20px;bottom:20px;z-index:9999;padding:10px 14px;border-radius:10px;color:#fff;font-size:13px;box-shadow:0 10px 24px rgba(0,0,0,.15);opacity:0;transform:translateY(8px);transition:.2s';
+      document.body.appendChild(toast);
+    }
+    toast.style.background = success ? '#1f7a3a' : '#c0392b';
+    toast.textContent = message;
+    requestAnimationFrame(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; });
+    clearTimeout(showInlineToast._t);
+    showInlineToast._t = setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(8px)'; }, 1800);
+  };
+
+  const getCustomerById = (id) => state.items.find(x => String(x.id) === String(id));
+
+  const updateCustomerInState = (id, patch) => {
+    const idx = state.items.findIndex(x => String(x.id) === String(id));
+    if (idx === -1) return null;
+    state.items[idx] = { ...state.items[idx], ...patch };
+    window.allCustomers = state.items;
+    return state.items[idx];
+  };
+
+  const saveCustomerPatch = async (id, patch) => {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const current = getCustomerById(id);
+    const next = { ...(current || {}), ...(patch || {}) };
+    const points = Number(next.diemTichLuy ?? 0);
+    const formData = new FormData();
+    formData.append('khachHang', new Blob([JSON.stringify({
+      hoTen: next.name || '',
+      sdt: next.phone || '',
+      email: next.email || '',
+      avatar: typeof next.avatar === 'string' ? next.avatar : '',
+      diemTichLuy: points,
+      hangThanhVien: next.hangThanhVien || calculateTier(points),
+      vip: Boolean(next.isVip),
+    })], { type: 'application/json' }));
+    if (patch?.avatar instanceof File) {
+      formData.append('avatarFile', patch.avatar);
+    }
+
+    const response = await fetch(`${CUSTOMER_API}/${id}`, {
+      method: 'PUT',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return null;
+    }
+    if (!response.ok) {
+      const message = await response.text();
+      throw new Error(message || 'Request failed');
+    }
+    const saved = await response.json();
+    const mapped = mapCustomer(saved);
+    updateCustomerInState(id, mapped);
+    return mapped;
+  };
+  
+  // Clear old listeners
+  if (openBtn) openBtn.onclick = null;
+  if (closeBtn) closeBtn.onclick = null;
+  if (cancelBtn) cancelBtn.onclick = null;
+  if (form) form.onsubmit = null;
+  if (search) search.oninput = e => render(e.target.value);
+
+  const diemInput = document.getElementById('editDiemTichLuy');
+  let hangInput = document.getElementById('editHangThanhVien');
+  const tierOptions = ['Đồng', 'Bạc', 'Vàng', 'Bạch Kim', 'Kim Cương'];
+  if (hangInput && hangInput.tagName !== 'SELECT') {
+    const tierSelect = document.createElement('select');
+    tierSelect.className = hangInput.className || 'input';
+    tierSelect.name = 'hangThanhVien';
+    tierSelect.id = hangInput.id;
+    tierSelect.innerHTML = tierOptions.map(tier => `<option value="${tier}">${tier}</option>`).join('');
+    hangInput.replaceWith(tierSelect);
+    hangInput = tierSelect;
+  }
+  if (form && form.avatar) form.avatar.onchange = null;
+  
+  // Attach new listeners
+  if (openBtn) openBtn.onclick = () => {
+    form.reset();
+    preview.removeAttribute('src');
+    preview.style.display = 'none';
+    preview.nextElementSibling.style.display = 'block';
+    document.querySelector('#customerModal .modal-title').textContent = ' Thêm khách hàng';
+    document.getElementById('saveCustomer').querySelector('.txt').textContent = 'Lưu khách hàng';
+    window.currentEditCustomerIndex = undefined;
+    modal.classList.add('open');
+  };
+  if (closeBtn) closeBtn.onclick = closeModal;
+  if (cancelBtn) cancelBtn.onclick = closeModal;
+  
+  modal.removeEventListener('click', window.customerModalHandler);
+  window.customerModalHandler = e => { if (e.target === modal) closeModal(); };
+  modal.addEventListener('click', window.customerModalHandler);
+  
+  if (search) search.oninput = e => render(e.target.value);
+  
+  if (form && form.avatar) {
+    form.avatar.addEventListener('change', e => { 
+      const f = e.target.files[0]; 
+      if (!f) return; 
+      preview.src = URL.createObjectURL(f); 
+      preview.style.display='block'; 
+      preview.nextElementSibling.style.display='none'; 
+    });
+  }
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const name = form.name.value.trim();
+    const phone = form.phone.value.trim();
+    const email = form.email.value.trim();
+    const nameField = form.name.closest('.field');
+    const phoneField = form.phone.closest('.field');
+    const emailField = form.email.closest('.field');
+    [nameField, phoneField, emailField].forEach(f => f.classList.remove('error'));
+    let ok = true;
+    const phoneOk = /^(0[3|5|7|8|9])[0-9]{8}$/.test(phone);
+    const emailOk = /^\S+@\S+\.\S+$/.test(email);
+    if (!name) { nameField.classList.add('error'); nameField.querySelector('.helper').textContent = 'Tên không được để trống'; ok = false; }
+    if (!phoneOk) { phoneField.classList.add('error'); phoneField.querySelector('.helper').textContent = 'SĐT phải đúng định dạng'; ok = false; }
+    if (!emailOk) { emailField.classList.add('error'); emailField.querySelector('.helper').textContent = 'Email không hợp lệ'; ok = false; }
+
+    const diemVal = document.getElementById('editDiemTichLuy');
+    const trangThaiVal = document.getElementById('editTrangThai');
+    const points = Number(diemVal?.value || 0);
+    if (!Number.isInteger(points) || points < 0) {
+      const pointsField = diemVal?.closest('.field');
+      if (pointsField) pointsField.classList.add('error');
+      ok = false;
+    }
+    if (!ok) return;
+    const tier = form.hangThanhVien?.value || calculateTier(points);
+    const isVip = form.isVip && form.isVip.value === '1';
+    const formData = new FormData();
+    formData.append('khachHang', new Blob([JSON.stringify({
+      hoTen: name,
+      sdt: phone,
+      email,
+      diemTichLuy: points,
+      hangThanhVien: tier,
+      vip: isVip,
+    })], { type: 'application/json' }));
+    const file = form.avatar.files && form.avatar.files[0];
+    if (file) formData.append('avatarFile', file);
+
+    const isEdit = window.currentEditCustomerIndex !== undefined;
+    const customerId = isEdit ? state.items[window.currentEditCustomerIndex]?.id : null;
+    const url = isEdit ? `${CUSTOMER_API}/${customerId}` : CUSTOMER_API;
+
+    try {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const response = await fetch(url, {
+        method: isEdit ? 'PUT' : 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+
+      if (response.status === 401) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || 'Request failed');
+      }
+
+      const saved = await response.json();
+      const mapped = mapCustomer(saved);
+      if (isEdit) {
+        state.items[window.currentEditCustomerIndex] = {
+          ...state.items[window.currentEditCustomerIndex],
+          ...mapped,
+        };
+        window.currentEditCustomerIndex = undefined;
+        document.querySelector('#customerModal .modal-title').textContent = ' Thêm khách hàng';
+        document.getElementById('saveCustomer').querySelector('.txt').textContent = 'Lưu khách hàng';
+      } else {
+        state.items.unshift(mapped);
+      }
+      window.allCustomers = state.items;
+      render(search.value);
+      closeModal();
+      form.reset();
+      window.showToast(isEdit ? 'Đã cập nhật khách hàng' : 'Đã thêm khách hàng');
+    } catch (err) {
+      window.showToast('Không thể lưu khách hàng: ' + err.message);
+    }
+  };
+
+  // Handle edit and delete buttons in table
+  tableBody.addEventListener('click', async e => {
+    const editBtn = e.target.closest('.customer-edit');
+    const deleteBtn = e.target.closest('.customer-delete');
+    const toggle = e.target.closest('.status-toggle');
+    const pointsCell = e.target.closest('.inline-points');
+    if (toggle) {
+      const id = toggle.dataset.id;
+      const current = getCustomerById(id);
+      const nextValue = toggle.checked;
+      try {
+        await saveCustomerPatch(id, { trangThai: nextValue });
+        const updated = getCustomerById(id);
+        const row = toggle.closest('tr');
+        if (row && updated) {
+          updateCustomerRowFrame(row, updated);
+        }
+        showInlineToast('Đã cập nhật trạng thái');
+      } catch (err) {
+        toggle.checked = !nextValue;
+        showInlineToast('Cập nhật trạng thái thất bại', false);
+      }
+      return;
+    }
+    if (pointsCell) {
+      const id = pointsCell.dataset.id;
+      if (pointsCell.querySelector('input')) return;
+      const oldValue = pointsCell.dataset.value || '0';
+      pointsCell.innerHTML = `<input type="number" class="inline-points-input" value="${oldValue}" style="width:90px;border:1px solid var(--border);border-radius:8px;padding:6px 8px;font:inherit;">`;
+      const input = pointsCell.querySelector('input');
+      input.focus();
+      input.select();
+
+      const commit = async () => {
+        const newPoints = Number(input.value || 0);
+        try {
+          const saved = await saveCustomerPatch(id, { diemTichLuy: newPoints, hangThanhVien: calculateTier(newPoints) });
+          const row = input.closest('tr');
+          const updated = getCustomerById(id);
+          if (row && updated) {
+            const pointsTd = row.querySelector('.inline-points');
+            const tierCell = row.querySelector('.tier-cell');
+            if (pointsTd) {
+              pointsTd.dataset.value = updated.diemTichLuy ?? newPoints;
+              pointsTd.textContent = updated.diemTichLuy ?? newPoints;
+            }
+            updateCustomerRowFrame(row, updated);
+          }
+          showInlineToast('Đã cập nhật điểm tích lũy');
+        } catch (err) {
+          pointsCell.innerHTML = oldValue;
+          showInlineToast('Cập nhật điểm thất bại', false);
+        }
+      };
+
+      input.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter') { ev.preventDefault(); commit(); }
+        if (ev.key === 'Escape') { pointsCell.dataset.value = oldValue; pointsCell.textContent = oldValue; }
+      });
+      input.addEventListener('blur', commit, { once: true });
+      return;
+    }
+    if (!editBtn && !deleteBtn) return;
+
+    const id = editBtn ? editBtn.dataset.id : deleteBtn.dataset.id;
+    const itemIndex = state.items.findIndex(i => String(i.id) === String(id));
+    if (itemIndex < 0) return;
+
+    if (editBtn) {
+      // Open edit modal
+      const item = state.items[itemIndex];
+      form.name.value = item.name;
+      form.phone.value = item.phone;
+      form.email.value = item.email;
+      form.dob.value = item.dob || '';
+      form.address.value = item.address || '';
+      form.note.value = item.note || '';
+
+      const diemEl = document.getElementById('editDiemTichLuy');
+      const hangEl = document.getElementById('editHangThanhVien');
+      const trangThaiEl = document.getElementById('editTrangThai');
+      const isVipEl = document.getElementById('editIsVip');
+      if (diemEl) diemEl.value = item.diemTichLuy ?? 0;
+      if (hangEl) hangEl.value = item.hangThanhVien || calculateTier(item.diemTichLuy ?? 0);
+      if (trangThaiEl) trangThaiEl.value = item.trangThai ? '1' : '0';
+      if (isVipEl) isVipEl.value = item.isVip ? '1' : '0';
+          
+      if (item.avatar && item.avatar.length > 1) {
+        preview.src = item.avatar;
+        preview.style.display = 'block';
+        preview.nextElementSibling.style.display = 'none';
+      } else {
+        preview.removeAttribute('src');
+        preview.style.display = 'none';
+        preview.nextElementSibling.style.display = 'block';
+      }
+
+      document.querySelector('#customerModal .modal-title').textContent = ' Sửa khách hàng';
+      document.getElementById('saveCustomer').querySelector('.txt').textContent = 'Cập nhật';
+      window.currentEditCustomerIndex = itemIndex;
+      modal.classList.add('open');
+    } else if (deleteBtn) {
+      // Delete confirmation
+      const item = state.items[itemIndex];
+      window.showConfirm('Bạn chắc chắn muốn xóa khách hàng này?', async () => {
+        try {
+          const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+          const response = await fetch(`${CUSTOMER_API}/${item.id}`, {
+            method: 'DELETE',
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          });
+          if (response.status === 401) { window.location.href = 'login.html'; return; }
+          if (!response.ok) throw new Error('Delete failed');
+          state.items.splice(itemIndex, 1);
+          window.allCustomers = state.items;
+          render(search.value);
+          window.showToast('Đã xóa khách hàng');
+        } catch (err) {
+          window.showToast('Không thể xóa khách hàng');
+        }
+      });
+    }
+  });
+
+  // View detail modal
+  const detailModal = document.getElementById('customerDetailModal');
+  const closeDetailBtn = document.getElementById('closeDetailModal');
+  const closeDetailBtn2 = document.getElementById('closeDetailBtn');
+  
+  if (closeDetailBtn) closeDetailBtn.onclick = () => detailModal.classList.remove('open');
+  if (closeDetailBtn2) closeDetailBtn2.onclick = () => detailModal.classList.remove('open');
+  
+  tableBody.addEventListener('click', e => {
+    const btn = e.target.closest('.js-view-customer');
+    if (!btn) return;
+    const customer = state.items.find(x => String(x.id) === String(btn.dataset.id));
+    if (!customer) return;
+
+    // Populate detail modal
+    document.getElementById('detailName').textContent = customer.name;
+    document.getElementById('detailPhone').textContent = customer.phone;
+    document.getElementById('detailEmail').textContent = customer.email;
+    document.getElementById('detailDOB').textContent = customer.dob || '—';
+    document.getElementById('detailAddress').textContent = customer.address || '—';
+    document.getElementById('detailTier').textContent = tierLabel(customer.hangThanhVien, customer.isVip);
+    document.getElementById('detailOrders').textContent = customer.tongDonHang ?? 0;
+    document.getElementById('detailPoints').textContent = customer.diemTichLuy ?? 0;
+    document.getElementById('detailStatus').textContent = customer.trangThai ? 'Hoạt động' : 'Ngừng hoạt động';
+    document.getElementById('detailNote').textContent = customer.note || '—';
+
+    const avatarContainer = document.getElementById('detailAvatarContainer');
+    if (avatarContainer) {
+      if (customer.avatar && customer.avatar.length > 1) {
+        avatarContainer.innerHTML = `<img src="${customer.avatar}" class="avatar" style="width:80px;height:80px;object-fit:cover;margin:0 auto;" alt="Avatar">`;
+      } else {
+        avatarContainer.innerHTML = `<div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto;display:flex;align-items:center;justify-content:center;">${customer.avatar || (customer.name[0] || 'C').toUpperCase()}</div>`;
+      }
+    }
+    
+    detailModal.classList.add('open');
+  });
+
+  render();
+  loadCustomersFromApi();
+};
+</script>

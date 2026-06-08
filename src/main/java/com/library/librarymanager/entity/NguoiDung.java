@@ -1,9 +1,12 @@
 package com.library.librarymanager.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -17,12 +20,19 @@ public class NguoiDung {
     private int id;
     private String hoTen;
     private String username;
+    @JsonIgnore
     private String password;
     private String SDT;
-
-
+    @Email
+    private String email;
+    private String avatar;
+    private String caLamViec;
+    private String diaChi;
+    private LocalDateTime ngayVaoLam;
+    private BigDecimal luongCoBan;
+    private String ghiChu;
     @ManyToOne
-    @JoinColumn(name = "tenNhom")
+    @JoinColumn(name = "ten_nhom", referencedColumnName = "id")
     private NhomNguoiDung nhom;
     @JsonIgnore
     @OneToMany(mappedBy = "nguoiDung")

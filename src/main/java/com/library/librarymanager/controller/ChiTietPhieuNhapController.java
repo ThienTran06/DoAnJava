@@ -18,10 +18,4 @@ public class ChiTietPhieuNhapController {
     List<ChiTietPhieuNhap> getAll(){return chiTietPhieuNhapService.getAll();}
     @GetMapping("/{id}")
     ChiTietPhieuNhap getById(@PathVariable int id){return chiTietPhieuNhapService.getById(id);}
-    @PostMapping
-    ChiTietPhieuNhap create(@RequestBody ChiTietPhieuNhap chiTietPhieuNhap){return  chiTietPhieuNhapService.create(chiTietPhieuNhap);}
-    @PutMapping("/{id}")
-    ChiTietPhieuNhap updateById(@PathVariable int id, @RequestBody ChiTietPhieuNhap chiTietPhieuNhap){return chiTietPhieuNhapService.updateById(id,chiTietPhieuNhap);}
-    @DeleteMapping("/{id}")
-    void deleteById(@PathVariable int id){chiTietPhieuNhapService.deleteById(id);}
 }

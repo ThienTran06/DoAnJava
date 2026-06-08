@@ -8,14 +8,11 @@ import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.entity.RefreshToken;
 import com.library.librarymanager.repository.NguoiDungRepository;
 import com.library.librarymanager.service.Interface.AuthService;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -37,49 +34,31 @@ public class AuthServiceImpl implements AuthService {
 
         NguoiDung user = repo
                 .findByUsername(req.getUsername())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy"));
+                .orElseThrow(() -> new AuthException("Sai tai khoan hoac mat khau"));
 
-        if (user == null) {
-            throw new AuthException("Sai tài khoản");
+        if (!encoder.matches(req.getPassword(), user.getPassword())) {
+            throw new AuthException("Sai tai khoan hoac mat khau");
         }
 
-        if (!encoder.matches(
-                req.getPassword(),
-                user.getPassword()
-        )) {
-
-            throw new AuthException("Sai mật khẩu");
-        }
-
-        List<String> permissions =
-
-                user.getDsPhanQuyen()
-                        .stream()
-                        .map(pq ->
-                                pq.getChucNang()
-                                        .getTenChucNang()
-                        )
-                        .toList();
+        List<String> permissions = user.getDsPhanQuyen()
+                .stream()
+                .map(pq -> pq.getChucNang().getTenChucNang())
+                .toList();
 
         String accessToken = jwtutil.generateToken(
                 user.getId(),
 
                 user.getUsername(),
-
                 user.getNhom().getTenNhom(),
-
                 permissions
         );
 
-        RefreshToken refreshToken =
-                refreshTokenService.create(
-                        user.getUsername()
-                );
+        RefreshToken refreshToken = refreshTokenService.create(user.getUsername());
 
         return new LoginResponse(
-                "Login thành công",
+                "Login thanh cong",
                 accessToken,
-                refreshToken.getToken()
+                refreshToken.getRawToken()
         );
     }
 }

@@ -40,6 +40,11 @@ public class ChiTietPhieuGiuServiceImpl implements ChiTietPhieuGiuService {
         }
         if(soLuong<=0)throw new IllegalArgumentException("Số lượng không được âm");
         List<ChiTietPhieuGiu> ds = ctRepo.findByPhieuGiuId(phieuId);
+        boolean daCoTrongPhieu = ds.stream()
+                .anyMatch(ct -> ct.getSach() != null && ct.getSach().getId() == sachId);
+        if (daCoTrongPhieu) {
+            throw new RuntimeException("Khong duoc them trung mot sach trong phieu giu");
+        }
 
         if (ds.size() >= maxSach) {
             throw new RuntimeException("Vuơt giới hạn sách");
