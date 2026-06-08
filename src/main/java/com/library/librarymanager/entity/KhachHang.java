@@ -23,11 +23,7 @@ public class KhachHang {
     private int id;
 
     private String hoTen;
-
-    @JsonProperty("sdt")
-    @JsonAlias({"SDT", "phone"})
-    private String SDT;
-
+    private String sdt;
     private String email;
 
     private String avatar;

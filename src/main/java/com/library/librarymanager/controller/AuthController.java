@@ -74,28 +74,32 @@ public class AuthController {
             @CookieValue(value = "refreshToken", required = false) String cookieRefreshToken
     ) {
 
-        String token = resolveRefreshToken(req, cookieRefreshToken);
+        RefreshToken rt =
+                refreshTokenService.validate(
+                        req.getRefreshToken()
+                );
 
-        if (token == null) {
-            throw new RuntimeException("Refresh token khong duoc cung cap");
-        }
+        NguoiDung user =
+                repo.findByUsername(
+                        rt.getUsername()
+                ).orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
-        RefreshToken rt = refreshTokenService.validate(token);
+        List<String> permissions =
+                user.getDsPhanQuyen()
+                        .stream()
+                        .map(pq ->
+                                pq.getChucNang()
+                                        .getTenChucNang()
+                        )
+                        .toList();
 
-        NguoiDung user = repo.findByUsername(rt.getUsername())
-                .orElseThrow(() -> new RuntimeException("Khong tim thay nguoi dung"));
-
-        List<String> permissions = user.getDsPhanQuyen()
-                .stream()
-                .map(pq -> pq.getChucNang().getTenChucNang())
-                .toList();
-
-        String newAccessToken = jwtutil.generateToken(
-                user.getId(),
-                user.getUsername(),
-                user.getNhom().getTenNhom(),
-                permissions
-        );
+        String newAccessToken =
+                jwtutil.generateToken(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getNhom().getTenNhom(),
+                        permissions
+                );
 
         return new LoginResponse(
                 "Refresh thanh cong",
