@@ -99,15 +99,33 @@ public class HoaDonServiceImpl implements HoaDonService {
 
 
     @Override
-    public HoaDon updateById(int id, HoaDon hoaDon) {
-        HoaDon res = hoaDonRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy nhà cung cấp có id = "+id));
-        res.setId(hoaDon.getId());
-        res.setNgayBan(hoaDon.getNgayBan());
-        res.setNhanVien(hoaDon.getNhanVien());
-        res.setKhachHang(hoaDon.getKhachHang());
-        res.setTongTien(hoaDon.getTongTien());
-        res.setDanhSachChiTiet(hoaDon.getDanhSachChiTiet());
-        res.setTrangThai(hoaDon.getTrangThai());
+    public HoaDon updateById(int id, UpdateHoaDonRequest request) {
+        HoaDon res = hoaDonRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Khong tim thay hoa don co id = "+id));
+
+        if ("DA HUY".equals(res.getTrangThai())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Khong the cap nhat hoa don da huy");
+        }
+
+        if (request.getMaHoaDon() != null) {
+            res.setMaHoaDon(request.getMaHoaDon());
+        }
+
+        if (request.getNgayBan() != null) {
+            res.setNgayBan(request.getNgayBan());
+        }
+
+        if (request.getNhanVienId() != null) {
+            NguoiDung nhanVien = nhanVienRepository.findById(request.getNhanVienId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Khong tim thay nhan vien co id = " + request.getNhanVienId()));
+            res.setNhanVien(nhanVien);
+        }
+
+        if (request.getKhachHangId() != null) {
+            KhachHang khachHang = khachHangRepository.findById(request.getKhachHangId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Khong tim thay khach hang co id = " + request.getKhachHangId()));
+            res.setKhachHang(khachHang);
+        }
+
         hoaDonRepository.save(res);
         return res;
     }

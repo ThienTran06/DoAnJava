@@ -1,8 +1,10 @@
 package com.library.librarymanager.config;
 
+
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.*;
 import com.nimbusds.jwt.*;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +17,6 @@ public class JwtUtil {
 
     private final byte[] secret;
 
-    // Giữ cách lấy cấu hình bảo mật từ application.properties của Bản 1
     public JwtUtil(
             @Value("${jwt.secret}") String secret
     ) {
@@ -25,39 +26,31 @@ public class JwtUtil {
         this.secret = secret.getBytes(StandardCharsets.UTF_8);
     }
 
-    // Tận dụng hàm parseToken dùng chung cực sạch của Bản 2
-    private SignedJWT parseToken(String token) {
+    public String generateToken(Integer id,
+                                String username,
+                                String role,
+                                List<String> permissions) {
+
         try {
-            SignedJWT jwt = SignedJWT.parse(token);
-            JWSVerifier verifier = new MACVerifier(secret);
 
-            if (!jwt.verify(verifier)) {
-                throw new RuntimeException("Token không hợp lệ");
-            }
-
-            Date exp = jwt.getJWTClaimsSet().getExpirationTime();
-            if (exp.before(new Date())) {
-                throw new RuntimeException("Token hết hạn");
-            }
-
-            return jwt;
-        } catch (Exception e) {
-            throw new RuntimeException("Token lỗi");
-        }
-    }
-
-    // Giữ hàm generateToken có thêm ID của Bản 2
-    public String generateToken(Integer id, String username, String role, List<String> permissions) {
-        try {
-            JWSSigner signer = new MACSigner(secret);
+            JWSSigner signer =
+                    new MACSigner(secret);
 
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
+
                     .subject(username)
-                    .claim("id", id) // Thêm ID người dùng
+                    .claim("id", id)
+
                     .claim("role", role)
+
                     .claim("permissions", permissions)
+
                     .issueTime(new Date())
-                    .expirationTime(new Date(System.currentTimeMillis() + 18000000)) // 5 tiếng
+
+                    .expirationTime(
+                            new Date(System.currentTimeMillis() + 18000000)
+                    )
+
                     .build();
 
             SignedJWT jwt = new SignedJWT(
@@ -66,53 +59,106 @@ public class JwtUtil {
             );
 
             jwt.sign(signer);
+
             return jwt.serialize();
-        } catch (Exception e) {
+
+        }
+        catch (Exception e) {
             throw new RuntimeException("Lỗi tạo token");
         }
     }
 
-    public Integer extractId(String token) {
-        try {
-            SignedJWT jwt = parseToken(token);
-            return jwt.getJWTClaimsSet().getIntegerClaim("id");
-        } catch (Exception e) {
-            throw new RuntimeException("Token lỗi");
-        }
-    }
-
     public String extractUsername(String token) {
+
         try {
-            SignedJWT jwt = parseToken(token);
+
+            SignedJWT jwt = SignedJWT.parse(token);
+
+            JWSVerifier verifier =
+                    new MACVerifier(secret);
+
+            if (!jwt.verify(verifier)) {
+                throw new RuntimeException("Token không hợp lệ");
+            }
+
+            Date exp =
+                    jwt.getJWTClaimsSet().getExpirationTime();
+
+            if (exp.before(new Date())) {
+                throw new RuntimeException("Token hết hạn");
+            }
+
             return jwt.getJWTClaimsSet().getSubject();
-        } catch (Exception e) {
+
+        }
+        catch (Exception e) {
             throw new RuntimeException("Token lỗi");
         }
     }
 
     public String extractRole(String token) {
+
         try {
-            SignedJWT jwt = parseToken(token);
-            return jwt.getJWTClaimsSet().getStringClaim("role");
-        } catch (Exception e) {
+
+            SignedJWT jwt = SignedJWT.parse(token);
+
+            JWSVerifier verifier =
+                    new MACVerifier(secret);
+
+            if (!jwt.verify(verifier)) {
+                throw new RuntimeException("Token không hợp lệ");
+            }
+
+            return jwt.getJWTClaimsSet()
+                    .getStringClaim("role");
+
+        }
+        catch (Exception e) {
             throw new RuntimeException("Token lỗi");
         }
     }
 
     public List<String> extractPermissions(String token) {
+
         try {
-            SignedJWT jwt = parseToken(token);
+
+            SignedJWT jwt = SignedJWT.parse(token);
+
+            JWSVerifier verifier =
+                    new MACVerifier(secret);
+
+            if (!jwt.verify(verifier)) {
+                throw new RuntimeException("Token không hợp lệ");
+            }
+
             return jwt.getJWTClaimsSet().getStringListClaim("permissions");
-        } catch (Exception e) {
+
+        }
+        catch (Exception e) {
             throw new RuntimeException("Token lỗi");
         }
     }
 
     public boolean validateToken(String token) {
+
         try {
-            parseToken(token);
-            return true;
-        } catch (Exception e) {
+
+            SignedJWT jwt = SignedJWT.parse(token);
+
+            JWSVerifier verifier =
+                    new MACVerifier(secret);
+
+            if (!jwt.verify(verifier)) {
+                return false;
+            }
+
+            Date exp =
+                    jwt.getJWTClaimsSet().getExpirationTime();
+
+            return !exp.before(new Date());
+
+        }
+        catch (Exception e) {
             return false;
         }
     }
