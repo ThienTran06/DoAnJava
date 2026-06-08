@@ -21,7 +21,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +55,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     @Transactional
     public HoaDon create(HoaDonRequest request) {
+        validateHoaDonRequest(request);
         NguoiDung nhanVien = nhanVienRepository.findById(request.getNhanVienId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy nhân viên có id = "+request.getNhanVienId()));
         KhachHang khachHang = khachHangRepository.findById(request.getKhachHangId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy khách hàng có id = "+request.getKhachHangId()));
         HoaDon newHoaDon = new HoaDon();
@@ -163,6 +166,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     @Transactional
     public HoaDon updateChiTiet(int id, HoaDonRequest request) {
+        validateHoaDonRequest(request);
         HoaDon hoaDon = hoaDonRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Khong tim thay hoa don co id = " + id));
 
@@ -216,10 +220,12 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     public List<DoanhThuNgayResponse>getDoanhThuTheoNgay(int nam, int thang){
+        validateYearMonth(nam, thang);
         return hoaDonRepository.doanhThuTheoNgay(nam,thang);
     }
     @Override
     public List<DoanhThuThangResponse>getDoanhThuTheoThang(int nam){
+        validateYear(nam);
         return hoaDonRepository.doanhThuTheoThang(nam);
     }
     @Override
@@ -244,6 +250,12 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
     @Override
     public List<DoanhThuNgayResponse> getDoanhThuTheoKhoangNgay(LocalDate tuNgay,LocalDate denNgay){
+        if (tuNgay == null || denNgay == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ngay bao cao khong duoc de trong");
+        }
+        if (tuNgay.isAfter(denNgay)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tu ngay khong duoc lon hon den ngay");
+        }
         LocalDateTime start = tuNgay.atStartOfDay();
         LocalDateTime end = denNgay.plusDays(1).atStartOfDay();
         return hoaDonRepository.getDoanhThuKhoangNgay(start,end);
@@ -280,4 +292,32 @@ public class HoaDonServiceImpl implements HoaDonService {
 
 
 
+    private void validateHoaDonRequest(HoaDonRequest request) {
+        if (request == null || request.getDanhSachChiTiet() == null || request.getDanhSachChiTiet().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Danh sach chi tiet hoa don khong duoc trong");
+        }
+        Set<Integer> sachIds = new HashSet<>();
+        for (ChiTietHoaDonRequest detail : request.getDanhSachChiTiet()) {
+            if (detail == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chi tiet hoa don khong hop le");
+            }
+            if (!sachIds.add(detail.getSachID())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Khong duoc them trung mot sach trong hoa don");
+            }
+        }
+    }
+
+    private void validateYearMonth(int nam, int thang) {
+        validateYear(nam);
+        if (thang < 1 || thang > 12) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Thang phai nam trong khoang 1 den 12");
+        }
+    }
+
+    private void validateYear(int nam) {
+        int currentYear = LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh")).getYear();
+        if (nam < 1000 || nam > currentYear) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nam phai nam trong khoang 1000 den " + currentYear);
+        }
+    }
 }

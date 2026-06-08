@@ -4,6 +4,7 @@ import com.library.librarymanager.entity.KhachHang;
 import com.library.librarymanager.repository.KhachHangRepository;
 import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.KhachHangService;
+import com.library.librarymanager.util.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +39,7 @@ public class KhachHangServiceImpl implements KhachHangService {
 
     @Override
     public KhachHang create(KhachHang khachHang) {
+        validateKhachHang(khachHang, null);
         apDungHangThanhVienMacDinhNeuCan(khachHang);
         return khachHangRepository.save(khachHang);
     }
@@ -55,6 +57,7 @@ public class KhachHangServiceImpl implements KhachHangService {
     public KhachHang updateById(int id, KhachHang khachHang) {
         KhachHang res = khachHangRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Khong tim thay khach hang co id = " + id));
+        validateKhachHang(khachHang, id);
         res.setSDT(khachHang.getSDT());
         res.setEmail(khachHang.getEmail());
         res.setHoTen(khachHang.getHoTen());
@@ -139,6 +142,39 @@ public class KhachHangServiceImpl implements KhachHangService {
         if (khachHang.getHangThanhVien() == null || khachHang.getHangThanhVien().isBlank()) {
             khachHang.setHangThanhVien(tinhHangThanhVien(khachHang.getDiemTichLuy()));
         }
+    }
+
+    private void validateKhachHang(KhachHang khachHang, Integer currentId) {
+        if (khachHang == null) {
+            throw ValidationUtils.badRequest("Du lieu khach hang khong duoc de trong");
+        }
+        String hoTen = ValidationUtils.requireText(khachHang.getHoTen(), "Ho ten khach hang");
+        String sdt = ValidationUtils.requireText(khachHang.getSDT(), "So dien thoai");
+        ValidationUtils.requirePhone(sdt, "So dien thoai");
+        String email = ValidationUtils.trimToNull(khachHang.getEmail());
+        ValidationUtils.validateOptionalEmail(email);
+        ValidationUtils.requirePositiveOrZero(khachHang.getDiemTichLuy(), "Diem tich luy");
+
+        boolean duplicatedPhone = currentId == null
+                ? khachHangRepository.existsBySdt(sdt)
+                : khachHangRepository.existsBySdtAndIdNot(sdt, currentId);
+        if (duplicatedPhone) {
+            throw ValidationUtils.badRequest("So dien thoai khach hang da ton tai");
+        }
+
+        if (email != null) {
+            boolean duplicatedEmail = currentId == null
+                    ? khachHangRepository.existsByEmailIgnoreCase(email)
+                    : khachHangRepository.existsByEmailIgnoreCaseAndIdNot(email, currentId);
+            if (duplicatedEmail) {
+                throw ValidationUtils.badRequest("Email khach hang da ton tai");
+            }
+        }
+
+        khachHang.setHoTen(hoTen);
+        khachHang.setSDT(sdt);
+        khachHang.setEmail(email);
+        khachHang.setHangThanhVien(ValidationUtils.trimToNull(khachHang.getHangThanhVien()));
     }
 
     private BigDecimal getPhanTramGiamTheoHang(String hangThanhVien) {

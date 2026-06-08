@@ -1,6 +1,7 @@
 package com.library.librarymanager.controller;
 
 import com.library.librarymanager.config.JwtUtil;
+import com.library.librarymanager.dto.request.ForgotPasswordRequest;
 import com.library.librarymanager.dto.request.LoginRequest;
 import com.library.librarymanager.dto.request.RefreshRequest;
 import com.library.librarymanager.dto.response.LoginResponse;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +42,9 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtutil;
+
+    @Autowired
+    private BCryptPasswordEncoder encoder;
 
     @Value("${app.auth.refresh-cookie-same-site:None}")
     private String refreshCookieSameSite;
@@ -118,6 +123,21 @@ public class AuthController {
         );
 
         return "Logout thanh cong";
+    }
+
+    @PostMapping("/forgot-password")
+    public String forgotPassword(@Valid @RequestBody ForgotPasswordRequest req) {
+        NguoiDung user = repo.findByUsername(req.getUsername())
+                .orElseThrow(() -> new RuntimeException("Khong tim thay tai khoan hoac email khong khop"));
+
+        String savedEmail = user.getEmail();
+        if (savedEmail == null || !savedEmail.equalsIgnoreCase(req.getEmail().trim())) {
+            throw new RuntimeException("Khong tim thay tai khoan hoac email khong khop");
+        }
+
+        user.setPassword(encoder.encode(req.getNewPassword()));
+        repo.save(user);
+        return "Doi mat khau thanh cong";
     }
 
     private String resolveRefreshToken(RefreshRequest req, String cookieRefreshToken) {

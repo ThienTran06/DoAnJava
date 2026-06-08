@@ -28,7 +28,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +62,7 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
     @Override
     @Transactional
     public PhieuNhap create(PhieuNhapRequest request) {
+        validatePhieuNhapRequest(request);
         NhaCungCap nhaCungCap = nhaCungCapRepository.findById(request.getNhaCungCapId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Khong tim thay nha cung cap co id = " + request.getNhaCungCapId()));
         NguoiDung nhanVien = nhanVienRepository.findById(request.getNhanVienId())
@@ -124,6 +127,7 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
     @Override
     @Transactional
     public PhieuNhap updateChiTiet(int id, PhieuNhapRequest request) {
+        validatePhieuNhapRequest(request);
         PhieuNhap phieuNhap = phieuNhapRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Khong tim thay phieu nhap co id = " + id));
         if("DA HUY".equals(phieuNhap.getTrangThai()))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Khônng thể cập nhật danh sách chi tiết phiếu nhập đã bị hủy");
@@ -234,5 +238,26 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
                 rs[2] == null ? 0 : ((Number) rs[2]).doubleValue(),
                 rs[3] == null ? 0 : ((Number) rs[3]).doubleValue()
         );
+    }
+
+    private void validatePhieuNhapRequest(PhieuNhapRequest request) {
+        if (request == null || request.getList() == null || request.getList().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Danh sach chi tiet phieu nhap khong duoc trong");
+        }
+        Set<Integer> sachIds = new HashSet<>();
+        for (ChiTietPhieuNhapRequest detail : request.getList()) {
+            if (detail == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chi tiet phieu nhap khong hop le");
+            }
+            if (detail.getSoLuongNhap() <= 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "So luong nhap phai la so duong");
+            }
+            if (detail.getGiaNhap() == null || detail.getGiaNhap().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Gia nhap phai la so duong");
+            }
+            if (!sachIds.add(detail.getSachId())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Khong duoc them trung mot sach trong phieu nhap");
+            }
+        }
     }
 }

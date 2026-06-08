@@ -13,6 +13,7 @@ import com.library.librarymanager.repository.NguoiDungRepository;
 import com.library.librarymanager.repository.NhomNguoiDungRepository;
 import com.library.librarymanager.repository.PhanQuyenRepository;
 import com.library.librarymanager.service.Interface.NguoiDungService;
+import com.library.librarymanager.util.ValidationUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -91,6 +92,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     @Override
     @Transactional
     public NguoiDung create(CreateUserRequest req) {
+        validateUserRequest(req);
 
         if (repo.findByUsername(req.getTenDangNhap()).isPresent()) {
             throw new RuntimeException("Tài khoản đã tồn tại");
@@ -128,6 +130,7 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     @Override
     // Cập nhật thông tin người dùng và đồng bộ lại quyền theo chức vụ.
     public NguoiDung update(int id, CreateUserRequest req) {
+        validateUserRequest(req);
 
         NguoiDung nd = repo.findById(id)
                 .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
@@ -185,6 +188,25 @@ public class NguoiDungServiceImpl implements NguoiDungService {
                     nhom.setTenNhom(normalizedTenNhom);
                     return nhomRepo.save(nhom);
                 });
+    }
+
+    private void validateUserRequest(CreateUserRequest req) {
+        if (req == null) {
+            throw ValidationUtils.badRequest("Du lieu nhan vien khong duoc de trong");
+        }
+        req.setTenDangNhap(ValidationUtils.requireText(req.getTenDangNhap(), "Ten dang nhap"));
+        req.setHoTen(ValidationUtils.requireText(req.getHoTen(), "Ho ten nhan vien"));
+        req.setSdt(ValidationUtils.requireText(req.getSdt(), "So dien thoai"));
+        ValidationUtils.requirePhone(req.getSdt(), "So dien thoai");
+        req.setTenNhom(ValidationUtils.requireText(req.getTenNhom(), "Nhom nguoi dung"));
+        req.setEmail(ValidationUtils.trimToNull(req.getEmail()));
+        ValidationUtils.validateOptionalEmail(req.getEmail());
+        if (req.getLuongCoBan() != null) {
+            ValidationUtils.requirePositiveOrZero(req.getLuongCoBan(), "Luong co ban");
+        }
+        req.setCaLamViec(ValidationUtils.trimToNull(req.getCaLamViec()));
+        req.setDiaChi(ValidationUtils.trimToNull(req.getDiaChi()));
+        req.setGhiChu(ValidationUtils.trimToNull(req.getGhiChu()));
     }
 
     private void applyRolePermissions(NguoiDung nd, String tenNhom) {

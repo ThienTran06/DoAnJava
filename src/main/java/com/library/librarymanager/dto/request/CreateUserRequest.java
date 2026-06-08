@@ -1,7 +1,9 @@
 package com.library.librarymanager.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -38,6 +40,7 @@ public class CreateUserRequest {
 
     private List<@Positive(message = "Permission id phai lon hon 0") Integer> permissionIds;
 
+    @Email(message = "Email khong dung dinh dang")
     private String email;
 
     private String avatar;
@@ -46,6 +49,7 @@ public class CreateUserRequest {
 
     private String diaChi;
 
+    @PositiveOrZero(message = "Luong co ban khong duoc am")
     private BigDecimal luongCoBan;
 
     private String ghiChu;

@@ -37,7 +37,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String uri = req.getRequestURI();
 
-        if (uri.startsWith("/auth")
+        if (isPublicResource(uri)
+                || uri.startsWith("/auth")
+                || uri.startsWith("/api/public")
                 || uri.startsWith("/swagger-ui")
                 || uri.startsWith("/Create")
                 || uri.startsWith("/v3/api-docs")) {
@@ -93,5 +95,24 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
         chain.doFilter(req, res);
+    }
+
+    private boolean isPublicResource(String uri) {
+        return "/".equals(uri)
+                || uri.endsWith(".html")
+                || uri.endsWith(".css")
+                || uri.endsWith(".js")
+                || uri.endsWith(".png")
+                || uri.endsWith(".jpg")
+                || uri.endsWith(".jpeg")
+                || uri.endsWith(".gif")
+                || uri.endsWith(".svg")
+                || uri.endsWith(".ico")
+                || uri.endsWith(".mp3")
+                || uri.startsWith("/pages/")
+                || uri.startsWith("/js/")
+                || uri.startsWith("/music/")
+                || uri.startsWith("/images/")
+                || uri.startsWith("/assets/");
     }
 }

@@ -8,6 +8,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface NhaCungCapRepository extends JpaRepository<NhaCungCap,Integer> {
+    boolean existsByTenNCCIgnoreCase(String tenNCC);
+
+    boolean existsByTenNCCIgnoreCaseAndIdNot(String tenNCC, int id);
+
+    @Query("""
+        SELECT COUNT(n) > 0
+        FROM NhaCungCap n
+        WHERE n.SDT = :sdt
+    """)
+    boolean existsBySdt(@Param("sdt") String sdt);
+
+    @Query("""
+        SELECT COUNT(n) > 0
+        FROM NhaCungCap n
+        WHERE n.SDT = :sdt
+        AND n.id <> :id
+    """)
+    boolean existsBySdtAndIdNot(@Param("sdt") String sdt, @Param("id") int id);
+
     @Query("""
     SELECT n
     FROM NhaCungCap n

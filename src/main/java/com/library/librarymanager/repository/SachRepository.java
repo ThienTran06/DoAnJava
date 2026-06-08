@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SachRepository extends JpaRepository<Sach,Integer> {
+    boolean existsByTenSachIgnoreCase(String tenSach);
+
+    boolean existsByTenSachIgnoreCaseAndIdNot(String tenSach, int id);
+
     @Query("SELECT s.tenSach as tenSach,s.soLuongTon as soLuongTonKho "
     +"FROM Sach s "
     +"ORDER BY s.soLuongTon DESC ")
