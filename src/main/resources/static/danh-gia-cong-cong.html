@@ -1,461 +1,293 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đánh giá sách - Thư viện</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="ui-polish.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đánh giá khách hàng – BookHouse</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f7ed; --surface: #ffffff; --border: #e8e8e2;
+    --text: #1f1f1f; --muted: #888880; --subtle: #b5b5ae;
+    --green: #3a7d44; --green-light: #e8f5eb;
+    --radius: 14px; --radius-sm: 8px;
+    --shadow: 0 4px 16px rgba(0,0,0,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; font-size: 14.5px; font-weight: 500;
+  }
+  .topbar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 32px; height: 62px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .logo { font-size: 17px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo span { opacity: 0.4; font-weight: 400; margin-left: 8px; font-size: 13px; }
+  .container { max-width: 860px; margin: 0 auto; padding: 32px 20px 60px; }
+  .page-header { margin-bottom: 28px; }
+  .page-title { font-size: 26px; font-weight: 800; letter-spacing: -0.7px; margin-bottom: 4px; }
+  .page-sub { color: var(--muted); font-size: 13px; font-weight: 400; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
+  }
+  .filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 7px 16px; border-radius: 20px; font-family: inherit;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    border: 1.5px solid var(--border); background: var(--surface);
+    color: var(--muted); transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--text); color: var(--text); }
+  .filter-btn.active { background: var(--text); color: #f6f7ed; border-color: var(--text); }
+  .sort-select {
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    padding: 7px 12px; background: var(--surface); color: var(--text);
+    cursor: pointer; outline: none;
+  }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px; margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px;
+  }
+  .stat-val { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .stat-lbl { font-size: 12px; color: var(--muted); margin-top: 3px; font-weight: 400; }
 
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-        }
+  .reviews-list { display: flex; flex-direction: column; gap: 14px; }
+  .review-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius); padding: 20px 22px;
+    transition: box-shadow 0.2s;
+  }
+  .review-card:hover { box-shadow: var(--shadow); }
+  .review-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .reviewer-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .review-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .type-badge {
+    display: inline-block; padding: 2px 10px; border-radius: 20px;
+    font-size: 11.5px; font-weight: 600;
+    background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+  }
+  .review-date { font-size: 12px; color: var(--subtle); }
+  .stars { display: flex; gap: 2px; margin-bottom: 10px; }
+  .star { font-size: 16px; color: #f1c40f; }
+  .star.empty { color: var(--border); }
+  .book-block {
+    background: var(--bg); border-left: 3px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 12px;
+    font-size: 13px; color: var(--muted);
+  }
+  .book-block strong { color: var(--text); }
+  .review-content { color: var(--text); line-height: 1.65; font-size: 14px; }
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
+  .review-images {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+  }
+  .review-image {
+    width: 88px; height: 88px; object-fit: cover;
+    border-radius: var(--radius-sm); border: 1.5px solid var(--border);
+    cursor: zoom-in; background: var(--bg);
+  }
+  .image-modal {
+    position: fixed; inset: 0; z-index: 100;
+    display: none; align-items: center; justify-content: center;
+    padding: 24px; background: rgba(0,0,0,0.72);
+  }
+  .image-modal.open { display: flex; }
+  .image-modal img {
+    max-width: min(960px, 96vw); max-height: 92vh;
+    border-radius: var(--radius-sm); background: var(--surface);
+  }
+  .reply-block {
+    margin-top: 14px; padding: 12px 14px;
+    border-left: 3px solid var(--green); border-radius: var(--radius-sm);
+    background: var(--green-light);
+  }
+  .reply-label { font-size: 12px; font-weight: 700; color: var(--green); margin-bottom: 5px; }
+  .reply-text { font-size: 13.5px; color: var(--text); line-height: 1.55; }
+  .reply-by { font-size: 11.5px; color: var(--muted); margin-top: 6px; }
 
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
+  .empty-state {
+    text-align: center; padding: 48px 20px;
+    color: var(--muted); font-size: 14px;
+  }
+  .loading { text-align: center; padding: 40px; color: var(--muted); }
 
-        .reviews-container {
-            display: grid;
-            gap: 20px;
-        }
-
-        .review-card {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .review-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .customer-info h3 {
-            color: #333;
-            font-size: 1.1em;
-            margin-bottom: 4px;
-        }
-
-        .review-type {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .review-type.sach {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .review-type.dich-vu {
-            background: #f3e5f5;
-            color: #7b1fa2;
-        }
-
-        .stars {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 8px;
-        }
-
-        .star {
-            color: #ffd700;
-            font-size: 1.2em;
-        }
-
-        .star.empty {
-            color: #ddd;
-        }
-
-        .book-info {
-            background: #f5f5f5;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border-left: 4px solid #667eea;
-        }
-
-        .book-info p {
-            margin: 4px 0;
-            font-size: 0.95em;
-        }
-
-        .review-content {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 12px;
-            font-size: 0.95em;
-        }
-
-        .review-date {
-            color: #999;
-            font-size: 0.85em;
-            margin-bottom: 12px;
-        }
-
-        .admin-reply {
-            background: #f9f9f9;
-            border-left: 4px solid #4caf50;
-            padding: 12px;
-            border-radius: 4px;
-            margin-top: 12px;
-        }
-
-        .admin-reply-label {
-            color: #4caf50;
-            font-weight: 600;
-            font-size: 0.9em;
-            margin-bottom: 8px;
-        }
-
-        .admin-reply-content {
-            color: #333;
-            line-height: 1.5;
-            font-size: 0.95em;
-        }
-
-        .admin-name {
-            color: #999;
-            font-size: 0.85em;
-            margin-top: 8px;
-        }
-
-        .no-reviews {
-            text-align: center;
-            color: white;
-            padding: 40px;
-            font-size: 1.1em;
-        }
-
-        .filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 10px 20px;
-            border: 2px solid white;
-            background: transparent;
-            color: white;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: white;
-            color: #667eea;
-        }
-
-        /* Dark mode */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            }
-
-            .review-card {
-                background: #0f3460;
-                color: #e0e0e0;
-            }
-
-            .customer-info h3 {
-                color: #fff;
-            }
-
-            .review-content {
-                color: #ccc;
-            }
-
-            .book-info {
-                background: #1a3a52;
-                border-left-color: #667eea;
-            }
-
-            .book-info p {
-                color: #b0b0b0;
-            }
-
-            .admin-reply {
-                background: #1a3a3a;
-            }
-
-            .admin-reply-content {
-                color: #e0e0e0;
-            }
-        }
-
-        .rating-distribution {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .rating-stat {
-            background: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            color: white;
-        }
-
-        .rating-stat .number {
-            font-size: 1.8em;
-            font-weight: bold;
-        }
-
-        .rating-stat .label {
-            font-size: 0.9em;
-            opacity: 0.9;
-            margin-top: 5px;
-        }
-
-        .sort-options {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-        }
-
-        .sort-btn {
-            padding: 8px 15px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-        }
-
-        .sort-btn:hover,
-        .sort-btn.active {
-            background: white;
-            color: #667eea;
-            border-color: white;
-        }
-    </style>
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>⭐ Đánh giá từ khách hàng</h1>
-            <p>Những nhận xét thực từ những độc giả yêu sách</p>
-        </div>
 
-        <!-- Filters and sort options -->
-        <div class="sort-options" id="sortOptions">
-            <button class="sort-btn active" onclick="sortReviews('latest')">Mới nhất</button>
-            <button class="sort-btn" onclick="sortReviews('highest')">5 sao trước</button>
-            <button class="sort-btn" onclick="sortReviews('lowest')">Ít sao trước</button>
-        </div>
+<div class="topbar">
+  <div class="logo">BookHouse <span>Đánh giá từ khách hàng</span></div>
+</div>
 
-        <div class="filters">
-            <button class="filter-btn active" onclick="filterReviews('all')">Tất cả</button>
-            <button class="filter-btn" onclick="filterReviews('sach')">📚 Đánh giá sách</button>
-            <button class="filter-btn" onclick="filterReviews('dich-vu')">🛎️ Đánh giá dịch vụ</button>
-        </div>
+<div class="container">
+  <div class="page-header">
+    <div class="page-title">Đánh giá khách hàng</div>
+    <div class="page-sub">Nhận xét chất lượng Sách và Dịch vụ của BookHouse</div>
+  </div>
 
-        <div class="reviews-container" id="reviewsContainer">
-            <div class="no-reviews">⏳ Đang tải đánh giá...</div>
-        </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" id="stTotal">—</div><div class="stat-lbl">Tổng đánh giá</div></div>
+    <div class="stat-card"><div class="stat-val" id="stAvg">—</div><div class="stat-lbl">Điểm trung bình</div></div>
+    <div class="stat-card"><div class="stat-val" id="stFive">—</div><div class="stat-lbl">Đánh giá 5 sao</div></div>
+    <div class="stat-card"><div class="stat-val" id="stReplied">—</div><div class="stat-lbl">Đã được phản hồi</div></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="filter-group">
+      <button class="filter-btn active" data-filter="all">Tất cả</button>
+      <button class="filter-btn" data-filter="SACH">Sách</button>
+      <button class="filter-btn" data-filter="DICH_VU">Dịch vụ</button>
     </div>
+    <select class="sort-select" id="sortSelect">
+      <option value="latest">Mới nhất</option>
+      <option value="highest">5 sao trước</option>
+      <option value="lowest">Ít sao trước</option>
+    </select>
+  </div>
 
-    <script>
-        const API_BASE = window.location.origin;
-        const REVIEWS_API = `${API_BASE}/api/public/danh-gia`;
+  <div class="reviews-list" id="reviewsList">
+    <div class="loading">Đang tải đánh giá...</div>
+  </div>
+</div>
 
-        let allReviews = [];
-        let currentFilter = 'all';
-        let currentSort = 'latest';
+<div class="image-modal" id="imageModal">
+  <img id="imageModalImg" alt="?nh ??nh gi?">
+</div>
 
-        async function loadReviews() {
-            try {
-                const response = await fetch(REVIEWS_API);
-                if (!response.ok) {
-                    throw new Error('Failed to load reviews');
-                }
-                allReviews = await response.json();
-                renderReviews();
-            } catch (error) {
-                console.error('Error loading reviews:', error);
-                document.getElementById('reviewsContainer').innerHTML = 
-                    '<div class="no-reviews">❌ Không thể tải đánh giá. Vui lòng thử lại sau.</div>';
-            }
-        }
+<script>
+  const API = window.location.origin + '/api/danh-gia/public';
+  let all = [], currentFilter = 'all';
 
-        function filterReviews(type) {
-            currentFilter = type;
-            // Update active button
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            renderReviews();
-        }
+  function esc(v) {
+    if (!v) return '';
+    const d = document.createElement('div');
+    d.textContent = v; return d.innerHTML;
+  }
 
-        function sortReviews(type) {
-            currentSort = type;
-            // Update active button
-            document.querySelectorAll('.sort-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            renderReviews();
-        }
+  function stars(n) {
+    return Array.from({length:5}, (_,i) =>
+      `<span class="star${i<n?'':' empty'}">★</span>`).join('');
+  }
 
-        function getFilteredAndSortedReviews() {
-            let filtered = allReviews.filter(review => {
-                if (currentFilter === 'all') return true;
-                if (currentFilter === 'sach') return review.loai === 'SACH';
-                if (currentFilter === 'dich-vu') return review.loai === 'DICH_VU';
-                return true;
-            });
+  function timeAgo(str) {
+    if (!str) return '—';
+    const d = new Date(str), now = new Date();
+    const m = Math.floor((now-d)/60000);
+    if (m < 1) return 'Vừa xong';
+    if (m < 60) return m + ' phút trước';
+    const h = Math.floor(m/60);
+    if (h < 24) return h + ' giờ trước';
+    const days = Math.floor(h/24);
+    if (days < 7) return days + ' ngày trước';
+    return d.toLocaleDateString('vi-VN');
+  }
 
-            // Sort
-            if (currentSort === 'latest') {
-                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            } else if (currentSort === 'highest') {
-                filtered.sort((a, b) => b.diemSao - a.diemSao);
-            } else if (currentSort === 'lowest') {
-                filtered.sort((a, b) => a.diemSao - b.diemSao);
-            }
 
-            return filtered;
-        }
+  function reviewImages(value) {
+    if (!value) return '';
+    const urls = String(value).split(',').map(x => x.trim()).filter(Boolean);
+    if (!urls.length) return '';
+    return `<div class="review-images">${urls.map(url =>
+      `<img class="review-image" src="${esc(url)}" alt="?nh ??nh gi?" data-full="${esc(url)}">`
+    ).join('')}</div>`;
+  }
 
-        function renderReviews() {
-            const reviews = getFilteredAndSortedReviews();
-            const container = document.getElementById('reviewsContainer');
+  function renderStats(data) {
+    document.getElementById('stTotal').textContent = data.length;
+    const avg = data.length ? (data.reduce((s,r)=>s+r.diemSao,0)/data.length).toFixed(1) : '—';
+    document.getElementById('stAvg').textContent = avg + ' ★';
+    document.getElementById('stFive').textContent = data.filter(r=>r.diemSao===5).length;
+    document.getElementById('stReplied').textContent = data.filter(r=>r.reply).length;
+  }
 
-            if (reviews.length === 0) {
-                container.innerHTML = '<div class="no-reviews">😢 Chưa có đánh giá nào</div>';
-                return;
-            }
+  function render() {
+    const sort = document.getElementById('sortSelect').value;
+    let list = all.filter(r => currentFilter === 'all' || r.loai === currentFilter);
+    if (sort === 'highest') list = [...list].sort((a,b)=>b.diemSao-a.diemSao);
+    else if (sort === 'lowest') list = [...list].sort((a,b)=>a.diemSao-b.diemSao);
+    else list = [...list].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
 
-            container.innerHTML = reviews.map(review => `
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="customer-info">
-                            <span class="review-type ${review.loai === 'SACH' ? 'sach' : 'dich-vu'}">
-                                ${review.loai === 'SACH' ? '📚 Đánh giá sách' : '🛎️ Đánh giá dịch vụ'}
-                            </span>
-                            <h3>${escapeHtml(review.khachHang?.hoTen || 'Ẩn danh')}</h3>
-                            <div class="stars">
-                                ${generateStars(review.diemSao)}
-                            </div>
-                        </div>
-                        <div class="review-date">${formatDate(review.createdAt)}</div>
-                    </div>
+    const el = document.getElementById('reviewsList');
+    if (!list.length) { el.innerHTML = '<div class="empty-state">Chưa có đánh giá nào.</div>'; return; }
 
-                    ${review.sach ? `
-                        <div class="book-info">
-                            <p><strong>📖 Sách:</strong> ${escapeHtml(review.sach.tenSach)}</p>
-                            <p><strong>Tác giả:</strong> ${review.sach.tacGias?.map(t => t.hoTen).join(', ') || 'N/A'}</p>
-                            <p><strong>Năm xuất bản:</strong> ${review.sach.namXuatBan}</p>
-                        </div>
-                    ` : ''}
+    el.innerHTML = list.map(r => `
+      <div class="review-card">
+        <div class="review-top">
+          <div>
+            <div class="reviewer-name">${esc(r.khachHang?.hoTen || 'Ẩn danh')}</div>
+            <div class="review-meta">
+              <span class="type-badge">${r.loai === 'SACH' ? 'Sách' : 'Dịch vụ'}</span>
+              <span class="review-date">${timeAgo(r.createdAt)}</span>
+            </div>
+          </div>
+        </div>
+        <div class="stars">${stars(r.diemSao)}</div>
+        ${r.sach ? `<div class="book-block"><strong>📖 ${esc(r.sach.tenSach)}</strong></div>` : ''}
+        <div class="review-content">${esc(r.noiDung)}</div>
+        ${reviewImages(r.hinhAnh)}
+        ${r.reply ? `
+          <div class="reply-block">
+            <div class="reply-label">💬 Phản hồi từ cửa hàng</div>
+            <div class="reply-text">${esc(r.reply)}</div>
+            ${r.replyBy ? `<div class="reply-by">— ${esc(r.replyBy)}</div>` : ''}
+          </div>` : ''}
+      </div>
+    `).join('');
+  }
 
-                    <div class="review-content">
-                        ${escapeHtml(review.noiDung)}
-                    </div>
+  async function load() {
+    try {
+      const res = await fetch(API);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      all = await res.json();
+      renderStats(all);
+      render();
+    } catch(e) {
+      document.getElementById('reviewsList').innerHTML =
+        `<div class="empty-state">Không thể tải đánh giá: ${esc(e.message)}</div>`;
+    }
+  }
 
-                    ${review.reply ? `
-                        <div class="admin-reply">
-                            <div class="admin-reply-label">💬 Phản hồi từ cửa hàng</div>
-                            <div class="admin-reply-content">
-                                ${escapeHtml(review.reply)}
-                            </div>
-                            ${review.replyBy ? `<div class="admin-name">- ${escapeHtml(review.replyBy)}</div>` : ''}
-                        </div>
-                    ` : ''}
-                </div>
-            `).join('');
-        }
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      render();
+    });
+  });
+  document.getElementById('sortSelect').addEventListener('change', render);
 
-        function generateStars(rating) {
-            let stars = '';
-            for (let i = 1; i <= 5; i++) {
-                stars += `<span class="star ${i <= rating ? '' : 'empty'}">★</span>`;
-            }
-            return stars;
-        }
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+  const imageModal = document.getElementById('imageModal');
+  const imageModalImg = document.getElementById('imageModalImg');
+  document.getElementById('reviewsList').addEventListener('click', (e) => {
+    const img = e.target.closest('.review-image');
+    if (!img) return;
+    imageModalImg.src = img.dataset.full;
+    imageModal.classList.add('open');
+  });
+  imageModal.addEventListener('click', () => {
+    imageModal.classList.remove('open');
+    imageModalImg.src = '';
+  });
 
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diff = now - date;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor(diff / (1000 * 60));
-
-            if (minutes < 1) return 'Vừa mới';
-            if (minutes < 60) return `${minutes} phút trước`;
-            if (hours < 24) return `${hours} giờ trước`;
-            if (days < 7) return `${days} ngày trước`;
-
-            return date.toLocaleDateString('vi-VN');
-        }
-
-        // Load reviews on page load
-        loadReviews();
-
-        // Auto-refresh every 30 seconds
-        setInterval(loadReviews, 30000);
-    </script>
+  load();
+  setInterval(load, 30000);
+</script>
 </body>
 </html>

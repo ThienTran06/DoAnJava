@@ -165,6 +165,7 @@ window.initCSKH = function() {
     sachName: item?.sach?.tenSach || '—',
     diemSao: item?.diemSao ?? 0,
     noiDung: item?.noiDung || '',
+    hinhAnh: item?.hinhAnh || '',
     loai: item?.loai || 'SACH',
     trangThai: item?.trangThai || 'CHO_DUYET',
     reply: item?.reply || '',
@@ -223,6 +224,15 @@ window.initCSKH = function() {
     if (statsFiveStarsEl) statsFiveStarsEl.textContent = fiveStars;
   };
 
+
+  const renderReviewImages = (hinhAnh) => {
+    const urls = String(hinhAnh || '').split(',').map(x => x.trim()).filter(Boolean);
+    if (!urls.length) return '';
+    return `<div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px">${urls.map(url =>
+      `<img class="js-review-image" src="${escapeHtml(url)}" data-full="${escapeHtml(url)}" style="width:64px; height:64px; object-fit:cover; border-radius:6px; border:1.5px solid var(--border); cursor:zoom-in" alt="?nh ??nh gi?">`
+    ).join('')}</div>`;
+  };
+
   const renderStars = (diemSao) => {
     let starsHtml = '';
     for (let i = 1; i <= 5; i++) {
@@ -276,11 +286,6 @@ window.initCSKH = function() {
       const statusBadge = item.trangThai === 'CHO_DUYET'
         ? '<span class="badge-cskh pending">Chờ duyệt</span>'
         : '<span class="badge-cskh approved">Đã duyệt</span>';
-
-      const actionDuyet = item.trangThai === 'CHO_DUYET'
-        ? `<button class="link js-duyet-review" data-id="${item.id}" style="margin-right:8px">Duyệt</button>`
-        : '';
-
       return `
         <tr>
           <td>${idx + 1}</td>
@@ -290,6 +295,7 @@ window.initCSKH = function() {
           <td>${renderStars(item.diemSao)}</td>
           <td>
             <div style="font-weight:500; max-width:320px; overflow-wrap:anywhere">${escapeHtml(item.noiDung)}</div>
+            ${renderReviewImages(item.hinhAnh)}
             ${item.reply ? `<div style="font-size:12px; color:var(--muted); margin-top:6px; padding:6px 10px; border-left:3.5px solid var(--border); background:var(--bg); border-radius:4px; max-width:320px; overflow-wrap:anywhere"><strong>Phản hồi:</strong> ${escapeHtml(item.reply)}</div>` : ''}
           </td>
           <td>${statusBadge}</td>
@@ -297,7 +303,6 @@ window.initCSKH = function() {
           <td>
             <div class="ops" style="display:flex; align-items:center; gap:8px">
               <button class="link js-reply-review" data-id="${item.id}" data-reply="${escapeHtml(item.reply)}">Reply</button>
-              ${actionDuyet}
               <button class="link danger js-xoa-review" data-id="${item.id}">Xóa</button>
             </div>
           </td>
@@ -377,9 +382,14 @@ window.initCSKH = function() {
   const tbody = document.getElementById('cskhTableBody');
   if (tbody) {
     tbody.onclick = async (e) => {
+      const imageBtn = e.target.closest('.js-review-image');
       const replyBtn = e.target.closest('.js-reply-review');
-      const duyetBtn = e.target.closest('.js-duyet-review');
       const xoaBtn = e.target.closest('.js-xoa-review');
+
+      if (imageBtn) {
+        window.open(imageBtn.dataset.full || imageBtn.src, '_blank');
+        return;
+      }
 
       if (replyBtn) {
         const id = replyBtn.dataset.id;
@@ -389,28 +399,6 @@ window.initCSKH = function() {
         if (replyIdEl) replyIdEl.value = id;
         if (replyTextareaEl) replyTextareaEl.value = currentReply;
         if (modal) modal.classList.add('open');
-      }
-
-      if (duyetBtn) {
-        const id = duyetBtn.dataset.id;
-        try {
-          const response = await fetch(`${REVIEW_API}/${id}/duyet`, {
-            method: 'PUT',
-            headers: getAuthHeaders(),
-          });
-
-          if (response.status === 401) {
-            window.location.href = 'login.html';
-            return;
-          }
-
-          if (!response.ok) throw new Error('Duyệt thất bại');
-
-          if (window.showToast) window.showToast('Đã duyệt đánh giá');
-          loadReviews();
-        } catch (err) {
-          if (window.showToast) window.showToast('Không thể duyệt đánh giá: ' + err.message);
-        }
       }
 
       if (xoaBtn) {

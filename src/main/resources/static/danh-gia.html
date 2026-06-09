@@ -16,6 +16,8 @@
       color: var(--text);
       padding: 24px 16px;
       font-size: 14.5px;
+      min-height: 100vh;
+      overflow-y: auto;
     }
 
     .container {
@@ -101,6 +103,27 @@
       resize: vertical;
       min-height: 120px;
       font-family: 'DM Sans', sans-serif;
+    }
+
+    .upload-area {
+      border: 2px dashed var(--border); border-radius: var(--radius-sm);
+      padding: 20px; text-align: center; cursor: pointer;
+      transition: all 0.2s; color: var(--text-muted); font-size: 13px;
+    }
+    .upload-area:hover { border-color: var(--green); color: var(--green); }
+    .upload-area.has-files { border-color: var(--green); background: var(--green-light); }
+    .preview-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .preview-img {
+      width: 80px; height: 80px; object-fit: cover;
+      border-radius: 8px; border: 1.5px solid var(--border);
+    }
+    .preview-item { position: relative; width: 80px; height: 80px; }
+    .preview-remove {
+      position: absolute; top: -7px; right: -7px;
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 1.5px solid var(--border); background: var(--surface);
+      color: var(--red); font-size: 14px; font-weight: 800;
+      cursor: pointer; line-height: 1;
     }
 
     .stars-container {
@@ -447,6 +470,15 @@
             <label class="label">Nhận xét <span class="required">*</span></label>
             <textarea id="noiDung" name="noiDung" required placeholder="Chia sẻ trải nghiệm của bạn về sách này..."></textarea>
           </div>
+
+          <div class="form-group">
+            <label class="label">Hình ảnh đính kèm</label>
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('hinhAnh').click()">
+              📷 Nhấn để chọn ảnh (tối đa 3 ảnh, mỗi ảnh dưới 5MB)
+            </div>
+            <input type="file" id="hinhAnh" accept="image/*" multiple style="display:none">
+            <div class="preview-grid" id="previewGrid"></div>
+          </div>
         </div>
 
         <!-- Form actions -->
@@ -590,6 +622,10 @@
       bookList.classList.remove('active');
       successMessage.classList.remove('show');
       errorMessage.classList.remove('show');
+      selectedFiles = [];
+      if (hinhAnhInput) hinhAnhInput.value = '';
+      if (previewGrid) previewGrid.innerHTML = '';
+      if (typeof syncUploadArea === 'function') syncUploadArea();
     }
 
     resetBtn.addEventListener('click', (e) => {
@@ -632,25 +668,20 @@
       errorMessage.classList.remove('show');
 
       try {
-        const params = new URLSearchParams({
-          hoTen,
-          sdt,
-          email: email || '',
-          diemSao,
-          noiDung,
-          loai
-        });
+        const formData = new FormData();
+        formData.append('hoTen', hoTen);
+        formData.append('sdt', sdt);
+        formData.append('email', email || '');
+        formData.append('diemSao', diemSao);
+        formData.append('noiDung', noiDung);
+        formData.append('loai', loai);
+        if (selectedSachId) formData.append('sachId', selectedSachId);
+        selectedFiles.forEach(f => formData.append('hinhAnh', f));
 
-        if (selectedSachId) {
-          params.append('sachId', selectedSachId);
-        }
-
-        const response = await fetch(`${REVIEW_API}?${params.toString()}`, {
+        const response = await fetch(REVIEW_API, {
           method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
+          headers: { 'Accept': 'application/json' },
+          body: formData
         });
 
         if (!response.ok) {
@@ -660,6 +691,7 @@
 
         loadingMessage.classList.remove('show');
         successMessage.classList.add('show');
+        alert('Đánh giá của bạn đã được gửi thành công.');
         resetForm();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (error) {
@@ -681,6 +713,54 @@
       const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
       return text.replace(/[&<>"']/g, m => map[m]);
     }
+
+    const uploadArea = document.getElementById('uploadArea');
+    const hinhAnhInput = document.getElementById('hinhAnh');
+    const previewGrid = document.getElementById('previewGrid');
+    let selectedFiles = [];
+    const uploadText = '?? Nh?n ?? ch?n ?nh (t?i ?a 3 ?nh, m?i ?nh d??i 5MB)';
+
+    function syncUploadArea() {
+      uploadArea.classList.toggle('has-files', selectedFiles.length > 0);
+      uploadArea.textContent = selectedFiles.length > 0
+        ? `? ?? ch?n ${selectedFiles.length} ?nh`
+        : uploadText;
+    }
+
+    function renderImagePreview() {
+      previewGrid.innerHTML = selectedFiles.map((f, i) => {
+        const url = URL.createObjectURL(f);
+        return `
+          <div class="preview-item">
+            <img class="preview-img" src="${url}" title="${escapeHtml(f.name)}">
+            <button type="button" class="preview-remove" data-index="${i}" aria-label="X?a ?nh">?</button>
+          </div>`;
+      }).join('');
+      syncUploadArea();
+    }
+
+    hinhAnhInput.addEventListener('change', () => {
+      const files = Array.from(hinhAnhInput.files).slice(0, 3);
+      const oversized = files.find(f => f.size > 5 * 1024 * 1024);
+      if (oversized) {
+        hinhAnhInput.value = '';
+        selectedFiles = [];
+        previewGrid.innerHTML = '';
+        syncUploadArea();
+        showError('M?i ?nh ph?i d??i 5MB');
+        return;
+      }
+      selectedFiles = files;
+      renderImagePreview();
+    });
+
+    previewGrid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.preview-remove');
+      if (!btn) return;
+      selectedFiles.splice(Number(btn.dataset.index), 1);
+      hinhAnhInput.value = '';
+      renderImagePreview();
+    });
 
     // Initialize
     document.addEventListener('DOMContentLoaded', loadBooks);

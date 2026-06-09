@@ -1,6 +1,7 @@
 package com.library.librarymanager.config;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableMethodSecurity
@@ -58,6 +59,8 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/assets/**",
                                 "/swagger-ui/**",
+                                "/api/danh-gia/public",
+                                "/api/danh-gia/public/submit",
                                 "/v3/api-docs/**"
                         ).permitAll()
 

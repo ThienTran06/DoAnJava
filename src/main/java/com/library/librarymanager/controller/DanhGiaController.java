@@ -1,51 +1,47 @@
 package com.library.librarymanager.controller;
 
-import com.library.librarymanager.entity.DanhGia;
-import com.library.librarymanager.service.Interface.DanhGiaService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.library.librarymanager.entity.DanhGia;
+import com.library.librarymanager.service.Interface.DanhGiaService;
+
+import lombok.RequiredArgsConstructor;
+
 @RestController
-@RequestMapping("/api/danh-gia")
 @RequiredArgsConstructor
 public class DanhGiaController {
 
     private final DanhGiaService danhGiaService;
 
-    @GetMapping
+    @GetMapping("/api/danh-gia")
     @PreAuthorize("hasAuthority('QUAN_LY_KHACH_HANG')")
     public List<DanhGia> getAll() {
         return danhGiaService.getAll();
     }
 
-    @PutMapping("/{id}/reply")
+    @PutMapping("/api/danh-gia/{id}/reply")
     @PreAuthorize("hasAuthority('QUAN_LY_KHACH_HANG')")
     public DanhGia reply(@PathVariable int id, @RequestParam String reply) {
         return danhGiaService.reply(id, reply);
     }
 
-    @PutMapping("/{id}/reply-with-name")
+    @PutMapping("/api/danh-gia/{id}/reply-with-name")
     @PreAuthorize("hasAuthority('QUAN_LY_KHACH_HANG')")
     public DanhGia replyWithName(@PathVariable int id, @RequestParam String reply, @RequestParam(required = false) String adminName) {
         return danhGiaService.reply(id, reply, adminName);
     }
 
-    @PutMapping("/{id}/duyet")
-    @PreAuthorize("hasAuthority('QUAN_LY_KHACH_HANG')")
-    public DanhGia duyetDanhGia(@PathVariable int id) {
-        return danhGiaService.duyetDanhGia(id);
-    }
-
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/danh-gia/{id}")
     @PreAuthorize("hasAuthority('QUAN_LY_KHACH_HANG')")
     public void xoaDanhGia(@PathVariable int id) {
         danhGiaService.xoaDanhGia(id);
     }
 
-    @PostMapping
+    @PostMapping("/api/danh-gia")
     @PreAuthorize("hasAuthority('QUAN_LY_KHACH_HANG')")
     public DanhGia taoDanhGia(
             @RequestParam int khachHangId,
@@ -57,7 +53,12 @@ public class DanhGiaController {
         return danhGiaService.taoDanhGia(khachHangId, sachId, diemSao, noiDung, loai);
     }
 
-    @PostMapping("/public/submit")
+    @GetMapping("/api/danh-gia/public")
+    public List<DanhGia> getPublicReviews() {
+        return danhGiaService.getPublicReviews();
+    }
+
+    @PostMapping("/api/danh-gia/public/submit")
     public DanhGia submitPublicReview(
             @RequestParam String hoTen,
             @RequestParam String sdt,
@@ -65,8 +66,9 @@ public class DanhGiaController {
             @RequestParam(required = false) Integer sachId,
             @RequestParam int diemSao,
             @RequestParam String noiDung,
-            @RequestParam(defaultValue = "SACH") String loai
+            @RequestParam(defaultValue = "SACH") String loai,
+            @RequestParam(required = false) List<MultipartFile> hinhAnh
     ) {
-        return danhGiaService.submitPublicReview(hoTen, sdt, email, sachId, diemSao, noiDung, loai);
+        return danhGiaService.submitPublicReview(hoTen, sdt, email, sachId, diemSao, noiDung, loai, hinhAnh);
     }
 }

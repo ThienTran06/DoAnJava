@@ -717,7 +717,10 @@
             
             Khách hàng
         </div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="location.href='CSKH.html'">
+    Chăm sóc KH
+</div>
+<div class="nav-item">
             
             Nhân viên
         </div>
@@ -741,6 +744,9 @@
             
             Nhập hàng <span class="nav-badge" id="sidebar-order-count">0</span>
         </div>
+<div class="nav-item" onclick="window.open('danh-gia-cong-cong.html','_blank')">
+    Đánh giá KH
+</div>
     </div>
 
     <div class="nav-section">
@@ -2033,11 +2039,12 @@
     if (item.getAttribute('onclick')) return;
     const label = item.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
     const routes = [
-      ['tổng quan', 'index.html?view=dashboard'],
-      ['sách', 'index.html?view=books'],
-      ['danh mục', 'index.html?view=categories'],
-      ['khách hàng', 'index.html?view=customers'],
-      ['nhân viên', 'index.html?view=staff'],
+      ['tổng quan', 'TongQuan.html'],
+      ['sách', 'Sach.html'],
+      ['danh mục', 'DanhMuc.html'],
+      ['khách hàng', 'KhachHang.html'],
+      ['chăm sóc', 'CSKH.html'],
+      ['nhân viên', 'NhanVien.html'],
       ['doanh thu', 'index.html?view=revenue'],
       ['tồn kho', 'index.html?view=inventory'],
       ['cài đặt', 'settings.html'],
