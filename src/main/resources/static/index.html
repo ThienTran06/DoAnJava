@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -459,6 +459,10 @@
       
       Khách Hàng
     </div>
+    <div class="nav-item" data-view="cskh">
+      
+      Chăm sóc KH
+    </div>
     <div class="nav-item" data-view="staff">
       
       Nhân viên
@@ -482,6 +486,18 @@
     <a class="nav-item" href="PhieuGiu.html">
       
       Phiếu giữ
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Công cộng</div>
+    <a class="nav-item" href="danh-gia.html" target="_blank">
+      
+      Đánh giá sách
+    </a>
+    <a class="nav-item" href="danh-gia-cong-cong.html" target="_blank">
+      
+      Xem đánh giá công cộng
     </a>
   </div>
 
@@ -865,6 +881,10 @@
       <div class="spa-page-container" data-page-container="customers"></div>
     </section>
 
+    <section class="view-panel" id="cskhView">
+      <div class="spa-page-container" data-page-container="cskh"></div>
+    </section>
+
     <section class="view-panel" id="staffView">
       <div class="spa-page-container" data-page-container="staff"></div>
     </section>
@@ -977,6 +997,7 @@ const viewTitles = {
   books: ['Sách', 'Quản lý toàn bộ đầu sách trong kho'],
   categories: ['Danh mục', 'Quản lý thể loại sách'],
   customers: ['Khách hàng', 'Quản lý thông tin khách hàng'],
+  cskh: ['Chăm sóc khách hàng', 'Quản lý đánh giá và phản hồi'],
   staff: ['Nhân viên', 'Quản lý nhân sự cửa hàng'],
   revenue: ['Doanh thu', 'Báo cáo doanh thu từ backend'],
   inventory: ['Tồn kho', 'Báo cáo tồn kho từ backend']
@@ -986,6 +1007,7 @@ const externalPages = {
   books: { file: 'pages/inventory.html', init: 'initBooks' },
   categories: { file: 'pages/categories.html', init: 'initCategories' },
   customers: { file: 'pages/customers.html', init: 'initCustomers' },
+  cskh: { file: 'pages/cskh.html', init: 'initCSKH' },
   staff: { file: 'pages/staff.html', init: 'initStaff' }
 };
 const externalPageCache = {};

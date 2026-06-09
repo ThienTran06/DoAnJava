@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh giá sách - Thư viện</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="ui-polish.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .reviews-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .review-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .customer-info h3 {
+            color: #333;
+            font-size: 1.1em;
+            margin-bottom: 4px;
+        }
+
+        .review-type {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .review-type.sach {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .review-type.dich-vu {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .stars {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .star {
+            color: #ffd700;
+            font-size: 1.2em;
+        }
+
+        .star.empty {
+            color: #ddd;
+        }
+
+        .book-info {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .book-info p {
+            margin: 4px 0;
+            font-size: 0.95em;
+        }
+
+        .review-content {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+        }
+
+        .review-date {
+            color: #999;
+            font-size: 0.85em;
+            margin-bottom: 12px;
+        }
+
+        .admin-reply {
+            background: #f9f9f9;
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 12px;
+        }
+
+        .admin-reply-label {
+            color: #4caf50;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .admin-reply-content {
+            color: #333;
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+
+        .admin-name {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+
+        .no-reviews {
+            text-align: center;
+            color: white;
+            padding: 40px;
+            font-size: 1.1em;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Dark mode */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            }
+
+            .review-card {
+                background: #0f3460;
+                color: #e0e0e0;
+            }
+
+            .customer-info h3 {
+                color: #fff;
+            }
+
+            .review-content {
+                color: #ccc;
+            }
+
+            .book-info {
+                background: #1a3a52;
+                border-left-color: #667eea;
+            }
+
+            .book-info p {
+                color: #b0b0b0;
+            }
+
+            .admin-reply {
+                background: #1a3a3a;
+            }
+
+            .admin-reply-content {
+                color: #e0e0e0;
+            }
+        }
+
+        .rating-distribution {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .rating-stat {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+        }
+
+        .rating-stat .number {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .rating-stat .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .sort-btn {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .sort-btn:hover,
+        .sort-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⭐ Đánh giá từ khách hàng</h1>
+            <p>Những nhận xét thực từ những độc giả yêu sách</p>
+        </div>
+
+        <!-- Filters and sort options -->
+        <div class="sort-options" id="sortOptions">
+            <button class="sort-btn active" onclick="sortReviews('latest')">Mới nhất</button>
+            <button class="sort-btn" onclick="sortReviews('highest')">5 sao trước</button>
+            <button class="sort-btn" onclick="sortReviews('lowest')">Ít sao trước</button>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterReviews('all')">Tất cả</button>
+            <button class="filter-btn" onclick="filterReviews('sach')">📚 Đánh giá sách</button>
+            <button class="filter-btn" onclick="filterReviews('dich-vu')">🛎️ Đánh giá dịch vụ</button>
+        </div>
+
+        <div class="reviews-container" id="reviewsContainer">
+            <div class="no-reviews">⏳ Đang tải đánh giá...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        const REVIEWS_API = `${API_BASE}/api/public/danh-gia`;
+
+        let allReviews = [];
+        let currentFilter = 'all';
+        let currentSort = 'latest';
+
+        async function loadReviews() {
+            try {
+                const response = await fetch(REVIEWS_API);
+                if (!response.ok) {
+                    throw new Error('Failed to load reviews');
+                }
+                allReviews = await response.json();
+                renderReviews();
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                document.getElementById('reviewsContainer').innerHTML = 
+                    '<div class="no-reviews">❌ Không thể tải đánh giá. Vui lòng thử lại sau.</div>';
+            }
+        }
+
+        function filterReviews(type) {
+            currentFilter = type;
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderReviews();
+        }
+
+        function sortReviews(type) {
+            currentSort = type;
+            // Update active button
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderReviews();
+        }
+
+        function getFilteredAndSortedReviews() {
+            let filtered = allReviews.filter(review => {
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'sach') return review.loai === 'SACH';
+                if (currentFilter === 'dich-vu') return review.loai === 'DICH_VU';
+                return true;
+            });
+
+            // Sort
+            if (currentSort === 'latest') {
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            } else if (currentSort === 'highest') {
+                filtered.sort((a, b) => b.diemSao - a.diemSao);
+            } else if (currentSort === 'lowest') {
+                filtered.sort((a, b) => a.diemSao - b.diemSao);
+            }
+
+            return filtered;
+        }
+
+        function renderReviews() {
+            const reviews = getFilteredAndSortedReviews();
+            const container = document.getElementById('reviewsContainer');
+
+            if (reviews.length === 0) {
+                container.innerHTML = '<div class="no-reviews">😢 Chưa có đánh giá nào</div>';
+                return;
+            }
+
+            container.innerHTML = reviews.map(review => `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="customer-info">
+                            <span class="review-type ${review.loai === 'SACH' ? 'sach' : 'dich-vu'}">
+                                ${review.loai === 'SACH' ? '📚 Đánh giá sách' : '🛎️ Đánh giá dịch vụ'}
+                            </span>
+                            <h3>${escapeHtml(review.khachHang?.hoTen || 'Ẩn danh')}</h3>
+                            <div class="stars">
+                                ${generateStars(review.diemSao)}
+                            </div>
+                        </div>
+                        <div class="review-date">${formatDate(review.createdAt)}</div>
+                    </div>
+
+                    ${review.sach ? `
+                        <div class="book-info">
+                            <p><strong>📖 Sách:</strong> ${escapeHtml(review.sach.tenSach)}</p>
+                            <p><strong>Tác giả:</strong> ${review.sach.tacGias?.map(t => t.hoTen).join(', ') || 'N/A'}</p>
+                            <p><strong>Năm xuất bản:</strong> ${review.sach.namXuatBan}</p>
+                        </div>
+                    ` : ''}
+
+                    <div class="review-content">
+                        ${escapeHtml(review.noiDung)}
+                    </div>
+
+                    ${review.reply ? `
+                        <div class="admin-reply">
+                            <div class="admin-reply-label">💬 Phản hồi từ cửa hàng</div>
+                            <div class="admin-reply-content">
+                                ${escapeHtml(review.reply)}
+                            </div>
+                            ${review.replyBy ? `<div class="admin-name">- ${escapeHtml(review.replyBy)}</div>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function generateStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += `<span class="star ${i <= rating ? '' : 'empty'}">★</span>`;
+            }
+            return stars;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor(diff / (1000 * 60));
+
+            if (minutes < 1) return 'Vừa mới';
+            if (minutes < 60) return `${minutes} phút trước`;
+            if (hours < 24) return `${hours} giờ trước`;
+            if (days < 7) return `${days} ngày trước`;
+
+            return date.toLocaleDateString('vi-VN');
+        }
+
+        // Load reviews on page load
+        loadReviews();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadReviews, 30000);
+    </script>
+</body>
+</html>

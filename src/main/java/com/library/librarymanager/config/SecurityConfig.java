@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/auth/**",
                                 "/api/public/**",
+                                "/api/danh-gia/public/**",
                                 "/Create/**",
                                 "/",
                                 "/*.html",
