@@ -265,6 +265,7 @@ window.initCustomers = function() {
       diemTichLuy: points,
       hangThanhVien: next.hangThanhVien || calculateTier(points),
       vip: Boolean(next.isVip),
+      trangThai: Boolean(next.trangThai),
     })], { type: 'application/json' }));
     if (patch?.avatar instanceof File) {
       formData.append('avatarFile', patch.avatar);
@@ -375,6 +376,7 @@ window.initCustomers = function() {
       diemTichLuy: points,
       hangThanhVien: tier,
       vip: isVip,
+      trangThai: trangThaiVal ? trangThaiVal.value === '1' : true,
     })], { type: 'application/json' }));
     const file = form.avatar.files && form.avatar.files[0];
     if (file) formData.append('avatarFile', file);

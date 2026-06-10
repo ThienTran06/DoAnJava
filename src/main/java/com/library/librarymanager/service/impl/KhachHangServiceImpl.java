@@ -57,7 +57,7 @@ public class KhachHangServiceImpl implements KhachHangService {
     public KhachHang updateById(int id, KhachHang khachHang) {
         KhachHang res = khachHangRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Khong tim thay khach hang co id = " + id));
-        validateKhachHang(khachHang, id);
+        validateKhachHang(khachHang, res);
         res.setSDT(khachHang.getSDT());
         res.setEmail(khachHang.getEmail());
         res.setHoTen(khachHang.getHoTen());
@@ -67,6 +67,7 @@ public class KhachHangServiceImpl implements KhachHangService {
         res.setDiemTichLuy(khachHang.getDiemTichLuy());
         res.setHangThanhVien(khachHang.getHangThanhVien());
         res.setVip(khachHang.isVip());
+        res.setTrangThai(khachHang.getTrangThai() == null || khachHang.getTrangThai());
         apDungHangThanhVienMacDinhNeuCan(res);
         khachHangRepository.save(res);
         return res;
@@ -144,7 +145,7 @@ public class KhachHangServiceImpl implements KhachHangService {
         }
     }
 
-    private void validateKhachHang(KhachHang khachHang, Integer currentId) {
+    private void validateKhachHang(KhachHang khachHang, KhachHang current) {
         if (khachHang == null) {
             throw ValidationUtils.badRequest("Du lieu khach hang khong duoc de trong");
         }
@@ -155,17 +156,20 @@ public class KhachHangServiceImpl implements KhachHangService {
         ValidationUtils.validateOptionalEmail(email);
         ValidationUtils.requirePositiveOrZero(khachHang.getDiemTichLuy(), "Diem tich luy");
 
-        boolean duplicatedPhone = currentId == null
+        boolean phoneChanged = current == null || !sdt.equals(current.getSDT());
+        boolean duplicatedPhone = phoneChanged && (current == null
                 ? khachHangRepository.existsBySdt(sdt)
-                : khachHangRepository.existsBySdtAndIdNot(sdt, currentId);
+                : khachHangRepository.existsBySdtAndIdNot(sdt, current.getId()));
         if (duplicatedPhone) {
             throw ValidationUtils.badRequest("So dien thoai khach hang da ton tai");
         }
 
         if (email != null) {
-            boolean duplicatedEmail = currentId == null
+            String currentEmail = current == null ? null : ValidationUtils.trimToNull(current.getEmail());
+            boolean emailChanged = currentEmail == null || !email.equalsIgnoreCase(currentEmail);
+            boolean duplicatedEmail = emailChanged && (current == null
                     ? khachHangRepository.existsByEmailIgnoreCase(email)
-                    : khachHangRepository.existsByEmailIgnoreCaseAndIdNot(email, currentId);
+                    : khachHangRepository.existsByEmailIgnoreCaseAndIdNot(email, current.getId()));
             if (duplicatedEmail) {
                 throw ValidationUtils.badRequest("Email khach hang da ton tai");
             }
