@@ -2,12 +2,14 @@ package com.library.librarymanager.controller;
 
 import com.library.librarymanager.dto.request.HoaDonRequest;
 import com.library.librarymanager.dto.request.UpdateHoaDonRequest;
+import com.library.librarymanager.dto.response.HoaDonResponse;
 import com.library.librarymanager.dto.response.ThongKeHoaDonResponse;
 import com.library.librarymanager.entity.HoaDon;
 import com.library.librarymanager.service.Interface.HoaDonService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +38,23 @@ public class HoaDonController {
     @GetMapping("/{id}")
     HoaDon getById(@PathVariable int id){return hoaDonService.getById(id);}
     @PostMapping
-    HoaDon create(@Valid @RequestBody HoaDonRequest hoaDon){return  hoaDonService.create(hoaDon);}
+    public HoaDonResponse create(@RequestBody HoaDonRequest req) {
+
+        HoaDon hd = hoaDonService.create(req);
+
+        String qrUrl =
+                "https://img.vietqr.io/image/MB-0393107717-compact2.png"
+                        + "?amount=" + hd.getTongTien()
+                        + "&addInfo=HD" + hd.getId();
+
+        HoaDonResponse res = new HoaDonResponse();
+        res.setId(hd.getId());
+        res.setTongTien(hd.getTongTien());
+        res.setTrangThai(hd.getTrangThai());
+        res.setQrUrl(qrUrl);
+
+        return res;
+    }
     @PutMapping("/{id}")
     HoaDon updateById(@PathVariable int id, @Valid @RequestBody UpdateHoaDonRequest request){return hoaDonService.updateById(id,request);}
     @DeleteMapping("/{id}")
@@ -60,5 +78,10 @@ public class HoaDonController {
         String digits = value.replaceAll("\\D", "");
         if (digits.isBlank()) return null;
         return Integer.parseInt(digits);
+    }
+    @PutMapping("/{id}/thanh-toan-tien-mat")
+    public ResponseEntity<?> thanhToanTienMat(@PathVariable int id) {
+        hoaDonService.thanhToanTienMat(id);
+        return ResponseEntity.ok().build();
     }
 }

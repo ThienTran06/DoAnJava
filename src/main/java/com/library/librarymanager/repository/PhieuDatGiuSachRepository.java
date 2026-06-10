@@ -5,6 +5,8 @@ import com.library.librarymanager.entity.PhieuDatGiuSach;
 
 import com.library.librarymanager.enums.TrangThaiGiu;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -23,4 +25,22 @@ public interface PhieuDatGiuSachRepository extends JpaRepository<PhieuDatGiuSach
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM PhieuDatGiuSach p WHERE p.id = :id")
     Optional<PhieuDatGiuSach> findByIdForUpdate(@Param("id") int id);
+    @Query("""
+    SELECT p
+    FROM PhieuDatGiuSach p
+    WHERE (:id IS NULL OR p.id = :id)
+      AND (
+            :tuNgay IS NULL
+            OR (
+                p.createdAt >= :tuNgay
+                AND p.createdAt < :denNgay
+            )
+          )
+""")
+    Page<PhieuDatGiuSach> getAll(
+            Integer id,
+            LocalDateTime tuNgay,
+            LocalDateTime denNgay,
+            Pageable pageable
+    );
 }

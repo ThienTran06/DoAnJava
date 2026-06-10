@@ -57,7 +57,8 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/assets/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/api/webhook/sepay"
                         ).permitAll()
 
                         .anyRequest().authenticated()
