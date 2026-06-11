@@ -68,6 +68,8 @@
     background: var(--surface); border: 1.5px solid var(--border);
     border-radius: var(--radius); padding: 20px 22px;
     transition: box-shadow 0.2s;
+    overflow: hidden;
+    min-width: 0;
   }
   .review-card:hover { box-shadow: var(--shadow); }
   .review-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
@@ -88,10 +90,10 @@
     font-size: 13px; color: var(--muted);
   }
   .book-block strong { color: var(--text); }
-  .review-content { color: var(--text); line-height: 1.65; font-size: 14px; }
+  .review-content {color: var(--text); line-height: 1.65; font-size: 14px; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap;}
 
   .review-images {
-    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; overflow: hidden; flex-shrink: 0; max-width: 100%;
   }
   .review-image {
     width: 88px; height: 88px; object-fit: cover;
