@@ -92,6 +92,10 @@ public class ChiTietPhieuGiuServiceImpl implements ChiTietPhieuGiuService {
         ChiTietPhieuGiu ct = ctRepo.findById(chiTietId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sách"));
 
+        if (ct.getPhieuGiu() == null || ct.getPhieuGiu().getTrangThai() != TrangThaiGiu.PENDING) {
+            throw new RuntimeException("Chi co the xoa sach trong phieu giu dang pending");
+        }
+
         Sach s = sachRepo.findByIdForUpdate(ct.getSach().getId()) .orElseThrow(() -> new RuntimeException("Khong tim thay sach"));;
 
         s.setSoLuongTon(s.getSoLuongTon() + ct.getSoLuong());

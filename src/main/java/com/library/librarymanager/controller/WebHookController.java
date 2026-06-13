@@ -4,10 +4,14 @@ import com.library.librarymanager.dto.request.WebHookRequest;
 import com.library.librarymanager.entity.HoaDon;
 import com.library.librarymanager.repository.HoaDonRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,8 +24,15 @@ public class WebHookController {
 
     private static final Pattern HD_PATTERN = Pattern.compile("HD\\d+");
 
+    @Value("${app.webhook.sepay.secret:}")
+    private String sepayWebhookSecret;
+
     @PostMapping("/sepay")
-    public void handle(@RequestBody WebHookRequest req) {
+    public void handle(
+            @RequestHeader(value = "X-Webhook-Secret", required = false) String webhookSecret,
+            @RequestBody WebHookRequest req
+    ) {
+        validateWebhookSecret(webhookSecret);
 
         if (req == null || req.getContent() == null || req.getTransferAmount() == null) return;
 
@@ -59,5 +70,14 @@ public class WebHookController {
         hd.setNgayBan(LocalDateTime.now());
 
         hoaDonRepository.save(hd);
+    }
+
+    private void validateWebhookSecret(String webhookSecret) {
+        if (sepayWebhookSecret == null || sepayWebhookSecret.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Sepay webhook secret is not configured");
+        }
+        if (!Objects.equals(sepayWebhookSecret, webhookSecret)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid webhook secret");
+        }
     }
 }

@@ -37,14 +37,6 @@ public class PhieuGiuSachController {
         return phieuService.taoPhieu(khachHangId);
     }
 
-    @PostMapping("/confirm/{phieuId}")
-    public HoaDon confirm(
-            @PathVariable int phieuId,
-            @PathVariable int nhanVienId
-    ) {
-        return phieuService.confirm(phieuId, nhanVienId);
-    }
-
     @PostMapping("/confirm/{phieuId}/{nhanVienId}")
     public HoaDon confirmByPath(
             @PathVariable int phieuId,

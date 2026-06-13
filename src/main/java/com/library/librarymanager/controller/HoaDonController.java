@@ -38,7 +38,7 @@ public class HoaDonController {
     @GetMapping("/{id}")
     HoaDon getById(@PathVariable int id){return hoaDonService.getById(id);}
     @PostMapping
-    public HoaDonResponse create(@RequestBody HoaDonRequest req) {
+    public HoaDonResponse create(@Valid @RequestBody HoaDonRequest req) {
 
         HoaDon hd = hoaDonService.create(req);
 
