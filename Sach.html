@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BookHouse – Tổng quan</title>
+<title>BookHouse - S?ch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap" rel="stylesheet">
 <style>
@@ -443,11 +443,11 @@
 
   <div class="nav-section">
     <div class="nav-label">Quản lý</div>
-    <a class="nav-item active" href="TongQuan.html">
+    <a class="nav-item" href="TongQuan.html">
       
       Tổng quan
     </a>
-    <a class="nav-item" href="Sach.html">
+    <a class="nav-item active" href="Sach.html">
       
       Sách
     </a>
@@ -1964,8 +1964,12 @@ if (dashboardRangeSelect) {
     renderDashboardLineChart(useThirtyDays ? dashboardState.thirtyDays : dashboardState.sevenDays);
   });
 }
-const initialView = new URLSearchParams(window.location.search).get('view') || 'dashboard';
-setView(initialView);
+const initialView = 'books';
+setView(initialView).then(() => {
+  if (new URLSearchParams(window.location.search).get('quick') === 'add') {
+    requestAnimationFrame(() => document.getElementById('btnAddBook')?.click());
+  }
+});
 </script>
 </body>
 </html>

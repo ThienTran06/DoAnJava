@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BookHouse – Tổng quan</title>
+<title>BookHouse - T?ng quan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap" rel="stylesheet">
 <style>
@@ -443,70 +443,32 @@
 
   <div class="nav-section">
     <div class="nav-label">Quản lý</div>
-    <a class="nav-item active" href="TongQuan.html">
-      
-      Tổng quan
-    </a>
-    <a class="nav-item" href="Sach.html">
-      
-      Sách
-    </a>
-    <a class="nav-item" href="DanhMuc.html">
-      
-      Danh mục 
-    </a>
-    <a class="nav-item" href="KhachHang.html">
-      
-      Khách Hàng
-    </a>
-    <a class="nav-item" href="CSKH.html">
-      
-      Chăm sóc KH
-    </a>
-    <a class="nav-item" href="NhanVien.html">
-      
-      Nhân viên
-    </a>
+    <a class="nav-item active" href="TongQuan.html">Tổng quan</a>
+    <a class="nav-item" href="Sach.html">Sách</a>
+    <a class="nav-item" href="DanhMuc.html">Danh mục</a>
+    <a class="nav-item" href="KhachHang.html">Khách hàng</a>
+    <a class="nav-item" href="CSKH.html">Chăm sóc KH</a>
+    <a class="nav-item" href="NhanVien.html">Nhân viên</a>
   </div>
 
   <div class="nav-section">
     <div class="nav-label">Nghiệp vụ</div>
-    <a class="nav-item" href="BanHang.html">
-      
-      Bán hàng
-    </a>
-    <a class="nav-item" href="HoaDon.html">
-      
-      Hóa đơn <span class="nav-badge">5</span>
-    </a>
-    <a class="nav-item" href="NhapHang.html">
-      
-      Nhập hàng
-    </a>
-    <a class="nav-item" href="PhieuGiu.html">
-      
-      Phiếu giữ
-    </a>
+    <a class="nav-item" href="BanHang.html">Bán hàng</a>
+    <a class="nav-item" href="HoaDon.html">Hóa đơn <span class="nav-badge">5</span></a>
+    <a class="nav-item" href="NhapHang.html">Nhập hàng</a>
+    <a class="nav-item" href="PhieuGiu.html">Phiếu giữ</a>
+    <a class="nav-item" href="danh-gia-cong-cong.html" target="_blank">Đánh giá KH</a>
   </div>
 
   <div class="nav-section">
     <div class="nav-label">Báo cáo</div>
-    <a class="nav-item" href="index.html?view=revenue">
-      
-      Doanh thu
-    </a>
-    <a class="nav-item" href="index.html?view=inventory">
-      
-      Tồn kho
-    </a>
+    <a class="nav-item" href="index.html?view=revenue">Doanh thu</a>
+    <a class="nav-item" href="index.html?view=inventory">Tồn kho</a>
   </div>
 
   <div class="nav-section">
     <div class="nav-label">Hệ thống</div>
-    <a class="nav-item" href="settings.html">
-      
-      Cài đặt
-    </a>
+    <a class="nav-item" href="settings.html">Cài đặt</a>
   </div>
 
   <div class="sidebar-footer">
@@ -1964,7 +1926,7 @@ if (dashboardRangeSelect) {
     renderDashboardLineChart(useThirtyDays ? dashboardState.thirtyDays : dashboardState.sevenDays);
   });
 }
-const initialView = new URLSearchParams(window.location.search).get('view') || 'dashboard';
+const initialView = 'dashboard';
 setView(initialView);
 </script>
 </body>

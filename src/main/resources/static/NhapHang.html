@@ -691,7 +691,7 @@
 <aside class="sidebar">
     <div class="sidebar-logo">
         <div class="logo-mark">
-            
+
         </div>
         <div>
             <div class="logo-text">BookHouse</div>
@@ -702,23 +702,28 @@
     <div class="nav-section">
         <div class="nav-label">Quản lý</div>
         <div class="nav-item">
-            
+
             Tổng quan
         </div>
         <div class="nav-item">
-            
+
             Sách
         </div>
         <div class="nav-item">
-            
-            Danh mục 
+
+            Danh mục
         </div>
         <div class="nav-item">
-            
+
             Khách hàng
         </div>
+
+        <div class="nav-item" onclick="location.href='CSKH.html'">
+            Chăm sóc KH
+        </div>
+
         <div class="nav-item">
-            
+
             Nhân viên
         </div>
     </div>
@@ -726,31 +731,34 @@
     <div class="nav-section">
         <div class="nav-label">Nghiệp vụ</div>
         <div class="nav-item" onclick="location.href = 'BanHang.html'">
-            
+
             Bán hàng
         </div>
         <div class="nav-item" onclick="location.href = 'HoaDon.html'">
-            
+
             Hóa đơn
         </div>
         <div class="nav-item" onclick="location.href = 'PhieuGiu.html'">
-            
+
             Đặt giữ sách
         </div>
         <div class="nav-item active" onclick="location.href = 'NhapHang.html'">
-            
+
             Nhập hàng <span class="nav-badge" id="sidebar-order-count">0</span>
+        </div>
+        <div class="nav-item" onclick="window.open('danh-gia-cong-cong.html','_blank')">
+            Đánh giá KH
         </div>
     </div>
 
     <div class="nav-section">
         <div class="nav-label">Báo cáo</div>
         <div class="nav-item">
-            
+
             Doanh thu
         </div>
         <div class="nav-item">
-            
+
             Tồn kho
         </div>
     </div>
@@ -758,7 +766,7 @@
     <div class="nav-section">
         <div class="nav-label">Hệ thống</div>
         <div class="nav-item">
-            
+
             Cài đặt
         </div>
     </div>
@@ -849,7 +857,7 @@
                     />
                     <input type="date" class="input-text" id="datePickerInput" />
                     <button class="btn btn-primary" id="btnOpenCreateModal">
-                        
+
                         Nhập hàng kho
                     </button>
                 </div>
@@ -2050,11 +2058,12 @@
     if (item.getAttribute('onclick')) return;
     const label = item.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
     const routes = [
-      ['tổng quan', 'index.html?view=dashboard'],
-      ['sách', 'index.html?view=books'],
-      ['danh mục', 'index.html?view=categories'],
-      ['khách hàng', 'index.html?view=customers'],
-      ['nhân viên', 'index.html?view=staff'],
+      ['tổng quan', 'TongQuan.html'],
+      ['sách', 'Sach.html'],
+      ['danh mục', 'DanhMuc.html'],
+      ['khách hàng', 'KhachHang.html'],
+      ['chăm sóc', 'CSKH.html'],
+      ['nhân viên', 'NhanVien.html'],
       ['doanh thu', 'index.html?view=revenue'],
       ['tồn kho', 'index.html?view=inventory'],
       ['cài đặt', 'settings.html'],
