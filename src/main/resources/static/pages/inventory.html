@@ -91,6 +91,27 @@ window.initBooks = function() {
       `;
     }
 
+    if (categoryFilter) {
+      const currentValue = categoryFilter.value || new URLSearchParams(window.location.search).get('categoryId') || '';
+      categoryFilter.innerHTML = `
+        <option value="">Tất cả thể loại</option>
+        ${categories.map(cat => `
+          <option value="${cat.id}">${cat.tenTheLoai || cat.ten || 'Thể loại'}</option>
+        `).join('')}
+      `;
+      categoryFilter.value = currentValue;
+    }
+
+    if (Array.isArray(window.allBooks)) {
+      window.allBooks = window.allBooks.map(book => ({
+        ...book,
+        category: (!book.category || book.category === '—') && book.theLoaiId
+          ? getCategoryNameById(book.theLoaiId)
+          : book.category,
+      }));
+      renderTable();
+    }
+
     if (publisherSelect) {
       publisherSelect.innerHTML = `
         <option value="">-- Chọn NXB --</option>
@@ -149,16 +170,23 @@ window.initBooks = function() {
     }
   };
 
+  const getCategoryNameById = (id) => {
+    const cat = categories.find(item => String(item.id) === String(id));
+    return cat ? (cat.tenTheLoai || cat.ten || 'Thể loại') : '—';
+  };
+
   const mapBook = (book) => {
     const stock = Number(book?.soLuongTon ?? 0);
     const price = book?.giaBan != null ? String(book.giaBan) : '0';
     const authors = Array.isArray(book?.danhSachTacGia) ? book.danhSachTacGia : [];
+    const theLoaiId = book?.theLoai?.id ?? book?.theLoaiId;
+    const categoryName = book?.theLoai?.tenTheLoai || book?.tenTheLoai || getCategoryNameById(theLoaiId);
 
     return {
       id: book?.id,
       name: book?.tenSach || '—',
-      category: book?.theLoai?.tenTheLoai || '—',
-      theLoaiId: book?.theLoai?.id,
+      category: categoryName,
+      theLoaiId,
       price,
       stock: String(stock),
       status: stock > 0 ? 'Còn hàng' : 'Hết hàng',
@@ -290,7 +318,7 @@ window.initBooks = function() {
 
     let filtered = books.filter(book => {
       const matchSearch = !searchText || book.name.toLowerCase().includes(searchText) || book.category.toLowerCase().includes(searchText);
-      const matchCategory = !categoryValue || book.category === categoryValue;
+      const matchCategory = !categoryValue || String(book.theLoaiId) === String(categoryValue);
       return matchSearch && matchCategory;
     });
 
@@ -431,6 +459,10 @@ window.initBooks = function() {
 
       const savedBook = await response.json();
       const savedData = mapBook(savedBook);
+      if (!savedData.theLoaiId) savedData.theLoaiId = Number(form.theLoaiId.value);
+      if (!savedData.category || savedData.category === '—') {
+        savedData.category = form.theLoaiId.selectedOptions[0]?.textContent || getCategoryNameById(savedData.theLoaiId);
+      }
 
       if (isEdit) {
         if (window.editingBookIndex !== undefined) {
@@ -515,9 +547,28 @@ window.initBooks = function() {
   };
 
   bookTable.addEventListener('click', window.bookTableHandler);
+
+  window.setBookCategoryFilter = (categoryId, categoryName = '') => {
+    if (categoryFilter) {
+      categoryFilter.value = categoryId ? String(categoryId) : '';
+      if (categoryId && categoryFilter.value !== String(categoryId) && categoryName) {
+        const option = document.createElement('option');
+        option.value = String(categoryId);
+        option.textContent = categoryName;
+        categoryFilter.appendChild(option);
+        categoryFilter.value = String(categoryId);
+      }
+    }
+    renderTable();
+  };
   
   renderTable();
-  loadMetadata();
+  loadMetadata().then(() => {
+    const params = new URLSearchParams(window.location.search);
+    const categoryId = params.get('categoryId');
+    const categoryName = params.get('categoryName');
+    if (categoryId) window.setBookCategoryFilter(categoryId, categoryName || '');
+  });
   loadBooksFromApi();
 };
 </script>

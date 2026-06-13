@@ -1,6 +1,7 @@
 package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.KhachHang;
+import com.library.librarymanager.repository.HoaDonRepository;
 import com.library.librarymanager.repository.KhachHangRepository;
 import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.KhachHangService;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class KhachHangServiceImpl implements KhachHangService {
     private final KhachHangRepository khachHangRepository;
+    private final HoaDonRepository hoaDonRepository;
     private final CloudinaryService cloudinaryService;
 
     private static final BigDecimal MOT_NGAN_DONG = BigDecimal.valueOf(1000);
@@ -28,20 +30,24 @@ public class KhachHangServiceImpl implements KhachHangService {
 
     @Override
     public List<KhachHang> getAll() {
-        return khachHangRepository.findAll();
+        List<KhachHang> khachHangs = khachHangRepository.findAll();
+        khachHangs.forEach(this::ganTongDonHang);
+        return khachHangs;
     }
 
     @Override
     public KhachHang getById(int id) {
-        return khachHangRepository.findById(id)
+        KhachHang khachHang = khachHangRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Khong tim thay khach hang co id = " + id));
+        ganTongDonHang(khachHang);
+        return khachHang;
     }
 
     @Override
     public KhachHang create(KhachHang khachHang) {
         validateKhachHang(khachHang, null);
         apDungHangThanhVienMacDinhNeuCan(khachHang);
-        return khachHangRepository.save(khachHang);
+        return ganTongDonHang(khachHangRepository.save(khachHang));
     }
 
     @Override
@@ -69,8 +75,7 @@ public class KhachHangServiceImpl implements KhachHangService {
         res.setVip(khachHang.isVip());
         res.setTrangThai(khachHang.getTrangThai() == null || khachHang.getTrangThai());
         apDungHangThanhVienMacDinhNeuCan(res);
-        khachHangRepository.save(res);
-        return res;
+        return ganTongDonHang(khachHangRepository.save(res));
     }
 
     @Override
@@ -209,9 +214,18 @@ public class KhachHangServiceImpl implements KhachHangService {
             int size
     ) {
 
-        return khachHangRepository.search(
+        Page<KhachHang> khachHangs = khachHangRepository.search(
                 keyword,
                 PageRequest.of(page, size)
         );
+        khachHangs.forEach(this::ganTongDonHang);
+        return khachHangs;
+    }
+
+    private KhachHang ganTongDonHang(KhachHang khachHang) {
+        if (khachHang != null && khachHang.getId() > 0) {
+            khachHang.setTongDonHang(hoaDonRepository.countByKhachHangId(khachHang.getId()));
+        }
+        return khachHang;
     }
 }

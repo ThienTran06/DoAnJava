@@ -13,6 +13,16 @@
       <button class="btn primary" id="btnAddCustomer">Thêm khách hàng</button>
     </div>
   </div>
+  <div class="table-card" id="customerFilterPanel" style="display:none;margin-bottom:18px">
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:12px;align-items:end">
+      <div class="field" style="margin:0"><div class="label">Trạng thái</div><select class="input" id="customerStatusFilter"><option value="">Tất cả</option><option value="active">Hoạt động</option><option value="inactive">Ngừng hoạt động</option></select></div>
+      <div class="field" style="margin:0"><div class="label">Điểm từ</div><input class="input" id="customerPointsMin" type="number" min="0" step="1" placeholder="0"></div>
+      <div class="field" style="margin:0"><div class="label">Điểm đến</div><input class="input" id="customerPointsMax" type="number" min="0" step="1" placeholder="Không giới hạn"></div>
+      <div class="field" style="margin:0"><div class="label">Đơn từ</div><input class="input" id="customerOrdersMin" type="number" min="0" step="1" placeholder="0"></div>
+      <div class="field" style="margin:0"><div class="label">Đơn đến</div><input class="input" id="customerOrdersMax" type="number" min="0" step="1" placeholder="Không giới hạn"></div>
+    </div>
+    <div class="footer-actions" style="padding:12px 0 0"><button class="btn ghost" type="button" id="btnResetCustomerFilter">Xóa lọc</button></div>
+  </div>
   <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
     <div class="stat-card"><div class="stat-value" id="customerTotal">0</div><div class="stat-label">Tổng khách hàng</div></div>
     <div class="stat-card dark"><div class="stat-value" id="customerVip">0</div><div class="stat-label">Khách hàng VIP</div></div>
@@ -126,6 +136,14 @@ window.initCustomers = function() {
   const modal = document.getElementById('customerModal');
   const form = document.getElementById('customerForm');
   const search = document.getElementById('customerSearch');
+  const filterBtn = document.getElementById('btnFilterCustomer');
+  const filterPanel = document.getElementById('customerFilterPanel');
+  const statusFilter = document.getElementById('customerStatusFilter');
+  const pointsMinFilter = document.getElementById('customerPointsMin');
+  const pointsMaxFilter = document.getElementById('customerPointsMax');
+  const ordersMinFilter = document.getElementById('customerOrdersMin');
+  const ordersMaxFilter = document.getElementById('customerOrdersMax');
+  const resetFilterBtn = document.getElementById('btnResetCustomerFilter');
   const preview = document.getElementById('customerPreview');
   const openBtn = document.getElementById('btnAddCustomer');
   const closeBtn = document.getElementById('closeCustomerModal');
@@ -200,10 +218,38 @@ window.initCustomers = function() {
     if (statOrdersEl) statOrdersEl.textContent = totalOrders.toLocaleString('vi-VN');
   };
 
+  const numberFilterValue = (input) => {
+    if (!input || input.value === '') return null;
+    const value = Number(input.value);
+    return Number.isFinite(value) ? value : null;
+  };
+
+  const passCustomerFilters = (item) => {
+    const statusValue = statusFilter?.value || '';
+    if (statusValue === 'active' && !item.trangThai) return false;
+    if (statusValue === 'inactive' && item.trangThai) return false;
+
+    const points = Number(item.diemTichLuy || 0);
+    const orders = Number(item.tongDonHang || 0);
+    const pointsMin = numberFilterValue(pointsMinFilter);
+    const pointsMax = numberFilterValue(pointsMaxFilter);
+    const ordersMin = numberFilterValue(ordersMinFilter);
+    const ordersMax = numberFilterValue(ordersMaxFilter);
+
+    if (pointsMin !== null && points < pointsMin) return false;
+    if (pointsMax !== null && points > pointsMax) return false;
+    if (ordersMin !== null && orders < ordersMin) return false;
+    if (ordersMax !== null && orders > ordersMax) return false;
+    return true;
+  };
+
   const render = (q = '') => {
     if (customersLoading) return;
     const query = q.trim().toLowerCase();
-    const rows = state.items.filter(x => !query || x.name.toLowerCase().includes(query) || x.phone.includes(query) || x.email.toLowerCase().includes(query));
+    const rows = state.items.filter(x => {
+      const matchSearch = !query || x.name.toLowerCase().includes(query);
+      return matchSearch && passCustomerFilters(x);
+    });
     tableBody.innerHTML = rows.length ? rows.map((item, idx) => `
       <tr class="${customerFrameClass(item)}">
         <td>${idx + 1}</td>
@@ -297,6 +343,12 @@ window.initCustomers = function() {
   if (cancelBtn) cancelBtn.onclick = null;
   if (form) form.onsubmit = null;
   if (search) search.oninput = e => render(e.target.value);
+  if (filterBtn) filterBtn.onclick = null;
+  if (resetFilterBtn) resetFilterBtn.onclick = null;
+  [statusFilter, pointsMinFilter, pointsMaxFilter, ordersMinFilter, ordersMaxFilter].forEach(input => {
+    if (input) input.oninput = null;
+    if (input) input.onchange = null;
+  });
 
   const diemInput = document.getElementById('editDiemTichLuy');
   let hangInput = document.getElementById('editHangThanhVien');
@@ -331,6 +383,24 @@ window.initCustomers = function() {
   modal.addEventListener('click', window.customerModalHandler);
   
   if (search) search.oninput = e => render(e.target.value);
+  if (filterBtn && filterPanel) {
+    filterBtn.onclick = () => {
+      filterPanel.style.display = filterPanel.style.display === 'none' ? 'block' : 'none';
+    };
+  }
+  [statusFilter, pointsMinFilter, pointsMaxFilter, ordersMinFilter, ordersMaxFilter].forEach(input => {
+    if (!input) return;
+    input.oninput = () => render(search?.value || '');
+    input.onchange = () => render(search?.value || '');
+  });
+  if (resetFilterBtn) {
+    resetFilterBtn.onclick = () => {
+      [statusFilter, pointsMinFilter, pointsMaxFilter, ordersMinFilter, ordersMaxFilter].forEach(input => {
+        if (input) input.value = '';
+      });
+      render(search?.value || '');
+    };
+  }
   
   if (form && form.avatar) {
     form.avatar.addEventListener('change', e => { 

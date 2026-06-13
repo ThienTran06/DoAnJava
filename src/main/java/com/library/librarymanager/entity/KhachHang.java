@@ -11,6 +11,7 @@ import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,6 +46,9 @@ public class KhachHang {
 
     @Column(name = "trang_thai", columnDefinition = "boolean default true")
     private Boolean trangThai = true;
+
+    @Transient
+    private long tongDonHang;
 
     @PrePersist
     @PreUpdate
