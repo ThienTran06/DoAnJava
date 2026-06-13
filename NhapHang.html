@@ -783,29 +783,11 @@
 
     <div class="nav-section">
         <div class="nav-label">Quản lý</div>
-        <div class="nav-item">
-            
-            Tổng quan
-        </div>
-        <div class="nav-item">
-            
-            Sách
-        </div>
-        <div class="nav-item">
-            
-            Danh mục 
-        </div>
-        <div class="nav-item">
-            
-            Khách hàng
-        </div>
-        <div class="nav-item" onclick="location.href='CSKH.html'">
-    Chăm sóc KH
-</div>
-<div class="nav-item">
-            
-            Nhân viên
-        </div>
+        <div class="nav-item">Tổng quan</div>
+        <div class="nav-item">Sách</div>
+        <div class="nav-item">Danh mục</div>
+        <div class="nav-item">Khách hàng</div>
+        <div class="nav-item">Nhân viên</div>
     </div>
 
     <div class="nav-section">
@@ -822,9 +804,6 @@
         <div class="nav-item active" onclick="location.href = 'NhapHang.html'">
             Nhập hàng <span class="nav-badge" id="sidebar-order-count">0</span>
         </div>
-<div class="nav-item" onclick="window.open('danh-gia-cong-cong.html','_blank')">
-    Đánh giá KH
-</div>
     </div>
 
     <div class="nav-section">
@@ -946,7 +925,6 @@
                         <th>Nhà cung cấp</th>
                         <th>Ngày nhập kho</th>
                         <th>Tổng tiền nhập</th>
-                        <th>Trạng thái</th>
                         <th style="text-align: center">Thao tác</th>
                     </tr>
                     </thead>
@@ -1356,10 +1334,6 @@
             <div style="grid-column: span 2">
                 <div class="summary-label">Thời gian nhập:</div>
                 <div class="summary-value" id="dtDate">...</div>
-            </div>
-            <div style="grid-column: span 2">
-                <div class="summary-label">Trạng thái:</div>
-                <div class="summary-value" id="dtStatus">...</div>
             </div>
         </div>
 
@@ -1776,20 +1750,12 @@
     }
 
     /* ================= RENDER BẢNG PHIẾU NHẬP ================= */
-    function getPurchaseStatusMeta(status) {
-      const normalized = String(status || "HOAN THANH").trim().toUpperCase();
-      if (normalized === "DA HUY" || normalized === "DA_HUY" || normalized === "HUY") {
-        return { text: "Đã hủy", style: "background:#fdecea;color:#c0392b;border:1px solid #f5c6c6;" };
-      }
-      return { text: "Thành công", style: "background:#e8f5eb;color:#3a7d44;border:1px solid #b9dfc1;" };
-    }
-
     function renderOrdersTable() {
       const tbody = document.getElementById("orderTableBody");
       tbody.innerHTML = "";
 
       if (!purchaseOrders || purchaseOrders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding: 40px 0;">Không tìm thấy phiếu nhập kho tương thích</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding: 40px 0;">Không tìm thấy phiếu nhập kho tương thích</td></tr>`;
         return;
       }
 
@@ -1814,21 +1780,19 @@
           }
 
           const totalAmount = item.tongTien || item.tongTienNhap || 0;
-          const statusMeta = getPurchaseStatusMeta(item.trangThai);
 
           tr.innerHTML = `
-            <td><span class="badge id-tag">#PN${item.id}</span></td>
-            <td><strong style="color:#13c2c2;"> ${nccName}</strong></td>
-            <td style="color:#595959;"><span> </span>${dateString}</td>
-            <td><span style="color:var(--text); font-weight:700;">${totalAmount.toLocaleString()} đ</span></td>
-            <td><span class="badge" style="${statusMeta.style}">${statusMeta.text}</span></td>
-            <td style="text-align: center;">
-              <div style="display:inline-flex; gap:8px;">
-                <button class="btn" onclick="viewDetailDrawer(${item.id})" style="border-color:var(--text); color:var(--text);" title="Xem chi tiết">Xem</button>
-                <button class="btn btn-danger-ghost" onclick="triggerDeleteOrder(${item.id})" title="Xóa phiếu nhập">Xóa</button>
-              </div>
-            </td>
-          `;
+          <td><span class="badge id-tag">#PN${item.id}</span></td>
+          <td><strong style="color:#13c2c2;"> ${nccName}</strong></td>
+          <td style="color:#595959;">${dateString}</td>
+          <td><span style="color:var(--text); font-weight:700;">${totalAmount.toLocaleString()} đ</span></td>
+          <td style="text-align: center;">
+            <div style="display:inline-flex; gap:8px;">
+              <button class="btn" onclick="viewDetailDrawer(${item.id})" style="border-color:var(--text); color:var(--text);" title="Xem chi tiết">Xem</button>
+
+            </div>
+          </td>
+        `;
           tbody.appendChild(tr);
         } catch (err) {
           console.error("Lỗi khi kết xuất dòng phiếu nhập:", err, item);
@@ -2259,8 +2223,6 @@
         }
       }
       document.getElementById("dtDate").innerText = dateString;
-      const statusMeta = getPurchaseStatusMeta(target.trangThai);
-      document.getElementById("dtStatus").innerHTML = `<span class="badge" style="${statusMeta.style}">${statusMeta.text}</span>`;
 
       const listWrapper = document.getElementById("drawerProductsList");
       listWrapper.innerHTML = "";

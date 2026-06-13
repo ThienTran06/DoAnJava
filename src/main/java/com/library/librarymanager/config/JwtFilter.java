@@ -40,7 +40,6 @@ public class JwtFilter extends OncePerRequestFilter {
         if (isPublicResource(uri)
                 || uri.startsWith("/auth")
                 || uri.startsWith("/api/public")
-                || uri.startsWith("/api/danh-gia/public")
                 || uri.startsWith("/swagger-ui")
                 || uri.startsWith("/Create")
                 || uri.startsWith("/api/webhook/sepay")

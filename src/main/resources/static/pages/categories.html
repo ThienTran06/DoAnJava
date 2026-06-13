@@ -38,7 +38,6 @@ window.initCategories = function() {
 
   const API_BASE = window.API_BASE_URL || window.location.origin;
   const CATEGORY_API = `${API_BASE}/api/the-loai`;
-  const BOOK_API = `${API_BASE}/api/sach`;
   let categoriesLoaded = false;
   let categoriesLoading = false;
 
@@ -55,40 +54,8 @@ window.initCategories = function() {
     id: item?.id,
     name: item?.tenTheLoai || '—',
     description: item?.moTa || item?.description || '—',
-    available: false,
-    bookCount: 0
+    status: item?.trangThai || 'Hoạt động'
   });
-
-  const getBookCategoryId = (book) => book?.theLoai?.id ?? book?.theLoaiId;
-
-  const updateCategoryAvailability = (books = []) => {
-    const counts = new Map();
-    books.forEach(book => {
-      const categoryId = getBookCategoryId(book);
-      if (categoryId == null) return;
-      counts.set(String(categoryId), (counts.get(String(categoryId)) || 0) + 1);
-    });
-    state.items = state.items.map(item => {
-      const bookCount = counts.get(String(item.id)) || 0;
-      return { ...item, bookCount, available: bookCount > 0 };
-    });
-  };
-
-  const loadBooksForAvailability = async () => {
-    try {
-      const response = await fetch(BOOK_API, {
-        headers: {
-          Accept: 'application/json',
-          ...getAuthHeaders(),
-        },
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const data = await response.json();
-      updateCategoryAvailability(Array.isArray(data) ? data : []);
-    } catch (error) {
-      updateCategoryAvailability(window.allBooks || []);
-    }
-  };
 
   const renderLoadingState = () => {
     tableBody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Đang tải thể loại...</div></td></tr>`;
@@ -121,7 +88,6 @@ window.initCategories = function() {
 
       const data = await response.json();
       state.items = Array.isArray(data) ? data.map(mapCategory) : [];
-      await loadBooksForAvailability();
       categoriesLoaded = true;
       categoriesLoading = false;
       render(search ? search.value : '');
@@ -138,11 +104,9 @@ window.initCategories = function() {
     tableBody.innerHTML = rows.length ? rows.map((item, index) => `
       <tr>
         <td>${index + 1}</td>
-        <td style="font-weight:700">
-          ${item.available ? `<button type="button" class="link category-open-books" data-id="${item.id}" title="Xem sách thuộc thể loại này">${item.name}</button>` : item.name}
-        </td>
+        <td style="font-weight:700">${item.name}</td>
         <td style="color:var(--muted)">${item.description}</td>
-        <td><span class="badge ${item.available ? 'ok' : 'bad'}">${item.available ? 'Có sẵn' : 'Không có sẵn'}</span></td>
+        <td><span class="badge paid">${item.status}</span></td>
         <td><div class="ops"><button class="link" data-id="${item.id}">Sửa</button><button class="link danger" data-id="${item.id}">Xóa</button></div></td>
       </tr>
     `).join('') : `<tr><td colspan="5"><div class="empty-state">Không tìm thấy thể loại phù hợp.</div></td></tr>`;
@@ -195,24 +159,8 @@ window.initCategories = function() {
 
   // Handle edit and delete buttons in table
   tableBody.addEventListener('click', e => {
-    const openBooksBtn = e.target.closest('.category-open-books');
     const editBtn = e.target.closest('.ops .link:not(.danger)');
     const deleteBtn = e.target.closest('.ops .link.danger');
-    if (openBooksBtn) {
-      const categoryId = openBooksBtn.dataset.id;
-      const categoryName = state.items.find(i => String(i.id) === String(categoryId))?.name || '';
-      const params = new URLSearchParams(window.location.search);
-      params.set('view', 'books');
-      params.set('categoryId', categoryId);
-      params.set('categoryName', categoryName);
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-      if (typeof window.setView === 'function') {
-        window.setView('books').then(() => window.setBookCategoryFilter?.(categoryId, categoryName));
-      } else {
-        window.location.href = `index.html?view=books&categoryId=${encodeURIComponent(categoryId)}&categoryName=${encodeURIComponent(categoryName)}`;
-      }
-      return;
-    }
     if (!editBtn && !deleteBtn) return;
 
     const id = editBtn ? editBtn.dataset.id : deleteBtn.dataset.id;

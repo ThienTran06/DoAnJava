@@ -126,6 +126,4 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Integer> {
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("startOfNextDay") LocalDateTime startOfNextDay
     );
-
-    long countByKhachHangId(int khachHangId);
 }

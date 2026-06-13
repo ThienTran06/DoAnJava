@@ -23,6 +23,8 @@ public class CreateUserRequest {
     @Size(min = 3, message = "Username toi thieu 3 ky tu")
     private String tenDangNhap;
 
+    @NotBlank(message = "Password khong duoc trong")
+    @Size(min = 4, message = "Password toi thieu 4 ky tu")
     private String matKhau;
 
     @NotBlank(message = "Ho ten khong duoc trong")

@@ -93,7 +93,6 @@ public class NguoiDungServiceImpl implements NguoiDungService {
     @Transactional
     public NguoiDung create(CreateUserRequest req) {
         validateUserRequest(req);
-        validatePasswordForCreate(req);
 
         if (repo.findByUsername(req.getTenDangNhap()).isPresent()) {
             throw new RuntimeException("Tài khoản đã tồn tại");
@@ -208,14 +207,6 @@ public class NguoiDungServiceImpl implements NguoiDungService {
         req.setCaLamViec(ValidationUtils.trimToNull(req.getCaLamViec()));
         req.setDiaChi(ValidationUtils.trimToNull(req.getDiaChi()));
         req.setGhiChu(ValidationUtils.trimToNull(req.getGhiChu()));
-    }
-
-    private void validatePasswordForCreate(CreateUserRequest req) {
-        String password = ValidationUtils.requireText(req.getMatKhau(), "Mat khau");
-        if (password.length() < 4) {
-            throw ValidationUtils.badRequest("Mat khau toi thieu 4 ky tu");
-        }
-        req.setMatKhau(password);
     }
 
     private void applyRolePermissions(NguoiDung nd, String tenNhom) {

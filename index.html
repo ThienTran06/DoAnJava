@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -443,30 +443,26 @@
 
   <div class="nav-section">
     <div class="nav-label">Quản lý</div>
-    <a class="nav-item active" href="TongQuan.html">
+    <div class="nav-item" data-view="dashboard">
       
       Tổng quan
-    </a>
-    <a class="nav-item" href="Sach.html">
+    </div>
+    <div class="nav-item" data-view="books">
       
       Sách
-    </a>
-    <a class="nav-item" href="DanhMuc.html">
+    </div>
+    <div class="nav-item" data-view="categories">
       
       Danh mục 
-    </a>
-    <a class="nav-item" href="KhachHang.html">
+    </div>
+    <div class="nav-item" data-view="customers">
       
       Khách Hàng
-    </a>
-    <a class="nav-item" href="CSKH.html">
-      
-      Chăm sóc KH
-    </a>
-    <a class="nav-item" href="NhanVien.html">
+    </div>
+    <div class="nav-item" data-view="staff">
       
       Nhân viên
-    </a>
+    </div>
   </div>
 
   <div class="nav-section">
@@ -491,14 +487,14 @@
 
   <div class="nav-section">
     <div class="nav-label">Báo cáo</div>
-    <a class="nav-item" href="index.html?view=revenue">
+    <div class="nav-item" data-view="revenue">
       
       Doanh thu
-    </a>
-    <a class="nav-item" href="index.html?view=inventory">
+    </div>
+    <div class="nav-item" data-view="inventory">
       
       Tồn kho
-    </a>
+    </div>
   </div>
 
   <div class="nav-section">
@@ -869,10 +865,6 @@
       <div class="spa-page-container" data-page-container="customers"></div>
     </section>
 
-    <section class="view-panel" id="cskhView">
-      <div class="spa-page-container" data-page-container="cskh"></div>
-    </section>
-
     <section class="view-panel" id="staffView">
       <div class="spa-page-container" data-page-container="staff"></div>
     </section>
@@ -985,7 +977,6 @@ const viewTitles = {
   books: ['Sách', 'Quản lý toàn bộ đầu sách trong kho'],
   categories: ['Danh mục', 'Quản lý thể loại sách'],
   customers: ['Khách hàng', 'Quản lý thông tin khách hàng'],
-  cskh: ['Chăm sóc khách hàng', 'Quản lý đánh giá và phản hồi'],
   staff: ['Nhân viên', 'Quản lý nhân sự cửa hàng'],
   revenue: ['Doanh thu', 'Báo cáo doanh thu từ backend'],
   inventory: ['Tồn kho', 'Báo cáo tồn kho từ backend']
@@ -995,7 +986,6 @@ const externalPages = {
   books: { file: 'pages/inventory.html', init: 'initBooks' },
   categories: { file: 'pages/categories.html', init: 'initCategories' },
   customers: { file: 'pages/customers.html', init: 'initCustomers' },
-  cskh: { file: 'pages/cskh.html', init: 'initCSKH' },
   staff: { file: 'pages/staff.html', init: 'initStaff' }
 };
 const externalPageCache = {};
@@ -1927,12 +1917,13 @@ if (dailyKpiForm && dailyKpiInput) {
 }
 const quickRevenueBtn = document.getElementById('quickRevenueBtn');
 if (quickRevenueBtn) {
-  quickRevenueBtn.addEventListener('click', () => { window.location.href = 'index.html?view=revenue'; });
+  quickRevenueBtn.addEventListener('click', () => setView('revenue'));
 }
 const quickAddBookBtn = document.getElementById('quickAddBookBtn');
 if (quickAddBookBtn) {
-  quickAddBookBtn.addEventListener('click', () => {
-    window.location.href = 'Sach.html?quick=add';
+  quickAddBookBtn.addEventListener('click', async () => {
+    await setView('books');
+    requestAnimationFrame(() => document.getElementById('btnAddBook')?.click());
   });
 }
 const quickSalesBtn = document.getElementById('quickSalesBtn');

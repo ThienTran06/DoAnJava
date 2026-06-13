@@ -1,7 +1,6 @@
 package com.library.librarymanager.config;
 
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +15,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
@@ -47,7 +46,6 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/auth/**",
                                 "/api/public/**",
-                                "/api/danh-gia/public/**",
                                 "/Create/**",
                                 "/",
                                 "/*.html",
@@ -61,9 +59,6 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/api/webhook/sepay"
-                                "/api/danh-gia/public",
-                                "/api/danh-gia/public/submit",
-                                "/v3/api-docs/**"
                         ).permitAll()
 
                         .anyRequest().authenticated()
