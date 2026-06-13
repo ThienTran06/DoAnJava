@@ -838,6 +838,12 @@
       return value;
     }
 
+    function getInvoiceDetailImage(detail) {
+      const bookImage = detail?.sach?.hinhAnh;
+      const snapshotImage = detail?.hinhAnh;
+      return getSafeBookImage(bookImage || snapshotImage);
+    }
+
     function getAuthHeaders() {
       const token = localStorage.getItem("token");
       const headers = {};
@@ -1075,7 +1081,7 @@
         pCard.style.background = "#fff";
         pCard.innerHTML = `
           <div style="display:flex; gap:12px; align-items:start;">
-            <img src="${getSafeBookImage(c.hinhAnh)}" style="width:50px; height:68px; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.src=drawerImgPlaceholder;">
+            <img src="${getInvoiceDetailImage(c)}" style="width:50px; height:68px; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.src=drawerImgPlaceholder;">
             <div style="flex:1;">
               <div style="font-weight:600; font-size:14px; color:#262626;">${c.tenSach || "Sách không rõ tên"}</div>
               <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-top:6px; color:var(--text-muted);">

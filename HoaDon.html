@@ -342,6 +342,15 @@
           background: #333;
           color: #fff;
         }
+        .btn-success {
+          background: var(--green);
+          border-color: var(--green);
+          color: #fff;
+        }
+        .btn-success:hover {
+          background: #2d6135;
+          border-color: #2d6135;
+        }
         .btn-danger-ghost {
           border-color: var(--red);
           color: var(--red);
@@ -349,7 +358,8 @@
         }
         .btn-danger-ghost:hover {
           background: var(--red-light);
-        }.btn:disabled {
+        }
+        .btn:disabled {
           opacity: 0.4;
           cursor: not-allowed;
           background: var(--border);
@@ -517,15 +527,13 @@
           position: relative;
         }
     </style>
-    <link rel="stylesheet" href="ui-polish.css">
-<script src="js/app-settings.js"></script>
+    <link rel="stylesheet" href="ui-polish.css" />
+    <script src="js/app-settings.js"></script>
 </head>
 <body>
 <aside class="sidebar">
     <div class="sidebar-logo">
-        <div class="logo-mark">
-            
-        </div>
+        <div class="logo-mark"></div>
         <div>
             <div class="logo-text">BookHouse</div>
             <div class="logo-sub">Tri thức trong tầm tay</div>
@@ -562,20 +570,16 @@
     <div class="nav-section">
         <div class="nav-label">Nghiệp vụ</div>
         <div class="nav-item" onclick="location.href = 'BanHang.html'">
-            
             Bán hàng
         </div>
         <div class="nav-item active" onclick="location.href = 'HoaDon.html'">
-            
             Hóa đơn <span class="nav-badge" id="sidebar-invoice-count">0</span>
         </div>
         <div class="nav-item" onclick="location.href = 'PhieuGiu.html'">
-            
             Đặt giữ sách
         </div>
         <div class="nav-item" onclick="location.href = 'NhapHang.html'">
-            
-            Nhập hàng 
+            Nhập hàng
         </div>
 <div class="nav-item" onclick="window.open('danh-gia-cong-cong.html','_blank')">
     Đánh giá KH
@@ -584,22 +588,13 @@
 
     <div class="nav-section">
         <div class="nav-label">Báo cáo</div>
-        <div class="nav-item">
-            
-            Doanh thu
-        </div>
-        <div class="nav-item">
-            
-            Tồn kho
-        </div>
+        <div class="nav-item">Doanh thu</div>
+        <div class="nav-item">Tồn kho</div>
     </div>
 
     <div class="nav-section">
         <div class="nav-label">Hệ thống</div>
-        <div class="nav-item">
-            
-            Cài đặt
-        </div>
+        <div class="nav-item">Cài đặt</div>
     </div>
 
     <div class="sidebar-footer">
@@ -645,7 +640,7 @@
 
         <div class="card">
             <div class="card-header-row">
-                <div class="page-title"> Quản lý hóa đơn</div>
+                <div class="page-title">Quản lý hóa đơn</div>
                 <div class="controls-group">
                     <input
                             type="number"
@@ -660,7 +655,6 @@
                             class="btn btn-primary"
                             onclick="location.href = 'BanHang.html'"
                     >
-                        
                         Tạo hóa đơn mới
                     </button>
                 </div>
@@ -722,7 +716,7 @@
                 class="modal-title"
                 style="display: flex; align-items: center; gap: 8px"
         >
-            <span> Chi tiết hóa đơn</span>
+            <span> Chi tiết phiếu giữ sách</span>
             <span class="badge id-tag" id="drawerInvoiceId">#...</span>
         </div>
         <button
@@ -774,7 +768,7 @@
             color: #434343;
           "
         >
-             Danh sách sản phẩm
+            Danh sách sản phẩm
         </div>
         <div
                 id="drawerProductsList"
@@ -813,7 +807,7 @@
 </div>
 
 <script>
-    const API_BASE_URL = window.location.origin;
+    const API_BASE_URL =  window.location.origin;
     let invoices = [];
     let currentPage = 0;
     let pageSize = 10;
@@ -830,10 +824,20 @@
       const value = String(src || "").trim();
       if (!value) return fallback;
       const lower = value.toLowerCase();
-      if (lower.includes("zalo") || lower.includes("zaloapp") || lower.includes("zalo.me")) {
+      if (
+        lower.includes("zalo") ||
+        lower.includes("zaloapp") ||
+        lower.includes("zalo.me")
+      ) {
         return fallback;
       }
       return value;
+    }
+
+    function getInvoiceDetailImage(detail) {
+      const bookImage = detail?.sach?.hinhAnh;
+      const snapshotImage = detail?.hinhAnh;
+      return getSafeBookImage(bookImage || snapshotImage);
     }
 
     function getAuthHeaders() {
@@ -963,6 +967,18 @@
       }
     }
 
+    // HÀM ĐIỀU HƯỚNG SANG KHỐI POS ĐỂ TIẾP TỤC GIAO DỊCH
+    function navigateToInvoicePaymentFlow(invoiceId) {
+      const target = invoices.find((x) => x.id === invoiceId);
+      if (!target) return;
+
+      // Đóng gói lưu Object hóa đơn tĩnh vào LocalStorage để trang BanHang.html bắt đơn
+      localStorage.setItem("RESERVATION_INVOICE", JSON.stringify(target));
+
+      // Điều hướng trực tiếp sang trang Quầy bán hàng
+      location.href = "BanHang.html";
+    }
+
     function renderInvoicesTable() {
       const tbody = document.getElementById("invoiceTableBody");
       tbody.innerHTML = "";
@@ -982,35 +998,49 @@
         }
 
         let statusMarkup = "";
-        if (item.trangThai === "HOAN_THANH") {
+        if (item.trangThai === "HOAN THANH" || item.trangThai === "PAID") {
           statusMarkup = `<span class="badge success">Hoàn thành</span>`;
         } else if (
-          item.trangThai === "HUY_DON" ||
-          item.trangThai === "DA_HUY"
+          item.trangThai === "HUY DON" ||
+          item.trangThai === "DA HUY" ||
+          item.trangThai === "CANCELLED"
         ) {
           statusMarkup = `<span class="badge danger">Đã hủy</span>`;
+        } else if (item.trangThai === "PENDING") {
+          statusMarkup = `<span class="badge warning">Chờ thanh toán</span>`;
         } else {
-          statusMarkup = `<span class="badge warning">${item.trangThai || "Đang xử lý"}</span>`;
+          statusMarkup = `<span class="badge warning">${item.trangThai}</span>`;
         }
 
-        const isCancelled =
-          item.trangThai === "HUY_DON" || item.trangThai === "DA_HUY";
-        const cancelActionBtn = isCancelled
+        const isClosed =
+          item.trangThai === "HOAN THANH" ||
+          item.trangThai === "PAID" ||
+          item.trangThai === "HUY DON" ||
+          item.trangThai === "DA HUY" ||
+          item.trangThai === "CANCELLED";
+
+        const cancelActionBtn = isClosed
           ? `<button class="btn" disabled style="background:#f5f5f5; color:var(--text-subtle); border-color:var(--border);">Đã đóng</button>`
           : `<button class="btn btn-danger-ghost" onclick="triggerCancelInvoice(${item.id})" title="Hủy hóa đơn">Hủy</button>`;
 
+        // Nếu hóa đơn chưa hoàn tất (đang PENDING/Chờ thanh toán), sinh nút Thanh toán điều hướng sang POS lẻ
+        const payActionBtn = isClosed
+          ? ""
+          : `<button class="btn btn-success" style="padding:4px 10px; font-size:12.5px;" onclick="navigateToInvoicePaymentFlow(${item.id})">Thanh toán</button>`;
+
         tr.innerHTML = `
-          <td><span class="badge id-tag">#${item.id}</span></td>
-          <td style="color:#595959;"><span style="margin-right:4px;"></span>${dateString}</td>
-          <td><span style="color:var(--red); font-weight:700;">${(item.tongTien || 0).toLocaleString()} đ</span></td>
-          <td>${statusMarkup}</td>
-          <td style="text-align: center;">
-            <div style="display:inline-flex; gap:8px;">
-              <button class="btn" onclick="viewDetailDrawer(${item.id})" style="border-color:#1890ff; color:#1890ff;" title="Xem chi tiết">Xem</button>
-              ${cancelActionBtn}
-            </div>
-          </td>
-        `;
+        <td><span class="badge id-tag">#${item.id}</span></td>
+        <td style="color:#595959;"><span style="margin-right:4px;"></span>${dateString}</td>
+        <td><span style="color:var(--red); font-weight:700;">${(item.tongTien || 0).toLocaleString()} đ</span></td>
+        <td>${statusMarkup}</td>
+        <td style="text-align: center;">
+          <div style="display:inline-flex; gap:8px;">
+            <button class="btn" onclick="viewDetailDrawer(${item.id})" style="border-color:#1890ff; color:#1890ff;" title="Xem chi tiết">Xem</button>
+            ${payActionBtn}
+            ${cancelActionBtn}
+          </div>
+        </td>
+      `;
         tbody.appendChild(tr);
       });
     }
@@ -1051,15 +1081,16 @@
       document.getElementById("dtDate").innerText = formattedDate;
 
       const wrapBadge = document.getElementById("dtStatusBadgeWrap");
-      if (target.trangThai === "HOAN_THANH") {
+      if (target.trangThai === "HOAN THANH" || target.trangThai === "PAID") {
         wrapBadge.innerHTML = `<span class="badge success">Hoàn thành</span>`;
       } else if (
-        target.trangThai === "HUY_DON" ||
-        target.trangThai === "DA_HUY"
+        target.trangThai === "HUY DON" ||
+        target.trangThai === "DA HUY" ||
+        target.trangThai === "CANCELLED"
       ) {
         wrapBadge.innerHTML = `<span class="badge danger">Đã hủy</span>`;
-      } else {
-        wrapBadge.innerHTML = `<span class="badge warning">${target.trangThai}</span>`;
+      } else if (target.trangThai === "PENDING") {
+        wrapBadge.innerHTML = `<span class="badge warning">Chờ thanh toán</span>`;
       }
 
       const targetProductsList =
@@ -1072,33 +1103,42 @@
         pCard.style.margin = "0";
         pCard.style.background = "#fff";
         pCard.innerHTML = `
-          <div style="display:flex; gap:12px; align-items:start;">
-            <img src="${getSafeBookImage(c.hinhAnh)}" style="width:50px; height:68px; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.src=drawerImgPlaceholder;">
-            <div style="flex:1;">
-              <div style="font-weight:600; font-size:14px; color:#262626;">${c.tenSach || "Sách không rõ tên"}</div>
-              <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-top:6px; color:var(--text-muted);">
-                <span>Số lượng: <strong style="color:var(--text);">${c.soLuong}</strong></span>
-                <span>Đơn giá: ${(c.donGia || 0).toLocaleString()} đ</span>
-              </div>
-              <div style="height:1px; background:#f0f0f0; margin:6px 0;"></div>
-              <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
-                <span style="color:var(--text-muted);">Thành tiền:</span>
-                <span style="font-weight:700; color:var(--red);">${(c.thanhTien || 0).toLocaleString()} đ</span>
-              </div>
+        <div style="display:flex; gap:12px; align-items:start;">
+          <img src="${getSafeBookImage(c.hinhAnh)}" style="width:50px; height:68px; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.src=drawerImgPlaceholder;">
+          <div style="flex:1;">
+            <div style="font-weight:600; font-size:14px; color:#262626;">${c.tenSach || "Sách không rõ tên"}</div>
+            <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-top:6px; color:var(--text-muted);">
+              <span>Số lượng: <strong style="color:var(--text);">${c.soLuong}</strong></span>
+              <span>Đơn giá: ${(c.donGia || 0).toLocaleString()} đ</span>
+            </div>
+            <div style="height:1px; background:#f0f0f0; margin:6px 0;"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
+              <span style="color:var(--text-muted);">Thành tiền:</span>
+              <span style="font-weight:700; color:var(--red);">${(c.thanhTien || 0).toLocaleString()} đ</span>
             </div>
           </div>
-        `;
+        </div>
+      `;
         targetProductsList.appendChild(pCard);
       });
 
       document.getElementById("dtTotalAmount").innerText =
         (target.tongTien || 0).toLocaleString() + " đ";
-      const isCancelable =
-        target.trangThai !== "HUY_DON" && target.trangThai !== "DA_HUY";
+
+      const isClosed =
+        target.trangThai === "HOAN THANH" ||
+        target.trangThai === "PAID" ||
+        target.trangThai === "HUY DON" ||
+        target.trangThai === "DA HUY" ||
+        target.trangThai === "CANCELLED";
+
       const footerActionArea = document.getElementById("drawerFooterAction");
 
-      if (isCancelable) {
-        footerActionArea.innerHTML = `<button class="btn btn-danger-ghost" style="border-radius:6px; font-weight:700;" onclick="triggerCancelInvoice(${target.id}, true)">Hủy hóa đơn</button>`;
+      if (!isClosed) {
+        footerActionArea.innerHTML = `
+          <button class="btn btn-success" style="border-radius:6px; font-weight:700;" onclick="navigateToInvoicePaymentFlow(${target.id})">Thanh toán đơn</button>
+          <button class="btn btn-danger-ghost" style="border-radius:6px; font-weight:700;" onclick="triggerCancelInvoice(${target.id}, true)">Hủy hóa đơn</button>
+        `;
       } else {
         footerActionArea.innerHTML = `<button class="btn" disabled style="border-radius:6px;">Hóa đơn đã đóng</button>`;
       }
@@ -1126,35 +1166,43 @@
           },
         );
         if (!response.ok) throw new Error("Không thể hủy hóa đơn");
-        window.showToast ? window.showToast("Đã hủy hóa đơn thành công!") : alert("Đã hủy hóa đơn thành công!");
+        window.showToast
+          ? window.showToast("Đã hủy hóa đơn thành công!")
+          : alert("Đã hủy hóa đơn thành công!");
         if (isFromDrawer) closeDetailDrawer();
 
         fetchInvoices();
         fetchThongKe(); // Tải lại thống kê ngay khi hủy đơn thành công để trừ doanh số
       } catch (err) {
-        window.showToast ? window.showToast("Hủy hóa đơn thất bại") : alert("Hủy hóa đơn thất bại");
+        window.showToast
+          ? window.showToast("Hủy hóa đơn thất bại")
+          : alert("Hủy hóa đơn thất bại");
       }
     }
 </script>
 <script>
-  document.querySelectorAll('.sidebar .nav-item').forEach(item => {
-    if (item.getAttribute('onclick')) return;
-    const label = item.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
-    const routes = [
-      ['tổng quan', 'TongQuan.html'],
-      ['sách', 'Sach.html'],
-      ['danh mục', 'DanhMuc.html'],
-      ['khách hàng', 'KhachHang.html'],
-      ['chăm sóc', 'CSKH.html'],
-      ['nhân viên', 'NhanVien.html'],
-      ['doanh thu', 'index.html?view=revenue'],
-      ['tồn kho', 'index.html?view=inventory'],
-      ['cài đặt', 'settings.html'],
-    ];
-    const route = routes.find(([key]) => label.includes(key));
-    if (!route) return;
-    item.addEventListener('click', () => { location.href = route[1]; });
-  });
+    document.querySelectorAll(".sidebar .nav-item").forEach((item) => {
+      if (item.getAttribute("onclick")) return;
+      const label = item.textContent
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+      const routes = [
+        ["tổng quan", "index.html?view=dashboard"],
+        ["sách", "index.html?view=books"],
+        ["danh mục", "index.html?view=categories"],
+        ["khách hàng", "index.html?view=customers"],
+        ["nhân viên", "index.html?view=staff"],
+        ["doanh thu", "index.html?view=revenue"],
+        ["tồn kho", "index.html?view=inventory"],
+        ["cài đặt", "settings.html"],
+      ];
+      const sidebarRoute = routes.find(([key]) => label.includes(key));
+      if (!sidebarRoute) return;
+      item.addEventListener("click", () => {
+        location.href = sidebarRoute[1];
+      });
+    });
 </script>
 </body>
 </html>

@@ -48,7 +48,7 @@
     </div>
     <div class="empty-state" id="staffEmptyState" style="display:none;margin-top:16px">Chưa có nhân viên nào.</div>
   </div>
-  <div class="modal-overlay" id="staffModal"><div class="modal"><div class="modal-head"><div class="modal-title"> Thêm nhân viên</div><button class="close" id="closeStaffModal">Đóng</button></div><form id="staffForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống</div></div><div class="field"><div class="label">Mã nhân viên</div><input class="input" name="code" required><div class="helper">Ví dụ: NV001</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ</div></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Chức vụ</div><select class="select" name="role"><option>Quản lý</option><option>Thu ngân</option><option>Nhân viên bán hàng</option><option>Kho</option><option>Biên mục</option><option>Kế toán</option><option>Nhân sự</option></select></div><div class="field"><div class="label">Ca làm việc</div><select class="select" name="shift" required><option value="Ca 1">Ca 1 (6h - 12h)</option><option value="Ca 2">Ca 2 (12h - 18h)</option><option value="Ca 3">Ca 3 (18h - 24h)</option></select></div><div class="field"><div class="label">Ngày vào làm</div><input class="input" type="date" name="joinDate"></div><div class="field"><div class="label">Lương cơ bản</div><input class="input" type="number" name="salary" min="0" step="1000"></div><div class="field full"><div class="label">Avatar nhân viên</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="staffPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelStaff">Hủy</button><button type="submit" class="btn primary" id="saveStaff"><span class="txt">Lưu nhân viên</span><span class="spin"></span></button></div></form></div></div>
+  <div class="modal-overlay" id="staffModal"><div class="modal"><div class="modal-head"><div class="modal-title"> Thêm nhân viên</div><button class="close" id="closeStaffModal">Đóng</button></div><form id="staffForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống</div></div><div class="field"><div class="label">Tên đăng nhập / Mã nhân viên</div><input class="input" name="code" required><div class="helper">Ví dụ: NV001. Nhân viên dùng mã này để đăng nhập.</div></div><div class="field"><div class="label">Mật khẩu đăng nhập</div><input class="input" name="password" type="password" minlength="4" value="123456"><div class="helper">Tạo mới mặc định 123456; khi sửa có thể bỏ trống để giữ mật khẩu cũ.</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ</div></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Chức vụ</div><select class="select" name="role"><option>Quản lý</option><option>Thu ngân</option><option>Nhân viên bán hàng</option><option>Kho</option><option>Biên mục</option><option>Kế toán</option><option>Nhân sự</option></select></div><div class="field"><div class="label">Ca làm việc</div><select class="select" name="shift" required><option value="Ca 1">Ca 1 (6h - 12h)</option><option value="Ca 2">Ca 2 (12h - 18h)</option><option value="Ca 3">Ca 3 (18h - 24h)</option></select></div><div class="field"><div class="label">Ngày vào làm</div><input class="input" type="date" name="joinDate"></div><div class="field"><div class="label">Lương cơ bản</div><input class="input" type="number" name="salary" min="0" step="1000"></div><div class="field full"><div class="label">Avatar nhân viên</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="staffPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelStaff">Hủy</button><button type="submit" class="btn primary" id="saveStaff"><span class="txt">Lưu nhân viên</span><span class="spin"></span></button></div></form></div></div>
   <div class="modal-overlay" id="staffDetailModal"><div class="modal" style="max-width:600px"><div class="modal-head"><div class="modal-title"> Hồ sơ nhân viên</div><button class="close" id="closeProfileModal">Đóng</button></div><div class="modal-body"><div style="text-align:center;margin-bottom:20px" id="profileAvatarContainer"><div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto">A</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px"><div><div style="font-size:12px;color:var(--muted)">Họ tên</div><div style="font-weight:700" id="profileName">—</div></div><div><div style="font-size:12px;color:var(--muted)">Mã nhân viên</div><div style="font-weight:700" id="profileCode">—</div></div><div><div style="font-size:12px;color:var(--muted)">Email</div><div style="font-weight:700" id="profileEmail">—</div></div><div><div style="font-size:12px;color:var(--muted)">Số điện thoại</div><div style="font-weight:700" id="profilePhone">—</div></div><div><div style="font-size:12px;color:var(--muted)">Chức vụ</div><div style="font-weight:700" id="profileRole">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ca làm việc</div><div style="font-weight:700" id="profileShift">—</div></div><div><div style="font-size:12px;color:var(--muted)">Địa chỉ</div><div style="font-weight:700" id="profileAddress">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ngày vào làm</div><div style="font-weight:700" id="profileJoinDate">—</div></div><div><div style="font-size:12px;color:var(--muted)">Lương cơ bản</div><div style="font-weight:700" id="profileSalary">—</div></div><div><div style="font-size:12px;color:var(--muted)">Trạng thái</div><div style="font-weight:700" id="profileStatus">—</div></div><div style="grid-column:1/-1"><div style="font-size:12px;color:var(--muted)">Ghi chú</div><div style="font-weight:700" id="profileNote">—</div></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="closeProfileBtn">Đóng</button></div></div></div>
 </div>
 
@@ -296,6 +296,8 @@ window.initStaff = function() {
   openBtn.onclick = () => {
     form.reset();
     form.shift.value = 'Ca 1';
+    form.password.value = '123456';
+    form.password.required = true;
     preview.removeAttribute('src');
     preview.style.display = 'none';
     preview.nextElementSibling.style.display = 'block';
@@ -311,21 +313,24 @@ window.initStaff = function() {
   form.onsubmit = async e => {
   e.preventDefault();
   let ok = true;
-  ['name','code','email','phone'].forEach(n => {
+  ['name','code','email','phone','password'].forEach(n => {
     const field = form.elements[n].closest('.field');
     field.classList.remove('error');
   });
+  const isEdit = window.currentEditStaffIndex !== undefined;
   const emailOk = /^\S+@\S+\.\S+$/.test(form.email.value.trim());
   const phoneOk = /^(0[3|5|7|8|9])[0-9]{8}$/.test(form.phone.value.trim());
+  const password = form.password.value.trim();
   if (!form.name.value.trim()) { markField(form.name, 'Không được để trống'); ok = false; }
   if (!form.code.value.trim()) { markField(form.code, 'Không được để trống'); ok = false; }
+  if (!isEdit && password.length < 4) { markField(form.password, 'Mật khẩu tối thiểu 4 ký tự'); ok = false; }
+  if (isEdit && password && password.length < 4) { markField(form.password, 'Mật khẩu tối thiểu 4 ký tự'); ok = false; }
   if (!emailOk) { markField(form.email, 'Email không hợp lệ'); ok = false; }
   if (!phoneOk) { markField(form.phone, 'SĐT đúng định dạng'); ok = false; }
   const salary = Number(form.salary.value || 0);
   if (!Number.isFinite(salary) || salary < 0) { markField(form.salary, 'Lương không được âm'); ok = false; }
   if (!ok) return;
 
-  const isEdit = window.currentEditStaffIndex !== undefined;
   const staffId = isEdit ? state.items[window.currentEditStaffIndex]?.id : null;
   const url = isEdit ? `${STAFF_API}/${staffId}` : `${STAFF_API}/create`;
   const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -352,7 +357,7 @@ if (avatarFile) {
 
   const payload = {
   tenDangNhap: form.code.value.trim(),
-  matKhau: '123456',
+  matKhau: password,
   hoTen: form.name.value.trim(),
   sdt: form.phone.value.trim(),
   tenNhom: toGroupName(form.role.value),
@@ -414,6 +419,8 @@ if (avatarFile) {
       const item = state.items[itemIndex];
       form.name.value = item.name;
       form.code.value = item.code;
+      form.password.value = '';
+      form.password.required = false;
       form.email.value = item.email;
       form.phone.value = item.phone;
       form.role.value = item.role;

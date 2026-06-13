@@ -5,13 +5,17 @@ import com.library.librarymanager.enums.TrangThaiGiu;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.KhachHangService;
 import com.library.librarymanager.service.Interface.PhieuGiuSachService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -69,12 +73,14 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
 
     @Override
     @Transactional
-    public void confirm(int phieuId, int nhanVienId) {
+    public HoaDon confirm(int phieuId, int nhanVienId) {
 
-        PhieuDatGiuSach p = phieuRepo.findByIdForUpdate(phieuId).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Khong tim thay phieu giu sachh co id = " + phieuId
-        ));
+        PhieuDatGiuSach p = phieuRepo.findByIdForUpdate(phieuId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Khong tim thay phieu giu sach co id = " + phieuId
+                ));
+
         if (p.getTrangThai() != TrangThaiGiu.PENDING) {
             throw new RuntimeException("Phieu khong hop le");
         }
@@ -85,7 +91,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
 
         List<ChiTietPhieuGiu> ds = ctRepo.findByPhieuGiuId(phieuId);
 
-        if (ds.isEmpty()) {
+        if (ds == null || ds.isEmpty()) {
             throw new RuntimeException("Phieu rong");
         }
 
@@ -96,49 +102,58 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
                 .orElseThrow(() -> new RuntimeException("Khong tim thay nhan vien"));
 
         HoaDon hd = new HoaDon();
-
         hd.setKhachHang(kh);
         hd.setNhanVien(nv);
         hd.setNgayBan(LocalDateTime.now());
-        hd.setTrangThai("PAID");
-
-        BigDecimal tongTien = BigDecimal.ZERO;
+        hd.setTrangThai("PENDING");
 
         hoaDonRepo.save(hd);
+
+        BigDecimal tongTien = BigDecimal.ZERO;
+        List<ChiTietHoaDon> dsct = new ArrayList<>();
 
         for (ChiTietPhieuGiu ct : ds) {
 
-            ChiTietHoaDon cthd = new ChiTietHoaDon();
+            Sach s = sachRepository.findByIdForUpdate(ct.getSach().getId())
+                    .orElseThrow(() -> new RuntimeException("Khong tim thay sach"));
 
+            ChiTietHoaDon cthd = new ChiTietHoaDon();
             cthd.setHoaDon(hd);
-            cthd.setSach(ct.getSach());
+            cthd.setSach(s);
             cthd.setSoLuong(ct.getSoLuong());
-            cthd.setDonGia(ct.getSach().getGiaBan());
-            cthd.setTenSach(ct.getSach().getTenSach());
-            cthd.setHinhAnh(ct.getSach().getHinhAnh());
-            BigDecimal thanhTien = ct.getSach().getGiaBan().multiply(BigDecimal.valueOf(ct.getSoLuong()));
+            cthd.setDonGia(s.getGiaBan());
+            cthd.setTenSach(s.getTenSach());
+            cthd.setHinhAnh(s.getHinhAnh());
+
+            BigDecimal thanhTien = s.getGiaBan()
+                    .multiply(BigDecimal.valueOf(ct.getSoLuong()));
+
             cthd.setThanhTien(thanhTien);
+
             cthdRepo.save(cthd);
 
-            BigDecimal gia = ct.getSach().getGiaBan();
-
-            tongTien = tongTien.add(
-                    gia.multiply(BigDecimal.valueOf(ct.getSoLuong()))
-            );
+            dsct.add(cthd);
+            tongTien = tongTien.add(thanhTien);
         }
 
+        hd.setDanhSachChiTiet(dsct);
+
         khachHangService.capNhatHangThanhVien(kh);
-        BigDecimal tongTienSauGiamGia = khachHangService.tinhTongTienSauGiamGia(kh, tongTien);
+
+        BigDecimal tongTienSauGiamGia =
+                khachHangService.tinhTongTienSauGiamGia(kh, tongTien);
+
         hd.setTongTien(tongTienSauGiamGia);
 
         hoaDonRepo.save(hd);
+
         khachHangService.congDiemTuHoaDon(kh, tongTienSauGiamGia);
 
         p.setTrangThai(TrangThaiGiu.CONFIRMED);
-
         phieuRepo.save(p);
-    }
 
+        return hd;
+    }
     @Override
     @Transactional
     public void expire(int phieuId) {
@@ -161,7 +176,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
 
             phieuRepo.save(p);
         }
-       else throw new RuntimeException("Không thể expire phiếu giữ không có trạng thái pending");
+        else throw new RuntimeException("Không thể expire phiếu giữ không có trạng thái pending");
     }
 
     @Override
@@ -178,8 +193,22 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
         phieuRepo.save(p);
     }
     @Override
-    public List<PhieuDatGiuSach> getAll() {
-        return phieuRepo.findAll();
+    public Page<PhieuDatGiuSach> getAll(Integer ma, LocalDate ngay, int page, int size) {
+
+        LocalDateTime tuNgay = null;
+        LocalDateTime denNgay = null;
+
+        if (ngay != null) {
+            tuNgay = ngay.atStartOfDay();
+            denNgay = ngay.plusDays(1).atStartOfDay();
+        }
+
+        return phieuRepo.getAll(
+                ma,
+                tuNgay,
+                denNgay,
+                PageRequest.of(page, size)
+        );
     }
     @Override
     public PhieuDatGiuSach getById(int id){

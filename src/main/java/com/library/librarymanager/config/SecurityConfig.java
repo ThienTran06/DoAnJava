@@ -59,6 +59,8 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/assets/**",
                                 "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/api/webhook/sepay"
                                 "/api/danh-gia/public",
                                 "/api/danh-gia/public/submit",
                                 "/v3/api-docs/**"

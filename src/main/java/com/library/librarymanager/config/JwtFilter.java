@@ -43,6 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 || uri.startsWith("/api/danh-gia/public")
                 || uri.startsWith("/swagger-ui")
                 || uri.startsWith("/Create")
+                || uri.startsWith("/api/webhook/sepay")
                 || uri.startsWith("/v3/api-docs")) {
 
             chain.doFilter(req, res);
