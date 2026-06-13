@@ -4,15 +4,15 @@ package com.library.librarymanager.Exception;
 
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -35,6 +35,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(res);
     }
 
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<?> handleMethodNotSupported(
+    org.springframework.web.HttpRequestMethodNotSupportedException ex) {
+    return ResponseEntity.status(405).body(Map.of("message", ex.getMessage(), "status", 405));
+    }
+    
     // 🔥 AUTH ERROR
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<?> handleResponseStatus(ResponseStatusException ex) {

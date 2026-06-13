@@ -7,9 +7,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,14 +44,24 @@ public class KhachHang {
     @JsonAlias({"isVip", "is_Vip", "is_vip"})
     private boolean vip = false;
 
+    @Column(name = "trang_thai", columnDefinition = "boolean default true")
+    private Boolean trangThai = true;
+
+    @Transient
+    private long tongDonHang;
+
     @PrePersist
     @PreUpdate
+    @PostLoad
     private void normalizeDefaults() {
         if (diemTichLuy < 0) {
             diemTichLuy = 0;
         }
         if (hangThanhVien == null || hangThanhVien.isBlank()) {
             hangThanhVien = "Đồng";
+        }
+        if (trangThai == null) {
+            trangThai = true;
         }
     }
 }

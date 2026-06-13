@@ -35,4 +35,19 @@ public class ChiTietHoaDon {
     @ManyToOne
     @JoinColumn(name = "sach_id")
     private Sach sach;
+
+    public String getHinhAnh() {
+        if (isUnsafeImageUrl(hinhAnh) && sach != null) {
+            return sach.getHinhAnh();
+        }
+        return hinhAnh;
+    }
+
+    private boolean isUnsafeImageUrl(String value) {
+        if (value == null || value.isBlank()) {
+            return false;
+        }
+        String lower = value.toLowerCase();
+        return lower.contains("zalo") || lower.contains("zaloapp") || lower.contains("zalo.me");
+    }
 }

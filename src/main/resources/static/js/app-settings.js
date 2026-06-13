@@ -754,6 +754,7 @@
     'Danh mục': 'Categories',
     'Khách Hàng': 'Customers',
     'Khách hàng': 'Customers',
+    'Chăm sóc KH': 'Customer Care',
     'Nhân viên': 'Staff',
     'Nghiệp vụ': 'Operations',
     'Bán hàng': 'Sales',
@@ -1362,6 +1363,7 @@
   }
 
   const iconPaths = {
+    cskh: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
     dashboard: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
     books: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/>',
     categories: '<path d="M4 4h6v6H4z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6H4z"/><path d="M14 14h6v6h-6z"/>',
@@ -1397,6 +1399,7 @@
 
   function navIconKey(text) {
     const value = (text || '').toLowerCase();
+    if (value.includes('chăm sóc') || value.includes('cskh')) return 'cskh';
     if (value.includes('tổng quan') || value.includes('dashboard')) return 'dashboard';
     if (value.includes('sách') && !value.includes('giữ')) return 'books';
     if (value.includes('danh mục') || value.includes('categories')) return 'categories';
