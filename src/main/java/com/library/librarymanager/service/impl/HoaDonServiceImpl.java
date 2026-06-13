@@ -320,4 +320,14 @@ public class HoaDonServiceImpl implements HoaDonService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nam phai nam trong khoang 1000 den " + currentYear);
         }
     }
+    @Override
+    public void thanhToanTienMat(int hoaDonId) {
+        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
+
+        hoaDon.setTrangThai("PAID");
+
+        hoaDonRepository.save(hoaDon);
+    }
 }
+

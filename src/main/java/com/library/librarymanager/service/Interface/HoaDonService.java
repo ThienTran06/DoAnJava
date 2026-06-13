@@ -29,4 +29,5 @@ public interface HoaDonService {
     BigDecimal getTongDoanhThu();
     HoaDon updateChiTiet(int id, HoaDonRequest request);
     ThongKeHoaDonResponse getThongKe();
+    void thanhToanTienMat(int hoaDonId);
 }

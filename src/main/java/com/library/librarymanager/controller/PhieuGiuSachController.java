@@ -3,9 +3,13 @@ package com.library.librarymanager.controller;
 import com.library.librarymanager.entity.HoaDon;
 import com.library.librarymanager.entity.PhieuDatGiuSach;
 import com.library.librarymanager.service.Interface.PhieuGiuSachService;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -34,28 +38,39 @@ public class PhieuGiuSachController {
     }
 
     @PostMapping("/confirm/{phieuId}")
-    public String confirm(
+    public HoaDon confirm(
             @PathVariable int phieuId,
-            @RequestParam int nhanVienId
+            @PathVariable int nhanVienId
     ) {
-
-        phieuService.confirm(phieuId, nhanVienId);
-
-        return "Xac nhan thanh cong";
+        return phieuService.confirm(phieuId, nhanVienId);
     }
 
     @PostMapping("/confirm/{phieuId}/{nhanVienId}")
-    public String confirmByPath(
+    public HoaDon confirmByPath(
             @PathVariable int phieuId,
             @PathVariable int nhanVienId
     ) {
 
-        phieuService.confirm(phieuId, nhanVienId);
 
-        return "Xac nhan thanh cong";
+
+        return    phieuService.confirm(phieuId, nhanVienId);
     }
     @GetMapping
-    List<PhieuDatGiuSach> getAll(){return phieuService.getAll();}
+    public ResponseEntity<Page<PhieuDatGiuSach>> getAll(
+            @RequestParam(required = false) Integer ma,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate ngay,
+
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(
+                phieuService.getAll(ma, ngay, page, size)
+        );
+    }
+
 
     @PostMapping("/huy/{phieuId}")
     public String huy(@PathVariable int phieuId) {
