@@ -370,10 +370,10 @@ window.initCSKH = function() {
         if (!response.ok) throw new Error('Reply failed');
 
         closeModal();
-        if (window.showToast) window.showToast('Đã gửi phản hồi thành công');
+        if (window.showToast) window.showToast('Đã gửi phản hồi thành công', 'success');
         loadReviews();
       } catch (err) {
-        if (window.showToast) window.showToast('Không thể gửi phản hồi: ' + err.message);
+        if (window.showToast) window.showToast('Không thể gửi phản hồi: ' + err.message, 'error');
       }
     };
   }
@@ -418,10 +418,10 @@ window.initCSKH = function() {
 
             if (!response.ok) throw new Error('Xóa thất bại');
 
-            if (window.showToast) window.showToast('Đã xóa đánh giá');
+            if (window.showToast) window.showToast('Đã xóa đánh giá', 'success');
             loadReviews();
           } catch (err) {
-            if (window.showToast) window.showToast('Không thể xóa đánh giá: ' + err.message);
+            if (window.showToast) window.showToast('Không thể xóa đánh giá: ' + err.message, 'error');
           }
         };
 

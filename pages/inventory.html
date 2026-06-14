@@ -163,10 +163,10 @@ window.initBooks = function() {
       populateMetadataSelects();
       const select = isPublisher ? form.nhaXuatBanId : form.tacGiaIds;
       if (select && saved.id != null) select.value = String(saved.id);
-      window.showToast(`Đã thêm ${label}`);
+      window.showToast(`Đã thêm ${label}`, 'success');
     } catch (error) {
       console.error(error);
-      window.showToast(`Không thể thêm ${label}`);
+      window.showToast(`Không thể thêm ${label}`, 'error');
     }
   };
 
@@ -480,10 +480,10 @@ window.initBooks = function() {
       preview.style.display = 'none'; 
       preview.nextElementSibling.style.display = 'block'; 
       renderTable();
-      window.showToast(isEdit ? 'Đã cập nhật sách' : 'Đã lưu sách mới'); 
+      window.showToast(isEdit ? 'Đã cập nhật sách' : 'Đã lưu sách mới', 'success'); 
     } catch (err) {
       console.error(err);
-      window.showToast('Không thể lưu sách. Vui lòng thử lại.');
+      window.showToast('Không thể lưu sách. Vui lòng thử lại.', 'error');
     } finally {
       saveBtn.classList.remove('loading'); 
     }
@@ -538,9 +538,9 @@ window.initBooks = function() {
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           window.allBooks.splice(bookIndex, 1);
           renderTable();
-          window.showToast('Đã xóa sách');
+          window.showToast('Đã xóa sách', 'success');
         } catch (error) {
-          window.showToast('Không thể xóa sách');
+          window.showToast('Không thể xóa sách', 'error');
         }
       });
     }
