@@ -159,8 +159,45 @@
   .notif-dot {
     position: absolute; top: 7px; right: 7px;
     width: 6px; height: 6px; background: #e74c3c;
-    border-radius: 50%; border: 1.5px solid white;
+    border-radius: 50%; border: 1.5px solid var(--surface);
   }
+  /* Notification Panel */
+  .notif-panel {
+    display: none; position: absolute; top: 62px; right: 28px; z-index: 100;
+    width: 360px; max-height: 420px; background: var(--surface);
+    border: 1.5px solid var(--border); border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.12); overflow: hidden;
+    flex-direction: column;
+  }
+  .notif-panel.open { display: flex; }
+  .notif-panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+  }
+  .notif-panel-title { font-size: 14px; font-weight: 800; }
+  .notif-mark-all {
+    background: none; border: none; color: var(--green); font-size: 12px;
+    font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .notif-mark-all:hover { text-decoration: underline; }
+  .notif-panel-body { overflow-y: auto; flex: 1; }
+  .notif-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 16px; cursor: pointer; transition: background .15s;
+    border-bottom: 1px solid var(--border);
+  }
+  .notif-item:last-child { border-bottom: none; }
+  .notif-item:hover { background: var(--bg); }
+  .notif-item.unread { background: var(--green-light); }
+  .notif-item.unread:hover { background: var(--green-light); filter: brightness(.97); }
+  .notif-item-icon { flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .notif-item-icon.success { background: var(--green-light); color: var(--green); }
+  .notif-item-icon.error { background: var(--red-light); color: var(--red); }
+  .notif-item-icon.info { background: var(--bg); color: var(--text); }
+  .notif-item-body { flex: 1; min-width: 0; }
+  .notif-item-msg { font-size: 13px; font-weight: 500; line-height: 1.35; word-break: break-word; }
+  .notif-item-time { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .notif-empty { padding: 32px 16px; text-align: center; font-size: 13px; color: var(--text-muted); }
 
   /* ─── CONTENT ─── */
   .content { padding: 22px 28px; flex: 1; }
@@ -425,15 +462,6 @@
   .bar-fill { height: 100%; background: var(--text); border-radius: 20px; min-width: 3px; }
   .bar-value { text-align: right; color: var(--text-muted); font-weight: 700; }
   .spa-page-container { min-height: 420px; }
-  .toast {
-    position: fixed; right: 24px; bottom: 24px; z-index: 200;
-    max-width: min(360px, calc(100vw - 32px)); padding: 12px 14px;
-    border-radius: 10px; background: var(--text); color: #fff;
-    box-shadow: var(--shadow-md); font-weight: 700; font-size: 13px;
-    opacity: 0; transform: translateY(10px); pointer-events: none;
-    transition: opacity .18s ease, transform .18s ease;
-  }
-  .toast.show { opacity: 1; transform: translateY(0); }
   @media (max-width: 1100px) {
     .report-grid.two,
     .report-grid.charts { grid-template-columns: 1fr; }
@@ -442,6 +470,8 @@
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="ui-polish.css">
 <script src="js/app-settings.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/user-profile.js"></script>
 <script>(function(){if(localStorage.getItem('darkMode')==='1')document.documentElement.setAttribute('data-theme','dark');})();</script>
 </head>
 <body>
@@ -551,15 +581,26 @@
       <span class="kbd">⌘K</span>
     </div>
     <div class="topbar-actions">
-      <div class="icon-btn">
+      <div class="icon-btn" id="notifBellBtn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888880" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span class="notif-dot"></span>
+        <span class="notif-dot" id="notifDot" style="display:none"></span>
       </div>
       <div class="icon-btn" id="topbarThemeBtn" title="Chuyển chế độ sáng/tối" onclick="window._toggleDarkMode()">
         <svg id="topbarThemeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888880" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
       </div>
     </div>
   </header>
+
+  <!-- Notification Panel -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-header">
+      <span class="notif-panel-title">Thông báo</span>
+      <button class="notif-mark-all" id="notifMarkAll">Đánh dấu đã đọc</button>
+    </div>
+    <div class="notif-panel-body" id="notifList">
+      <div class="notif-empty">Chưa có thông báo nào</div>
+    </div>
+  </div>
 
   <div class="content">
     <div class="date-row">
@@ -907,7 +948,6 @@
       <div class="list-modal-body" id="dashboardListModalBody"></div>
     </div>
   </div>
-  <div class="toast" id="appToast"></div>
 </div>
 
 <script>
@@ -1133,18 +1173,6 @@ async function apiRequest(path, options = {}) {
   return text ? JSON.parse(text) : null;
 }
 
-function showToast(message) {
-  const toast = document.getElementById('appToast');
-  if (!toast) {
-    alert(message);
-    return;
-  }
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => toast.classList.remove('show'), 2600);
-}
-window.showToast = showToast;
 
 function showConfirm(message, onConfirm) {
   if (window.confirm(message)) onConfirm?.();
@@ -1988,6 +2016,120 @@ setView(initialView).then(() => {
     setTimeout(() => document.getElementById('btnAddBook')?.click(), 80);
   }
 });
+</script>
+
+<!-- Notification Bell System -->
+<script>
+(function () {
+  'use strict';
+  var STORAGE_KEY = 'bh_notifications';
+  var MAX_ITEMS = 30;
+
+  var bellBtn = document.getElementById('notifBellBtn');
+  var panel = document.getElementById('notifPanel');
+  var listEl = document.getElementById('notifList');
+  var markAllBtn = document.getElementById('notifMarkAll');
+  var dot = document.getElementById('notifDot');
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch (e) { return []; }
+  }
+  function save(items) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, MAX_ITEMS)));
+  }
+
+  function timeAgo(ts) {
+    var diff = Math.floor((Date.now() - ts) / 1000);
+    if (diff < 60) return 'Vừa xong';
+    if (diff < 3600) return Math.floor(diff / 60) + ' phút trước';
+    if (diff < 86400) return Math.floor(diff / 3600) + ' giờ trước';
+    return Math.floor(diff / 86400) + ' ngày trước';
+  }
+
+  var typeIcons = {
+    success: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    error: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    info: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+  };
+
+  function render() {
+    var items = load();
+    var unread = items.filter(function (n) { return !n.read; }).length;
+    dot.style.display = unread > 0 ? '' : 'none';
+
+    if (items.length === 0) {
+      listEl.innerHTML = '<div class="notif-empty">Chưa có thông báo nào</div>';
+      return;
+    }
+    listEl.innerHTML = items.map(function (n, i) {
+      var t = n.type || 'info';
+      return '<div class="notif-item' + (n.read ? '' : ' unread') + '" data-idx="' + i + '">'
+        + '<div class="notif-item-icon ' + t + '">' + (typeIcons[t] || typeIcons.info) + '</div>'
+        + '<div class="notif-item-body">'
+        + '<div class="notif-item-msg">' + escHtml(n.message) + '</div>'
+        + '<div class="notif-item-time">' + timeAgo(n.ts) + '</div>'
+        + '</div></div>';
+    }).join('');
+  }
+
+  function escHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  /* Toggle panel */
+  bellBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    panel.classList.toggle('open');
+    if (panel.classList.contains('open')) render();
+  });
+
+  /* Close on outside click */
+  document.addEventListener('click', function (e) {
+    if (!panel.contains(e.target) && e.target !== bellBtn) {
+      panel.classList.remove('open');
+    }
+  });
+
+  /* Mark single as read */
+  listEl.addEventListener('click', function (e) {
+    var item = e.target.closest('.notif-item');
+    if (!item) return;
+    var idx = parseInt(item.getAttribute('data-idx'), 10);
+    var items = load();
+    if (items[idx]) { items[idx].read = true; save(items); render(); }
+  });
+
+  /* Mark all as read */
+  markAllBtn.addEventListener('click', function () {
+    var items = load();
+    items.forEach(function (n) { n.read = true; });
+    save(items);
+    render();
+  });
+
+  /* Public API: addNotification */
+  window.addNotification = function (message, type) {
+    var items = load();
+    items.unshift({ message: message, type: type || 'info', ts: Date.now(), read: false });
+    save(items);
+    render();
+  };
+
+  /* Patch showToast to also push notification */
+  var origShowToast = window.showToast;
+  if (origShowToast) {
+    window.showToast = function (message, type) {
+      origShowToast(message, type);
+      window.addNotification(message, type || 'info');
+    };
+  }
+
+  /* Initial render */
+  render();
+})();
 </script>
 </body>
 </html>
