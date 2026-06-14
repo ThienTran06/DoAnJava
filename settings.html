@@ -345,6 +345,9 @@
 </style>
 <link rel="stylesheet" href="ui-polish.css">
 <script src="js/app-settings.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/user-profile.js"></script>
+<script>(function(){if(localStorage.getItem('darkMode')==='1')document.documentElement.setAttribute('data-theme','dark');})();</script>
 </head>
 <body>
 
@@ -620,34 +623,6 @@
     updateMusicButtonLanguage();
   }
 
-  /* AUTH GUARD + JWT USER INFO ─── */
-  function parseJwtPayload(token) {
-    try {
-      const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-      return JSON.parse(atob(base64));
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function initUser() {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = 'login.html';
-      return;
-    }
-    const payload = parseJwtPayload(token);
-    if (!payload) {
-      window.location.href = 'login.html';
-      return;
-    }
-    const name = payload.sub || payload.username || payload.name || 'Admin';
-    const role = payload.role || payload.roles || payload.vaiTro || 'Nhân viên';
-    document.getElementById('userName').textContent = name;
-    document.getElementById('userRole').textContent = Array.isArray(role) ? role[0] : role;
-    document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
-  }
-
   /* ─── PAGE INIT ─── */
   async function logout() {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -668,7 +643,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    initUser();
     applyTheme(localStorage.getItem('darkMode') === '1');
     restoreMusic();
     restoreLanguage();

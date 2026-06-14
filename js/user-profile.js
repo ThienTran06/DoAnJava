@@ -1,0 +1,268 @@
+/* ============================================================
+   BookHouse – User Profile Module
+   Self-contained IIFE: JWT decode, API fetch with cache,
+   sidebar population, and profile popup modal.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var CACHE_KEY = 'bh_user_profile';
+  var CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+  /* ── JWT Decode ── */
+  function decodeJwt() {
+    var token = localStorage.getItem('token');
+    if (!token) return null;
+    var parts = token.split('.');
+    if (parts.length < 2) return null;
+    try {
+      var base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      var padded = base64 + '===='.slice(base64.length % 4 || 4);
+      var bytes = Uint8Array.from(atob(padded), function (c) { return c.charCodeAt(0); });
+      return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    } catch (e) { return null; }
+  }
+
+  /* ── Cached API Fetch ── */
+  function getCachedProfile() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(CACHE_KEY));
+      if (raw && raw.ts && (Date.now() - raw.ts < CACHE_TTL)) return raw.data;
+    } catch (e) { /* ignore */ }
+    return null;
+  }
+
+  function setCachedProfile(data) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ data: data, ts: Date.now() }));
+    } catch (e) { /* ignore */ }
+  }
+
+  function fetchProfile(userId) {
+    var token = localStorage.getItem('token');
+    var base = window.API_BASE_URL || window.location.origin;
+    return fetch(base + '/api/nguoi-dung/' + userId, {
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }
+    }).then(function (res) {
+      if (!res.ok) throw new Error(res.status);
+      return res.json();
+    });
+  }
+
+  /* ── Sidebar Population ── */
+  function findEl(ids, fallbackSelector) {
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById(ids[i]);
+      if (el) return el;
+    }
+    return fallbackSelector ? document.querySelector(fallbackSelector) : null;
+  }
+
+  function setAvatar(el, profile) {
+    if (!el) return;
+    if (profile.avatar) {
+      el.innerHTML = '<img src="' + escAttr(profile.avatar) + '" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+      var img = el.querySelector('img');
+      if (img) {
+        img.onerror = function () {
+          el.innerHTML = '';
+          el.textContent = getInitial(profile);
+        };
+      }
+    } else {
+      el.textContent = getInitial(profile);
+    }
+  }
+
+  function getInitial(profile) {
+    return String(profile.hoTen || profile.username || 'A').charAt(0).toUpperCase();
+  }
+
+  function escAttr(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function getRoleLabel(profile) {
+    var r = profile.role || profile.nhom?.tenNhom || '';
+    if (typeof r === 'string') return r;
+    if (Array.isArray(r)) return r[0] || '';
+    return '';
+  }
+
+  function populateSidebar(profile) {
+    var avatarEl = findEl(['userAvatar', 'avatar-box'], '.sidebar-footer .avatar');
+    var nameEl = findEl(['userName', 'user-display-name'], '.sidebar-footer .user-name');
+    var roleEl = findEl([], '.sidebar-footer .user-role');
+
+    setAvatar(avatarEl, profile);
+    if (nameEl) nameEl.textContent = profile.hoTen || profile.username || 'Admin';
+    if (roleEl) {
+      var label = getRoleLabel(profile);
+      if (label) roleEl.textContent = label;
+    }
+  }
+
+  /* ── Profile Popup ── */
+  function injectPopupCSS() {
+    if (document.getElementById('bh-profile-css')) return;
+    var style = document.createElement('style');
+    style.id = 'bh-profile-css';
+    style.textContent =
+      '.bh-profile-overlay{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.35);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s ease}' +
+      '.bh-profile-overlay.open{opacity:1}' +
+      '.bh-profile-popup{background:var(--surface,#fff);border-radius:20px;padding:32px 28px 24px;width:380px;max-width:calc(100vw - 32px);box-shadow:0 16px 48px rgba(0,0,0,.18);position:relative;transform:scale(.95);transition:transform .2s ease}' +
+      '.bh-profile-overlay.open .bh-profile-popup{transform:scale(1)}' +
+      '.bh-profile-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border:none;background:var(--bg,#f5f5f0);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text,#1f1f1f);transition:background .15s}' +
+      '.bh-profile-close:hover{background:var(--border,#ddd)}' +
+      '.bh-profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--text,#1f1f1f);color:var(--bg,#fff);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;margin:0 auto 16px;overflow:hidden;border:3px solid var(--border,#e0e0e0)}' +
+      '.bh-profile-avatar img{width:100%;height:100%;object-fit:cover}' +
+      '.bh-profile-name{text-align:center;font-size:18px;font-weight:800;margin-bottom:2px}' +
+      '.bh-profile-role{text-align:center;font-size:12px;color:var(--text-muted,#888);font-weight:500;margin-bottom:20px}' +
+      '.bh-profile-info{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}' +
+      '.bh-profile-row{display:flex;align-items:center;gap:10px;font-size:13px}' +
+      '.bh-profile-row-label{color:var(--text-muted,#888);font-weight:500;min-width:90px;flex-shrink:0}' +
+      '.bh-profile-row-value{font-weight:600;word-break:break-word}' +
+      '.bh-profile-actions{display:flex;gap:8px;justify-content:center}' +
+      '.bh-profile-btn{padding:8px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--border,#ddd);background:var(--surface,#fff);color:var(--text,#1f1f1f);font-family:inherit;transition:background .15s,border-color .15s}' +
+      '.bh-profile-btn:hover{background:var(--bg,#f5f5f0);border-color:var(--text,#1f1f1f)}' +
+      '.bh-profile-btn.primary{background:var(--text,#1f1f1f);color:var(--bg,#fff);border-color:var(--text,#1f1f1f)}' +
+      '.bh-profile-btn.primary:hover{opacity:.88}';
+    document.head.appendChild(style);
+  }
+
+  function showProfilePopup(profile) {
+    injectPopupCSS();
+
+    /* Remove existing overlay if any */
+    var old = document.getElementById('bhProfileOverlay');
+    if (old) old.remove();
+
+    var overlay = document.createElement('div');
+    overlay.className = 'bh-profile-overlay';
+    overlay.id = 'bhProfileOverlay';
+
+    var avatarHtml;
+    if (profile.avatar) {
+      avatarHtml = '<img src="' + escAttr(profile.avatar) + '" alt="Avatar" onerror="this.parentElement.innerHTML=\'' + getInitial(profile) + '\'">';
+    } else {
+      avatarHtml = getInitial(profile);
+    }
+
+    var rows = [];
+    function addRow(label, value) {
+      if (value) rows.push('<div class="bh-profile-row"><span class="bh-profile-row-label">' + label + '</span><span class="bh-profile-row-value">' + escAttr(value) + '</span></div>');
+    }
+    addRow('Tài khoản', profile.username);
+    addRow('Email', profile.email);
+    addRow('SĐT', profile.sdt || profile.SDT);
+    addRow('Địa chỉ', profile.diaChi);
+    addRow('Ca làm việc', profile.caLamViec);
+    if (profile.ngayVaoLam) {
+      try {
+        var d = new Date(profile.ngayVaoLam);
+        addRow('Ngày vào làm', d.toLocaleDateString('vi-VN'));
+      } catch (e) { addRow('Ngày vào làm', profile.ngayVaoLam); }
+    }
+
+    overlay.innerHTML =
+      '<div class="bh-profile-popup">' +
+        '<button class="bh-profile-close" title="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+        '<div class="bh-profile-avatar">' + avatarHtml + '</div>' +
+        '<div class="bh-profile-name">' + escAttr(profile.hoTen || profile.username || 'Admin') + '</div>' +
+        '<div class="bh-profile-role">' + escAttr(getRoleLabel(profile) || 'Nhân viên') + '</div>' +
+        '<div class="bh-profile-info">' + rows.join('') + '</div>' +
+        '<div class="bh-profile-actions">' +
+          '<button class="bh-profile-btn" id="bhProfileCloseBtn">Đóng</button>' +
+          '<button class="bh-profile-btn primary" id="bhProfileSettingsBtn">Cài đặt</button>' +
+        '</div>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+
+    /* Trigger animation */
+    requestAnimationFrame(function () { overlay.classList.add('open'); });
+
+    /* Close handlers */
+    function close() {
+      overlay.classList.remove('open');
+      setTimeout(function () { overlay.remove(); }, 220);
+    }
+
+    overlay.querySelector('.bh-profile-close').addEventListener('click', close);
+    document.getElementById('bhProfileCloseBtn').addEventListener('click', close);
+    document.getElementById('bhProfileSettingsBtn').addEventListener('click', function () {
+      window.location.href = 'settings.html';
+    });
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) close();
+    });
+    document.addEventListener('keydown', function handler(e) {
+      if (e.key === 'Escape') { close(); document.removeEventListener('keydown', handler); }
+    });
+  }
+
+  /* ── Init ── */
+  var _profile = null;
+
+  function init() {
+    var jwt = decodeJwt();
+    if (!jwt || !jwt.id) return;
+
+    /* 1. Try cache first for instant sidebar */
+    var cached = getCachedProfile();
+    if (cached) {
+      _profile = cached;
+      populateSidebar(cached);
+    } else {
+      /* Populate from JWT immediately as fallback */
+      var fallback = {
+        id: jwt.id,
+        username: jwt.sub,
+        hoTen: jwt.hoTen || jwt.name || jwt.sub || 'Admin',
+        role: jwt.role
+      };
+      _profile = fallback;
+      populateSidebar(fallback);
+    }
+
+    /* 2. Fetch fresh data from API in background */
+    fetchProfile(jwt.id).then(function (data) {
+      _profile = data;
+      setCachedProfile(data);
+      populateSidebar(data);
+    }).catch(function () {
+      /* API failed (403, network) — keep JWT/cache data, no error shown */
+    });
+
+    /* 3. Attach click handler to user card */
+    var userCard = document.querySelector('.sidebar-footer .user-card');
+    if (userCard) {
+      userCard.style.cursor = 'pointer';
+      userCard.addEventListener('click', function () {
+        if (_profile) showProfilePopup(_profile);
+      });
+    }
+  }
+
+  /* Expose for external use */
+  window.BookHouseProfile = {
+    getProfile: function () { return _profile; },
+    showPopup: function () { if (_profile) showProfilePopup(_profile); },
+    refresh: function () {
+      var jwt = decodeJwt();
+      if (!jwt || !jwt.id) return;
+      fetchProfile(jwt.id).then(function (data) {
+        _profile = data;
+        setCachedProfile(data);
+        populateSidebar(data);
+      });
+    }
+  };
+
+  /* Run on DOM ready */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
