@@ -443,7 +443,7 @@
 
   <div class="nav-section">
     <div class="nav-label">Quản lý</div>
-    <a class="nav-item active" href="TongQuan.html">
+    <a class="nav-item" data-view="dashboard" href="TongQuan.html">
       
       Tổng quan
     </a>
@@ -491,11 +491,11 @@
 
   <div class="nav-section">
     <div class="nav-label">Báo cáo</div>
-    <a class="nav-item" href="index.html?view=revenue">
+    <a class="nav-item" data-view="revenue" href="index.html?view=revenue">
       
       Doanh thu
     </a>
-    <a class="nav-item" href="index.html?view=inventory">
+    <a class="nav-item" data-view="inventory" href="index.html?view=inventory">
       
       Tồn kho
     </a>
@@ -1167,6 +1167,9 @@ async function loadExternalPage(view) {
 
 async function setView(view) {
   if (!viewTitles[view]) view = 'dashboard';
+  document.querySelectorAll('.sidebar .nav-item.active').forEach(item => {
+    item.classList.remove('active');
+  });
   document.querySelectorAll('[data-view]').forEach(item => {
     item.classList.toggle('active', item.dataset.view === view);
   });
