@@ -105,6 +105,53 @@
     }
   }
 
+  /* ── Avatar Upload (Cloudinary + API) ── */
+  var CLOUD_NAME = 'ddjcg7c8y';
+  var UPLOAD_PRESET = 'ml_default';
+
+  function uploadAvatarToCloudinary(file) {
+    var fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', UPLOAD_PRESET);
+    fd.append('cloud_name', CLOUD_NAME);
+    return fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image/upload', {
+      method: 'POST',
+      body: fd
+    }).then(function (res) {
+      if (!res.ok) throw new Error('Upload thất bại');
+      return res.json();
+    }).then(function (data) {
+      if (!data.secure_url) throw new Error('Không nhận được URL ảnh');
+      return data.secure_url;
+    });
+  }
+
+  function saveAvatarToApi(profile, avatarUrl) {
+    var token = localStorage.getItem('token');
+    var base = window.API_BASE_URL || window.location.origin;
+    var payload = {
+      tenDangNhap: profile.username || profile.tenDangNhap,
+      hoTen: profile.hoTen || profile.username || 'Admin',
+      sdt: profile.sdt || profile.SDT || '0000000000',
+      tenNhom: (profile.nhom && profile.nhom.tenNhom) || profile.role || 'Nhân viên',
+      permissionIds: [],
+      email: profile.email || '',
+      avatar: avatarUrl,
+      caLamViec: profile.caLamViec || '',
+      diaChi: profile.diaChi || '',
+      luongCoBan: profile.luongCoBan || 0,
+      ghiChu: profile.ghiChu || ''
+    };
+    return fetch(base + '/api/nguoi-dung/' + profile.id, {
+      method: 'PUT',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      if (!res.ok) throw new Error('Lưu avatar thất bại (' + res.status + ')');
+      return res.json();
+    });
+  }
+
   /* ── Profile Popup ── */
   function injectPopupCSS() {
     if (document.getElementById('bh-profile-css')) return;
@@ -117,8 +164,15 @@
       '.bh-profile-overlay.open .bh-profile-popup{transform:scale(1)}' +
       '.bh-profile-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border:none;background:var(--bg,#f5f5f0);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text,#1f1f1f);transition:background .15s}' +
       '.bh-profile-close:hover{background:var(--border,#ddd)}' +
-      '.bh-profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--text,#1f1f1f);color:var(--bg,#fff);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;margin:0 auto 16px;overflow:hidden;border:3px solid var(--border,#e0e0e0)}' +
+      '.bh-profile-avatar-wrap{position:relative;width:72px;height:72px;margin:0 auto 16px;cursor:pointer}' +
+      '.bh-profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--text,#1f1f1f);color:var(--bg,#fff);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;overflow:hidden;border:3px solid var(--border,#e0e0e0)}' +
       '.bh-profile-avatar img{width:100%;height:100%;object-fit:cover}' +
+      '.bh-profile-avatar-edit{position:absolute;bottom:0;right:0;width:24px;height:24px;border-radius:50%;background:var(--text,#1f1f1f);color:var(--bg,#fff);display:flex;align-items:center;justify-content:center;border:2px solid var(--surface,#fff);cursor:pointer;transition:transform .15s}' +
+      '.bh-profile-avatar-edit:hover{transform:scale(1.1)}' +
+      '.bh-profile-avatar-wrap.uploading .bh-profile-avatar{opacity:.5}' +
+      '.bh-profile-avatar-wrap.uploading .bh-profile-avatar-edit{display:none}' +
+      '.bh-profile-upload-spinner{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text,#1f1f1f)}' +
+      '.bh-profile-avatar-wrap.uploading .bh-profile-upload-spinner{display:flex}' +
       '.bh-profile-name{text-align:center;font-size:18px;font-weight:800;margin-bottom:2px}' +
       '.bh-profile-role{text-align:center;font-size:12px;color:var(--text-muted,#888);font-weight:500;margin-bottom:20px}' +
       '.bh-profile-info{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}' +
@@ -160,10 +214,17 @@
       } catch (e) { addRow('Ngày vào làm', profile.ngayVaoLam); }
     }
 
+    var cameraSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+
     overlay.innerHTML =
       '<div class="bh-profile-popup">' +
         '<button class="bh-profile-close" title="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
-        '<div class="bh-profile-avatar"></div>' +
+        '<div class="bh-profile-avatar-wrap">' +
+          '<div class="bh-profile-avatar"></div>' +
+          '<div class="bh-profile-avatar-edit" title="Đổi avatar">' + cameraSvg + '</div>' +
+          '<div class="bh-profile-upload-spinner">Đang tải...</div>' +
+        '</div>' +
+        '<input type="file" accept="image/*" style="display:none" class="bh-avatar-file-input">' +
         '<div class="bh-profile-name">' + escAttr(profile.hoTen || profile.username || 'Admin') + '</div>' +
         '<div class="bh-profile-role">' + escAttr(getRoleLabel(profile) || 'Nhân viên') + '</div>' +
         '<div class="bh-profile-info">' + rows.join('') + '</div>' +
@@ -175,18 +236,51 @@
 
     /* Set avatar safely via DOM (no inline handlers) */
     var avatarEl = overlay.querySelector('.bh-profile-avatar');
-    if (profile.avatar) {
-      var img = document.createElement('img');
-      img.src = profile.avatar;
-      img.alt = 'Avatar';
-      img.onerror = function () {
-        avatarEl.innerHTML = '';
-        avatarEl.textContent = getInitial(profile);
-      };
-      avatarEl.appendChild(img);
-    } else {
-      avatarEl.textContent = getInitial(profile);
+    function renderPopupAvatar(p) {
+      avatarEl.innerHTML = '';
+      if (p.avatar) {
+        var img = document.createElement('img');
+        img.src = p.avatar;
+        img.alt = 'Avatar';
+        img.onerror = function () {
+          avatarEl.innerHTML = '';
+          avatarEl.textContent = getInitial(p);
+        };
+        avatarEl.appendChild(img);
+      } else {
+        avatarEl.textContent = getInitial(p);
+      }
     }
+    renderPopupAvatar(profile);
+
+    /* Avatar upload handler */
+    var avatarWrap = overlay.querySelector('.bh-profile-avatar-wrap');
+    var fileInput = overlay.querySelector('.bh-avatar-file-input');
+
+    avatarWrap.addEventListener('click', function () {
+      if (!avatarWrap.classList.contains('uploading')) fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function () {
+      var file = fileInput.files && fileInput.files[0];
+      if (!file) return;
+      avatarWrap.classList.add('uploading');
+
+      uploadAvatarToCloudinary(file).then(function (url) {
+        return saveAvatarToApi(profile, url);
+      }).then(function (updatedProfile) {
+        _profile = updatedProfile;
+        setCachedProfile(updatedProfile);
+        populateSidebar(updatedProfile);
+        profile.avatar = updatedProfile.avatar;
+        renderPopupAvatar(updatedProfile);
+        avatarWrap.classList.remove('uploading');
+        if (window.showToast) window.showToast('Đã cập nhật avatar', 'success');
+      }).catch(function (err) {
+        avatarWrap.classList.remove('uploading');
+        if (window.showToast) window.showToast('Không thể cập nhật avatar: ' + err.message, 'error');
+      });
+    });
 
     document.body.appendChild(overlay);
 
