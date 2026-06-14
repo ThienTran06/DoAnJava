@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
@@ -52,7 +52,7 @@
           display: block;
         }
 
-        /* ─── SIDEBAR (ĐỒNG BỘ 100% VỚI HOA-DON) ─── */
+        /* ─── SIDEBAR ─── */
         .sidebar {
           width: 224px;
           min-width: 224px;
@@ -353,7 +353,8 @@
         }
         .btn-danger-ghost:hover {
           background: var(--red-light);
-        }.btn:disabled {
+        }
+        .btn:disabled {
           opacity: 0.4;
           cursor: not-allowed;
           background: var(--border);
@@ -450,7 +451,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          z-index: 100;
+          z-index: 1100;
           opacity: 0;
           pointer-events: none;
           transition: opacity 0.2s ease;
@@ -574,10 +575,11 @@
         .cart-container {
           display: flex;
           flex-direction: column;
-          height: 530px;
+          flex: 1;
           border: 1.5px solid var(--border);
           border-radius: var(--radius-sm);
           padding: 16px;
+          overflow: hidden;
           background: #fff;
         }
         .cart-items-list {
@@ -683,16 +685,96 @@
           font-weight: 600;
           margin-top: 1px;
         }
+        .print-invoice-wrapper {
+          display: flex;
+          flex-direction: column;
+          background: #fff;
+          color: #1a1a1a;
+          padding: 24px;
+          font-size: 13px;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+        }
+        .print-invoice-header {
+          text-align: center;
+          margin-bottom: 16px;
+        }
+        .print-invoice-header h3 {
+          font-size: 18px;
+          font-weight: 800;
+          margin-bottom: 4px;
+        }
+        .print-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 16px 0;
+        }
+        .print-table th {
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          padding: 8px 4px;
+          border-bottom: 1.5px solid #000;
+          text-align: left;
+        }
+        .print-table td {
+          padding: 10px 4px;
+          border-bottom: 1px dashed var(--border);
+        }
+
+        /* ─── CẤU HÌNH IN CHUYÊN DỤNG CHO PHIẾU NHẬP ─── */
+        @media print {
+          @page {
+            size: 76mm 297mm;
+            margin: 0mm 3mm;
+          }
+          body * {
+            visibility: hidden;
+            background: transparent !important;
+          }
+          #purchasePrintModal,
+          #purchasePrintModal * {
+            visibility: visible;
+          }
+          #purchasePrintModal {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-shadow: none !important;
+            border: none !important;
+            background: #fff !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+          .modal-header,
+          .modal-footer {
+            display: none !important;
+          }
+          .modal-box {
+            box-shadow: none !important;
+            border: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            transform: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          .print-invoice-wrapper {
+            border: none !important;
+            padding: 5px 0mm !important;
+            width: 100% !important;
+          }
+        }
     </style>
-    <link rel="stylesheet" href="ui-polish.css">
-<script src="js/app-settings.js"></script>
+    <link rel="stylesheet" href="ui-polish.css" />
+    <script src="js/app-settings.js"></script>
 </head>
 <body>
 <aside class="sidebar">
     <div class="sidebar-logo">
-        <div class="logo-mark">
-
-        </div>
+        <div class="logo-mark"></div>
         <div>
             <div class="logo-text">BookHouse</div>
             <div class="logo-sub">Tri thức trong tầm tay</div>
@@ -702,28 +784,26 @@
     <div class="nav-section">
         <div class="nav-label">Quản lý</div>
         <div class="nav-item">
-
+            
             Tổng quan
         </div>
         <div class="nav-item">
-
+            
             Sách
         </div>
         <div class="nav-item">
-
-            Danh mục
+            
+            Danh mục 
         </div>
         <div class="nav-item">
-
+            
             Khách hàng
         </div>
-
         <div class="nav-item" onclick="location.href='CSKH.html'">
-            Chăm sóc KH
-        </div>
-
-        <div class="nav-item">
-
+    Chăm sóc KH
+</div>
+<div class="nav-item">
+            
             Nhân viên
         </div>
     </div>
@@ -731,44 +811,31 @@
     <div class="nav-section">
         <div class="nav-label">Nghiệp vụ</div>
         <div class="nav-item" onclick="location.href = 'BanHang.html'">
-
             Bán hàng
         </div>
         <div class="nav-item" onclick="location.href = 'HoaDon.html'">
-
             Hóa đơn
         </div>
         <div class="nav-item" onclick="location.href = 'PhieuGiu.html'">
-
             Đặt giữ sách
         </div>
         <div class="nav-item active" onclick="location.href = 'NhapHang.html'">
-
             Nhập hàng <span class="nav-badge" id="sidebar-order-count">0</span>
         </div>
-        <div class="nav-item" onclick="window.open('danh-gia-cong-cong.html','_blank')">
-            Đánh giá KH
-        </div>
+<div class="nav-item" onclick="window.open('danh-gia-cong-cong.html','_blank')">
+    Đánh giá KH
+</div>
     </div>
 
     <div class="nav-section">
         <div class="nav-label">Báo cáo</div>
-        <div class="nav-item">
-
-            Doanh thu
-        </div>
-        <div class="nav-item">
-
-            Tồn kho
-        </div>
+        <div class="nav-item">Doanh thu</div>
+        <div class="nav-item">Tồn kho</div>
     </div>
 
     <div class="nav-section">
         <div class="nav-label">Hệ thống</div>
-        <div class="nav-item">
-
-            Cài đặt
-        </div>
+        <div class="nav-item">Cài đặt</div>
     </div>
 
     <div class="sidebar-footer">
@@ -814,7 +881,7 @@
 
         <div class="card">
             <div class="card-header-row">
-                <div class="page-title"> Danh sách nhà cung cấp</div>
+                <div class="page-title">Danh sách nhà cung cấp</div>
                 <div class="controls-group">
                     <input
                             type="text"
@@ -823,7 +890,11 @@
                             placeholder="Tìm NCC theo tên, SĐT, địa chỉ..."
                             style="width: 280px"
                     />
-                    <button class="btn" id="btnReloadSuppliers" style="padding: 7px 12px">
+                    <button
+                            class="btn"
+                            id="btnReloadSuppliers"
+                            style="padding: 7px 12px"
+                    >
                         Tải lại
                     </button>
                 </div>
@@ -845,7 +916,7 @@
 
         <div class="card">
             <div class="card-header-row">
-                <div class="page-title"> Quản lý nhập kho (Phiếu Nhập)</div>
+                <div class="page-title">Quản lý nhập kho (Phiếu Nhập)</div>
                 <div class="controls-group">
                     <input
                             type="number"
@@ -857,7 +928,6 @@
                     />
                     <input type="date" class="input-text" id="datePickerInput" />
                     <button class="btn btn-primary" id="btnOpenCreateModal">
-
                         Nhập hàng kho
                     </button>
                 </div>
@@ -912,7 +982,7 @@
 <div class="modal-overlay" id="createOrderModal">
     <div class="modal-box">
         <div class="modal-header">
-            <div class="modal-title"> Lập phiếu nhập kho hàng</div>
+            <div class="modal-title">Lập phiếu nhập kho hàng</div>
             <button
                     class="btn"
                     onclick="closeCreateModal()"
@@ -925,7 +995,7 @@
             <div class="create-grid">
                 <div>
                     <div class="section-card">
-                        <div class="section-title"> Nhà cung cấp đối tác</div>
+                        <div class="section-title">Nhà cung cấp đối tác</div>
                         <div class="space-compact">
                             <input
                                     type="text"
@@ -959,7 +1029,7 @@
                     </div>
 
                     <div class="section-card">
-                        <div class="section-title"> Tìm sách cần nhập kho</div>
+                        <div class="section-title">Tìm sách cần nhập kho</div>
                         <input
                                 type="text"
                                 class="input-text"
@@ -999,12 +1069,16 @@
                                         class="btn"
                                         id="btnPrevBookPage"
                                         style="padding: 2px 6px; font-size: 11px"
-                                >Trước</button>
+                                >
+                                    Trước
+                                </button>
                                 <button
                                         class="btn"
                                         id="btnNextBookPage"
                                         style="padding: 2px 6px; font-size: 11px"
-                                >Sau</button>
+                                >
+                                    Sau
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1012,7 +1086,7 @@
 
                 <div class="cart-container">
                     <div class="section-title" style="color: var(--text)">
-                         Danh sách hàng nhập (<span id="cartCount">0</span>)
+                        Danh sách hàng nhập (<span id="cartCount">0</span>)
                     </div>
                     <div class="cart-items-list" id="cartItemsList">
                         <div
@@ -1063,11 +1137,11 @@
 <div
         class="modal-overlay"
         id="createSupplierModal"
-        style="background: rgba(0, 0, 0, 0.5); z-index: 110"
+        style="background: rgba(0, 0, 0, 0.5); z-index: 1110"
 >
     <div class="modal-box" style="max-width: 450px">
         <div class="modal-header">
-            <div class="modal-title"> Thêm mới Nhà Cung Cấp đối tác</div>
+            <div class="modal-title">Thêm mới Nhà Cung Cấp đối tác</div>
             <button
                     class="btn"
                     onclick="closeCreateSupplierModal()"
@@ -1113,6 +1187,121 @@
             <button class="btn" onclick="closeCreateSupplierModal()">Đóng</button>
             <button class="btn btn-primary" onclick="submitCreateSupplier()">
                 Tạo đối tác
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="purchasePrintModal" style="z-index: 1200">
+    <div class="modal-box" style="max-width: 480px">
+        <div class="modal-header">
+            <div class="modal-title">📄 Kết xuất phiếu nhập kho</div>
+            <button class="btn btn-icon" onclick="closePurchasePrintModal()">
+                ✕
+            </button>
+        </div>
+        <div
+                class="modal-body"
+                style="
+            max-height: 480px;
+            overflow-y: auto;
+            padding: 16px;
+            background: #fdfdfd;
+          "
+        >
+            <div class="print-invoice-wrapper" id="purchasePrintArea">
+                <div class="print-invoice-header">
+                    <h3>BOOKHOUSE SHOP</h3>
+                    <p>Đ/c: Khu phố 6, P. Linh Trung, TP. Thủ Đức</p>
+                    <p>Hotline: 0123.456.789</p>
+                    <p
+                            style="
+                  margin-top: 12px;
+                  font-weight: 800;
+                  font-size: 15px;
+                  border-top: 1px dashed var(--border);
+                  padding-top: 8px;
+                  color: #000;
+                  letter-spacing: 0.5px;
+                "
+                    >
+                        PHIẾU NHẬP KHO HÀNG
+                    </p>
+                </div>
+
+                <div
+                        style="
+                width: 100%;
+                font-size: 12.5px;
+                line-height: 1.6;
+                color: #444;
+                border-bottom: 1px dashed var(--border);
+                padding-bottom: 10px;
+              "
+                >
+                    <div>
+                        <b>Mã Phiếu:</b>
+                        <span id="p-order-id" style="font-weight: 700; color: #000"
+                        >#-----</span
+                        >
+                    </div>
+                    <div>
+                        <b>Thời gian:</b>
+                        <span id="p-order-date">--/--/---- --:--</span>
+                    </div>
+                    <div>
+                        <b>Đối tác NCC:</b> <span id="p-order-supplier">---</span>
+                    </div>
+                    <div>
+                        <b>Nhân viên kho:</b> <span id="p-order-staff">---</span>
+                    </div>
+                </div>
+
+                <table class="print-table">
+                    <thead>
+                    <tr>
+                        <th style="width: 55%">Tên mặt hàng</th>
+                        <th style="width: 15%; text-align: center">SL</th>
+                        <th style="width: 30%; text-align: right">T.Tiền</th>
+                    </tr>
+                    </thead>
+                    <tbody id="p-order-items"></tbody>
+                </table>
+
+                <div
+                        style="
+                width: 100%;
+                text-align: right;
+                font-size: 15px;
+                font-weight: 800;
+                margin-top: 4px;
+                margin-bottom: 4px;
+                color: #000;
+              "
+                >
+                    TỔNG VỐN:
+                    <span id="p-order-total" style="color: var(--red)">0 đ</span>
+                </div>
+
+                <div
+                        style="
+                text-align: center;
+                margin-top: 16px;
+                font-size: 11px;
+                color: #666;
+                font-style: italic;
+                border-top: 1px dashed var(--border);
+                padding-top: 8px;
+              "
+                >
+                    Kiểm kho hoàn tất – Hệ thống tự động cập nhật tồn kho.
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closePurchasePrintModal()">Đóng</button>
+            <button class="btn btn-primary" onclick="window.print()">
+                🖨️ In phiếu nhập (Ctrl+P)
             </button>
         </div>
     </div>
@@ -1182,7 +1371,7 @@
             color: #434343;
           "
         >
-             Danh sách mặt hàng chi tiết
+            Danh sách mặt hàng chi tiết
         </div>
         <div
                 id="drawerProductsList"
@@ -1222,7 +1411,7 @@
 </div>
 
 <script>
-    const API_BASE_URL = window.location.origin;
+    const API_BASE_URL =  window.location.origin;
 
     let purchaseOrders = [];
     let books = [];
@@ -1245,6 +1434,9 @@
     let searchBookQuery = "";
     let supplierTypingTimeout = null;
 
+    const drawerImgPlaceholder =
+      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1MCcgaGVpZ2h0PSc2OCcgdmlld0JveD0nMCAwIDUwIDY4JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
+
     function getAuthHeaders(contentType = "application/json") {
       const token = localStorage.getItem("token");
       const headers = {};
@@ -1253,11 +1445,18 @@
       return headers;
     }
 
-    function getSafeBookImage(src, fallback = "https://via.placeholder.com/50x68") {
+    function getSafeBookImage(
+      src,
+      fallback = "https://via.placeholder.com/50x68",
+    ) {
       const value = String(src || "").trim();
       if (!value) return fallback;
       const lower = value.toLowerCase();
-      if (lower.includes("zalo") || lower.includes("zaloapp") || lower.includes("zalo.me")) {
+      if (
+        lower.includes("zalo") ||
+        lower.includes("zaloapp") ||
+        lower.includes("zalo.me")
+      ) {
         return fallback;
       }
       return value;
@@ -1303,8 +1502,13 @@
       fetchSuppliers();
       fetchThongKe();
       setupEventListeners();
-      if (new URLSearchParams(window.location.search).get("quick") === "create") {
-        setTimeout(() => document.getElementById("btnOpenCreateModal")?.click(), 120);
+      if (
+        new URLSearchParams(window.location.search).get("quick") === "create"
+      ) {
+        setTimeout(
+          () => document.getElementById("btnOpenCreateModal")?.click(),
+          120,
+        );
       }
     });
 
@@ -1464,13 +1668,17 @@
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/nha-cung-cap?page=0&size=100`, {
-          method: "GET",
-          headers: getAuthHeaders(null),
-        });
+        const response = await fetch(
+          `${API_BASE_URL}/api/nha-cung-cap?page=0&size=100`,
+          {
+            method: "GET",
+            headers: getAuthHeaders(null),
+          },
+        );
         if (!response.ok) throw new Error("ERR_SUPPLIERS");
         const pageData = await response.json();
-        suppliers = pageData.content || (Array.isArray(pageData) ? pageData : []);
+        suppliers =
+          pageData.content || (Array.isArray(pageData) ? pageData : []);
       } catch (err) {
         console.error("Lỗi tải danh sách nhà cung cấp:", err);
         suppliers = [];
@@ -1479,18 +1687,20 @@
       renderSuppliersTable();
     }
 
-    function getSupplierPhone(supplier) {
-      return supplier?.sdt || supplier?.SDT || supplier?.phone || "";
+    function getSupplierPhone(s) {
+      return s?.sdt || s?.SDT || s?.phone || "";
     }
 
-    function getSupplierName(supplier) {
-      return supplier?.tenNCC || supplier?.tenNhaCungCap || supplier?.ten || "";
+    function getSupplierName(s) {
+      return s?.tenNCC || s?.tenNhaCungCap || s?.ten || "";
     }
 
     function renderSuppliersTable() {
       const tbody = document.getElementById("supplierTableBody");
       if (!tbody) return;
-      const keyword = (document.getElementById("supplierListSearchInput")?.value || "")
+      const keyword = (
+        document.getElementById("supplierListSearchInput")?.value || ""
+      )
         .trim()
         .toLowerCase();
       const rows = suppliers.filter((s) => {
@@ -1499,7 +1709,9 @@
           getSupplierName(s),
           getSupplierPhone(s),
           s.diaChi || "",
-        ].join(" ").toLowerCase();
+        ]
+          .join(" ")
+          .toLowerCase();
         return !keyword || haystack.includes(keyword);
       });
 
@@ -1508,14 +1720,18 @@
         return;
       }
 
-      tbody.innerHTML = rows.map((s) => `
-        <tr>
-          <td><span class="badge cyan-tag">#NCC${s.id || "N/A"}</span></td>
-          <td><strong>${getSupplierName(s) || "N/A"}</strong></td>
-          <td>${getSupplierPhone(s) || "N/A"}</td>
-          <td style="color:var(--text-muted);">${s.diaChi || "N/A"}</td>
-        </tr>
-      `).join("");
+      tbody.innerHTML = rows
+        .map(
+          (s) => `
+      <tr>
+        <td><span class="badge cyan-tag">#NCC${s.id || "N/A"}</span></td>
+        <td><strong>${getSupplierName(s) || "N/A"}</strong></td>
+        <td>${getSupplierPhone(s) || "N/A"}</td>
+        <td style="color:var(--text-muted);">${s.diaChi || "N/A"}</td>
+      </tr>
+    `,
+        )
+        .join("");
     }
 
     async function fetchPurchaseOrders() {
@@ -1636,7 +1852,7 @@
 
     async function fetchBooks() {
       try {
-        let url = `${API_BASE_URL}/api/sach/page?page=${currentBookPage}&size=${bookPageSize}`;
+        let url = `${API_BASE_URL}/api/sach/page-all?page=${currentBookPage}&size=${bookPageSize}`;
         if (searchBookQuery)
           url += `&keyword=${encodeURIComponent(searchBookQuery)}`;
 
@@ -1711,10 +1927,10 @@
 
       const card = document.getElementById("selectedSupplierCard");
       card.innerHTML = `
-        <div style="font-weight:700; font-size:13.5px; color:var(--text);"> Đã chọn: ${getSupplierName(s) || "N/A"}</div>
-        <div style="font-size:12px; color:var(--text); margin-top:3px;"><b>Số điện thoại:</b> ${getSupplierPhone(s) || "N/A"}</div>
-        <div style="font-size:12px; color:var(--text-muted); margin-top:1px;"><b>Địa chỉ:</b> ${s.diaChi || "N/A"}</div>
-      `;
+      <div style="font-weight:700; font-size:13.5px; color:var(--text);"> Đã chọn: ${getSupplierName(s) || "N/A"}</div>
+      <div style="font-size:12px; color:var(--text); margin-top:3px;"><b>Số điện thoại:</b> ${getSupplierPhone(s) || "N/A"}</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:1px;"><b>Địa chỉ:</b> ${s.diaChi || "N/A"}</div>
+    `;
       card.style.display = "block";
     }
 
@@ -1729,20 +1945,20 @@
 
       books.forEach((b) => {
         const tr = document.createElement("tr");
-        const imgUrl = getSafeBookImage(b.hinhAnh, "https://via.placeholder.com/50x68");
+        const imgUrl = getSafeBookImage(b.hinhAnh, drawerImgPlaceholder);
         tr.innerHTML = `
-          <td>
-            <div style="display:flex; gap:8px; align-items:start;">
-              <img src="${imgUrl}" style="width:38px; height:50px; object-fit:cover; border-radius:4px;" onerror="this.src='https://via.placeholder.com/50x68'">
-              <div>
-                <div style="font-weight:600; line-height:1.2;">${b.tenSach}</div>
-                <div style="color:var(--text-muted); font-size:11px; margin-top:2px;">Tồn kho: ${b.soLuongTon}</div>
-              </div>
+        <td>
+          <div style="display:flex; gap:8px; align-items:start;">
+            <img src="${imgUrl}" style="width:40px; height:54px; object-fit:cover; border-radius:4px;" onerror="this.onerror=null; this.src=drawerImgPlaceholder;">
+            <div>
+              <div style="font-weight:600; line-height:1.2;">${b.tenSach}</div>
+              <div style="color:var(--text-muted); font-size:11px; margin-top:2px;">Tồn kho: ${b.soLuongTon}</div>
             </div>
-          </td>
-          <td style="white-space:nowrap;">${(b.giaBan || 0).toLocaleString()} đ</td>
-          <td style="text-align:right;"><button class="btn" style="padding:4px 8px; font-size:12px; border-color:var(--text); color:var(--text);" onclick="addBookToCart(${b.id})">Chọn</button></td>
-        `;
+          </div>
+        </td>
+        <td style="white-space:nowrap;">${(b.giaBan || 0).toLocaleString()} đ</td>
+        <td style="text-align:right;"><button class="btn" style="padding:4px 8px; font-size:12px; border-color:var(--text); color:var(--text);" onclick="addBookToCart(${b.id})">Chọn</button></td>
+      `;
         tbody.appendChild(tr);
       });
     }
@@ -1767,30 +1983,32 @@
         costSummary += item.giaNhap * item.sl;
         const card = document.createElement("div");
         card.className = "mini-card";
-        const fallbackSrc =
-          getSafeBookImage(item.hinhAnh, "https://via.placeholder.com/50x68");
+        const fallbackSrc = getSafeBookImage(
+          item.hinhAnh,
+          drawerImgPlaceholder,
+        );
 
         card.innerHTML = `
-          <img src="${fallbackSrc}" onerror="this.src='https://via.placeholder.com/50x68'">
-          <div class="mini-card-info">
-            <div class="mini-card-title">${item.tenSach}</div>
-            <div class="input-grid-mini" style="margin-top:4px;">
-              <div>
-                <label>Giá Nhập (đ)</label>
-                <input type="number" class="input-text" min="0" value="${item.giaNhap}"
-                  style="padding:2px 6px; font-size:12px;" onchange="updateCartPrice(${item.id}, this.value)">
-              </div>
-              <div>
-                <label>S.Lượng</label>
-                <input type="number" class="input-text" min="1" value="${item.sl}"
-                  style="padding:2px 6px; font-size:12px;" onchange="updateCartQuantity(${item.id}, this.value)">
-              </div>
+        <img src="${fallbackSrc}" onerror="this.onerror=null; this.src=drawerImgPlaceholder;">
+        <div class="mini-card-info">
+          <div class="mini-card-title">${item.tenSach}</div>
+          <div class="input-grid-mini" style="margin-top:4px;">
+            <div>
+              <label>Giá Nhập (đ)</label>
+              <input type="number" class="input-text" min="0" value="${item.giaNhap}"
+                style="padding:2px 6px; font-size:12px;" onchange="updateCartPrice(${item.id}, this.value)">
             </div>
-            <div style="text-align: right; margin-top: 2px;">
-              <button class="btn btn-danger-ghost" style="padding:0 4px; font-size:11px; border:none; height:auto;" onclick="removeCartItem(${item.id})">Xóa</button>
+            <div>
+              <label>S.Lượng</label>
+              <input type="number" class="input-text" min="1" value="${item.sl}"
+                style="padding:2px 6px; font-size:12px;" onchange="updateCartQuantity(${item.id}, this.value)">
             </div>
           </div>
-        `;
+          <div style="text-align: right; margin-top: 2px;">
+            <button class="btn btn-danger-ghost" style="padding:0 4px; font-size:11px; border:none; height:auto;" onclick="removeCartItem(${item.id})">Xóa</button>
+          </div>
+        </div>
+      `;
         container.appendChild(card);
       });
       totalDisplay.innerText = costSummary.toLocaleString() + " đ";
@@ -1893,6 +2111,7 @@
       }
     }
 
+    // HÀM SUBMIT LẬP PHIẾU NHẬP - SỬA LẠI ĐỂ TỰ ĐỘNG BẬT GIAO DIỆN PREVIEW PHIẾU IN K80 KHI THÀNH CÔNG
     async function submitCreateOrder() {
       if (selectedBooks.length === 0) {
         alert("Chưa lựa chọn mặt hàng nào để tiến hành nhập kho");
@@ -1929,8 +2148,33 @@
           throw new Error(errJson.message || "Lỗi quy trình lưu phiếu");
         }
 
+        const orderResult = await response.json();
+
         alert("Tạo phiếu nhập kho thành công!");
-        closeCreateModal();
+
+        // SỬA: Lấy thông tin đối tác NCC trực tiếp từ DB response trả về
+        const supplierInfo = orderResult.nhaCungCap || selectedSupplier;
+        const staffInfo =
+          orderResult.nhanVien ||
+          orderResult.nhanVienNguoiDung ||
+          currentUser;
+        const finalTotal =
+          orderResult.tongTien || orderResult.tongTienNhap || 0;
+
+        // LƯU BẢN SAO TRƯỚC KHI XÓA STATE GIỎ HÀNG
+        const booksToPrint = [...selectedBooks];
+
+        closeCreateModal(); // Đóng modal lập phiếu nhập ban đầu và xóa state giỏ hàng cũ
+
+        // ĐỒNG BỘ: Truyền trực tiếp dữ liệu NCC từ response của DB để không bị trống khi in
+        openPurchasePrintModal(
+          orderResult,
+          booksToPrint,
+          supplierInfo,
+          staffInfo,
+          finalTotal,
+        );
+
         fetchPurchaseOrders();
         fetchThongKe();
       } catch (err) {
@@ -1940,6 +2184,50 @@
 
     function closeCreateModal() {
       document.getElementById("createOrderModal").classList.remove("open");
+      resetCartState();
+    }
+
+    // SỬA LẠI: Thêm tham số supplier và staff để bind dữ liệu trực tiếp không sợ bị reset dữ liệu
+    function openPurchasePrintModal(
+      order,
+      cartBooks,
+      supplier,
+      staff,
+      finalTotal,
+    ) {
+      document.getElementById("p-order-id").innerText =
+        `#PN${order.id || "N/A"}`;
+      document.getElementById("p-order-date").innerText =
+        new Date().toLocaleString("vi-VN");
+      document.getElementById("p-order-supplier").innerText =
+        getSupplierName(supplier) || "N/A";
+      document.getElementById("p-order-staff").innerText =
+        staff?.hoTen || "Nhân viên kho";
+
+      const tbody = document.getElementById("p-order-items");
+      tbody.innerHTML = "";
+
+      let totalCost = 0;
+      cartBooks.forEach((item) => {
+        const rowCost = item.giaNhap * item.sl;
+        totalCost += rowCost;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.tenSach}</td>
+          <td style="text-align:center;">${item.sl}</td>
+          <td style="text-align:right;">${rowCost.toLocaleString()}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("p-order-total").innerText =
+        finalTotal.toLocaleString() + " đ";
+      document.getElementById("purchasePrintModal").classList.add("open");
+    }
+
+    function closePurchasePrintModal() {
+      document.getElementById("purchasePrintModal").classList.remove("open");
       resetCartState();
     }
 
@@ -1986,39 +2274,37 @@
 
         const bookObj = c.sach || {};
         const name = c.tenSach || bookObj.tenSach || "Sách đối tác";
-        const imageSrc =
-          getSafeBookImage(c.hinhAnh || bookObj.hinhAnh, "https://via.placeholder.com/64x84");
+        const imageSrc = getSafeBookImage(
+          c.hinhAnh || bookObj.hinhAnh,
+          drawerImgPlaceholder,
+        );
         const quantity = c.soLuong || c.soLuongNhap || 0;
         const totalCost = quantity * (c.giaNhap || 0);
 
         card.innerHTML = `
-          <div style="display:flex; gap:12px; align-items:start;">
-            <img src="${imageSrc}" style="width:48px; height:64px; object-fit:cover; border-radius:6px;" onerror="this.src='https://via.placeholder.com/64x84'">
-            <div style="flex:1;">
-              <div style="font-weight:600; font-size:14px; color:var(--text);">${name}</div>
-              <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-top:4px; color:var(--text-muted);">
-                <span>Số lượng nhập: <strong style="color:var(--text);">${quantity}</strong></span>
-                <span>Đơn giá nhập: ${(c.giaNhap || 0).toLocaleString()} đ</span>
-              </div>
-              <div style="height:1px; background:#f0f0f0; margin:6px 0;"></div>
-              <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
-                <span style="color:var(--text-muted);">Tổng chi phí vế này:</span>
-                <span style="font-weight:700; color:var(--text);">${totalCost.toLocaleString()} đ</span>
-              </div>
+        <div style="display:flex; gap:12px; align-items:start;">
+          <img src="${imageSrc}" style="width:48px; height:64px; object-fit:cover; border-radius:6px;" onerror="this.onerror=null; this.src=drawerImgPlaceholder;">
+          <div style="flex:1;">
+            <div style="font-weight:600; font-size:14px; color:var(--text);">${name}</div>
+            <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-top:6px; color:var(--text-muted);">
+              <span>Số lượng nhập: <strong style="color:var(--text);">${quantity}</strong></span>
+              <span>Đơn giá nhập: ${(c.giaNhap || 0).toLocaleString()} đ</span>
+            </div>
+            <div style="height:1px; background:#f0f0f0; margin:6px 0;"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px;">
+              <span style="color:var(--text-muted);">Tổng chi phí vế này:</span>
+              <span style="font-weight:700; color:var(--text);">${totalCost.toLocaleString()} đ</span>
             </div>
           </div>
-        `;
+        </div>
+      `;
         listWrapper.appendChild(card);
       });
 
       document.getElementById("dtTotalAmount").innerText =
         (target.tongTien || 0).toLocaleString() + " đ";
 
-      document.getElementById("drawerFooterAction").innerHTML = `
-        <button class="btn btn-danger-ghost" style="border-radius:6px; font-weight:700;" onclick="triggerDeleteOrder(${target.id}, true)">
-          Xóa phiếu nhập
-        </button>
-      `;
+      document.getElementById("drawerFooterAction").innerHTML = ``;
 
       document.getElementById("detailDrawerOverlay").classList.add("open");
       document.getElementById("detailDrawer").classList.add("open");
@@ -2028,50 +2314,30 @@
       document.getElementById("detailDrawerOverlay").classList.remove("open");
       document.getElementById("detailDrawer").classList.remove("open");
     }
-
-    async function triggerDeleteOrder(id, isFromDrawer = false) {
-      const confirmation = confirm(
-        "Bạn có chắc chắn muốn xóa vĩnh viễn phiếu nhập này khỏi kho dữ liệu? Hệ thống sẽ cập nhật lại số lượng tồn.",
-      );
-      if (!confirmation) return;
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/phieu-nhap/${id}`, {
-          method: "DELETE",
-          headers: getAuthHeaders(null),
-        });
-
-        if (!response.ok) throw new Error("ERR_DELETE");
-
-        alert("Đã xóa phiếu nhập kho thành công");
-        if (isFromDrawer) closeDetailDrawer();
-        fetchPurchaseOrders();
-        fetchThongKe();
-      } catch (err) {
-        console.error(err);
-        alert("Quy trình xóa phiếu nhập kho thất bại");
-      }
-    }
 </script>
 <script>
-  document.querySelectorAll('.sidebar .nav-item').forEach(item => {
-    if (item.getAttribute('onclick')) return;
-    const label = item.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
-    const routes = [
-      ['tổng quan', 'TongQuan.html'],
-      ['sách', 'Sach.html'],
-      ['danh mục', 'DanhMuc.html'],
-      ['khách hàng', 'KhachHang.html'],
-      ['chăm sóc', 'CSKH.html'],
-      ['nhân viên', 'NhanVien.html'],
-      ['doanh thu', 'index.html?view=revenue'],
-      ['tồn kho', 'index.html?view=inventory'],
-      ['cài đặt', 'settings.html'],
-    ];
-    const route = routes.find(([key]) => label.includes(key));
-    if (!route) return;
-    item.addEventListener('click', () => { location.href = route[1]; });
-  });
+    document.querySelectorAll(".sidebar .nav-item").forEach((item) => {
+      if (item.getAttribute("onclick")) return;
+      const label = item.textContent
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+      const routes = [
+        ["tổng quan", "index.html?view=dashboard"],
+        ["sách", "index.html?view=books"],
+        ["danh mục", "index.html?view=categories"],
+        ["khách hàng", "index.html?view=customers"],
+        ["nhân viên", "index.html?view=staff"],
+        ["doanh thu", "index.html?view=revenue"],
+        ["tồn kho", "index.html?view=inventory"],
+        ["cài đặt", "settings.html"],
+      ];
+      const sidebarRoute = routes.find(([key]) => label.includes(key));
+      if (!sidebarRoute) return;
+      item.addEventListener("click", () => {
+        location.href = sidebarRoute[1];
+      });
+    });
 </script>
 </body>
 </html>

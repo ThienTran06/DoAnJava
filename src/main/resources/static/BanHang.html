@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
@@ -124,9 +124,6 @@
           color: #f6f7ed;
           font-weight: 600;
         }
-        .nav-item.active svg {
-          stroke: #f6f7ed !important;
-        }
         .nav-badge {
           margin-left: auto;
           background: var(--text);
@@ -135,14 +132,6 @@
           font-weight: 700;
           padding: 1px 6px;
           border-radius: 20px;
-        }
-        .nav-item.active .nav-badge {
-          background: rgba(255, 255, 255, 0.25);
-        }
-        .nav-arrow {
-          margin-left: auto;
-          font-size: 11px;
-          opacity: 0.35;
         }
 
         .sidebar-footer {
@@ -184,7 +173,7 @@
           font-weight: 400;
         }
 
-        /* ─── MAIN LAYOUT & TRÀN MÀN HÌNH ─── */
+        /* ─── MAIN LAYOUT ─── */
         .main {
           flex: 1;
           overflow-y: auto;
@@ -318,6 +307,15 @@
           background: #333;
           color: #fff;
         }
+        .btn-success {
+          background: var(--green);
+          border-color: var(--green);
+          color: #fff;
+        }
+        .btn-success:hover {
+          background: #2d6135;
+          border-color: #2d6135;
+        }
         .btn-danger-ghost {
           border-color: var(--red);
           color: var(--red);
@@ -325,12 +323,20 @@
         }
         .btn-danger-ghost:hover {
           background: var(--red-light);
-        }.btn:disabled {
+        }
+        .btn-icon {
+          width: 32px;
+          height: 32px;
+          padding: 0;
+          justify-content: center;
+          border-radius: 50%;
+        }
+        .btn:disabled {
           opacity: 0.4;
           cursor: not-allowed;
-          background: var(--border);
-          color: var(--text-subtle);
-          border-color: var(--border);
+          background: var(--border) !important;
+          color: var(--text-subtle) !important;
+          border-color: var(--border) !important;
         }
 
         /* ─── TABLES ─── */
@@ -516,24 +522,211 @@
         .form-item input {
           width: 100%;
         }
+
+        /* ─── THANH TOÁN TIỀN MẶT & QR CODE ─── */
+        .payment-methods-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          margin-bottom: 14px;
+        }
+        .method-box {
+          border: 1.5px solid var(--border);
+          border-radius: 8px;
+          padding: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          font-weight: 700;
+          cursor: pointer;
+          user-select: none;
+          transition: all 0.15s;
+          color: var(--text-muted);
+        }
+        .method-box:hover {
+          background: var(--bg);
+        }
+        .method-box.active {
+          border-color: var(--text);
+          background: var(--text);
+          color: white;
+        }
+        .qr-status-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(255, 255, 255, 0.92);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          font-weight: bold;
+        }
+        .spinner {
+          width: 32px;
+          height: 32px;
+          border: 3px solid #ccc;
+          border-top-color: var(--text);
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        /* ─── CHI TIẾT ĐỊNH DẠNG FORM HÓA ĐƠN ĐẸP LÊN ─── */
+        .print-invoice-wrapper {
+          display: flex;
+          flex-direction: column;
+          background: #fff;
+          color: #1a1a1a;
+          padding: 24px;
+          font-family: "DM Sans", sans-serif;
+          font-size: 13px;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.02);
+        }
+        .print-invoice-header {
+          text-align: center;
+          margin-bottom: 16px;
+          width: 100%;
+        }
+        .print-invoice-header h3 {
+          margin-bottom: 4px;
+          font-size: 18px;
+          font-weight: 800;
+          letter-spacing: -0.5px;
+          color: #000;
+        }
+        .print-invoice-header p {
+          color: #666;
+          font-size: 12px;
+          line-height: 1.4;
+        }
+        .print-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 16px 0;
+        }
+        .print-table th {
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: #777;
+          padding: 8px 4px;
+          border-bottom: 1.5px solid #000;
+        }
+        .print-table td {
+          padding: 10px 4px;
+          font-size: 13px;
+          border-bottom: 1px dashed var(--border);
+          color: #333;
+        }
+        .print-table tr:last-child td {
+          border-bottom: 1px solid #000;
+        }
+        .print-qr-zone {
+          text-align: center;
+          margin-top: 14px;
+          padding: 12px;
+          border: 1px dashed var(--border);
+          border-radius: 8px;
+          width: 100%;
+          position: relative;
+          min-height: 180px;
+          background: #fafafa;
+        }
+        .print-qr-img {
+          width: 140px;
+          height: 140px;
+          margin: 8px auto;
+          display: block;
+          border-radius: 6px;
+        }
+
+        /* ─── CẤU HÌNH IN CHUYÊN DỤNG CHO MÁY IN NHIỆT K80 ─── */
+        @media print {
+          @page {
+            size: 76mm 297mm;
+            margin: 0mm 3mm;
+          }
+          body * {
+            visibility: hidden;
+            background: transparent !important;
+          }
+          #invoicePrintModal,
+          #invoicePrintModal * {
+            visibility: visible;
+          }
+          #invoicePrintModal {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-shadow: none !important;
+            border: none !important;
+            background: #fff !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+          .modal-header,
+          .modal-footer,
+          .payment-toggle-zone {
+            display: none !important;
+          }
+          .modal-box {
+            box-shadow: none !important;
+            border: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            transform: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          .print-invoice-wrapper {
+            border: none !important;
+            box-shadow: none !important;
+            padding: 5px 0mm !important;
+            width: 100% !important;
+          }
+          .print-table th {
+            border-bottom: 1.5px solid #000 !important;
+          }
+          .print-table td {
+            border-bottom: 1px dashed #000 !important;
+          }
+          .print-qr-zone,
+          #p-qr-area,
+          .print-qr-zone * {
+            display: none !important;
+            height: 0 !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+        }
     </style>
-    <link rel="stylesheet" href="ui-polish.css">
-<script src="js/app-settings.js"></script>
+    <link rel="stylesheet" href="ui-polish.css" />
+    <script src="js/app-settings.js"></script>
 </head>
 <body>
-<!-- SIDEBAR ĐỒNG BỘ CHUẨN ĐẦY ĐỦ 100% -->
 <aside class="sidebar">
     <div class="sidebar-logo">
-        <div class="logo-mark">
-            
-        </div>
+        <div class="logo-mark"></div>
         <div>
             <div class="logo-text">BookHouse</div>
             <div class="logo-sub">Tri thức trong tầm tay</div>
         </div>
     </div>
 
-    <!-- Nhóm 1: Quản lý -->
     <div class="nav-section">
         <div class="nav-label">Quản lý</div>
         <div class="nav-item">
@@ -552,62 +745,43 @@
             
             Khách hàng
         </div>
-
         <div class="nav-item" onclick="location.href='CSKH.html'">
-            Chăm sóc KH
-        </div>
-
-        <div class="nav-item">
+    Chăm sóc KH
+</div>
+<div class="nav-item">
             
             Nhân viên
         </div>
     </div>
 
-    <!-- Nhóm 2: Nghiệp vụ -->
     <div class="nav-section">
         <div class="nav-label">Nghiệp vụ</div>
         <div class="nav-item active" onclick="location.href = 'BanHang.html'">
-            
             Bán hàng
         </div>
         <div class="nav-item" onclick="location.href = 'HoaDon.html'">
-            
             Hóa đơn <span class="nav-badge" id="sidebar-invoice-count">0</span>
         </div>
         <div class="nav-item" onclick="location.href = 'PhieuGiu.html'">
-            
             Đặt giữ sách
         </div>
         <div class="nav-item" onclick="location.href = 'NhapHang.html'">
-            
             Nhập hàng
         </div>
-
-        <div class="nav-item" onclick="window.open('danh-gia-cong-cong.html','_blank')">
-            Đánh giá KH
-        </div>
+<div class="nav-item" onclick="window.open('danh-gia-cong-cong.html','_blank')">
+    Đánh giá KH
+</div>
     </div>
 
-    <!-- Nhóm 3: Báo cáo -->
     <div class="nav-section">
         <div class="nav-label">Báo cáo</div>
-        <div class="nav-item">
-            
-            Doanh thu
-        </div>
-        <div class="nav-item">
-            
-            Tồn kho
-        </div>
+        <div class="nav-item">Doanh thu</div>
+        <div class="nav-item">Tồn kho</div>
     </div>
 
-    <!-- Nhóm 4: Hệ thống (ĐÃ BỔ SUNG ĐẦY ĐỦ) -->
     <div class="nav-section">
         <div class="nav-label">Hệ thống</div>
-        <div class="nav-item">
-            
-            Cài đặt
-        </div>
+        <div class="nav-item">Cài đặt</div>
     </div>
 
     <div class="sidebar-footer">
@@ -725,12 +899,16 @@
                                     class="btn"
                                     id="btnPrevBookPage"
                                     style="padding: 2px 6px; font-size: 11px"
-                            >Trước</button>
+                            >
+                                Trước
+                            </button>
                             <button
                                     class="btn"
                                     id="btnNextBookPage"
                                     style="padding: 2px 6px; font-size: 11px"
-                            >Sau</button>
+                            >
+                                Sau
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -739,7 +917,7 @@
             <div class="card" style="padding: 16px">
                 <div class="cart-container">
                     <div class="section-title">
-                         Giỏ hàng lập đơn (<span id="cartCount">0</span>)
+                        Giỏ hàng lập đơn (<span id="cartCount">0</span>)
                     </div>
                     <div class="cart-items-list" id="cartItemsList">
                         <div
@@ -778,7 +956,7 @@
                                 onclick="submitCreateInvoice()"
                                 id="btnSubmitInvoice"
                         >
-                              XÁC NHẬN LẬP HÓA ĐƠN
+                            XÁC NHẬN LẬP HÓA ĐƠN
                         </button>
                     </div>
                 </div>
@@ -787,11 +965,10 @@
     </div>
 </div>
 
-<!-- MODAL KHÁCH HÀNG -->
 <div class="modal-overlay" id="createCustomerModal">
     <div class="modal-box">
         <div class="modal-header">
-            <div class="modal-title"> Tạo tài khoản khách hàng mới</div>
+            <div class="modal-title">Tạo tài khoản khách hàng mới</div>
             <button
                     class="btn"
                     onclick="closeCreateCustomerModal()"
@@ -825,8 +1002,214 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="invoicePrintModal">
+    <div class="modal-box" style="max-width: 480px">
+        <div class="modal-header">
+            <div class="modal-title" id="p-modal-title">
+                📄 Xem trước phiếu in hóa đơn
+            </div>
+            <button
+                    class="btn btn-icon"
+                    id="btnCloseInvoiceModal"
+                    onclick="closeInvoicePrintModal()"
+            >
+                ✕
+            </button>
+        </div>
+        <div
+                class="modal-body"
+                style="
+            max-height: 480px;
+            overflow-y: auto;
+            padding: 16px;
+            background: #fdfdfd;
+          "
+        >
+            <div
+                    class="payment-toggle-zone"
+                    id="paymentToggleZone"
+                    style="margin-bottom: 14px"
+            >
+                <div
+                        style="
+                font-size: 12.5px;
+                font-weight: 700;
+                margin-bottom: 6px;
+                color: #555;
+              "
+                >
+                    💵 Hình thức thanh toán:
+                </div>
+                <div class="payment-methods-grid">
+                    <div
+                            class="method-box active"
+                            id="method-cash"
+                            onclick="switchPaymentMethod('TIEN_MAT')"
+                    >
+                        💵 Tiền mặt
+                    </div>
+                    <div
+                            class="method-box"
+                            id="method-qrcode"
+                            onclick="switchPaymentMethod('QUET_MA')"
+                    >
+                        📸 Quét mã QR
+                    </div>
+                </div>
+            </div>
+
+            <div class="print-invoice-wrapper" id="printArea">
+                <div class="print-invoice-header">
+                    <h3>BOOKHOUSE SHOP</h3>
+                    <p>Đ/c: Khu phố 6, P. Linh Trung, TP. Thủ Đức</p>
+                    <p>Hotline: 0123.456.789</p>
+                    <p
+                            style="
+                  margin-top: 12px;
+                  font-weight: 800;
+                  font-size: 15px;
+                  border-top: 1px dashed var(--border);
+                  padding-top: 8px;
+                  color: #000;
+                  letter-spacing: 0.5px;
+                "
+                            id="p-invoice-title-type"
+                    >
+                        HÓA ĐƠN BÁN LẺ
+                    </p>
+                </div>
+
+                <div
+                        style="
+                width: 100%;
+                font-size: 12.5px;
+                line-height: 1.6;
+                color: #444;
+                border-bottom: 1px dashed var(--border);
+                padding-bottom: 10px;
+              "
+                >
+                    <div>
+                        <b>Mã HĐ:</b>
+                        <span id="p-invoice-id" style="font-weight: 700; color: #000"
+                        >#-----</span
+                        >
+                    </div>
+                    <div>
+                        <b>Ngày lập:</b>
+                        <span id="p-invoice-date">--/--/---- --:--</span>
+                    </div>
+                    <div>
+                        <b>Khách hàng:</b> <span id="p-invoice-customer">Khách lẻ</span>
+                    </div>
+                    <div><b>Nhân viên :</b> <span id="p-order-staff">---</span></div>
+                    <div>
+                        <b>Hình thức:</b>
+                        <span id="p-invoice-method" style="font-weight: 600"
+                        >Tiền mặt</span
+                        >
+                    </div>
+                </div>
+
+                <table class="print-table">
+                    <thead>
+                    <tr>
+                        <th style="width: 60%">Tên sách</th>
+                        <th style="width: 15%; text-align: center">SL</th>
+                        <th style="width: 25%; text-align: right">T.Tiền</th>
+                    </tr>
+                    </thead>
+                    <tbody id="p-invoice-items"></tbody>
+                </table>
+
+                <div
+                        style="
+                width: 100%;
+                text-align: right;
+                font-size: 15px;
+                font-weight: 800;
+                margin-top: 4px;
+                margin-bottom: 4px;
+                color: #000;
+              "
+                >
+                    TỔNG CỘNG:
+                    <span id="p-invoice-total" style="color: var(--red)">0 đ</span>
+                </div>
+
+                <div class="print-qr-zone" id="p-qr-area" style="display: none">
+                    <p style="font-weight: 700; font-size: 11px; color: var(--text)">
+                        QUÉT MÃ QR QUA APP NGÂN HÀNG
+                    </p>
+                    <img
+                            src=""
+                            id="p-invoice-qr"
+                            class="print-qr-img"
+                            alt="VietQR Code"
+                    />
+                    <p
+                            style="
+                  font-size: 11px;
+                  color: var(--text-muted);
+                  line-height: 1.4;
+                  padding: 0 10px;
+                "
+                    >
+                        Hệ thống tự động đồng bộ hóa đơn ngay khi nhận được tiền.
+                    </p>
+
+                    <div class="qr-status-overlay" id="qrStatusOverlay">
+                        <div class="spinner"></div>
+                        <div
+                                id="countdownText"
+                                style="
+                    font-size: 12px;
+                    color: var(--text);
+                    padding: 0 15px;
+                    text-align: center;
+                  "
+                        >
+                            Đang kiểm tra biến động số dư tài khoản...
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                        style="
+                text-align: center;
+                margin-top: 16px;
+                font-size: 12px;
+                color: #666;
+                font-style: italic;
+              "
+                >
+                    Cảm ơn quý khách. Hẹn gặp lại!
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button
+                    class="btn btn-success"
+                    id="btnConfirmCashPay"
+                    onclick="executeConfirmCashPay()"
+                    style="border-radius: 6px; font-weight: 700"
+            >
+                ✓ Xác nhận đã thu tiền mặt
+            </button>
+            <button
+                    class="btn btn-primary"
+                    id="btnExecutePrint"
+                    onclick="executePrint()"
+                    style="gap: 8px"
+            >
+                🖨️ In hóa đơn (Ctrl+P)
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
-    const API_BASE_URL = window.location.origin;
+    const API_BASE_URL =  window.location.origin;
     let books = [];
     let selectedCartItems = [];
     let selectedCustomer = null;
@@ -838,16 +1221,27 @@
     let searchBookQuery = "";
     let customerTypingTimeout = null;
 
+    let currentPaymentMethod = "TIEN_MAT";
+    let paymentCheckInterval = null;
+    let activeInvoiceId = null;
+
+    let isInvoiceFromReservation = false;
+    let activeInvoiceObjectCache = null;
+
     const imgPlaceholder =
-      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='54' viewBox='0 0 40 54' style='background:%23eee;'><text x='50%' y='50%' font-size='9' font-family='sans-serif' fill='%23999' dominant-baseline='middle' text-anchor='middle'>No Image</text></svg>";
+      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc1NCcgdmlld0JveD0nMCAwIDQwIDU0JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
     const cartPlaceholder =
-      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='68' viewBox='0 0 50 68' style='background:%23eee;'><text x='50%' y='50%' font-size='9' font-family='sans-serif' fill='%23999' dominant-baseline='middle' text-anchor='middle'>No Image</text></svg>";
+      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1MCcgaGVpZ2h0PSc2OCcgdmlld0JveD0nMCAwIDUwIDY4JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
 
     function getSafeBookImage(src, fallback = imgPlaceholder) {
       const value = String(src || "").trim();
       if (!value) return fallback;
       const lower = value.toLowerCase();
-      if (lower.includes("zalo") || lower.includes("zaloapp") || lower.includes("zalo.me")) {
+      if (
+        lower.includes("zalo") ||
+        lower.includes("zaloapp") ||
+        lower.includes("zalo.me")
+      ) {
         return fallback;
       }
       return value;
@@ -894,24 +1288,207 @@
       };
     }
 
+    function loadCurrentUser() {
+      const user = getStoredCurrentUser();
+      currentUser = user;
+      if (user) {
+        const nameBox = document.getElementById("user-display-name");
+        const avatarBox = document.getElementById("avatar-box");
+        if (nameBox)
+          nameBox.innerText = user.hoTen || user.username || "Admin";
+        if (avatarBox)
+          avatarBox.innerText = String(user.hoTen || user.username || "A")
+            .charAt(0)
+            .toUpperCase();
+      }
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
       loadCurrentUser();
       fetchBooks();
       fetchSidebarInvoiceCount();
       setupEventListeners();
+      checkFromReservationFlow();
     });
 
-    function loadCurrentUser() {
-      const user = getStoredCurrentUser();
-      currentUser = user;
-      if (user) {
-        document.getElementById("user-display-name").innerText =
-          user.hoTen || user.username || "Admin";
-        document.getElementById("avatar-box").innerText = String(
-          user.hoTen || user.username || "A",
-        )
-          .charAt(0)
-          .toUpperCase();
+    function checkFromReservationFlow() {
+      const savedInvoiceData = localStorage.getItem("RESERVATION_INVOICE");
+      if (!savedInvoiceData) return;
+
+      try {
+        const invoice = JSON.parse(savedInvoiceData);
+        console.log("Đồng bộ dữ liệu hóa đơn từ đặt giữ sách:", invoice);
+        activeInvoiceId = invoice.id;
+        activeInvoiceObjectCache = invoice;
+
+        isInvoiceFromReservation = true;
+
+        const mockCartItems = (invoice.danhSachChiTiet || []).map((ct) => ({
+          id: ct.sach?.id || ct.sachID,
+          tenSach: ct.tenSach || "Sách",
+          gia: ct.donGia,
+          sl: ct.soLuong,
+        }));
+
+        if (invoice.khachHang) {
+          selectCustomer(invoice.khachHang);
+        } else if (invoice.tenKhachHang) {
+          document.getElementById("customerSearchInput").value =
+            invoice.tenKhachHang;
+        }
+
+        openInvoicePrintModal(invoice, mockCartItems);
+      } catch (e) {
+        console.error("Lỗi đồng bộ dữ liệu hóa đơn tĩnh:", e);
+      } finally {
+        localStorage.removeItem("RESERVATION_INVOICE");
+      }
+    }
+
+    function switchPaymentMethod(method) {
+      currentPaymentMethod = method;
+      document
+        .getElementById("method-cash")
+        .classList.toggle("active", method === "TIEN_MAT");
+      document
+        .getElementById("method-qrcode")
+        .classList.toggle("active", method === "QUET_MA");
+
+      const qrArea = document.getElementById("p-qr-area");
+      const overlay = document.getElementById("qrStatusOverlay");
+      const qrImage = document.getElementById("p-invoice-qr");
+      const btnCashConfirm = document.getElementById("btnConfirmCashPay");
+      const btnPrint = document.getElementById("btnExecutePrint");
+      const btnCloseModal = document.getElementById("btnCloseInvoiceModal");
+
+      if (method === "TIEN_MAT") {
+        document.getElementById("p-modal-title").innerText =
+          "🎉 CHỜ XÁC NHẬN THU TIỀN MẶT";
+        document.getElementById("p-invoice-title-type").innerText =
+          "PHIẾU TẠM TÍNH (CHỜ THANH TOÁN)";
+        document.getElementById("p-invoice-method").innerText = "Tiền mặt";
+        qrArea.style.display = "none";
+        btnCashConfirm.style.display = "inline-flex";
+
+        btnCloseModal.disabled = true;
+        btnPrint.disabled = true;
+
+        if (paymentCheckInterval) {
+          clearInterval(paymentCheckInterval);
+          paymentCheckInterval = null;
+        }
+      } else {
+        document.getElementById("p-modal-title").innerText =
+          "⏳ Chờ khách quét mã QR...";
+        document.getElementById("p-invoice-title-type").innerText =
+          "PHIẾU TẠM TÍNH (CHỜ THANH TOÁN)";
+        document.getElementById("p-invoice-method").innerText =
+          "Chuyển khoản (VietQR)";
+        qrArea.style.display = "block";
+        btnCashConfirm.style.display = "none";
+        overlay.style.display = "flex";
+        document.getElementById("countdownText").innerText =
+          "Đang tải mã QR thanh toán...";
+
+        qrImage.onload = function () {
+          overlay.style.display = "none";
+        };
+
+        const totalMoney = activeInvoiceObjectCache
+          ? activeInvoiceObjectCache.tongTien || 0
+          : 0;
+
+        qrImage.src = `https://img.vietqr.io/image/MB-0393107717-compact2.png?amount=${totalMoney}&addInfo=Thanh%20toan%20HD${activeInvoiceId}`;
+
+        btnCloseModal.disabled = true;
+        btnPrint.disabled = true;
+
+        startQrCheckPolling(activeInvoiceId);
+      }
+    }
+
+    function startQrCheckPolling(invoiceId) {
+      if (paymentCheckInterval) clearInterval(paymentCheckInterval);
+      paymentCheckInterval = setInterval(async () => {
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/api/hoa-don/${invoiceId}`,
+            {
+              method: "GET",
+              headers: getAuthHeaders(null),
+            },
+          );
+          const currentStatusData = await response.json();
+          if (
+            currentStatusData.trangThai === "PAID" ||
+            currentStatusData.trangThai === "HOAN_THANH"
+          ) {
+            clearInterval(paymentCheckInterval);
+            paymentCheckInterval = null;
+
+            document.getElementById("p-modal-title").innerText =
+              "🎉 QUÉT MÃ QR THÀNH CÔNG!";
+            document.getElementById("p-invoice-title-type").innerText =
+              "HÓA ĐƠN BÁN LẺ";
+            document.getElementById("p-invoice-method").innerText =
+              "Chuyển khoản (Đã thanh toán)";
+            document.getElementById("paymentToggleZone").style.display =
+              "none";
+
+            // Đổi nhẹ lại câu thông báo cho hợp lý vì không tự in nữa
+            document.getElementById("qrStatusOverlay").style.display = "flex";
+            document.getElementById("countdownText").innerText =
+              "Thanh toán hoàn tất! Vui lòng nhấn nút in hóa đơn.";
+
+            // Mở khóa nút In và nút Đóng
+            document.getElementById("btnCloseInvoiceModal").disabled = false;
+            document.getElementById("btnExecutePrint").disabled = false;
+
+            // Ẩn lớp overlay loading đi để lộ diện form phiếu in
+            setTimeout(() => {
+              document.getElementById("qrStatusOverlay").style.display =
+                "none";
+            }, 1000);
+          }
+        } catch (err) {
+          console.log("Hệ thống đang kiểm tra biến động số dư...");
+        }
+      }, 2000);
+    }
+
+    async function executeConfirmCashPay() {
+      if (!confirm("Xác nhận bạn đã thu đủ tiền mặt của khách hàng?")) return;
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/hoa-don/${activeInvoiceId}/thanh-toan-tien-mat`,
+          {
+            method: "PUT",
+            headers: getAuthHeaders(null),
+          },
+        );
+        if (!response.ok)
+          throw new Error(
+            "Cập nhật trạng thái thanh toán tiền mặt thất bại.",
+          );
+
+        document.getElementById("p-modal-title").innerText =
+          "🎉 ĐÃ THU TIỀN MẶT THÀNH CÔNG!";
+        document.getElementById("p-invoice-title-type").innerText =
+          "HÓA ĐƠN BÁN LẺ";
+        document.getElementById("p-invoice-method").innerText =
+          "Tiền mặt (Đã thanh toán)";
+
+        document.getElementById("paymentToggleZone").style.display = "none";
+        document.getElementById("btnConfirmCashPay").style.display = "none";
+
+        document.getElementById("btnCloseInvoiceModal").disabled = false;
+        document.getElementById("btnExecutePrint").disabled = false;
+
+        alert(
+          "Hóa đơn chuyển sang trạng thái ĐÃ THANH TOÁN (Tiền mặt). Hãy nhấn nút In hóa đơn!",
+        );
+      } catch (err) {
+        alert("Lỗi: " + err.message);
       }
     }
 
@@ -927,9 +1504,7 @@
         const pageData = await response.json();
         const countBadge = document.getElementById("sidebar-invoice-count");
         if (countBadge) countBadge.innerText = pageData.totalElements || 0;
-      } catch (err) {
-        console.warn("Lỗi đồng bộ badge số lượng hóa đơn:", err);
-      }
+      } catch (err) {}
     }
 
     function setupEventListeners() {
@@ -1021,7 +1596,7 @@
       }
       books.forEach((b) => {
         const tr = document.createElement("tr");
-        const imgUrl = getSafeBookImage(b.hinhAnh);
+        const imgUrl = b.hinhAnh || imgPlaceholder;
         tr.innerHTML = `
           <td>
             <div style="display:flex; gap:8px; align-items:start;">
@@ -1077,7 +1652,7 @@
       document.getElementById("customerSuggestions").style.display = "none";
       const card = document.getElementById("selectedCustomerCard");
       card.innerHTML = `
-        <div style="font-weight:700; font-size:13.5px;"> Đã chọn: ${kh.hoTen}</div>
+        <div style="font-weight:700; font-size:13.5px;">📋 Đã chọn: ${kh.hoTen}</div>
         <div style="margin: 4px 0;"><span class="badge id-tag">KH#${kh.id}</span></div>
         <div style="font-size:12px; color:var(--text-muted)">SĐT: ${kh.sdt || kh.soDienThoai || "N/A"} | Email: ${kh.email || "N/A"}</div>
       `;
@@ -1221,38 +1796,109 @@
           body: JSON.stringify(payload),
         });
         if (!response.ok) throw new Error("Hệ thống gặp lỗi khi tạo hóa đơn");
-        alert("Tạo hóa đơn bán hàng thành công!");
-        selectedCartItems = [];
-        selectedCustomer = null;
-        document.getElementById("customerSearchInput").value = "";
-        document.getElementById("selectedCustomerCard").style.display =
-          "none";
-        renderCartItems();
-        fetchSidebarInvoiceCount();
+
+        const invoiceResult = await response.json();
+        activeInvoiceId = invoiceResult.id;
+        isInvoiceFromReservation = false;
+        activeInvoiceObjectCache = invoiceResult;
+        console.log("Dữ liệu Hóa đơn từ Server:", invoiceResult);
+        openInvoicePrintModal(invoiceResult, selectedCartItems);
       } catch (err) {
         alert(err.message);
       }
     }
+
+    function openInvoicePrintModal(invoice, cartItems) {
+      // ĐỒNG BỘ TỔNG TIỀN: Lấy chuẩn xác từ dữ liệu Server
+      let totalAmount = invoice.tongTien || invoice.tongGiaTri || 0;
+      const tbody = document.getElementById("p-invoice-items");
+      tbody.innerHTML = "";
+
+      cartItems.forEach((item) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.tenSach}</td>
+          <td style="text-align:center;">${item.sl}</td>
+          <td style="text-align:right;">${(item.gia * item.sl).toLocaleString()}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("p-invoice-id").innerText = `#HD${invoice.id}`;
+      document.getElementById("p-invoice-date").innerText =
+        new Date().toLocaleString("vi-VN");
+      document.getElementById("p-invoice-total").innerText =
+        totalAmount.toLocaleString() + " đ";
+
+      // ĐỒNG BỘ KHÁCH HÀNG: Trích xuất tên khách hàng hiển thị lên phiếu in nhiệt
+      const customerName =
+        invoice.khachHang?.hoTen ||
+        invoice.tenKhachHang ||
+        selectedCustomer?.hoTen ||
+        "Khách lẻ";
+      document.getElementById("p-invoice-customer").innerText = customerName;
+      document.getElementById("p-order-staff").innerText =
+        invoice.nhanVien?.hoTen ||
+        "Mã: #" + currentUser?.id ||
+        "Nhân viên bán hàng";
+      document.getElementById("paymentToggleZone").style.display = "block";
+      document.getElementById("btnConfirmCashPay").style.display =
+        "inline-flex";
+
+      switchPaymentMethod("TIEN_MAT");
+      document.getElementById("invoicePrintModal").classList.add("open");
+    }
+
+    function clearCartAndRefresh() {
+      selectedCartItems = [];
+      selectedCustomer = null;
+      document.getElementById("customerSearchInput").value = "";
+      document.getElementById("selectedCustomerCard").style.display = "none";
+      activeInvoiceId = null;
+      isInvoiceFromReservation = false;
+      activeInvoiceObjectCache = null;
+      renderCartItems();
+      fetchBooks();
+      fetchSidebarInvoiceCount();
+      document.getElementById("invoicePrintModal").classList.remove("open");
+    }
+
+    function closeInvoicePrintModal() {
+      if (paymentCheckInterval) {
+        clearInterval(paymentCheckInterval);
+        paymentCheckInterval = null;
+      }
+      clearCartAndRefresh();
+    }
+
+    function executePrint() {
+      window.print();
+    }
 </script>
+
 <script>
-  document.querySelectorAll('.sidebar .nav-item').forEach(item => {
-    if (item.getAttribute('onclick')) return;
-    const label = item.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
-    const routes = [
-      ['tổng quan', 'TongQuan.html'],
-      ['sách', 'Sach.html'],
-      ['danh mục', 'DanhMuc.html'],
-      ['khách hàng', 'KhachHang.html'],
-      ['chăm sóc', 'CSKH.html'],
-      ['nhân viên', 'NhanVien.html'],
-      ['doanh thu', 'index.html?view=revenue'],
-      ['tồn kho', 'index.html?view=inventory'],
-      ['cài đặt', 'settings.html'],
-    ];
-    const route = routes.find(([key]) => label.includes(key));
-    if (!route) return;
-    item.addEventListener('click', () => { location.href = route[1]; });
-  });
+    document.querySelectorAll(".sidebar .nav-item").forEach((item) => {
+      if (item.getAttribute("onclick")) return;
+      const label = item.textContent
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+      const routes = [
+        ["tổng quan", "index.html?view=dashboard"],
+        ["sách", "index.html?view=books"],
+        ["danh mục", "index.html?view=categories"],
+        ["khách hàng", "index.html?view=customers"],
+        ["nhân viên", "index.html?view=staff"],
+        ["doanh thu", "index.html?view=revenue"],
+        ["tồn kho", "index.html?view=inventory"],
+        ["cài đặt", "settings.html"],
+      ];
+      const sidebarRoute = routes.find(([key]) => label.includes(key));
+      if (!sidebarRoute) return;
+      item.addEventListener("click", () => {
+        location.href = sidebarRoute[1];
+      });
+    });
 </script>
 </body>
 </html>

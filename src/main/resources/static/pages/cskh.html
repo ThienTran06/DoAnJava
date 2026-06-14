@@ -357,8 +357,7 @@ window.initCSKH = function() {
       const replyText = document.getElementById('replyTextarea').value.trim();
 
       try {
-        // Gửi reply với adminName (tên nhân viên)
-        const response = await fetch(`${REVIEW_API}/${id}/reply-with-name?reply=${encodeURIComponent(replyText)}&adminName=${encodeURIComponent('Nhân viên CSKH')}`, {
+        const response = await fetch(`${REVIEW_API}/${id}/reply?reply=${encodeURIComponent(replyText)}`, {
           method: 'PUT',
           headers: getAuthHeaders(),
         });

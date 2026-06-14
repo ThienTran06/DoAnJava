@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BookHouse – Qu?n l? phi?u gi? sách</title>
+    <title>BookHouse – Quản lý phiếu giữ sách</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
             href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap"
@@ -57,7 +57,7 @@
           display: block;
         }
 
-        /* ??? SIDEBAR CHU?N Đ?NG B? Đ?Y Đ? 100% ??? */
+        /* SIDEBAR CHUẨN ĐỒNG BỘ ĐẦY ĐỦ 100% */
         .sidebar {
           width: 224px;
           min-width: 224px;
@@ -646,7 +646,7 @@
           border-radius: 3px;
         }
 
-        /* ??? C?U H?NH IN CHUYÊN D?NG CHO PHI?U GI? ??? */
+        /* CẤU HÌNH IN CHUYÊN DỤNG CHO PHIẾU GIỮ */
         .print-invoice-wrapper {
           display: flex;
           flex-direction: column;
@@ -686,7 +686,7 @@
 
         @media print {
           @page {
-            size: 76mm auto;
+            size: 76mm 297mm;
             margin: 0mm 3mm;
           }
           body * {
@@ -738,15 +738,15 @@
         <div class="logo-mark"></div>
         <div>
             <div class="logo-text">BookHouse</div>
-            <div class="logo-sub">Tri th?c trong t?m tay</div>
+            <div class="logo-sub">Tri thức trong tầm tay</div>
         </div>
     </div>
 
     <div class="nav-section">
-        <div class="nav-label">Qu?n l?</div>
+        <div class="nav-label">Quản lý</div>
         <div class="nav-item">
             
-            T?ng quan
+            Tổng quan
         </div>
         <div class="nav-item">
             
@@ -754,7 +754,7 @@
         </div>
         <div class="nav-item">
             
-            Danh m?c 
+            Danh mục 
         </div>
         <div class="nav-item">
             
@@ -770,7 +770,7 @@
     </div>
 
     <div class="nav-section">
-        <div class="nav-label">Nghi?p v?</div>
+        <div class="nav-label">Nghiệp vụ</div>
         <div class="nav-item" onclick="location.href = 'BanHang.html'">
             Bán hàng
         </div>
@@ -778,11 +778,11 @@
             Hóa đơn <span class="nav-badge" id="sidebar-invoice-count">0</span>
         </div>
         <div class="nav-item active" onclick="location.href = 'PhieuGiu.html'">
-            Đ?t gi? sách
+            Đặt giữ sách
             <span class="nav-badge" id="sidebar-reserve-count">0</span>
         </div>
         <div class="nav-item" onclick="location.href = 'NhapHang.html'">
-            Nh?p hàng
+            Nhập hàng
         </div>
 <div class="nav-item" onclick="window.open('danh-gia-cong-cong.html','_blank')">
     Đánh giá KH
@@ -792,12 +792,12 @@
     <div class="nav-section">
         <div class="nav-label">Báo cáo</div>
         <div class="nav-item">Doanh thu</div>
-        <div class="nav-item">T?n kho</div>
+        <div class="nav-item">Tồn kho</div>
     </div>
 
     <div class="nav-section">
-        <div class="nav-label">H? th?ng</div>
-        <div class="nav-item">Cài đ?t</div>
+        <div class="nav-label">Hệ thống</div>
+        <div class="nav-item">Cài đặt</div>
     </div>
 
     <div class="sidebar-footer">
@@ -805,7 +805,7 @@
             <div class="avatar" id="avatar-box">A</div>
             <div>
                 <div class="user-name" id="user-display-name">Admin</div>
-                <div class="user-role">Qu?n tr? viên</div>
+                <div class="user-role">Quản trị viên</div>
             </div>
         </div>
     </div>
@@ -814,9 +814,9 @@
 <div class="main">
     <header class="topbar">
         <div class="topbar-left">
-            <div class="topbar-title">Phi?u gi? sách</div>
+            <div class="topbar-title">Phiếu giữ sách</div>
             <div class="topbar-subtitle">
-                H? th?ng x? l? đ?t gi? sách trư?c cho khách hàng
+                Hệ thống xử lý đặt giữ sách trước cho khách hàng
             </div>
         </div>
     </header>
@@ -824,13 +824,13 @@
     <div class="content">
         <div class="card">
             <div class="card-header-row">
-                <div class="page-title">Qu?n l? phi?u gi? sách</div>
+                <div class="page-title">Quản lý phiếu giữ sách</div>
                 <div class="controls-group">
                     <input
                             type="text"
                             class="input-text"
                             id="searchReservationInput"
-                            placeholder="T?m m? phi?u gi? (ID)..."
+                            placeholder="Tìm mã phiếu giữ (ID)..."
                             style="width: 240px"
                     />
                     <input
@@ -840,7 +840,7 @@
                             style="width: auto"
                     />
                     <button class="btn btn-primary" id="btnOpenCreateModal">
-                        T?o phi?u gi? sách
+                        Tạo phiếu giữ sách
                     </button>
                 </div>
             </div>
@@ -854,10 +854,10 @@
                 <table class="tbl" id="reservationTable">
                     <thead>
                     <tr>
-                        <th>M? Phi?u</th>
-                        <th>Ngày l?p</th>
-                        <th>S? lư?ng sách</th>
-                        <th>Tr?ng thái</th>
+                        <th>Mã Phiếu</th>
+                        <th>Ngày lập</th>
+                        <th>Số lượng sách</th>
+                        <th>Trạng thái</th>
                         <th style="text-align: center">Thao tác</th>
                     </tr>
                     </thead>
@@ -867,7 +867,7 @@
 
             <div class="pagination-container">
                 <div class="pagination-info" id="paginationInfo">
-                    Hi?n th? 0-0 d?ng trong t?ng s? 0 d?ng
+                    Hiển thị 0-0 dòng trong tổng số 0 dòng
                 </div>
                 <div class="pagination-buttons">
                     <button
@@ -875,7 +875,7 @@
                             id="btnPrevPage"
                             style="padding: 4px 10px; font-size: 13px"
                     >
-                        Trư?c
+                        Trước
                     </button>
                     <button
                             class="btn"
@@ -890,11 +890,11 @@
     </div>
 </div>
 
-<!-- MODAL L?P PHI?U GI? -->
+<!-- MODAL LẬP PHIẾU GIỮ -->
 <div class="modal-overlay" id="createReservationModal">
     <div class="modal-box">
         <div class="modal-header">
-            <div class="modal-title">L?p phi?u gi? sách m?i</div>
+            <div class="modal-title">Lập phiếu giữ sách mới</div>
             <button
                     class="btn"
                     id="btnCloseCreateModal"
@@ -907,17 +907,17 @@
             <div class="create-grid">
                 <div>
                     <div class="section-card">
-                        <div class="section-title">T?m ki?m khách hàng</div>
+                        <div class="section-title">Tìm kiếm khách hàng</div>
                         <div class="space-compact" style="position: relative">
                             <input
                                     type="text"
                                     class="input-text"
                                     id="customerSearchInput"
-                                    placeholder="Nh?p h? tên ho?c s? đi?n tho?i khách hàng..."
+                                    placeholder="Nhập họ tên hoặc số điện thoại khách hàng..."
                                     autocomplete="off"
                             />
                             <button class="btn btn-primary" id="btnOpenCustPopup">
-                                T?o KH
+                                Tạo KH
                             </button>
                             <div
                                     class="suggestions-dropdown"
@@ -938,12 +938,12 @@
                     </div>
 
                     <div class="section-card">
-                        <div class="section-title">T?m ki?m sách gi?</div>
+                        <div class="section-title">Tìm kiếm sách giữ</div>
                         <input
                                 type="text"
                                 class="input-text"
                                 id="searchBookInput"
-                                placeholder="T?m tên sách nhanh..."
+                                placeholder="Tìm tên sách nhanh..."
                                 style="margin-bottom: 14px"
                         />
                         <div
@@ -959,7 +959,7 @@
                                 <tr>
                                     <th>Sách</th>
                                     <th>Giá</th>
-                                    <th style="text-align: center">Hành đ?ng</th>
+                                    <th style="text-align: center">Hành động</th>
                                 </tr>
                                 </thead>
                                 <tbody id="bookSearchTableBody"></tbody>
@@ -985,7 +985,7 @@
                                         id="btnPrevBookPage"
                                         style="padding: 2px 6px; font-size: 11px"
                                 >
-                                    Trư?c
+                                    Trước
                                 </button>
                                 <button
                                         class="btn"
@@ -1001,13 +1001,13 @@
 
                 <div class="cart-container" id="basketFrame">
                     <div class="section-title">
-                        Gi? hàng đ?t gi? (<span id="cartCount">0</span>)
+                        Giỏ hàng đặt giữ (<span id="cartCount">0</span>)
                     </div>
                     <div class="cart-items-list" id="cartItemsList">
                         <div
                                 style="color: #999; text-align: center; padding-top: 150px"
                         >
-                            Chưa có s?n ph?m trong gi? hàng gi? sách
+                            Chưa có sản phẩm trong giỏ hàng giữ sách
                         </div>
                     </div>
 
@@ -1023,11 +1023,11 @@
                     margin-bottom: 16px;
                   "
                         >
-                            <span style="font-weight: 700">T?ng s? lư?ng gi?</span>
+                            <span style="font-weight: 700">Tổng số lượng giữ</span>
                             <span
                                     style="color: var(--red); font-size: 18px; font-weight: 800"
                                     id="cartTotalQtyDisplay"
-                            >0 quy?n</span
+                            >0 quyển</span
                             >
                         </div>
                         <button
@@ -1040,7 +1040,7 @@
                   "
                                 id="btnSubmitReservation"
                         >
-                            XÁC NH?N L?P PHI?U GI?
+                            XÁC NHẬN LẬP PHIẾU GIỮ
                         </button>
                     </div>
                 </div>
@@ -1057,7 +1057,7 @@
 >
     <div class="modal-box" style="max-width: 450px">
         <div class="modal-header">
-            <div class="modal-title">T?o tài kho?n khách hàng m?i</div>
+            <div class="modal-title">Tạo tài khoản khách hàng mới</div>
             <button
                     class="btn"
                     id="btnCloseCustModal"
@@ -1069,11 +1069,11 @@
         <div class="modal-body">
             <form id="customerForm" onsubmit="event.preventDefault()">
                 <div class="form-item">
-                    <label>H? tên *</label>
+                    <label>Họ tên *</label>
                     <input type="text" class="input-text" id="custName" required />
                 </div>
                 <div class="form-item">
-                    <label>S? đi?n tho?i *</label>
+                    <label>Số điện thoại *</label>
                     <input type="text" class="input-text" id="custPhone" required />
                 </div>
                 <div class="form-item">
@@ -1085,23 +1085,23 @@
         <div class="modal-footer">
             <button class="btn" id="btnCancelCustModal">Đóng</button>
             <button class="btn btn-primary" id="btnSubmitCustModal">
-                T?o khách hàng
+                Tạo khách hàng
             </button>
         </div>
     </div>
 </div>
 
-<!-- MODAL IN PHI?U K80 -->
+<!-- MODAL IN PHIẾU K80 -->
 <div class="modal-overlay" id="reservationPrintModal" style="z-index: 1200">
     <div class="modal-box" style="max-width: 480px">
         <div class="modal-header">
-            <div class="modal-title">?? K?t xu?t phi?u gi? sách</div>
+            <div class="modal-title">Kết xuất phiếu giữ sách</div>
             <button
                     class="btn btn-icon"
                     onclick="closeReservationPrintModal()"
                     style="border: none; background: transparent"
             >
-                ?
+                ×
             </button>
         </div>
         <div
@@ -1116,7 +1116,7 @@
             <div class="print-invoice-wrapper" id="reservationPrintArea">
                 <div class="print-invoice-header">
                     <h3>BOOKHOUSE SHOP</h3>
-                    <p>Đ/c: Khu ph? 6, P. Linh Trung, TP. Th? Đ?c</p>
+                    <p>Đ/c: Khu phố 6, P. Linh Trung, TP. Thủ Đức</p>
                     <p>Hotline: 0123.456.789</p>
                     <p
                             style="
@@ -1129,7 +1129,7 @@
                   letter-spacing: 0.5px;
                 "
                     >
-                        PHI?U GI? SÁCH
+                        PHIẾU GIỮ SÁCH
                     </p>
                 </div>
 
@@ -1144,13 +1144,13 @@
               "
                 >
                     <div>
-                        <b>M? Phi?u:</b>
+                        <b>Mã Phiếu:</b>
                         <span id="pr-id" style="font-weight: 700; color: #000"
                         >#-----</span
                         >
                     </div>
                     <div>
-                        <b>Th?i gian t?o:</b>
+                        <b>Thời gian tạo:</b>
                         <span id="pr-date">--/--/---- --:--</span>
                     </div>
                     <div>
@@ -1172,8 +1172,8 @@
                 <table class="print-table">
                     <thead>
                     <tr>
-                        <th style="width: 70%">Tên m?t hàng</th>
-                        <th style="width: 30%; text-align: center">SL Gi?</th>
+                        <th style="width: 70%">Tên mặt hàng</th>
+                        <th style="width: 30%; text-align: center">SL Giữ</th>
                     </tr>
                     </thead>
                     <tbody id="pr-items"></tbody>
@@ -1190,8 +1190,8 @@
                 color: #000;
               "
                 >
-                    T?NG S? LƯ?NG GI?:
-                    <span id="pr-total" style="color: var(--red)">0 quy?n</span>
+                    TỔNG SỐ LƯỢNG GIỮ:
+                    <span id="pr-total" style="color: var(--red)">0 quyển</span>
                 </div>
 
                 <div
@@ -1205,9 +1205,9 @@
                 padding-top: 8px;
               "
                 >
-                    Qu? khách vui l?ng đ?n l?y sách đúng h?n.<br />
-                    H? th?ng s? t? đ?ng h?y phi?u khi quá h?n.<br />
-                    Xin c?m ơn!
+                    Quý khách vui lòng đến lấy sách đúng hạn.<br />
+                    Hệ thống sẽ tự động hủy phiếu khi quá hạn.<br />
+                    Xin cảm ơn!
                 </div>
             </div>
         </div>
@@ -1216,13 +1216,13 @@
                 Đóng
             </button>
             <button class="btn btn-primary" onclick="window.print()">
-                ??? In phi?u (Ctrl+P)
+                In phiếu (Ctrl+P)
             </button>
         </div>
     </div>
 </div>
 
-<!-- DRAWER CHI TI?T -->
+<!-- DRAWER CHI TIẾT -->
 <div class="drawer-overlay" id="detailDrawerOverlay"></div>
 <div class="drawer-box" id="detailDrawer">
     <div class="modal-header">
@@ -1230,7 +1230,7 @@
                 class="modal-title"
                 style="display: flex; align-items: center; gap: 8px"
         >
-            <span> Chi ti?t phi?u gi? sách</span>
+            <span> Chi tiết phiếu giữ sách</span>
             <span class="badge purple-tag" id="drawerReservationId">#...</span>
         </div>
         <button
@@ -1244,21 +1244,21 @@
     <div class="modal-body">
         <div class="detail-summary-grid">
             <div>
-                <div class="summary-label">M? khách hàng:</div>
+                <div class="summary-label">Mã khách hàng:</div>
                 <div class="summary-value">
                     <span class="badge id-tag" id="dtCustId">#N/A</span>
                 </div>
             </div>
             <div>
-                <div class="summary-label">Tr?ng thái phi?u:</div>
+                <div class="summary-label">Trạng thái phiếu:</div>
                 <div class="summary-value" id="dtStatusBadgeWrap">...</div>
             </div>
             <div>
-                <div class="summary-label">Ngày l?p phi?u:</div>
+                <div class="summary-label">Ngày lập phiếu:</div>
                 <div class="summary-value" id="dtDateCreated">...</div>
             </div>
             <div>
-                <div class="summary-label">H?n l?y sách:</div>
+                <div class="summary-label">Hạn lấy sách:</div>
                 <div
                         class="summary-value"
                         style="color: var(--red); font-weight: 700"
@@ -1277,7 +1277,7 @@
             color: #434343;
           "
         >
-            Danh sách s?n ph?m gi?
+            Danh sách sản phẩm giữ
         </div>
         <div
                 id="drawerProductsList"
@@ -1303,7 +1303,7 @@
     let selectedCustomer = null;
     let currentUser = null;
 
-    // Variables cho phân trang B?ng Chính
+    // Variables cho phân trang Bảng Chính
     let currentResPage = 0;
     let resPageSize = 10;
     let totalResPages = 0;
@@ -1320,7 +1320,7 @@
     let customerTypingTimeout = null;
 
     const imgPlaceholder =
-      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='54' viewBox='0 0 40 54' style='background:%23eee;'><text x='50%' y='50%' font-size='9' font-family='sans-serif' fill='%23999' dominant-baseline='middle' text-anchor='middle'>No Image</text></svg>";
+      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc1NCcgdmlld0JveD0nMCAwIDQwIDU0JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
 
     function getAuthHeaders(contentType = "application/json") {
       const token = localStorage.getItem("token");
@@ -1425,7 +1425,7 @@
         .getElementById("detailDrawerOverlay")
         .addEventListener("click", closeDetailDrawer);
 
-      // Events Phân Trang cho B?ng Chính
+      // Events Phân Trang cho Bảng Chính
       document.getElementById("btnPrevPage").addEventListener("click", () => {
         if (currentResPage > 0) {
           currentResPage--;
@@ -1571,7 +1571,7 @@
       const btnNext = document.getElementById("btnNextPage");
 
       if (totalResElements === 0) {
-        info.innerText = "Không t?m th?y d? li?u";
+        info.innerText = "Không tìm thấy dữ liệu";
         btnPrev.disabled = true;
         btnNext.disabled = true;
         return;
@@ -1582,7 +1582,7 @@
         (currentResPage + 1) * resPageSize,
         totalResElements,
       );
-      info.innerText = `Hi?n th? ${start}-${end} d?ng trong t?ng s? ${totalResElements} d?ng`;
+      info.innerText = `Hiển thị ${start}-${end} dòng trong tổng số ${totalResElements} dòng`;
 
       btnPrev.disabled = currentResPage === 0;
       btnNext.disabled =
@@ -1633,7 +1633,7 @@
       const dropdown = document.getElementById("customerSuggestions");
       dropdown.innerHTML = "";
       if (!list || list.length === 0) {
-        dropdown.innerHTML = `<div class="suggestion-item" style="color:var(--text-muted); cursor:default; padding:10px 14px;">Không t?m th?y khách hàng</div>`;
+        dropdown.innerHTML = `<div class="suggestion-item" style="color:var(--text-muted); cursor:default; padding:10px 14px;">Không tìm thấy khách hàng</div>`;
         dropdown.style.display = "block";
         return;
       }
@@ -1654,7 +1654,7 @@
       const card = document.getElementById("selectedCustomerCard");
       card.innerHTML = `
         <div>
-          <div style="font-weight:700; font-size:13.5px;"> Đ? ch?n: ${kh.hoTen}</div>
+          <div style="font-weight:700; font-size:13.5px;"> Đã chọn: ${kh.hoTen}</div>
           <div style="margin: 4px 0;"><span class="badge id-tag">KH#${kh.id}</span></div>
           <div style="font-size:12px; color:var(--text-muted)">SĐT: ${kh.sdt} | Email: ${kh.email || "N/A"}</div>
         </div>
@@ -1675,7 +1675,7 @@
       tbody.innerHTML = "";
 
       if (reservations.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:40px 0;">Không t?m th?y phi?u đ?t gi? sách nào thích h?p</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:40px 0;">Không tìm thấy phiếu đặt giữ sách nào thích hợp</td></tr>`;
         return;
       }
 
@@ -1701,13 +1701,13 @@
         const isPending =
           item.trangThai === "CHO_LAY" || item.trangThai === "PENDING";
         const actionCancelBtn = isPending
-          ? `<button class="btn btn-danger-ghost" onclick="triggerCancelReservation(${item.id})" title="H?y phi?u gi?">H?y</button>`
-          : `<button class="btn" disabled style="background:#f5f5f5; color:var(--text-subtle); border-color:var(--border);">Đ? đóng</button>`;
+          ? `<button class="btn btn-danger-ghost" onclick="triggerCancelReservation(${item.id})" title="Hủy phiếu giữ">Hủy</button>`
+          : `<button class="btn" disabled style="background:#f5f5f5; color:var(--text-subtle); border-color:var(--border);">Đã đóng</button>`;
 
         tr.innerHTML = `
           <td><span class="badge id-tag">#${item.id}</span></td>
           <td style="color:#595959;">${formatDateTime(item.createdAt)}</td>
-          <td><span style="font-weight:700; color:#111;">${totalQty} quy?n</span></td>
+          <td><span style="font-weight:700; color:#111;">${totalQty} quyển</span></td>
           <td>${statusMarkup}</td>
           <td style="text-align: center;">
             <div style="display:inline-flex; gap:8px;">
@@ -1725,7 +1725,7 @@
       tbody.innerHTML = "";
 
       if (books.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px 0;">Không t?m th?y sách phù h?p</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px 0;">Không tìm thấy sách phù hợp</td></tr>`;
         return;
       }
 
@@ -1739,7 +1739,7 @@
               <img src="${imgUrl}" style="width:38px; height:50px; object-fit:cover; border-radius:4px;" onerror="this.onerror=null; this.src=imgPlaceholder;">
               <div>
                 <div style="font-weight:600; line-height:1.2;">${b.tenSach}</div>
-                <div style="color:var(--text-muted); font-size:11px; margin-top:2px;">T?n kho: ${b.soLuongTon}</div>
+                <div style="color:var(--text-muted); font-size:11px; margin-top:2px;">Tồn kho: ${b.soLuongTon}</div>
               </div>
             </div>
           </td>
@@ -1758,8 +1758,8 @@
       countDisplay.innerText = selectedCartItems.length;
 
       if (selectedCartItems.length === 0) {
-        container.innerHTML = `<div style="color: #999; text-align: center; padding-top: 150px">Chưa có s?n ph?m trong gi? hàng gi? sách</div>`;
-        totalQtyDisplay.innerText = "0 quy?n";
+        container.innerHTML = `<div style="color: #999; text-align: center; padding-top: 150px">Chưa có sản phẩm trong giỏ hàng giữ sách</div>`;
+        totalQtyDisplay.innerText = "0 quyển";
         return;
       }
       container.innerHTML = "";
@@ -1780,7 +1780,7 @@
         `;
         container.appendChild(card);
       });
-      totalQtyDisplay.innerText = totalQty + " quy?n";
+      totalQtyDisplay.innerText = totalQty + " quyển";
     }
 
     function addBookToCart(bookId) {
@@ -1791,7 +1791,7 @@
         if (existing.sl < book.soLuongTon) {
           existing.sl += 1;
         } else {
-          alert("S? lư?ng vư?t quá gi?i h?n t?n kho hi?n t?i.");
+          alert("Số lượng vượt quá giới hạn tồn kho hiện tại.");
         }
       } else {
         selectedCartItems.push({
@@ -1811,7 +1811,7 @@
       if (target) {
         if (parsed > target.tonKho) {
           parsed = target.tonKho;
-          alert(`Ch? có th? đ?t t?i đa ${target.tonKho} s?n ph?m.`);
+          alert(`Chỉ có thể đặt tối đa ${target.tonKho} sản phẩm.`);
         }
         if (parsed < 1) parsed = 1;
         target.sl = parsed;
@@ -1827,18 +1827,18 @@
     /* ================= TIMELINE RUNTIME MUTATIONS ================= */
     async function submitCreateReservation() {
       if (selectedCartItems.length === 0) {
-        alert("Gi? hàng đ?t gi? đang tr?ng!");
+        alert("Giỏ hàng đặt giữ đang trống!");
         return;
       }
 
       if (!selectedCustomer) {
-        alert("Vui l?ng l?a ch?n khách hàng đích danh");
+        alert("Vui lòng lựa chọn khách hàng đích danh");
         return;
       }
 
       const btnSubmit = document.getElementById("btnSubmitReservation");
       btnSubmit.disabled = true;
-      btnSubmit.innerText = "ĐANG X? L? LƯU PHI?U...";
+      btnSubmit.innerText = "ĐANG XỬ LÝ LƯU PHIẾU...";
 
       try {
         const startResponse = await fetch(
@@ -1859,7 +1859,7 @@
 
         if (isNaN(phieuId)) {
           throw new Error(
-            `Server tr? v? ID phi?u không h?p l?: "${generatedId}"`,
+            `Server trả về ID phiếu không hợp lệ: "${generatedId}"`,
           );
         }
 
@@ -1877,7 +1877,7 @@
               const errData = await res.json().catch(() => null);
               throw new Error(
                 errData?.message ||
-                  `L?i n?p sách "${item.tenSach}" (ID: ${item.id})`,
+                  `Lỗi nạp sách "${item.tenSach}" (ID: ${item.id})`,
               );
             }
 
@@ -1885,16 +1885,16 @@
           }),
         );
 
-        alert(`L?p phi?u đ?t gi? sách thành công!\nM? s? phi?u: #${phieuId}`);
+        alert(`Lập phiếu đặt giữ sách thành công!\nMã số phiếu: #${phieuId}`);
 
-        // LƯU ?: Ph?i sao chép d? li?u trư?c khi g?i closeCreateModal() v? hàm close s? làm tr?ng gi? hàng
+        // LƯU Ý: Phải sao chép dữ liệu trước khi gọi closeCreateModal() vì hàm close sẽ làm trống giỏ hàng
         const cartCopy = [...selectedCartItems];
         const customerCopy = selectedCustomer;
         const totalQty = cartCopy.reduce((acc, curr) => acc + curr.sl, 0);
 
-        closeCreateModal(); // Đóng form l?p phi?u
+        closeCreateModal(); // Đóng form lập phiếu
 
-        // M? giao di?n In Phi?u v?i d? li?u đ? đư?c sao chép
+        // Mở giao diện In Phiếu với dữ liệu đã được sao chép
         openReservationPrintModal(
           phieuId,
           cartCopy,
@@ -1903,13 +1903,13 @@
           totalQty,
         );
 
-        fetchReservations(); // Load l?i data n?n b?ng chính
+        fetchReservations(); // Load lại data nền bảng chính
       } catch (err) {
-        console.error("Chi ti?t l?i:", err);
-        alert(`T?o phi?u th?t b?i!\nNguyên nhân: ${err.message}`);
+        console.error("Chi tiết lỗi:", err);
+        alert(`Tạo phiếu thất bại!\nNguyên nhân: ${err.message}`);
       } finally {
         btnSubmit.disabled = false;
-        btnSubmit.innerText = "XÁC NH?N L?P PHI?U GI?";
+        btnSubmit.innerText = "XÁC NHẬN LẬP PHIẾU GIỮ";
       }
     }
 
@@ -1924,14 +1924,14 @@
       document.getElementById("pr-date").innerText =
         new Date().toLocaleString("vi-VN");
 
-      // Hi?n Tên và M? Khách Hàng
+      // Hiển Tên và Mã Khách Hàng
       document.getElementById("pr-customer").innerText =
         customer?.hoTen || "N/A";
       document.getElementById("pr-customer-id").innerText = customer?.id
         ? `(#KH${customer.id})`
         : "";
 
-      // Hi?n Tên và M? Nhân Viên
+      // Hiển Tên và Mã Nhân Viên
       document.getElementById("pr-staff").innerText = staff?.hoTen || "Admin";
       document.getElementById("pr-staff-id").innerText = staff?.id
         ? `(#NV${staff.id})`
@@ -1949,7 +1949,7 @@
         tbody.appendChild(tr);
       });
 
-      document.getElementById("pr-total").innerText = totalQty + " quy?n";
+      document.getElementById("pr-total").innerText = totalQty + " quyển";
       document.getElementById("reservationPrintModal").classList.add("open");
     }
 
@@ -1959,10 +1959,10 @@
         .classList.remove("open");
     }
 
-    // S?A LU?NG XÁC NH?N: CHUY?N PHI?U GI? SANG HÓA ĐƠN PENDING R?I TRUY?N DATA SANG PAGE THANH TOÁN
+    // SỬA LUỒNG XÁC NHẬN: CHUYỂN PHIẾU GIỮ SANG HÓA ĐƠN PENDING RỒI TRUYỀN DATA SANG PAGE THANH TOÁN
     async function triggerConfirmReservation(id) {
       if (!currentUser?.id) {
-        alert("Không l?y đư?c thông tin đ?nh danh nhân viên phiên hi?n h?u.");
+        alert("Không lấy được thông tin định danh nhân viên phiên hiện hữu.");
         return;
       }
 
@@ -1971,11 +1971,11 @@
       );
       if (btnConfirm) {
         btnConfirm.disabled = true;
-        btnConfirm.innerText = "ĐANG CHUY?N Đ?I ĐƠN...";
+        btnConfirm.innerText = "ĐANG CHUYỂN ĐỔI ĐƠN...";
       }
 
       try {
-        // G?i API Backend: Ch?t phi?u gi? và sinh ra hóa đơn t?nh d?ng PENDING
+        // Gửi API Backend: Chốt phiếu giữ và sinh ra hóa đơn tĩnh dạng PENDING
         const response = await fetch(
           `${API_BASE_URL}/api/phieu-giu/confirm/${id}/${currentUser.id}`,
           {
@@ -1987,33 +1987,33 @@
         if (!response.ok) {
           const errText = await response.text();
           throw new Error(
-            errText || "Backend g?p l?i khi chuy?n đ?i tr?ng thái.",
+            errText || "Backend gặp lỗi khi chuyển đổi trạng thái.",
           );
         }
 
         const invoice = await response.json();
 
-        // Đóng gói lưu Object hóa đơn ch? t?nh vào LocalStorage đ? trang BanHang.html b?t đơn
+        // Đóng gói lưu Object hóa đơn chờ tĩnh vào LocalStorage để trang BanHang.html bắt đơn
         localStorage.setItem("RESERVATION_INVOICE", JSON.stringify(invoice));
 
         alert(
-          "Xác nh?n phi?u gi? thành công! Đang chuy?n ti?p sang giao di?n thanh toán sinh m? QR...",
+          "Xác nhận phiếu giữ thành công! Đang chuyển tiếp sang giao diện thanh toán sinh mã QR...",
         );
 
-        // Chuy?n hư?ng trang tr?c ti?p
+        // Chuyển hướng trang trực tiếp
         location.href = "BanHang.html";
       } catch (err) {
-        alert("Xác nh?n l?y sách th?t b?i: " + err.message);
+        alert("Xác nhận lấy sách thất bại: " + err.message);
         if (btnConfirm) {
           btnConfirm.disabled = false;
-          btnConfirm.innerText = "Xác nh?n l?y sách";
+          btnConfirm.innerText = "Xác nhận lấy sách";
         }
       }
     }
 
     async function triggerCancelReservation(id, isFromDrawer = false) {
       const confirmation = confirm(
-        "B?n ch?c ch?n mu?n h?y phi?u đ?t gi? này ch?? S? lư?ng t?n kho s? t? đ?ng hoàn tr?.",
+        "Bạn chắc chắn muốn hủy phiếu đặt giữ này chứ? Số lượng tồn kho sẽ tự động hoàn trả.",
       );
       if (!confirmation) return;
 
@@ -2026,11 +2026,11 @@
           },
         );
         if (!response.ok) throw new Error();
-        alert("Đ? h?y phi?u gi? sách thành công!");
+        alert("Đã hủy phiếu giữ sách thành công!");
         if (isFromDrawer) closeDetailDrawer();
         fetchReservations();
       } catch (err) {
-        alert("Quy tr?nh h?y phi?u th?t b?i.");
+        alert("Quy trình hủy phiếu thất bại.");
       }
     }
 
@@ -2048,7 +2048,7 @@
       const email = document.getElementById("custEmail").value.trim();
 
       if (!hoTen || !sdt) {
-        alert("Vui l?ng b? sung đ?y đ? thông tin b?t bu?c.");
+        alert("Vui lòng bổ sung đầy đủ thông tin bắt buộc.");
         return;
       }
       try {
@@ -2062,9 +2062,9 @@
 
         selectCustomer(newCustomer);
         closeCreateCustomerModal();
-        alert("T?o liên k?t thông tin khách hàng thành công!");
+        alert("Tạo liên kết thông tin khách hàng thành công!");
       } catch (err) {
-        alert("L?i kh?i t?o tài kho?n.");
+        alert("Lỗi khởi tạo tài khoản.");
       }
     }
 
@@ -2131,7 +2131,7 @@
         pCard.style.background = "#fff";
 
         const bookInfo = c.sachSach || c.sach || {};
-        const title = bookInfo.tenSach || `M? Sách: #${c.sachId}`;
+        const title = bookInfo.tenSach || `Mã Sách: #${c.sachId}`;
         const thumb = bookInfo.hinhAnh || imgPlaceholder;
         const originalPrice = bookInfo.giaBan
           ? `${bookInfo.giaBan.toLocaleString()} đ`
@@ -2144,8 +2144,8 @@
             <div style="flex:1;">
               <div style="font-weight:600; font-size:14px; color:var(--text);">${title}</div>
               <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-top:6px; color:var(--text-muted);">
-                <span>S? lư?ng gi?: <strong style="color:var(--text);">${qty} quy?n</strong></span>
-                <span>Đơn giá niêm y?t: ${originalPrice}</span>
+                <span>Số lượng giữ: <strong style="color:var(--text);">${qty} quyển</strong></span>
+                <span>Đơn giá niêm yết: ${originalPrice}</span>
               </div>
             </div>
           </div>
@@ -2158,11 +2158,11 @@
         target.trangThai === "CHO_LAY" || target.trangThai === "PENDING";
       if (isPending) {
         footerArea.innerHTML = `
-          <button class="btn btn-success" style="border-radius:6px; font-weight:700;" onclick="triggerConfirmReservation(${target.id})">Xác nh?n l?y sách</button>
-          <button class="btn btn-danger-ghost" style="border-radius:6px; font-weight:700;" onclick="triggerCancelReservation(${target.id}, true)">H?y phi?u gi?</button>
+          <button class="btn btn-success" style="border-radius:6px; font-weight:700;" onclick="triggerConfirmReservation(${target.id})">Xác nhận lấy sách</button>
+          <button class="btn btn-danger-ghost" style="border-radius:6px; font-weight:700;" onclick="triggerCancelReservation(${target.id}, true)">Hủy phiếu giữ</button>
         `;
       } else {
-        footerArea.innerHTML = `<button class="btn" disabled style="border-radius:6px;">Phi?u đ? đóng quy tr?nh</button>`;
+        footerArea.innerHTML = `<button class="btn" disabled style="border-radius:6px;">Phiếu đã đóng quy trình</button>`;
       }
 
       document.getElementById("detailDrawerOverlay").classList.add("open");
@@ -2183,14 +2183,14 @@
         .trim()
         .toLowerCase();
       const routes = [
-        ["t?ng quan", "index.html?view=dashboard"],
+        ["tổng quan", "index.html?view=dashboard"],
         ["sách", "index.html?view=books"],
-        ["danh m?c", "index.html?view=categories"],
+        ["danh mục", "index.html?view=categories"],
         ["khách hàng", "index.html?view=customers"],
         ["nhân viên", "index.html?view=staff"],
         ["doanh thu", "index.html?view=revenue"],
-        ["t?n kho", "index.html?view=inventory"],
-        ["cài đ?t", "settings.html"],
+        ["tồn kho", "index.html?view=inventory"],
+        ["cài đặt", "settings.html"],
       ];
       const sidebarRoute = routes.find(([key]) => label.includes(key));
       if (!sidebarRoute) return;

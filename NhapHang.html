@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
@@ -725,7 +725,7 @@
         /* ─── CẤU HÌNH IN CHUYÊN DỤNG CHO PHIẾU NHẬP ─── */
         @media print {
           @page {
-            size: 76mm auto;
+            size: 76mm 297mm;
             margin: 0mm 3mm;
           }
           body * {
@@ -1435,7 +1435,7 @@
     let supplierTypingTimeout = null;
 
     const drawerImgPlaceholder =
-      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='68' viewBox='0 0 50 68' style='background:%23eee;'><text x='50%' y='50%' font-size='9' font-family='sans-serif' fill='%23999' dominant-baseline='middle' text-anchor='middle'>No Image</text></svg>";
+      "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1MCcgaGVpZ2h0PSc2OCcgdmlld0JveD0nMCAwIDUwIDY4JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
 
     function getAuthHeaders(contentType = "application/json") {
       const token = localStorage.getItem("token");
