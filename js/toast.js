@@ -22,13 +22,23 @@
     /* Type-specific colours */
     '.bh-toast--success{background:var(--green,#3a7d44);color:#fff}' +
     '.bh-toast--error{background:var(--red,#c0392b);color:#fff}' +
-    '.bh-toast--info{background:var(--text,#1f1f1f);color:var(--bg,#fff)}';
+    '.bh-toast--info{background:var(--surface,#fff);color:var(--text,#1f1f1f);border:1.5px solid var(--border,#e0e0e0)}';
   document.head.appendChild(style);
 
-  /* ── Container ── */
+  /* ── Container (deferred until body exists) ── */
   var container = document.createElement('div');
   container.className = 'bh-toast-container';
-  document.body.appendChild(container);
+
+  function ensureContainer() {
+    if (!container.parentNode && document.body) {
+      document.body.appendChild(container);
+    }
+  }
+  if (document.body) {
+    ensureContainer();
+  } else {
+    document.addEventListener('DOMContentLoaded', ensureContainer);
+  }
 
   /* ── SVG Icons ── */
   var icons = {
@@ -41,6 +51,7 @@
 
   /* ── Public API ── */
   function showToast(message, type) {
+    ensureContainer();
     type = type || 'info';
     if (!icons[type]) type = 'info';
 

@@ -61,15 +61,18 @@
   function setAvatar(el, profile) {
     if (!el) return;
     if (profile.avatar) {
-      el.innerHTML = '<img src="' + escAttr(profile.avatar) + '" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
-      var img = el.querySelector('img');
-      if (img) {
-        img.onerror = function () {
-          el.innerHTML = '';
-          el.textContent = getInitial(profile);
-        };
-      }
+      var img = document.createElement('img');
+      img.src = profile.avatar;
+      img.alt = 'Avatar';
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
+      img.onerror = function () {
+        el.innerHTML = '';
+        el.textContent = getInitial(profile);
+      };
+      el.innerHTML = '';
+      el.appendChild(img);
     } else {
+      el.innerHTML = '';
       el.textContent = getInitial(profile);
     }
   }
@@ -83,7 +86,7 @@
   }
 
   function getRoleLabel(profile) {
-    var r = profile.role || profile.nhom?.tenNhom || '';
+    var r = profile.role || (profile.nhom && profile.nhom.tenNhom) || '';
     if (typeof r === 'string') return r;
     if (Array.isArray(r)) return r[0] || '';
     return '';
@@ -141,13 +144,6 @@
     overlay.className = 'bh-profile-overlay';
     overlay.id = 'bhProfileOverlay';
 
-    var avatarHtml;
-    if (profile.avatar) {
-      avatarHtml = '<img src="' + escAttr(profile.avatar) + '" alt="Avatar" onerror="this.parentElement.innerHTML=\'' + getInitial(profile) + '\'">';
-    } else {
-      avatarHtml = getInitial(profile);
-    }
-
     var rows = [];
     function addRow(label, value) {
       if (value) rows.push('<div class="bh-profile-row"><span class="bh-profile-row-label">' + label + '</span><span class="bh-profile-row-value">' + escAttr(value) + '</span></div>');
@@ -167,44 +163,66 @@
     overlay.innerHTML =
       '<div class="bh-profile-popup">' +
         '<button class="bh-profile-close" title="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
-        '<div class="bh-profile-avatar">' + avatarHtml + '</div>' +
+        '<div class="bh-profile-avatar"></div>' +
         '<div class="bh-profile-name">' + escAttr(profile.hoTen || profile.username || 'Admin') + '</div>' +
         '<div class="bh-profile-role">' + escAttr(getRoleLabel(profile) || 'Nhân viên') + '</div>' +
         '<div class="bh-profile-info">' + rows.join('') + '</div>' +
         '<div class="bh-profile-actions">' +
-          '<button class="bh-profile-btn" id="bhProfileCloseBtn">Đóng</button>' +
-          '<button class="bh-profile-btn primary" id="bhProfileSettingsBtn">Cài đặt</button>' +
+          '<button class="bh-profile-btn bh-profile-close-btn">Đóng</button>' +
+          '<button class="bh-profile-btn primary bh-profile-settings-btn">Cài đặt</button>' +
         '</div>' +
       '</div>';
+
+    /* Set avatar safely via DOM (no inline handlers) */
+    var avatarEl = overlay.querySelector('.bh-profile-avatar');
+    if (profile.avatar) {
+      var img = document.createElement('img');
+      img.src = profile.avatar;
+      img.alt = 'Avatar';
+      img.onerror = function () {
+        avatarEl.innerHTML = '';
+        avatarEl.textContent = getInitial(profile);
+      };
+      avatarEl.appendChild(img);
+    } else {
+      avatarEl.textContent = getInitial(profile);
+    }
 
     document.body.appendChild(overlay);
 
     /* Trigger animation */
     requestAnimationFrame(function () { overlay.classList.add('open'); });
 
-    /* Close handlers */
+    /* Close handlers — single cleanup function */
     function close() {
+      document.removeEventListener('keydown', escHandler);
       overlay.classList.remove('open');
       setTimeout(function () { overlay.remove(); }, 220);
     }
 
+    function escHandler(e) {
+      if (e.key === 'Escape') close();
+    }
+
     overlay.querySelector('.bh-profile-close').addEventListener('click', close);
-    document.getElementById('bhProfileCloseBtn').addEventListener('click', close);
-    document.getElementById('bhProfileSettingsBtn').addEventListener('click', function () {
+    overlay.querySelector('.bh-profile-close-btn').addEventListener('click', close);
+    overlay.querySelector('.bh-profile-settings-btn').addEventListener('click', function () {
       window.location.href = 'settings.html';
     });
     overlay.addEventListener('click', function (e) {
       if (e.target === overlay) close();
     });
-    document.addEventListener('keydown', function handler(e) {
-      if (e.key === 'Escape') { close(); document.removeEventListener('keydown', handler); }
-    });
+    document.addEventListener('keydown', escHandler);
   }
 
   /* ── Init ── */
   var _profile = null;
+  var _initDone = false;
 
   function init() {
+    if (_initDone) return;
+    _initDone = true;
+
     var jwt = decodeJwt();
     if (!jwt || !jwt.id) return;
 

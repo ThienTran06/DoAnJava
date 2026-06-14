@@ -148,14 +148,14 @@
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 4px; padding: 1px 5px; font-size: 10px; color: var(--text-subtle);
   }
-  .topbar-actions { display: flex; align-items: center; gap: 8px; }
+  .topbar-actions { display: flex; align-items: center; gap: 8px; position: relative; }
   .icon-btn {
     width: 36px; height: 36px; border-radius: 8px;
     border: 1.5px solid var(--border); background: var(--surface);
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; transition: all 0.15s; position: relative;
   }
-  .icon-btn:hover { background: var(--bg); border-color: #ccc; }
+  .icon-btn:hover { background: var(--bg); border-color: var(--text-subtle); }
   .notif-dot {
     position: absolute; top: 7px; right: 7px;
     width: 6px; height: 6px; background: #e74c3c;
@@ -163,8 +163,8 @@
   }
   /* Notification Panel */
   .notif-panel {
-    display: none; position: absolute; top: 62px; right: 28px; z-index: 100;
-    width: 360px; max-height: 420px; background: var(--surface);
+    display: none; position: absolute; top: calc(100% + 8px); right: 0; z-index: 100;
+    width: min(360px, calc(100vw - 32px)); max-height: 420px; background: var(--surface);
     border: 1.5px solid var(--border); border-radius: 14px;
     box-shadow: 0 8px 32px rgba(0,0,0,.12); overflow: hidden;
     flex-direction: column;
@@ -175,12 +175,21 @@
     padding: 14px 16px; border-bottom: 1px solid var(--border);
   }
   .notif-panel-title { font-size: 14px; font-weight: 800; }
-  .notif-mark-all {
-    background: none; border: none; color: var(--green); font-size: 12px;
+  .notif-header-actions { display: flex; gap: 12px; }
+  .notif-header-btn {
+    background: none; border: none; font-size: 12px;
     font-weight: 600; cursor: pointer; font-family: inherit;
   }
-  .notif-mark-all:hover { text-decoration: underline; }
+  .notif-header-btn:hover { text-decoration: underline; }
+  .notif-header-btn.read { color: var(--green); }
+  .notif-header-btn.clear { color: var(--red); }
   .notif-panel-body { overflow-y: auto; flex: 1; }
+  .notif-item-del {
+    flex-shrink: 0; width: 18px; height: 18px; cursor: pointer;
+    opacity: 0; transition: opacity .15s; color: var(--text-muted);
+  }
+  .notif-item:hover .notif-item-del { opacity: .6; }
+  .notif-item-del:hover { opacity: 1 !important; color: var(--red); }
   .notif-item {
     display: flex; align-items: flex-start; gap: 10px;
     padding: 12px 16px; cursor: pointer; transition: background .15s;
@@ -595,7 +604,10 @@
   <div class="notif-panel" id="notifPanel">
     <div class="notif-panel-header">
       <span class="notif-panel-title">Thông báo</span>
-      <button class="notif-mark-all" id="notifMarkAll">Đánh dấu đã đọc</button>
+      <div class="notif-header-actions">
+        <button class="notif-header-btn read" id="notifMarkAll">Đọc tất cả</button>
+        <button class="notif-header-btn clear" id="notifClearAll">Xóa tất cả</button>
+      </div>
     </div>
     <div class="notif-panel-body" id="notifList">
       <div class="notif-empty">Chưa có thông báo nào</div>
@@ -2029,6 +2041,7 @@ setView(initialView).then(() => {
   var panel = document.getElementById('notifPanel');
   var listEl = document.getElementById('notifList');
   var markAllBtn = document.getElementById('notifMarkAll');
+  var clearAllBtn = document.getElementById('notifClearAll');
   var dot = document.getElementById('notifDot');
 
   function load() {
@@ -2041,10 +2054,12 @@ setView(initialView).then(() => {
 
   function timeAgo(ts) {
     var diff = Math.floor((Date.now() - ts) / 1000);
+    if (diff < 0) return 'Vừa xong';
     if (diff < 60) return 'Vừa xong';
     if (diff < 3600) return Math.floor(diff / 60) + ' phút trước';
     if (diff < 86400) return Math.floor(diff / 3600) + ' giờ trước';
-    return Math.floor(diff / 86400) + ' ngày trước';
+    if (diff < 604800) return Math.floor(diff / 86400) + ' ngày trước';
+    return new Date(ts).toLocaleDateString('vi-VN');
   }
 
   var typeIcons = {
@@ -2052,6 +2067,8 @@ setView(initialView).then(() => {
     error: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
     info: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
   };
+
+  var delSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
   function render() {
     var items = load();
@@ -2069,7 +2086,9 @@ setView(initialView).then(() => {
         + '<div class="notif-item-body">'
         + '<div class="notif-item-msg">' + escHtml(n.message) + '</div>'
         + '<div class="notif-item-time">' + timeAgo(n.ts) + '</div>'
-        + '</div></div>';
+        + '</div>'
+        + '<span class="notif-item-del" data-del="' + i + '" title="Xóa">' + delSvg + '</span>'
+        + '</div>';
     }).join('');
   }
 
@@ -2088,13 +2107,25 @@ setView(initialView).then(() => {
 
   /* Close on outside click */
   document.addEventListener('click', function (e) {
-    if (!panel.contains(e.target) && e.target !== bellBtn) {
+    if (!bellBtn.contains(e.target) && !panel.contains(e.target)) {
       panel.classList.remove('open');
     }
   });
 
-  /* Mark single as read */
+  /* Mark single as read OR delete */
   listEl.addEventListener('click', function (e) {
+    /* Delete button */
+    var delBtn = e.target.closest('.notif-item-del');
+    if (delBtn) {
+      e.stopPropagation();
+      var delIdx = parseInt(delBtn.getAttribute('data-del'), 10);
+      var items = load();
+      items.splice(delIdx, 1);
+      save(items);
+      render();
+      return;
+    }
+    /* Mark as read */
     var item = e.target.closest('.notif-item');
     if (!item) return;
     var idx = parseInt(item.getAttribute('data-idx'), 10);
@@ -2107,6 +2138,12 @@ setView(initialView).then(() => {
     var items = load();
     items.forEach(function (n) { n.read = true; });
     save(items);
+    render();
+  });
+
+  /* Clear all */
+  clearAllBtn.addEventListener('click', function () {
+    save([]);
     render();
   });
 
