@@ -490,9 +490,9 @@ window.initCustomers = function() {
       render(search.value);
       closeModal();
       form.reset();
-      window.showToast(isEdit ? 'Đã cập nhật khách hàng' : 'Đã thêm khách hàng');
+      window.showToast(isEdit ? 'Đã cập nhật khách hàng' : 'Đã thêm khách hàng', 'success');
     } catch (err) {
-      window.showToast('Không thể lưu khách hàng: ' + err.message);
+      window.showToast('Không thể lưu khách hàng: ' + err.message, 'error');
     }
   };
 
@@ -612,9 +612,9 @@ window.initCustomers = function() {
           state.items.splice(itemIndex, 1);
           window.allCustomers = state.items;
           render(search.value);
-          window.showToast('Đã xóa khách hàng');
+          window.showToast('Đã xóa khách hàng', 'success');
         } catch (err) {
-          window.showToast('Không thể xóa khách hàng');
+          window.showToast('Không thể xóa khách hàng', 'error');
         }
       });
     }

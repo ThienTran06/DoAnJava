@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -529,6 +529,9 @@
     </style>
     <link rel="stylesheet" href="ui-polish.css" />
     <script src="js/app-settings.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/user-profile.js"></script>
+    <script>(function(){if(localStorage.getItem('darkMode')==='1')document.documentElement.setAttribute('data-theme','dark');})();</script>
 </head>
 <body>
 <aside class="sidebar">
@@ -848,26 +851,10 @@
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-      loadCurrentUser();
       fetchInvoices();
       fetchThongKe();
       setupEventListeners();
     });
-
-    function loadCurrentUser() {
-      try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user) {
-          document.getElementById("user-display-name").innerText =
-            user.hoTen || "Admin";
-          document.getElementById("avatar-box").innerText = String(
-            user.hoTen || "A",
-          )
-            .charAt(0)
-            .toUpperCase();
-        }
-      } catch {}
-    }
 
     function setupEventListeners() {
       document
@@ -1310,7 +1297,7 @@
         );
         if (!response.ok) throw new Error("Không thể hủy hóa đơn");
         window.showToast
-          ? window.showToast("Đã hủy hóa đơn thành công!")
+          ? window.showToast("Đã hủy hóa đơn thành công!", "success")
           : alert("Đã hủy hóa đơn thành công!");
         if (isFromDrawer) closeDetailDrawer();
 
@@ -1318,7 +1305,7 @@
         fetchThongKe(); // Tải lại thống kê ngay khi hủy đơn thành công để trừ doanh số
       } catch (err) {
         window.showToast
-          ? window.showToast("Hủy hóa đơn thất bại")
+          ? window.showToast("Hủy hóa đơn thất bại", "error")
           : alert("Hủy hóa đơn thất bại");
       }
     }

@@ -398,9 +398,9 @@ if (avatarFile) {
     window.allStaff = state.items;
     render();
     closeModal();
-    window.showToast(isEdit ? 'Đã cập nhật nhân viên' : 'Đã thêm nhân viên');
+    window.showToast(isEdit ? 'Đã cập nhật nhân viên' : 'Đã thêm nhân viên', 'success');
   } catch (err) {
-    window.showToast('Không thể lưu nhân viên: ' + err.message);
+    window.showToast('Không thể lưu nhân viên: ' + err.message, 'error');
   }
 };
   // Handle edit and delete buttons in table
@@ -458,9 +458,9 @@ if (avatarFile) {
       state.items.splice(itemIndex, 1);
       window.allStaff = state.items;
       render();
-      window.showToast('Đã xóa nhân viên');
+      window.showToast('Đã xóa nhân viên', 'success');
     } catch (err) {
-      window.showToast('Không thể xóa nhân viên');
+      window.showToast('Không thể xóa nhân viên', 'error');
     }
   });
 }

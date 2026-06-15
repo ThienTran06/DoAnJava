@@ -190,7 +190,7 @@ window.initCategories = function() {
     state.items.unshift({ name, description: desc || '—', status: 'Hoạt động' });
     render(search.value);
     closeModal();
-    window.showToast('Đã thêm thể loại');
+    window.showToast('Đã thêm thể loại', 'success');
   };
 
   // Handle edit and delete buttons in table
@@ -241,9 +241,9 @@ window.initCategories = function() {
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           state.items.splice(itemIndex, 1);
           render(search.value);
-          window.showToast('Đã xóa thể loại');
+          window.showToast('Đã xóa thể loại', 'success');
         } catch (error) {
-          window.showToast('Không thể xóa thể loại');
+          window.showToast('Không thể xóa thể loại', 'error');
         }
       });
     }
@@ -298,9 +298,9 @@ window.initCategories = function() {
       render(search.value);
       closeModal();
       form.reset();
-      window.showToast(isEdit ? 'Đã cập nhật thể loại' : 'Đã thêm thể loại');
+      window.showToast(isEdit ? 'Đã cập nhật thể loại' : 'Đã thêm thể loại', 'success');
     } catch (error) {
-      window.showToast('Không thể lưu thể loại');
+      window.showToast('Không thể lưu thể loại', 'error');
     }
   };
 
