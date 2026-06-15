@@ -527,6 +527,354 @@
   `;
 
   const appCss = `
+    .topbar .search-box {
+      display: none !important;
+    }
+    .topbar-actions {
+      position: relative;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .icon-btn.app-notification-btn,
+    .icon-btn.app-account-btn {
+      position: relative;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      min-width: 44px;
+      height: 44px;
+      padding: 0 !important;
+      cursor: pointer;
+    }
+    .app-notification-badge {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      min-width: 17px;
+      height: 17px;
+      padding: 0 5px;
+      border: 2px solid var(--surface, #fff);
+      border-radius: 999px;
+      background: #e03131;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 13px;
+      text-align: center;
+    }
+    .app-notification-badge.is-hidden {
+      display: none;
+    }
+    .app-topbar-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      z-index: 2500;
+      width: min(360px, calc(100vw - 28px));
+      max-height: min(560px, calc(100dvh - 96px));
+      overflow: auto;
+      padding: 8px;
+      border: 1px solid var(--border, #e6e6e0);
+      border-radius: 12px;
+      background: var(--surface, #fff);
+      color: var(--text, #1f1f1f);
+      box-shadow: 0 18px 42px rgba(0,0,0,.16);
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
+      transition: opacity .16s ease, transform .16s ease;
+    }
+    .app-topbar-menu.open {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .app-menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 10px 8px;
+      border-bottom: 1px solid var(--border, #e6e6e0);
+    }
+    .app-menu-title {
+      margin: 0;
+      color: var(--text, #1f1f1f);
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+    .app-menu-link {
+      border: 0;
+      background: transparent;
+      color: #2f6f3a;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .app-notification-list {
+      display: grid;
+      gap: 4px;
+      padding: 8px 0 0;
+    }
+    .app-notification-item {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      background: transparent;
+    }
+    .app-notification-item.is-unread {
+      background: rgba(47, 111, 58, .08);
+    }
+    .app-notification-dot {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #f4ead4;
+      color: #2f2b22;
+      font-weight: 900;
+    }
+    .app-notification-text {
+      color: var(--text, #1f1f1f);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+    .app-notification-time {
+      margin-top: 3px;
+      color: var(--muted, #777);
+      font-size: 12px;
+      line-height: 1.3;
+    }
+    .app-account-card {
+      padding: 12px;
+    }
+    .app-account-row {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border, #e6e6e0);
+    }
+    .app-account-avatar {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 50%;
+      background: #f4ead4;
+      color: #2f2b22;
+      font-weight: 900;
+      font-size: 18px;
+    }
+    .app-account-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .app-account-name {
+      color: var(--text, #1f1f1f);
+      font-weight: 850;
+      line-height: 1.25;
+    }
+    .app-account-meta {
+      margin-top: 3px;
+      color: var(--muted, #777);
+      font-size: 12px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .app-account-actions {
+      display: grid;
+      gap: 6px;
+      padding-top: 10px;
+    }
+    .app-account-button {
+      width: 100%;
+      min-height: 38px;
+      padding: 8px 10px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text, #1f1f1f);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: left;
+      cursor: pointer;
+    }
+    .app-account-button:hover {
+      background: rgba(47, 111, 58, .08);
+      border-color: rgba(47, 111, 58, .18);
+    }
+    .app-account-button.danger {
+      color: #d83333;
+    }
+    .app-profile-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9990;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.42);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .16s ease;
+    }
+    .app-profile-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .app-profile-modal {
+      width: min(420px, 100%);
+      max-height: calc(100dvh - 36px);
+      overflow: auto;
+      padding: 26px 24px 22px;
+      border: 1px solid var(--border, #e6e6e0);
+      border-radius: 14px;
+      background: var(--surface, #fff);
+      color: var(--text, #1f1f1f);
+      box-shadow: 0 24px 56px rgba(0,0,0,.22);
+      position: relative;
+      transform: translateY(8px) scale(.98);
+      transition: transform .16s ease;
+    }
+    .app-profile-overlay.open .app-profile-modal {
+      transform: translateY(0) scale(1);
+    }
+    .app-profile-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border, #e6e6e0);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text, #1f1f1f);
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .app-profile-avatar {
+      width: 76px;
+      height: 76px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      margin: 4px auto 14px;
+      border-radius: 50%;
+      background: #f4ead4;
+      color: #2f2b22;
+      font-size: 28px;
+      font-weight: 900;
+    }
+    .app-profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .app-profile-name {
+      padding: 0 28px;
+      color: var(--text, #1f1f1f);
+      font-size: 19px;
+      font-weight: 900;
+      line-height: 1.25;
+      text-align: center;
+    }
+    .app-profile-role {
+      margin: 4px 0 18px;
+      color: var(--muted, #777);
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .app-profile-info {
+      display: grid;
+      gap: 8px;
+      margin: 0 0 18px;
+    }
+    .app-profile-row {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border, #e6e6e0);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .app-profile-label {
+      color: var(--muted, #777);
+      font-weight: 700;
+    }
+    .app-profile-value {
+      color: var(--text, #1f1f1f);
+      font-weight: 800;
+      word-break: break-word;
+    }
+    .app-profile-actions {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .app-profile-action {
+      min-height: 38px;
+      padding: 8px 16px;
+      border: 1px solid var(--border, #e6e6e0);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text, #1f1f1f);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .app-profile-action.primary {
+      background: #f4ead4;
+      border-color: #ddd0b5;
+      color: #2f2b22;
+    }
+    html[data-theme="dark"] .app-topbar-menu {
+      background: var(--surface, #1b222c);
+      border-color: var(--border, #303a47);
+      box-shadow: 0 18px 42px rgba(0,0,0,.36);
+    }
+    html[data-theme="dark"] .app-notification-badge {
+      border-color: var(--surface, #1b222c);
+    }
+    html[data-theme="dark"] .app-notification-dot,
+    html[data-theme="dark"] .app-account-avatar,
+    html[data-theme="dark"] .app-profile-avatar {
+      background: #253044;
+      color: #eef2f7;
+    }
+    html[data-theme="dark"] .app-profile-modal {
+      background: var(--surface, #1b222c);
+      border-color: var(--border, #303a47);
+      box-shadow: 0 24px 56px rgba(0,0,0,.44);
+    }
+    html[data-theme="dark"] .app-profile-action.primary {
+      background: #253044;
+      border-color: #3a4960;
+      color: #eef2f7;
+    }
+    html[data-theme="dark"] .app-notification-item.is-unread,
+    html[data-theme="dark"] .app-account-button:hover {
+      background: rgba(139, 184, 255, .12);
+      border-color: rgba(139, 184, 255, .22);
+    }
     .app-toast {
       position: fixed;
       right: 24px;
@@ -1475,6 +1823,502 @@
     slider.style.setProperty('--range-value', `${Math.max(0, Math.min(100, pct))}%`);
   }
 
+  function readJsonStorage(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function decodeTokenPayload(token) {
+    if (!token || token.split('.').length < 2) return null;
+    try {
+      const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const json = decodeURIComponent(Array.prototype.map.call(atob(base64), ch => (
+        '%' + ('00' + ch.charCodeAt(0).toString(16)).slice(-2)
+      )).join(''));
+      return JSON.parse(json);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function getCurrentAccountProfile() {
+    const profileApi = window.BookHouseProfile;
+    if (profileApi && typeof profileApi.getProfile === 'function') {
+      try {
+        const profile = profileApi.getProfile();
+        if (profile) return normalizeAccountProfile(profile);
+      } catch (error) {
+        // Fall back to locally stored login data.
+      }
+    }
+    const storedUser = readJsonStorage('user') || readJsonStorage('currentUser') || readJsonStorage('account');
+    const tokenPayload = decodeTokenPayload(localStorage.getItem('token') || localStorage.getItem('accessToken'));
+    const source = Object.assign({}, tokenPayload || {}, storedUser || {});
+    return normalizeAccountProfile(source);
+  }
+
+  function normalizeAccountProfile(source) {
+    source = source || {};
+    const role = source.role || source.authority || source.chucVu || source.position || (source.nhom && source.nhom.tenNhom) || 'Người dùng';
+    return {
+      id: source.id || source.userId || source.maNguoiDung || '',
+      name: source.name || source.fullName || source.hoTen || source.tenNhanVien || source.username || source.tenDangNhap || source.sub || 'Tài khoản BookHouse',
+      email: source.email || source.mail || '',
+      role: Array.isArray(role) ? role.join(', ') : role,
+      username: source.username || source.tenDangNhap || source.sub || '',
+      phone: source.phone || source.sdt || source.SDT || source.soDienThoai || '',
+      address: source.address || source.diaChi || '',
+      shift: source.caLamViec || '',
+      startDate: source.ngayVaoLam || '',
+      salary: source.luongCoBan || '',
+      status: source.trangThai || source.status || (source.enabled === false ? 'Đã khóa' : 'Đang hoạt động'),
+      note: source.ghiChu || source.note || '',
+      avatar: source.avatar || source.avatarUrl || source.photoUrl || source.hinhAnh || ''
+    };
+  }
+
+  function accountInitial(profile) {
+    const text = String((profile && (profile.name || profile.username || profile.email)) || 'B').trim();
+    return (text.charAt(0) || 'B').toUpperCase();
+  }
+
+  function notificationDefaults() {
+    const pageTitle = (document.querySelector('.topbar-title') || document.querySelector('h1') || document).textContent || '';
+    let seedAt = Number(localStorage.getItem('bookhouseNotificationsSeedAt') || 0);
+    if (!seedAt) {
+      seedAt = Date.now() - 180000;
+      localStorage.setItem('bookhouseNotificationsSeedAt', String(seedAt));
+    }
+    return [
+      {
+        id: 'low-stock',
+        createdAt: seedAt,
+        title: 'Sách sắp hết hàng',
+        detail: 'Kiểm tra lại các đầu sách có tồn kho thấp để nhập thêm kịp thời.',
+        time: 'Vừa xong',
+        unread: true
+      },
+      {
+        id: 'pending-reservations',
+        createdAt: seedAt - 60000,
+        title: 'Phiếu giữ cần xử lý',
+        detail: 'Có phiếu giữ đang chờ xác nhận hoặc đến hạn lấy sách.',
+        time: 'Hôm nay',
+        unread: true
+      },
+      {
+        id: 'page-context',
+        createdAt: seedAt - 120000,
+        title: pageTitle.trim() || 'BookHouse',
+        detail: 'Thông báo hệ thống và cập nhật công việc sẽ hiển thị tại đây.',
+        time: 'Mới cập nhật',
+        unread: true
+      }
+    ];
+  }
+
+  function getNotifications() {
+    const stored = readJsonStorage('bookhouseNotifications');
+    const items = Array.isArray(stored) && stored.length ? stored : notificationDefaults();
+    const readAt = Number(localStorage.getItem('bookhouseNotificationsReadAt') || 0);
+    return items.map((item, index) => {
+      const createdAt = Number(item.createdAt || Date.now() - index * 60000);
+      return Object.assign({}, item, {
+        id: item.id || `notice-${index}`,
+        createdAt,
+        unread: item.unread !== false && createdAt > readAt
+      });
+    });
+  }
+
+  function closeTopbarMenus(exceptMenu) {
+    document.querySelectorAll('.app-topbar-menu.open').forEach(menu => {
+      if (menu !== exceptMenu) menu.classList.remove('open');
+    });
+  }
+
+  function renderNotificationMenu(menu, badge) {
+    const notifications = getNotifications();
+    const unreadCount = notifications.filter(item => item.unread).length;
+    badge.textContent = unreadCount > 9 ? '9+' : String(unreadCount);
+    badge.classList.toggle('is-hidden', unreadCount === 0);
+    menu.textContent = '';
+
+    const header = document.createElement('div');
+    header.className = 'app-menu-header';
+    const title = document.createElement('h3');
+    title.className = 'app-menu-title';
+    title.textContent = 'Thông báo';
+    const markRead = document.createElement('button');
+    markRead.type = 'button';
+    markRead.className = 'app-menu-link';
+    markRead.textContent = 'Đánh dấu đã đọc';
+    markRead.addEventListener('click', () => {
+      localStorage.setItem('bookhouseNotificationsReadAt', String(Date.now()));
+      renderNotificationMenu(menu, badge);
+    });
+    header.append(title, markRead);
+    menu.appendChild(header);
+
+    const list = document.createElement('div');
+    list.className = 'app-notification-list';
+    notifications.forEach(item => {
+      const row = document.createElement('div');
+      row.className = `app-notification-item${item.unread ? ' is-unread' : ''}`;
+      const icon = document.createElement('div');
+      icon.className = 'app-notification-dot';
+      icon.textContent = item.unread ? '!' : '✓';
+      const body = document.createElement('div');
+      const text = document.createElement('div');
+      text.className = 'app-notification-text';
+      text.textContent = item.title || 'Thông báo';
+      const detail = document.createElement('div');
+      detail.className = 'app-notification-time';
+      detail.textContent = item.detail || item.message || '';
+      const time = document.createElement('div');
+      time.className = 'app-notification-time';
+      time.textContent = item.time || '';
+      body.append(text, detail, time);
+      row.append(icon, body);
+      list.appendChild(row);
+    });
+    menu.appendChild(list);
+  }
+
+  function renderAccountMenu(menu) {
+    const profile = getCurrentAccountProfile();
+    menu.textContent = '';
+    const card = document.createElement('div');
+    card.className = 'app-account-card';
+    const row = document.createElement('div');
+    row.className = 'app-account-row';
+    const avatar = document.createElement('div');
+    avatar.className = 'app-account-avatar';
+    if (profile.avatar) {
+      const img = document.createElement('img');
+      img.alt = profile.name || 'Avatar';
+      img.src = profile.avatar;
+      avatar.appendChild(img);
+    } else {
+      avatar.textContent = accountInitial(profile);
+    }
+    const info = document.createElement('div');
+    const name = document.createElement('div');
+    name.className = 'app-account-name';
+    name.textContent = profile.name || 'Tài khoản BookHouse';
+    const meta = document.createElement('div');
+    meta.className = 'app-account-meta';
+    meta.textContent = [profile.email || profile.username, profile.role].filter(Boolean).join(' • ');
+    info.append(name, meta);
+    row.append(avatar, info);
+
+    const actions = document.createElement('div');
+    actions.className = 'app-account-actions';
+    const profileButton = document.createElement('button');
+    profileButton.type = 'button';
+    profileButton.className = 'app-account-button';
+    profileButton.textContent = 'Xem thông tin tài khoản';
+    profileButton.addEventListener('click', () => {
+      closeTopbarMenus();
+      showAccountProfileDetails();
+    });
+    const settingsButton = document.createElement('button');
+    settingsButton.type = 'button';
+    settingsButton.className = 'app-account-button';
+    settingsButton.textContent = 'Cài đặt';
+    settingsButton.addEventListener('click', () => {
+      window.location.href = 'settings.html';
+    });
+    const logoutButton = document.createElement('button');
+    logoutButton.type = 'button';
+    logoutButton.className = 'app-account-button danger';
+    logoutButton.textContent = 'Đăng xuất';
+    logoutButton.addEventListener('click', () => {
+      ['token', 'accessToken', 'refreshToken', 'user', 'currentUser', 'account'].forEach(key => localStorage.removeItem(key));
+      window.location.href = 'login.html';
+    });
+    actions.append(profileButton, settingsButton, logoutButton);
+    card.append(row, actions);
+    menu.appendChild(card);
+  }
+
+  function addProfileRow(container, label, value, fallback) {
+    const row = document.createElement('div');
+    row.className = 'app-profile-row';
+    const labelEl = document.createElement('div');
+    labelEl.className = 'app-profile-label';
+    labelEl.textContent = label;
+    const valueEl = document.createElement('div');
+    valueEl.className = 'app-profile-value';
+    const display = value === 0 ? '0' : String(value || '').trim();
+    valueEl.textContent = display || fallback || 'Chưa cập nhật';
+    row.append(labelEl, valueEl);
+    container.appendChild(row);
+  }
+
+  function formatProfileMoney(value) {
+    if (value === 0) return '0 đ';
+    if (!value) return '';
+    const number = Number(value);
+    if (Number.isNaN(number)) return String(value);
+    return number.toLocaleString('vi-VN') + ' đ';
+  }
+
+  function formatProfileDate(value) {
+    if (!value) return '';
+    try {
+      const date = new Date(value);
+      if (!Number.isNaN(date.getTime())) return date.toLocaleDateString('vi-VN');
+    } catch (error) {
+      // Keep original value.
+    }
+    return String(value);
+  }
+
+  function showAccountProfileDetails() {
+    const profile = getCurrentAccountProfile();
+    const profileApi = window.BookHouseProfile;
+    if (profileApi && typeof profileApi.showPopup === 'function' && typeof profileApi.getProfile === 'function') {
+      try {
+        if (profileApi.getProfile()) {
+          profileApi.showPopup();
+          setTimeout(() => {
+            if (document.getElementById('bhProfileOverlay')) return;
+            showAccountProfileFallback(profile);
+          }, 0);
+          return;
+        }
+      } catch (error) {
+        // Use the fallback modal below.
+      }
+    }
+    showAccountProfileFallback(profile);
+  }
+
+  function showAccountProfileFallback(profile) {
+    const old = document.getElementById('appProfileOverlay');
+    if (old) old.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'appProfileOverlay';
+    overlay.className = 'app-profile-overlay';
+
+    const modal = document.createElement('div');
+    modal.className = 'app-profile-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Thông tin tài khoản');
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'app-profile-close';
+    closeBtn.setAttribute('aria-label', 'Đóng');
+    closeBtn.textContent = '×';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'app-profile-avatar';
+    if (profile.avatar) {
+      const img = document.createElement('img');
+      img.alt = profile.name || 'Avatar';
+      img.src = profile.avatar;
+      img.onerror = () => {
+        avatar.textContent = accountInitial(profile);
+        img.remove();
+      };
+      avatar.appendChild(img);
+    } else {
+      avatar.textContent = accountInitial(profile);
+    }
+
+    const name = document.createElement('div');
+    name.className = 'app-profile-name';
+    name.textContent = profile.name || 'Tài khoản BookHouse';
+
+    const role = document.createElement('div');
+    role.className = 'app-profile-role';
+    role.textContent = profile.role || 'Người dùng';
+
+    const info = document.createElement('div');
+    info.className = 'app-profile-info';
+    addProfileRow(info, 'Mã tài khoản', profile.id);
+    addProfileRow(info, 'Họ tên', profile.name);
+    addProfileRow(info, 'Tài khoản', profile.username);
+    addProfileRow(info, 'Vai trò', profile.role);
+    addProfileRow(info, 'Email', profile.email);
+    addProfileRow(info, 'SĐT', profile.phone);
+    addProfileRow(info, 'Địa chỉ', profile.address);
+    addProfileRow(info, 'Ca làm việc', profile.shift);
+    addProfileRow(info, 'Ngày vào làm', formatProfileDate(profile.startDate));
+    addProfileRow(info, 'Lương cơ bản', formatProfileMoney(profile.salary));
+    addProfileRow(info, 'Trạng thái', profile.status);
+    addProfileRow(info, 'Ghi chú', profile.note, 'Không có ghi chú');
+
+    const actions = document.createElement('div');
+    actions.className = 'app-profile-actions';
+    const closeAction = document.createElement('button');
+    closeAction.type = 'button';
+    closeAction.className = 'app-profile-action';
+    closeAction.textContent = 'Đóng';
+    const settingsAction = document.createElement('button');
+    settingsAction.type = 'button';
+    settingsAction.className = 'app-profile-action primary';
+    settingsAction.textContent = 'Cài đặt';
+    settingsAction.addEventListener('click', () => {
+      window.location.href = 'settings.html';
+    });
+    actions.append(closeAction, settingsAction);
+
+    modal.append(closeBtn, avatar, name, role, info, actions);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    const close = () => overlay.remove();
+    closeBtn.addEventListener('click', close);
+    closeAction.addEventListener('click', close);
+    overlay.addEventListener('click', event => {
+      if (event.target === overlay) close();
+    });
+    document.addEventListener('keydown', function onEsc(event) {
+      if (event.key !== 'Escape') return;
+      document.removeEventListener('keydown', onEsc);
+      close();
+    });
+    requestAnimationFrame(() => overlay.classList.add('open'));
+  }
+
+  function ensureTopbarMenus() {
+    document.querySelectorAll('.topbar .search-box').forEach(box => {
+      box.hidden = true;
+      box.setAttribute('aria-hidden', 'true');
+    });
+
+    const actions = document.querySelector('.topbar-actions');
+    if (!actions) return;
+
+    let notificationButton = actions.querySelector('.app-notification-btn');
+    let accountButton = actions.querySelector('.app-account-btn');
+    const availableButtons = Array.from(actions.querySelectorAll('.icon-btn:not(#topbarThemeBtn)'));
+
+    if (!notificationButton) {
+      notificationButton = availableButtons[0] || document.createElement('div');
+      if (!notificationButton.parentElement) actions.appendChild(notificationButton);
+    }
+    if (!accountButton) {
+      accountButton = availableButtons.find(button => button !== notificationButton) || document.createElement('div');
+      if (!accountButton.parentElement) actions.appendChild(accountButton);
+    }
+
+    notificationButton.classList.add('icon-btn', 'app-notification-btn');
+    accountButton.classList.add('icon-btn', 'app-account-btn');
+    notificationButton.setAttribute('role', 'button');
+    accountButton.setAttribute('role', 'button');
+    notificationButton.setAttribute('tabindex', '0');
+    accountButton.setAttribute('tabindex', '0');
+    notificationButton.setAttribute('aria-label', 'Mở thông báo');
+    accountButton.setAttribute('aria-label', 'Mở thông tin tài khoản');
+
+    notificationButton.querySelectorAll('.notif-dot').forEach(dot => dot.remove());
+    let badge = notificationButton.querySelector('.app-notification-badge');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'app-notification-badge';
+      notificationButton.appendChild(badge);
+    }
+
+    let notificationMenu = actions.querySelector('#appNotificationMenu');
+    if (!notificationMenu) {
+      notificationMenu = document.createElement('div');
+      notificationMenu.id = 'appNotificationMenu';
+      notificationMenu.className = 'app-topbar-menu';
+      actions.appendChild(notificationMenu);
+    }
+    let accountMenu = actions.querySelector('#appAccountMenu');
+    if (!accountMenu) {
+      accountMenu = document.createElement('div');
+      accountMenu.id = 'appAccountMenu';
+      accountMenu.className = 'app-topbar-menu';
+      actions.appendChild(accountMenu);
+    }
+
+    if (!notificationMenu.dataset.menuReady) {
+      notificationMenu.dataset.menuReady = '1';
+      renderNotificationMenu(notificationMenu, badge);
+    } else {
+      const unreadCount = getNotifications().filter(item => item.unread).length;
+      badge.textContent = unreadCount > 9 ? '9+' : String(unreadCount);
+      badge.classList.toggle('is-hidden', unreadCount === 0);
+    }
+    if (!accountMenu.dataset.menuReady) {
+      accountMenu.dataset.menuReady = '1';
+      renderAccountMenu(accountMenu);
+    }
+
+    if (!notificationButton.dataset.topbarBound) {
+      notificationButton.dataset.topbarBound = '1';
+      const toggleNotifications = event => {
+        event.stopPropagation();
+        renderNotificationMenu(notificationMenu, badge);
+        closeTopbarMenus(notificationMenu);
+        notificationMenu.classList.toggle('open');
+      };
+      notificationButton.addEventListener('click', toggleNotifications);
+      notificationButton.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          toggleNotifications(event);
+        }
+      });
+    }
+
+    if (!accountButton.dataset.topbarBound) {
+      accountButton.dataset.topbarBound = '1';
+      const openAccountProfile = event => {
+        event.stopPropagation();
+        closeTopbarMenus();
+        showAccountProfileDetails();
+      };
+      accountButton.addEventListener('click', openAccountProfile);
+      accountButton.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openAccountProfile(event);
+        }
+      });
+    }
+
+    if (!document.documentElement.dataset.topbarMenusBound) {
+      document.documentElement.dataset.topbarMenusBound = '1';
+      document.addEventListener('click', event => {
+        if (!event.target.closest('.topbar-actions')) closeTopbarMenus();
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeTopbarMenus();
+      });
+    }
+  }
+
+  function ensureSidebarProfileButton() {
+    document.querySelectorAll('.sidebar-footer .user-card').forEach(card => {
+      if (card.dataset.profileBound) return;
+      card.dataset.profileBound = '1';
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', 'Xem thông tin tài khoản');
+      const openProfile = event => {
+        event.preventDefault();
+        showAccountProfileDetails();
+      };
+      card.addEventListener('click', openProfile);
+      card.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') openProfile(event);
+      });
+    });
+  }
+
   function enhanceUiIcons() {
     document.querySelectorAll('.logo-mark').forEach(mark => {
       if (!mark.querySelector('.app-logo-icon')) {
@@ -1505,9 +2349,15 @@
       header.prepend(icon);
     });
 
-    document.querySelectorAll('.icon-btn').forEach((button, index) => {
+    ensureTopbarMenus();
+    ensureSidebarProfileButton();
+
+    document.querySelectorAll('.icon-btn').forEach(button => {
       if (button.querySelector('.app-ui-icon')) return;
-      button.appendChild(createUiIcon(button.id === 'topbarThemeBtn' ? (isDarkMode() ? 'moon' : 'sun') : (index % 2 ? 'user' : 'bell')));
+      const iconKey = button.id === 'topbarThemeBtn'
+        ? (isDarkMode() ? 'moon' : 'sun')
+        : (button.classList.contains('app-account-btn') ? 'user' : 'bell');
+      button.appendChild(createUiIcon(iconKey));
     });
 
     document.querySelectorAll('.quick-btn').forEach(button => {

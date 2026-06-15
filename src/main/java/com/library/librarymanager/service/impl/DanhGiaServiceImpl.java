@@ -106,7 +106,7 @@ public class DanhGiaServiceImpl implements DanhGiaService {
                     newCustomer.setDiemTichLuy(0);
                     return khachHangRepository.save(newCustomer);
                 });
-        // T?m s?ch (optional)
+        // Tim sach (optional)
         Sach sach = null;
         if (sachId != null) {
             sach = sachRepository.findById(sachId)

@@ -139,7 +139,7 @@ window.initCategories = function() {
       <tr>
         <td>${index + 1}</td>
         <td style="font-weight:700">
-          ${item.available ? `<button type="button" class="link category-open-books" data-id="${item.id}" title="Xem sách thuộc thể loại này">${item.name}</button>` : item.name}
+          ${item.available ? `<button type="button" class="link category-open-books" data-id="${item.id}" data-name="${item.name}" title="Xem sách thuộc thể loại này">${item.name}</button>` : item.name}
         </td>
         <td style="color:var(--muted)">${item.description}</td>
         <td><span class="badge ${item.available ? 'ok' : 'bad'}">${item.available ? 'Có sẵn' : 'Không có sẵn'}</span></td>
@@ -200,17 +200,8 @@ window.initCategories = function() {
     const deleteBtn = e.target.closest('.ops .link.danger');
     if (openBooksBtn) {
       const categoryId = openBooksBtn.dataset.id;
-      const categoryName = state.items.find(i => String(i.id) === String(categoryId))?.name || '';
-      const params = new URLSearchParams(window.location.search);
-      params.set('view', 'books');
-      params.set('categoryId', categoryId);
-      params.set('categoryName', categoryName);
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-      if (typeof window.setView === 'function') {
-        window.setView('books').then(() => window.setBookCategoryFilter?.(categoryId, categoryName));
-      } else {
-        window.location.href = `index.html?view=books&categoryId=${encodeURIComponent(categoryId)}&categoryName=${encodeURIComponent(categoryName)}`;
-      }
+      const categoryName = openBooksBtn.dataset.name || state.items.find(i => String(i.id) === String(categoryId))?.name || '';
+      window.location.href = `Sach.html?categoryId=${encodeURIComponent(categoryId)}&categoryName=${encodeURIComponent(categoryName)}`;
       return;
     }
     if (!editBtn && !deleteBtn) return;
