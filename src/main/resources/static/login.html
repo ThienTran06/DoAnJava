@@ -523,6 +523,35 @@
         }
     </style>
     <link rel="stylesheet" href="ui-polish.css">
+    <style>
+        html[data-theme="dark"] body .login-card .btn-login#login-btn,
+        html[data-theme="dark"] body button.btn-login#login-btn {
+            background: #253044 !important;
+            border: 1px solid #3a4960 !important;
+            color: #eef2f7 !important;
+            text-shadow: none !important;
+            box-shadow: none !important;
+        }
+
+        html[data-theme="dark"] body .login-card .btn-login#login-btn:hover,
+        html[data-theme="dark"] body button.btn-login#login-btn:hover {
+            background: #2f3d54 !important;
+            border-color: #50627c !important;
+            color: #ffffff !important;
+        }
+
+        html[data-theme="dark"] body .login-card .btn-login#login-btn:disabled,
+        html[data-theme="dark"] body .login-card .btn-login#login-btn.loading {
+            background: #253044 !important;
+            border-color: #3a4960 !important;
+            color: #cbd5e1 !important;
+            opacity: .88 !important;
+        }
+
+        html[data-theme="dark"] body .login-card .btn-login#login-btn svg {
+            stroke: currentColor !important;
+        }
+    </style>
 <script src="js/app-settings.js"></script>
 </head>
 <body>

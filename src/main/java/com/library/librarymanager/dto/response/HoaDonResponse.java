@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 public class HoaDonResponse {
     private int id;
     private BigDecimal tongTien;
+    private BigDecimal tienGiamGia;
+    private String maGiamGia;
     private String trangThai;
     private String qrUrl;
 }

@@ -932,6 +932,24 @@
                         <div
                                 style="height: 1px; background: var(--border); margin: 12px 0"
                         ></div>
+                        <div class="form-item" style="margin-bottom: 12px; position: relative">
+                            <label for="discountCodeInput">Mã giảm giá</label>
+                            <input
+                                    type="text"
+                                    class="input-text"
+                                    id="discountCodeInput"
+                                    placeholder="Nhập mã của khách hàng"
+                                    style="width: 100%; text-transform: uppercase"
+                            />
+                            <div
+                                    class="suggestions-dropdown"
+                                    id="discountCodeSuggestions"
+                            ></div>
+                        </div>
+                        <div
+                                id="discountCodeSummary"
+                                style="display:none;margin:-4px 0 12px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-soft);font-size:12px;color:var(--text);line-height:1.45"
+                        ></div>
                         <div
                                 style="
                     display: flex;
@@ -1135,6 +1153,14 @@
                 color: #000;
               "
                 >
+                    <div
+                            id="p-invoice-discount"
+                            style="display:none;width:100%;text-align:right;font-size:12.5px;font-weight:700;margin-top:4px;margin-bottom:2px;color:#3a7d44"
+                    ></div>
+                    <div
+                            id="p-invoice-subtotal"
+                            style="display:none;width:100%;text-align:right;font-size:12px;font-weight:700;margin-top:4px;margin-bottom:2px;color:#444"
+                    ></div>
                     TỔNG CỘNG:
                     <span id="p-invoice-total" style="color: var(--red)">0 đ</span>
                 </div>
@@ -1215,6 +1241,7 @@
     let books = [];
     let selectedCartItems = [];
     let selectedCustomer = null;
+    let customerDiscountCodes = [];
     let currentUser = null;
 
     let currentBookPage = 0;
@@ -1544,7 +1571,35 @@
           document.getElementById("customerSuggestions").style.display =
             "none";
         }
+        if (
+          !e.target.closest("#discountCodeInput") &&
+          !e.target.closest("#discountCodeSuggestions")
+        ) {
+          document.getElementById("discountCodeSuggestions").style.display =
+            "none";
+        }
       });
+
+      document
+        .getElementById("discountCodeInput")
+        .addEventListener("focus", () => renderDiscountCodeSuggestions());
+
+      document
+        .getElementById("discountCodeInput")
+        .addEventListener("click", () => renderDiscountCodeSuggestions());
+
+      document
+        .getElementById("discountCodeInput")
+        .addEventListener("input", () => renderCartItems());
+
+      document
+        .getElementById("discountCodeSuggestions")
+        .addEventListener("click", (e) => {
+          const deleteBtn = e.target.closest(".js-delete-used-discount");
+          if (!deleteBtn) return;
+          e.stopPropagation();
+          deleteUsedDiscountCode(deleteBtn.dataset.id);
+        });
 
       document
         .getElementById("btnPrevBookPage")
@@ -1609,11 +1664,117 @@
               </div>
             </div>
           </td>
-          <td style="white-space:nowrap;">${(b.giaBan || 0).toLocaleString()} đ</td>
+          <td style="white-space:nowrap;">${renderBookPrice(b)}</td>
           <td style="text-align:right; padding-right:14px;"><button class="btn" style="padding:4px 8px; font-size:12px;" onclick="addBookToCart(${b.id})">Thêm</button></td>
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    function getSalePrice(book) {
+      const originalPrice = Number(book.giaBan || 0);
+      const salePrice = Number(book.giaSauUuDai || originalPrice);
+      return salePrice > 0 && salePrice < originalPrice ? salePrice : originalPrice;
+    }
+
+    function hasActiveSale(book) {
+      return Number(book.phanTramUuDai || 0) > 0 && getSalePrice(book) < Number(book.giaBan || 0);
+    }
+
+    function renderBookPrice(book) {
+      const originalPrice = Number(book.giaBan || 0);
+      const salePrice = getSalePrice(book);
+      if (!hasActiveSale(book)) return `${originalPrice.toLocaleString()} đ`;
+      return `
+        <div style="font-weight:800;color:var(--red)">${salePrice.toLocaleString()} đ</div>
+        <div style="font-size:11px;color:var(--text-muted);text-decoration:line-through">${originalPrice.toLocaleString()} đ</div>
+        <div style="font-size:11px;color:var(--green);font-weight:800">Giảm ${Number(book.phanTramUuDai || 0)}%</div>
+      `;
+    }
+
+    function discountStatusLabel(status) {
+      if (status === "CHUA_SU_DUNG") return "Chưa sử dụng";
+      if (status === "DA_SU_DUNG") return "Đã sử dụng";
+      if (status === "HET_HAN") return "Hết hạn";
+      return status || "Không rõ";
+    }
+
+    function renderDiscountCodeSuggestions() {
+      const dropdown = document.getElementById("discountCodeSuggestions");
+      if (!dropdown) return;
+      dropdown.innerHTML = "";
+
+      if (!selectedCustomer) {
+        dropdown.innerHTML = `<div class="suggestion-item" style="color:var(--text-muted); cursor:default;">Vui lòng chọn khách hàng trước</div>`;
+        dropdown.style.display = "block";
+        return;
+      }
+
+      if (!customerDiscountCodes.length) {
+        dropdown.innerHTML = `<div class="suggestion-item" style="color:var(--text-muted); cursor:default;">Khách hàng chưa có mã giảm giá</div>`;
+        dropdown.style.display = "block";
+        return;
+      }
+
+      customerDiscountCodes.forEach((code) => {
+        const div = document.createElement("div");
+        div.className = "suggestion-item";
+        div.style.display = "flex";
+        div.style.alignItems = "center";
+        div.style.justifyContent = "space-between";
+        div.style.gap = "8px";
+        const value = Number(code.giaTriGiam || 0).toLocaleString();
+        div.innerHTML = `
+          <div style="min-width:0">
+            <div style="font-weight:800">${code.ma}</div>
+            <div style="font-size:11.5px;color:var(--text-muted)">Giảm ${value} đ · ${discountStatusLabel(code.trangThai)}</div>
+          </div>
+          ${code.trangThai === "DA_SU_DUNG" ? `<button type="button" class="btn btn-danger-ghost js-delete-used-discount" data-id="${code.id}" style="padding:3px 8px;font-size:11px;">Xóa</button>` : ""}
+        `;
+        if (code.trangThai === "CHUA_SU_DUNG") {
+          div.addEventListener("click", (event) => {
+            if (event.target.closest("button")) return;
+            document.getElementById("discountCodeInput").value = code.ma;
+            dropdown.style.display = "none";
+            renderCartItems();
+          });
+        } else {
+          div.style.cursor = "default";
+        }
+        dropdown.appendChild(div);
+      });
+
+      dropdown.style.display = "block";
+    }
+
+    async function fetchCustomerDiscountCodes(customerId) {
+      customerDiscountCodes = [];
+      document.getElementById("discountCodeInput").value = "";
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/ma-giam-gia/khach-hang/${customerId}`, {
+          method: "GET",
+          headers: getAuthHeaders(null),
+        });
+        if (!response.ok) throw new Error("Không tải được mã giảm giá");
+        customerDiscountCodes = await response.json();
+      } catch (err) {
+        customerDiscountCodes = [];
+      }
+    }
+
+    async function deleteUsedDiscountCode(id) {
+      if (!confirm("Xóa mã giảm giá đã sử dụng này?")) return;
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/ma-giam-gia/${id}`, {
+          method: "DELETE",
+          headers: getAuthHeaders(null),
+        });
+        if (!response.ok) throw new Error("Không thể xóa mã giảm giá");
+        if (selectedCustomer) await fetchCustomerDiscountCodes(selectedCustomer.id);
+        renderDiscountCodeSuggestions();
+      } catch (err) {
+        alert(err.message);
+      }
     }
 
     async function fetchCustomerSuggestions(keyword) {
@@ -1659,6 +1820,7 @@
         <div style="font-size:12px; color:var(--text-muted)">SĐT: ${kh.sdt || kh.soDienThoai || "N/A"} | Email: ${kh.email || "N/A"}</div>
       `;
       card.style.display = "block";
+      fetchCustomerDiscountCodes(kh.id);
     }
 
     function openCreateCustomerModal() {
@@ -1703,10 +1865,14 @@
           alert("Số lượng vượt quá giới hạn tồn kho hiện tại.");
         }
       } else {
+        const salePrice = getSalePrice(book);
         selectedCartItems.push({
           id: book.id,
           tenSach: book.tenSach,
-          gia: book.giaBan,
+          gia: salePrice,
+          giaGoc: book.giaBan,
+          phanTramUuDai: hasActiveSale(book) ? book.phanTramUuDai : 0,
+          tenUuDai: book.tenUuDai || "",
           sl: 1,
           hinhAnh: book.hinhAnh,
           tonKho: book.soLuongTon,
@@ -1734,6 +1900,50 @@
       renderCartItems();
     }
 
+    function getCartSubtotal() {
+      return selectedCartItems.reduce((sum, item) => sum + item.gia * item.sl, 0);
+    }
+
+    function getSelectedDiscountCode() {
+      const inputValue = (document.getElementById("discountCodeInput")?.value || "").trim().toUpperCase();
+      if (!inputValue) return null;
+      return customerDiscountCodes.find((code) => String(code.ma || "").toUpperCase() === inputValue) || {
+        ma: inputValue,
+        giaTriGiam: 0,
+        trangThai: "KHONG_XAC_DINH",
+      };
+    }
+
+    function getCartDiscountAmount(subtotal) {
+      const code = getSelectedDiscountCode();
+      if (!code || code.trangThai !== "CHUA_SU_DUNG") return 0;
+      return Math.min(subtotal, Number(code.giaTriGiam || 0));
+    }
+
+    function renderDiscountSummary(subtotal) {
+      const summary = document.getElementById("discountCodeSummary");
+      if (!summary) return;
+      const code = getSelectedDiscountCode();
+      if (!code) {
+        summary.style.display = "none";
+        summary.innerHTML = "";
+        return;
+      }
+
+      const discountAmount = getCartDiscountAmount(subtotal);
+      if (code.trangThai === "CHUA_SU_DUNG") {
+        summary.style.display = "block";
+        summary.innerHTML = `
+          <div style="display:flex;justify-content:space-between;gap:12px"><span>Mã giảm giá áp dụng</span><b>${code.ma}</b></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;color:var(--green);font-weight:800"><span>Số tiền giảm</span><span>-${discountAmount.toLocaleString()} đ</span></div>
+        `;
+        return;
+      }
+
+      summary.style.display = "block";
+      summary.innerHTML = `<div style="color:var(--red);font-weight:800">Mã ${code.ma} không khả dụng (${discountStatusLabel(code.trangThai)})</div>`;
+    }
+
     function renderCartItems() {
       const container = document.getElementById("cartItemsList");
       const totalDisplay = document.getElementById("cartTotalDisplay");
@@ -1743,6 +1953,7 @@
       if (selectedCartItems.length === 0) {
         container.innerHTML = `<div style="color: #999; text-align: center; padding-top: 150px">Chưa có sản phẩm trong giỏ hàng</div>`;
         totalDisplay.innerText = "0 đ";
+        renderDiscountSummary(0);
         return;
       }
       container.innerHTML = "";
@@ -1755,7 +1966,11 @@
           <img src="${getSafeBookImage(item.hinhAnh, cartPlaceholder)}" onerror="this.onerror=null; this.src=cartPlaceholder;">
           <div class="mini-card-info">
             <div class="mini-card-title">${item.tenSach}</div>
-            <div class="mini-card-price">${item.gia.toLocaleString()} đ</div>
+            <div class="mini-card-price">
+              ${item.gia.toLocaleString()} đ
+              ${Number(item.phanTramUuDai || 0) > 0 ? `<span style="margin-left:6px;color:var(--green);font-size:11px;font-weight:800">Giảm ${item.phanTramUuDai}%</span>` : ""}
+            </div>
+            ${Number(item.phanTramUuDai || 0) > 0 ? `<div style="font-size:11px;color:var(--text-muted);text-decoration:line-through">${Number(item.giaGoc || item.gia).toLocaleString()} đ</div>` : ""}
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
               <input type="number" class="input-text" min="1" max="${item.tonKho}" value="${item.sl}" style="width:60px; padding:2px 4px; font-size:12px;" onchange="updateCartQuantity(${item.id}, this.value)">
               <button class="btn btn-danger-ghost" style="padding:2px 6px; font-size:11px; border:none;" onclick="removeCartItem(${item.id})">Xóa</button>
@@ -1764,7 +1979,9 @@
         `;
         container.appendChild(card);
       });
-      totalDisplay.innerText = calculatedTotal.toLocaleString() + " đ";
+      const discountAmount = getCartDiscountAmount(calculatedTotal);
+      renderDiscountSummary(calculatedTotal);
+      totalDisplay.innerText = Math.max(0, calculatedTotal - discountAmount).toLocaleString() + " đ";
     }
 
     async function submitCreateInvoice() {
@@ -1787,6 +2004,7 @@
         const payload = {
           khachHangId: selectedCustomer.id,
           nhanVienId: Number(currentUser.id),
+          maGiamGia: document.getElementById("discountCodeInput").value.trim(),
           danhSachChiTiet: selectedCartItems.map((x) => ({
             sachID: x.id,
             soLuong: x.sl,
@@ -1813,6 +2031,11 @@
     function openInvoicePrintModal(invoice, cartItems) {
       // ĐỒNG BỘ TỔNG TIỀN: Lấy chuẩn xác từ dữ liệu Server
       let totalAmount = invoice.tongTien || invoice.tongGiaTri || 0;
+      const subtotalAmount = cartItems.reduce((sum, item) => sum + item.gia * item.sl, 0);
+      const invoiceDiscount = Number(invoice.tienGiamGia || invoice.giamGia || 0);
+      const invoiceDiscountCode = typeof invoice.maGiamGia === "object"
+        ? invoice.maGiamGia?.ma
+        : (invoice.maGiamGia || document.getElementById("discountCodeInput")?.value || "");
       const tbody = document.getElementById("p-invoice-items");
       tbody.innerHTML = "";
 
@@ -1821,7 +2044,10 @@
         tr.innerHTML = `
           <td>${item.tenSach}</td>
           <td style="text-align:center;">${item.sl}</td>
-          <td style="text-align:right;">${(item.gia * item.sl).toLocaleString()}</td>
+          <td style="text-align:right;">
+            ${(item.gia * item.sl).toLocaleString()}
+            ${Number(item.phanTramUuDai || 0) > 0 ? `<div style="font-size:10.5px;color:#3a7d44;font-weight:700">Giảm ${item.phanTramUuDai}%</div>` : ""}
+          </td>
         `;
         tbody.appendChild(tr);
       });
@@ -1829,6 +2055,19 @@
       document.getElementById("p-invoice-id").innerText = `#HD${invoice.id}`;
       document.getElementById("p-invoice-date").innerText =
         new Date().toLocaleString("vi-VN");
+      const subtotalEl = document.getElementById("p-invoice-subtotal");
+      const discountEl = document.getElementById("p-invoice-discount");
+      if (subtotalEl && discountEl && invoiceDiscount > 0) {
+        subtotalEl.style.display = "block";
+        subtotalEl.innerText = `Tạm tính: ${subtotalAmount.toLocaleString()} đ`;
+        discountEl.style.display = "block";
+        discountEl.innerText = `Mã giảm giá ${invoiceDiscountCode || ""}: -${invoiceDiscount.toLocaleString()} đ`;
+      } else if (subtotalEl && discountEl) {
+        subtotalEl.style.display = "none";
+        discountEl.style.display = "none";
+        subtotalEl.innerText = "";
+        discountEl.innerText = "";
+      }
       document.getElementById("p-invoice-total").innerText =
         totalAmount.toLocaleString() + " đ";
 
@@ -1854,7 +2093,11 @@
     function clearCartAndRefresh() {
       selectedCartItems = [];
       selectedCustomer = null;
+      customerDiscountCodes = [];
       document.getElementById("customerSearchInput").value = "";
+      document.getElementById("discountCodeInput").value = "";
+      document.getElementById("discountCodeSummary").style.display = "none";
+      document.getElementById("discountCodeSuggestions").style.display = "none";
       document.getElementById("selectedCustomerCard").style.display = "none";
       activeInvoiceId = null;
       isInvoiceFromReservation = false;

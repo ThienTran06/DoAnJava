@@ -21,6 +21,12 @@ public class ChiTietHoaDon {
 
     private BigDecimal donGia;
 
+    private BigDecimal giaGoc;
+
+    private BigDecimal phanTramUuDai;
+
+    private String tenUuDai;
+
     private String tenSach;
 
     private String hinhAnh;

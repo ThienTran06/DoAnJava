@@ -19,6 +19,12 @@ public class Sach {
     private int soLuongTon;
     private String hinhAnh;
     private int namXuatBan;
+    @Transient
+    private BigDecimal giaSauUuDai;
+    @Transient
+    private BigDecimal phanTramUuDai;
+    @Transient
+    private String tenUuDai;
 
     @ManyToOne
     @JoinColumn(name = "the_loai_id")

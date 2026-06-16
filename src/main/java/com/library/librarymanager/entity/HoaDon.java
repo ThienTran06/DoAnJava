@@ -18,10 +18,14 @@ public class HoaDon {
     private String maHoaDon;
     private LocalDateTime ngayBan;
     private BigDecimal tongTien;
+    private BigDecimal tienGiamGia;
     private String trangThai;
     @ManyToOne
     @JoinColumn(name = "khach_hang_id")
     private KhachHang khachHang;
+    @ManyToOne
+    @JoinColumn(name = "ma_giam_gia_id")
+    private MaGiamGia maGiamGia;
     @ManyToOne
     @JoinColumn(name="nhan_vien_id")
     private NguoiDung nhanVien;

@@ -8,6 +8,8 @@ import com.library.librarymanager.entity.*;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.HoaDonService;
 import com.library.librarymanager.service.Interface.KhachHangService;
+import com.library.librarymanager.service.Interface.MaGiamGiaService;
+import com.library.librarymanager.service.Interface.UuDaiService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,6 +37,8 @@ public class HoaDonServiceImpl implements HoaDonService {
     private final SachRepository sachRepository;
     private final ChiTietHoaDonRepository chiTietHoaDonRepository;
     private final KhachHangService khachHangService;
+    private final MaGiamGiaService maGiamGiaService;
+    private final UuDaiService uuDaiService;
     @Override
     public List<HoaDon> getAll() {
         return hoaDonRepository.findAll();
@@ -69,16 +73,21 @@ public class HoaDonServiceImpl implements HoaDonService {
             Sach sach= sachRepository.findByIdForUpdate(chiTietHoaDonRequest.getSachID()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy sách có id = "+ chiTietHoaDonRequest.getSachID()));
             if(sach.getSoLuongTon()< chiTietHoaDonRequest.getSoLuong())throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không đủ sách tồn kho để bán");
             if(chiTietHoaDonRequest.getSoLuong()<=0)throw new IllegalArgumentException("Số lượng không được âm");
+            uuDaiService.ganUuDaiHienTai(sach);
+            BigDecimal donGiaSauUuDai = sach.getGiaSauUuDai() == null ? sach.getGiaBan() : sach.getGiaSauUuDai();
             ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon();
             chiTietHoaDon.setSach(sach);
             chiTietHoaDon.setHoaDon(newHoaDon);
             chiTietHoaDon.setSoLuong(chiTietHoaDonRequest.getSoLuong());
-            chiTietHoaDon.setDonGia(sach.getGiaBan());
+            chiTietHoaDon.setGiaGoc(sach.getGiaBan());
+            chiTietHoaDon.setDonGia(donGiaSauUuDai);
+            chiTietHoaDon.setPhanTramUuDai(sach.getPhanTramUuDai());
+            chiTietHoaDon.setTenUuDai(sach.getTenUuDai());
             chiTietHoaDon.setTenSach(sach.getTenSach());
             chiTietHoaDon.setHinhAnh(sach.getHinhAnh());
             chiTietHoaDon.setTenSach(sach.getTenSach());
             chiTietHoaDon.setThanhTien(
-                    sach.getGiaBan().multiply(BigDecimal.valueOf(chiTietHoaDonRequest.getSoLuong())));
+                    donGiaSauUuDai.multiply(BigDecimal.valueOf(chiTietHoaDonRequest.getSoLuong())));
 
 
             sach.setSoLuongTon(sach.getSoLuongTon()- chiTietHoaDonRequest.getSoLuong());
@@ -91,9 +100,13 @@ public class HoaDonServiceImpl implements HoaDonService {
         newHoaDon.setNgayBan(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
         khachHangService.capNhatHangThanhVien(khachHang);
         BigDecimal tongTienSauGiamGia = khachHangService.tinhTongTienSauGiamGia(khachHang, tongTien);
-        newHoaDon.setTongTien(tongTienSauGiamGia);
+        MaGiamGia maGiamGia = maGiamGiaService.suDungMa(khachHang, request.getMaGiamGia());
+        BigDecimal tongTienCuoi = maGiamGiaService.tinhTienSauMaGiamGia(tongTienSauGiamGia, maGiamGia);
+        newHoaDon.setMaGiamGia(maGiamGia);
+        newHoaDon.setTienGiamGia(tongTienSauGiamGia.subtract(tongTienCuoi));
+        newHoaDon.setTongTien(tongTienCuoi);
         hoaDonRepository.save(newHoaDon);
-        khachHangService.congDiemTuHoaDon(khachHang, tongTienSauGiamGia);
+        khachHangService.congDiemTuHoaDon(khachHang, tongTienCuoi);
         return newHoaDon;
     }
 
@@ -196,14 +209,19 @@ public class HoaDonServiceImpl implements HoaDonService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Khong du sach ton kho de ban");
             }
 
+            uuDaiService.ganUuDaiHienTai(sach);
+            BigDecimal donGiaSauUuDai = sach.getGiaSauUuDai() == null ? sach.getGiaBan() : sach.getGiaSauUuDai();
             ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon();
             chiTietHoaDon.setHoaDon(hoaDon);
             chiTietHoaDon.setSach(sach);
             chiTietHoaDon.setSoLuong(detailRequest.getSoLuong());
-            chiTietHoaDon.setDonGia(sach.getGiaBan());
+            chiTietHoaDon.setGiaGoc(sach.getGiaBan());
+            chiTietHoaDon.setDonGia(donGiaSauUuDai);
+            chiTietHoaDon.setPhanTramUuDai(sach.getPhanTramUuDai());
+            chiTietHoaDon.setTenUuDai(sach.getTenUuDai());
             chiTietHoaDon.setTenSach(sach.getTenSach());
             chiTietHoaDon.setHinhAnh(sach.getHinhAnh());
-            chiTietHoaDon.setThanhTien(sach.getGiaBan().multiply(BigDecimal.valueOf(detailRequest.getSoLuong())));
+            chiTietHoaDon.setThanhTien(donGiaSauUuDai.multiply(BigDecimal.valueOf(detailRequest.getSoLuong())));
 
             sach.setSoLuongTon(sach.getSoLuongTon() - detailRequest.getSoLuong());
             tongTien = tongTien.add(chiTietHoaDon.getThanhTien());
@@ -213,7 +231,10 @@ public class HoaDonServiceImpl implements HoaDonService {
         chiTietHoaDonRepository.saveAll(newDetails);
         hoaDon.setDanhSachChiTiet(newDetails);
         khachHangService.capNhatHangThanhVien(hoaDon.getKhachHang());
-        hoaDon.setTongTien(khachHangService.tinhTongTienSauGiamGia(hoaDon.getKhachHang(), tongTien));
+        BigDecimal tongTienSauGiamGia = khachHangService.tinhTongTienSauGiamGia(hoaDon.getKhachHang(), tongTien);
+        BigDecimal tongTienCuoi = maGiamGiaService.tinhTienSauMaGiamGia(tongTienSauGiamGia, hoaDon.getMaGiamGia());
+        hoaDon.setTienGiamGia(tongTienSauGiamGia.subtract(tongTienCuoi));
+        hoaDon.setTongTien(tongTienCuoi);
 
         return hoaDonRepository.save(hoaDon);
     }

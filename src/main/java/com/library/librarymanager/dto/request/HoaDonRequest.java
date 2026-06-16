@@ -17,6 +17,8 @@ public class HoaDonRequest {
      @Positive
      private int nhanVienId;
 
+     private String maGiamGia;
+
      @NotEmpty(message = "Danh sach chi tiet khong duoc trong")
      @Valid
      private List<ChiTietHoaDonRequest> danhSachChiTiet;

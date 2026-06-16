@@ -6,6 +6,29 @@
     <div class="stat-card"><div class="stat-value" id="statOutOfStock">0</div><div class="stat-label">Hết hàng</div><span class="stat-delta down">↓ 3</span></div>
     <div class="stat-card"><div class="stat-value" id="statInventoryValue">0</div><div class="stat-label">Giá trị kho</div><span class="stat-delta up">↑ 8%</span></div>
   </div>
+  <div class="table-card" style="margin-bottom:18px">
+    <div class="header-row" style="margin-bottom:14px;align-items:flex-end">
+      <div>
+        <div style="font-size:16px;font-weight:800">Ưu đãi sản phẩm</div>
+        <div style="font-size:12.5px;color:var(--muted);margin-top:3px">Tạo ưu đãi theo ngày hoặc theo khoảng tháng cho một danh sách sách</div>
+      </div>
+      <button class="btn ghost" type="button" id="btnRefreshPromotions">Tải lại ưu đãi</button>
+    </div>
+    <form id="promotionForm" style="display:grid;grid-template-columns:minmax(160px,1fr) 110px 145px 145px minmax(220px,1.4fr) auto;gap:12px;align-items:end;margin-bottom:14px;padding:14px;border:1.5px solid var(--border);border-radius:12px;background:var(--bg)">
+      <div class="field" style="margin:0"><div class="label">Tên ưu đãi</div><input class="input" id="promotionName" placeholder="Ưu đãi hôm nay" required></div>
+      <div class="field" style="margin:0"><div class="label">% giảm</div><input class="input" id="promotionPercent" type="number" min="1" max="100" step="1" placeholder="40" required></div>
+      <div class="field" style="margin:0"><div class="label">Ngày bắt đầu</div><input class="input" id="promotionStart" type="date" required></div>
+      <div class="field" style="margin:0"><div class="label">Ngày kết thúc</div><input class="input" id="promotionEnd" type="date" required></div>
+      <div class="field" style="margin:0"><div class="label">Sách áp dụng</div><select class="select" id="promotionBookSelect" multiple required style="min-height:44px"></select></div>
+      <button class="btn primary" type="submit" id="btnCreatePromotion">Tạo ưu đãi</button>
+    </form>
+    <div class="table-wrap">
+      <table class="tbl-books">
+        <thead><tr><th>Tên ưu đãi</th><th>% giảm</th><th>Thời gian</th><th>Số sách</th><th>Trạng thái</th></tr></thead>
+        <tbody id="promotionTable"><tr><td colspan="5"><div class="empty-state">Đang tải danh sách ưu đãi...</div></td></tr></tbody>
+      </table>
+    </div>
+  </div>
   <div class="table-card">
     <div class="header-row"><div style="font-size:14.5px;font-weight:800">Danh sách đầu sách</div><div style="display:flex;gap:10px;align-items:center"><div class="search-box" style="width:300px"><input type="text" id="bookSearch" placeholder="Tìm kiếm sách..."></div><select id="categoryFilter" class="select" style="width:150px"><option value="">Tất cả thể loại</option><option>Kinh tế</option><option>Tâm lý</option><option>Văn học</option><option>Thiếu nhi</option><option>Kỹ năng</option></select><button class="btn primary" id="btnAddBook">Thêm sách</button></div></div>
     <div class="table-wrap"><table class="tbl-books"><thead><tr><th>STT</th><th>Ảnh</th><th>Tên</th><th>Mục</th><th>Giá</th><th>Số lượng</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="bookTable"><tr><td>1</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Đắc nhân tâm</td><td>Kinh tế</td><td>95k đ</td><td>186</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>2</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Combo Harry Potter</td><td>Trẻ em</td><td>250k đ</td><td>152</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>3</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Nhà giả kim</td><td>Văn học</td><td>89k đ</td><td>128</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>4</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Atomic Habits</td><td>Kỹ năng</td><td>119k đ</td><td>0</td><td><span class="badge bad">Hết hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>5</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Dám bị ghét</td><td>Tâm lý</td><td>105k đ</td><td>98</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr></tbody></table></div>
@@ -28,11 +51,17 @@ window.initBooks = function() {
   const bookTable = document.getElementById('bookTable');
   const addPublisherBtn = document.getElementById('btnAddPublisher');
   const addAuthorBtn = document.getElementById('btnAddAuthor');
+  const promotionForm = document.getElementById('promotionForm');
+  const promotionTable = document.getElementById('promotionTable');
+  const promotionBookSelect = document.getElementById('promotionBookSelect');
+  const refreshPromotionsBtn = document.getElementById('btnRefreshPromotions');
+  const createPromotionBtn = document.getElementById('btnCreatePromotion');
   
   if (!overlay || !openBtn || !form) return;
 
   const API_BASE = window.API_BASE_URL || window.location.origin;
   const BOOKS_API = `${API_BASE}/api/sach`;
+  const PROMOTION_API = `${API_BASE}/api/uu-dai`;
   let booksLoaded = false;
   let booksLoading = false;
   let booksLoadError = '';
@@ -40,6 +69,7 @@ window.initBooks = function() {
   let publishers = [];
   let authors = [];
   let bookStats = null;
+  let promotions = [];
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem('token')
@@ -76,6 +106,59 @@ window.initBooks = function() {
 
   const publisherName = pub => pub ? (pub.tenNXB || pub.tenNhaXuatBan || pub.ten || 'NXB') : '';
   const authorName = author => author ? (author.hoTen || author.tenTacGia || author.ten || 'Tác giả') : '';
+  const money = value => Number(value || 0).toLocaleString('vi-VN') + ' đ';
+  const todayInputValue = () => new Date().toISOString().slice(0, 10);
+
+  const formatDate = value => {
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '—';
+    return date.toLocaleDateString('vi-VN');
+  };
+
+  const renderPromotionBookOptions = () => {
+    if (!promotionBookSelect) return;
+    promotionBookSelect.innerHTML = (window.allBooks || []).map(book =>
+      `<option value="${book.id}">${book.name} - ${money(book.price)}</option>`
+    ).join('');
+  };
+
+  const renderPromotions = () => {
+    if (!promotionTable) return;
+    const today = todayInputValue();
+    promotionTable.innerHTML = promotions.length ? promotions.map(item => {
+      const start = item.ngayBatDau;
+      const end = item.ngayKetThuc;
+      const active = item.trangThai && start <= today && end >= today;
+      const status = active ? 'Đang áp dụng' : (item.trangThai ? 'Chưa/đã qua kỳ' : 'Tắt');
+      return `
+        <tr>
+          <td style="font-weight:800">${item.tenUuDai || '—'}</td>
+          <td style="font-weight:800;color:var(--red)">${Number(item.phanTramGiam || 0)}%</td>
+          <td>${formatDate(start)} - ${formatDate(end)}</td>
+          <td>${Array.isArray(item.danhSachSach) ? item.danhSachSach.length : 0}</td>
+          <td><span class="badge ${active ? 'ok' : 'bad'}">${status}</span></td>
+        </tr>
+      `;
+    }).join('') : '<tr><td colspan="5"><div class="empty-state">Chưa có ưu đãi nào.</div></td></tr>';
+  };
+
+  const loadPromotionsFromApi = async () => {
+    if (!promotionTable) return;
+    promotionTable.innerHTML = '<tr><td colspan="5"><div class="empty-state">Đang tải danh sách ưu đãi...</div></td></tr>';
+    try {
+      const response = await fetch(PROMOTION_API, {
+        headers: { Accept: 'application/json', ...getAuthHeaders() },
+      });
+      if (response.status === 401) throw new Error('401');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      promotions = Array.isArray(data) ? data : [];
+      renderPromotions();
+    } catch (error) {
+      promotionTable.innerHTML = '<tr><td colspan="5"><div class="empty-state">Không thể tải danh sách ưu đãi.</div></td></tr>';
+    }
+  };
 
   const populateMetadataSelects = () => {
     const categorySelect = form.theLoaiId;
@@ -188,6 +271,9 @@ window.initBooks = function() {
       category: categoryName,
       theLoaiId,
       price,
+      salePrice: book?.giaSauUuDai != null ? String(book.giaSauUuDai) : price,
+      salePercent: Number(book?.phanTramUuDai || 0),
+      saleName: book?.tenUuDai || '',
       stock: String(stock),
       status: stock > 0 ? 'Còn hàng' : 'Hết hàng',
       image: book?.hinhAnh || '',
@@ -234,6 +320,7 @@ window.initBooks = function() {
 
       const data = await response.json();
       window.allBooks = Array.isArray(data) ? data.map(mapBook) : [];
+      renderPromotionBookOptions();
       booksLoaded = true;
       booksLoading = false;
       renderTable();
@@ -334,7 +421,11 @@ window.initBooks = function() {
         <td><img src="${book.image || ''}" style="width:40px;height:50px;object-fit:cover;border-radius:4px;background:#f0f0f0" alt="Ảnh sách"></td>
         <td>${book.name}</td>
         <td>${book.category}</td>
-        <td>${book.price} đ</td>
+        <td>
+          ${Number(book.salePercent || 0) > 0 && Number(book.salePrice) < Number(book.price)
+            ? `<div style="font-weight:800;color:var(--red)">${money(book.salePrice)}</div><div style="font-size:11px;color:var(--muted);text-decoration:line-through">${money(book.price)}</div><div style="font-size:11px;font-weight:800;color:#3a7d44">Giảm ${book.salePercent}%</div>`
+            : `${money(book.price)}`}
+        </td>
         <td>${book.stock}</td>
         <td><span class="badge ${book.status === 'Còn hàng' ? 'ok' : 'bad'}">${book.status}</span></td>
         <td><div class="ops"><button class="link book-edit" data-id="${book.id}">Sửa</button><button class="link danger book-delete" data-id="${book.id}">Xóa</button></div></td>
@@ -351,6 +442,8 @@ window.initBooks = function() {
   if (form.image) form.image.onchange = null;
   if (bookSearch) bookSearch.oninput = null;
   if (categoryFilter) categoryFilter.onchange = null;
+  if (promotionForm) promotionForm.onsubmit = null;
+  if (refreshPromotionsBtn) refreshPromotionsBtn.onclick = null;
   if (addPublisherBtn) addPublisherBtn.onclick = null;
   if (addAuthorBtn) addAuthorBtn.onclick = null;
   bookTable.removeEventListener('click', window.bookTableHandler);
@@ -394,6 +487,62 @@ window.initBooks = function() {
   // Search and filter handlers
   if (bookSearch) bookSearch.oninput = renderTable;
   if (categoryFilter) categoryFilter.onchange = renderTable;
+  if (refreshPromotionsBtn) refreshPromotionsBtn.onclick = () => loadPromotionsFromApi();
+  if (promotionForm) {
+    const today = todayInputValue();
+    if (promotionForm.querySelector('#promotionStart') && !promotionForm.querySelector('#promotionStart').value) {
+      promotionForm.querySelector('#promotionStart').value = today;
+      promotionForm.querySelector('#promotionEnd').value = today;
+    }
+    promotionForm.onsubmit = async e => {
+      e.preventDefault();
+      const name = document.getElementById('promotionName').value.trim();
+      const percent = Number(document.getElementById('promotionPercent').value || 0);
+      const start = document.getElementById('promotionStart').value;
+      const end = document.getElementById('promotionEnd').value;
+      const sachIds = Array.from(promotionBookSelect?.selectedOptions || []).map(option => Number(option.value));
+      if (!name || percent <= 0 || percent > 100 || !start || !end || !sachIds.length) {
+        window.showToast('Vui lòng nhập đủ thông tin ưu đãi');
+        return;
+      }
+      if (start > end) {
+        window.showToast('Ngày bắt đầu không được lớn hơn ngày kết thúc');
+        return;
+      }
+      if (createPromotionBtn) createPromotionBtn.disabled = true;
+      try {
+        const response = await fetch(PROMOTION_API, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeaders(),
+          },
+          body: JSON.stringify({
+            tenUuDai: name,
+            phanTramGiam: percent,
+            ngayBatDau: start,
+            ngayKetThuc: end,
+            trangThai: true,
+            sachIds,
+          }),
+        });
+        if (response.status === 401) throw new Error('Bạn chưa đăng nhập hoặc phiên làm việc đã hết hạn.');
+        if (!response.ok) {
+          const message = await response.text();
+          throw new Error(message || 'Không thể tạo ưu đãi');
+        }
+        promotionForm.reset();
+        document.getElementById('promotionStart').value = todayInputValue();
+        document.getElementById('promotionEnd').value = todayInputValue();
+        window.showToast('Đã tạo ưu đãi sản phẩm');
+        await Promise.all([loadPromotionsFromApi(), loadBooksFromApi()]);
+      } catch (err) {
+        window.showToast(err.message || 'Không thể tạo ưu đãi');
+      } finally {
+        if (createPromotionBtn) createPromotionBtn.disabled = false;
+      }
+    };
+  }
   if (addPublisherBtn) addPublisherBtn.onclick = () => createMetadataItem('publisher');
   if (addAuthorBtn) addAuthorBtn.onclick = () => createMetadataItem('author');
   
@@ -569,6 +718,8 @@ window.initBooks = function() {
     const categoryName = params.get('categoryName');
     if (categoryId) window.setBookCategoryFilter(categoryId, categoryName || '');
   });
+  renderPromotionBookOptions();
+  loadPromotionsFromApi();
   loadBooksFromApi();
 };
 </script>

@@ -96,9 +96,12 @@
     html[data-theme="dark"] .nav-item.active svg {
       stroke: currentColor !important;
     }
+    html[data-theme="dark"] .nav-badge,
     html[data-theme="dark"] .nav-item.active .nav-badge {
-      background: rgba(255,255,255,0.12);
-      color: var(--text);
+      background: #2b3647 !important;
+      border: 1px solid #3a4960 !important;
+      color: #d8e2f0 !important;
+      box-shadow: none !important;
     }
     html[data-theme="dark"] .stat-card.dark {
       background: #2f2f2f !important;
@@ -448,6 +451,8 @@
     html[data-theme="dark"] .btn:not(.btn-danger-ghost):not(.danger),
     html[data-theme="dark"] button.btn:not(.btn-danger-ghost):not(.danger),
     html[data-theme="dark"] .btn-primary,
+    html[data-theme="dark"] .btn-login,
+    html[data-theme="dark"] button.btn-login,
     html[data-theme="dark"] .report-btn,
     html[data-theme="dark"] .kpi-save-btn {
       background: #253044 !important;
@@ -457,11 +462,30 @@
     html[data-theme="dark"] .btn:not(.btn-danger-ghost):not(.danger):hover,
     html[data-theme="dark"] button.btn:not(.btn-danger-ghost):not(.danger):hover,
     html[data-theme="dark"] .btn-primary:hover,
+    html[data-theme="dark"] .btn-login:hover,
+    html[data-theme="dark"] button.btn-login:hover,
     html[data-theme="dark"] .report-btn:hover,
     html[data-theme="dark"] .kpi-save-btn:hover {
       background: #2f3d54 !important;
       border-color: #50627c !important;
       color: #ffffff !important;
+    }
+    html[data-theme="dark"] .btn-login.loading,
+    html[data-theme="dark"] .btn-login:disabled,
+    html[data-theme="dark"] button.btn-login:disabled {
+      background: #253044 !important;
+      border-color: #3a4960 !important;
+      color: #cbd5e1 !important;
+      opacity: .88 !important;
+      text-shadow: none !important;
+    }
+    html[data-theme="dark"] body .login-card .btn-login#login-btn,
+    html[data-theme="dark"] body button.btn-login#login-btn {
+      background: #253044 !important;
+      border-color: #3a4960 !important;
+      color: #eef2f7 !important;
+      text-shadow: none !important;
+      box-shadow: none !important;
     }
     html[data-theme="dark"] .nav-item:hover,
     html[data-theme="dark"] .user-card:hover,
@@ -1349,6 +1373,47 @@
 
   ];
 
+  translationPairs.push(
+    ['Mã giảm giá', 'Discount code'],
+    ['Nhập mã của khách hàng', 'Enter customer code'],
+    ['Mã giảm giá áp dụng', 'Applied discount code'],
+    ['Số tiền giảm', 'Discount amount'],
+    ['Mã giảm giá & điểm đã đổi', 'Discount codes & redeemed points'],
+    ['Theo dõi toàn bộ mã giảm giá được tạo từ điểm tích lũy của khách hàng', 'Track all discount codes created from customer loyalty points'],
+    ['Tìm mã, tên hoặc SĐT...', 'Search code, name or phone...'],
+    ['Tổng mã', 'Total codes'],
+    ['Tổng điểm đã đổi', 'Total redeemed points'],
+    ['Khách hàng quy đổi', 'Redeeming customer'],
+    ['Chọn khách hàng', 'Select customer'],
+    ['Điểm sử dụng', 'Points used'],
+    ['Tối thiểu 100', 'Minimum 100'],
+    ['Giá trị giảm dự kiến', 'Estimated discount value'],
+    ['Tạo mã', 'Create code'],
+    ['Điểm đã đổi', 'Redeemed points'],
+    ['Giá trị giảm', 'Discount value'],
+    ['Ngày tạo', 'Created date'],
+    ['Hết hạn', 'Expires'],
+    ['Ngày dùng', 'Used date'],
+    ['Ưu đãi sản phẩm', 'Product promotions'],
+    ['Tạo ưu đãi theo ngày hoặc theo khoảng tháng cho một danh sách sách', 'Create daily or monthly promotions for a book list'],
+    ['Tải lại ưu đãi', 'Reload promotions'],
+    ['Tên ưu đãi', 'Promotion name'],
+    ['Ưu đãi hôm nay', 'Today promotion'],
+    ['% giảm', 'Discount %'],
+    ['Ngày bắt đầu', 'Start date'],
+    ['Ngày kết thúc', 'End date'],
+    ['Sách áp dụng', 'Applied books'],
+    ['Tạo ưu đãi', 'Create promotion'],
+    ['Số sách', 'Book count'],
+    ['Đang áp dụng', 'Active'],
+    ['Chưa/đã qua kỳ', 'Not active'],
+    ['Tắt', 'Disabled'],
+    ['Chưa có ưu đãi nào.', 'No promotions yet.'],
+    ['Đang tải danh sách ưu đãi...', 'Loading promotion list...'],
+    ['Không thể tải danh sách ưu đãi.', 'Could not load promotion list.'],
+    ['Giảm', 'Discount']
+  );
+
   function normalizeText(value) {
     return String(value || '')
       .normalize('NFD')
@@ -1616,6 +1681,7 @@
   function translateAttributes(lang) {
     const attrs = ['placeholder', 'title', 'aria-label'];
     document.querySelectorAll('*').forEach(element => {
+      if (element.closest('[data-no-translate]')) return;
       let saved = originalAttributes.get(element);
       if (!saved) {
         saved = {};
@@ -1667,6 +1733,7 @@
         if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
         const parent = node.parentElement;
         if (!parent || ['SCRIPT', 'STYLE', 'TEXTAREA'].includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
+        if (parent.closest('[data-no-translate]')) return NodeFilter.FILTER_REJECT;
         return translateText(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
       }
     });

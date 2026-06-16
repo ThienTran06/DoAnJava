@@ -785,6 +785,10 @@
           "
         ></div>
         <div
+                id="dtDiscountInfo"
+                style="display:none;margin-top:10px;padding:10px 12px;border:1px dashed #b7d7bd;border-radius:8px;background:#f3fbf4;color:#237804;font-size:12.5px;font-weight:700"
+        ></div>
+        <div
                 style="
             margin-top: 24px;
             padding: 16px;
@@ -1128,6 +1132,18 @@
 
       document.getElementById("dtTotalAmount").innerText =
         (target.tongTien || 0).toLocaleString() + " đ";
+      const detailDiscountInfo = document.getElementById("dtDiscountInfo");
+      const detailDiscountAmount = Number(target.tienGiamGia || target.giamGia || 0);
+      const detailDiscountCode = typeof target.maGiamGia === "object"
+        ? target.maGiamGia?.ma
+        : target.maGiamGia;
+      if (detailDiscountInfo && detailDiscountAmount > 0) {
+        detailDiscountInfo.style.display = "block";
+        detailDiscountInfo.innerText = `Mã giảm giá ${detailDiscountCode || ""}: -${detailDiscountAmount.toLocaleString("vi-VN")} đ`;
+      } else if (detailDiscountInfo) {
+        detailDiscountInfo.style.display = "none";
+        detailDiscountInfo.innerText = "";
+      }
 
       const isClosed =
         target.trangThai === "HOAN THANH" ||
@@ -1216,9 +1232,16 @@
 
       const invoiceCode = `HD${String(invoice.id).padStart(6, "0")}`;
       const total = Number(invoice.tongTien || 0);
+      const discountAmount = Number(invoice.tienGiamGia || invoice.giamGia || 0);
+      const discountCode = typeof invoice.maGiamGia === "object"
+        ? invoice.maGiamGia?.ma
+        : invoice.maGiamGia;
       const customerName = invoice.khachHang?.hoTen || "Khách vãng lai";
       const staffName = invoice.nhanVien?.hoTen || "N/A";
       const printedAt = new Date().toLocaleString("vi-VN");
+      const discountLine = discountAmount > 0
+        ? `<div class="discount"><span>Mã giảm giá ${escapePrintHtml(discountCode || "")}:</span><span>-${discountAmount.toLocaleString("vi-VN")} đ</span></div>`
+        : "";
 
       const html = `<!doctype html>
 <html>
@@ -1240,6 +1263,7 @@
     .num { text-align: right; white-space: nowrap; }
     .empty { text-align: center; color: #777; }
     .total { display: flex; justify-content: flex-end; gap: 16px; margin-top: 14px; font-size: 16px; font-weight: 800; }
+    .discount { display: flex; justify-content: flex-end; gap: 16px; margin-top: 12px; font-size: 13px; font-weight: 700; color: #237804; }
     .footer { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; text-align: center; font-size: 13px; }
     .sign { margin-top: 52px; color: #555; }
     @media print { body { padding: 0; } .receipt { max-width: none; } }
@@ -1273,6 +1297,7 @@
       </thead>
       <tbody>${rows}</tbody>
     </table>
+    ${discountLine}
     <div class="total"><span>TỔNG CỘNG:</span><span>${total.toLocaleString("vi-VN")} đ</span></div>
     <div class="footer">
       <div><b>Khách hàng</b><div class="sign">(Ký, ghi rõ họ tên)</div></div>

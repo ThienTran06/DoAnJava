@@ -8,6 +8,7 @@ import com.library.librarymanager.repository.ChiTietHoaDonRepository;
 import com.library.librarymanager.repository.SachRepository;
 import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.SachService;
+import com.library.librarymanager.service.Interface.UuDaiService;
 import com.library.librarymanager.util.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,16 +28,21 @@ public class SachServiceImpl implements SachService {
     private final SachRepository sachRepository;
     private final CloudinaryService cloudinaryService;
     private final ChiTietHoaDonRepository chiTietHoaDonRepository;
+    private final UuDaiService uuDaiService;
 
     @Override
     public List<Sach> getAll() {
-        return sachRepository.findAll();
+        List<Sach> list = sachRepository.findAll();
+        list.forEach(uuDaiService::ganUuDaiHienTai);
+        return list;
     }
 
     @Override
     public Sach getById(int id) {
-        return sachRepository.findById(id)
+        Sach sach = sachRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Khong tim thay sach co id = " + id));
+        uuDaiService.ganUuDaiHienTai(sach);
+        return sach;
     }
 
     @Override
@@ -88,7 +94,9 @@ public class SachServiceImpl implements SachService {
 
     @Override
     public List<Sach> search(String tenSach, String tenTheLoai, String tenTacGia, Integer namXuatBan) {
-        return sachRepository.search(tenSach, tenTheLoai, tenTacGia, namXuatBan);
+        List<Sach> list = sachRepository.search(tenSach, tenTheLoai, tenTacGia, namXuatBan);
+        list.forEach(uuDaiService::ganUuDaiHienTai);
+        return list;
     }
 
     @Override
@@ -130,13 +138,21 @@ public class SachServiceImpl implements SachService {
 
     @Override
     public Page<Sach> getDanhSachSach(String keyword, int page, int size) {
-        return sachRepository.search(keyword, PageRequest.of(page, size));
+        return sachRepository.search(keyword, PageRequest.of(page, size))
+                .map(sach -> {
+                    uuDaiService.ganUuDaiHienTai(sach);
+                    return sach;
+                });
     }
 
     @Override
     public Page<Sach> getTatCaSach(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return sachRepository.searchAll(keyword, pageable);
+        return sachRepository.searchAll(keyword, pageable)
+                .map(sach -> {
+                    uuDaiService.ganUuDaiHienTai(sach);
+                    return sach;
+                });
     }
 
     private void validateSach(Sach sach, Integer currentId) {

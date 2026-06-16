@@ -50,6 +50,8 @@ public class HoaDonController {
         HoaDonResponse res = new HoaDonResponse();
         res.setId(hd.getId());
         res.setTongTien(hd.getTongTien());
+        res.setTienGiamGia(hd.getTienGiamGia());
+        res.setMaGiamGia(hd.getMaGiamGia() == null ? null : hd.getMaGiamGia().getMa());
         res.setTrangThai(hd.getTrangThai());
         res.setQrUrl(qrUrl);
 
