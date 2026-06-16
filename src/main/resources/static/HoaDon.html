@@ -528,8 +528,8 @@
         }
     </style>
     <link rel="stylesheet" href="ui-polish.css" />
-<script src="js/app-settings.js"></script>
-<script src="js/user-profile.js"></script>
+    <script src="js/app-settings.js"></script>
+    <script src="js/user-profile.js"></script>
 </head>
 <body>
 <aside class="sidebar">
@@ -544,26 +544,21 @@
     <div class="nav-section">
         <div class="nav-label">Quản lý</div>
         <div class="nav-item">
-            
             Tổng quan
         </div>
         <div class="nav-item">
-            
             Sách
         </div>
         <div class="nav-item">
-            
-            Danh mục 
+            Danh mục
         </div>
         <div class="nav-item">
-            
             Khách hàng
         </div>
         <div class="nav-item" onclick="location.href='CSKH.html'">
-    Chăm sóc KH
-</div>
-<div class="nav-item">
-            
+            Chăm sóc KH
+        </div>
+        <div class="nav-item">
             Nhân viên
         </div>
     </div>
@@ -584,9 +579,9 @@
         <div class="nav-item" onclick="location.href = 'PhieuGiu.html'">
             Phiếu giữ
         </div>
-<div class="nav-item" onclick="window.open('danh-gia-cong-cong.html','_blank')">
-    Đánh giá KH
-</div>
+        <div class="nav-item" onclick="window.open('danh-gia-cong-cong.html','_blank')">
+            Đánh giá KH
+        </div>
     </div>
 
     <div class="nav-section">
@@ -1015,6 +1010,8 @@
           statusMarkup = `<span class="badge danger">Đã hủy</span>`;
         } else if (item.trangThai === "PENDING") {
           statusMarkup = `<span class="badge warning">Chờ thanh toán</span>`;
+        } else if (item.trangThai === "PROCESSING") {
+          statusMarkup = `<span class="badge id-tag">Đang xử lý</span>`;
         } else {
           statusMarkup = `<span class="badge warning">${item.trangThai}</span>`;
         }
@@ -1026,12 +1023,14 @@
           item.trangThai === "DA HUY" ||
           item.trangThai === "CANCELLED";
 
+        const isProcessing = item.trangThai === "PROCESSING";
+
         const cancelActionBtn = isClosed
           ? `<button class="btn" disabled style="background:#f5f5f5; color:var(--text-subtle); border-color:var(--border);">Đã đóng</button>`
           : `<button class="btn btn-danger-ghost" onclick="triggerCancelInvoice(${item.id})" title="Hủy hóa đơn">Hủy</button>`;
 
         // Nếu hóa đơn chưa hoàn tất (đang PENDING/Chờ thanh toán), sinh nút Thanh toán điều hướng sang POS lẻ
-        const payActionBtn = isClosed
+        const payActionBtn = (isClosed || isProcessing)
           ? ""
           : `<button class="btn btn-success" style="padding:4px 10px; font-size:12.5px;" onclick="navigateToInvoicePaymentFlow(${item.id})">Thanh toán</button>`;
 
@@ -1099,6 +1098,10 @@
         wrapBadge.innerHTML = `<span class="badge danger">Đã hủy</span>`;
       } else if (target.trangThai === "PENDING") {
         wrapBadge.innerHTML = `<span class="badge warning">Chờ thanh toán</span>`;
+      } else if (target.trangThai === "PROCESSING") {
+        wrapBadge.innerHTML = `<span class="badge id-tag">Đang xử lý</span>`;
+      } else {
+        wrapBadge.innerHTML = `<span class="badge warning">${target.trangThai}</span>`;
       }
 
       const targetProductsList =
@@ -1152,14 +1155,18 @@
         target.trangThai === "DA HUY" ||
         target.trangThai === "CANCELLED";
 
+      const isProcessing = target.trangThai === "PROCESSING";
+
       const footerActionArea = document.getElementById("drawerFooterAction");
 
       const printButton = `<button class="btn btn-primary" style="border-radius:6px; font-weight:700;" onclick="printInvoice(${target.id})">In hóa đơn</button>`;
 
       if (!isClosed) {
+        const payBtn = isProcessing ? "" : `<button class="btn btn-success" style="border-radius:6px; font-weight:700;" onclick="navigateToInvoicePaymentFlow(${target.id})">Thanh toán đơn</button>`;
+
         footerActionArea.innerHTML = `
           ${printButton}
-          <button class="btn btn-success" style="border-radius:6px; font-weight:700;" onclick="navigateToInvoicePaymentFlow(${target.id})">Thanh toán đơn</button>
+          ${payBtn}
           <button class="btn btn-danger-ghost" style="border-radius:6px; font-weight:700;" onclick="triggerCancelInvoice(${target.id}, true)">Hủy hóa đơn</button>
         `;
       } else {
@@ -1200,6 +1207,7 @@
       if (status === "HOAN THANH" || status === "HOAN_THANH") return "Hoàn thành";
       if (status === "PAID") return "Đã thanh toán";
       if (status === "PENDING") return "Chờ thanh toán";
+      if (status === "PROCESSING") return "Đang xử lý";
       if (status === "HUY DON" || status === "DA HUY" || status === "HUY_DON" || status === "DA_HUY" || status === "CANCELLED") return "Đã hủy";
       return status || "Đang xử lý";
     }
@@ -1337,6 +1345,15 @@
           },
         );
         if (!response.ok) throw new Error("Không thể hủy hóa đơn");
+
+        const currentDraft = localStorage.getItem('DRAFT_INVOICE');
+        if (currentDraft) {
+            const draftObj = JSON.parse(currentDraft);
+            if (draftObj.id === invoiceId) {
+                localStorage.removeItem('DRAFT_INVOICE');
+            }
+        }
+
         window.showToast
           ? window.showToast("Đã hủy hóa đơn thành công!")
           : alert("Đã hủy hóa đơn thành công!");

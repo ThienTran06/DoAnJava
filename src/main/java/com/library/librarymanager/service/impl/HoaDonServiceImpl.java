@@ -5,13 +5,12 @@ import com.library.librarymanager.dto.request.HoaDonRequest;
 import com.library.librarymanager.dto.request.UpdateHoaDonRequest;
 import com.library.librarymanager.dto.response.*;
 import com.library.librarymanager.entity.*;
+import com.library.librarymanager.event.StockChangedEvent;
 import com.library.librarymanager.repository.*;
-import com.library.librarymanager.service.Interface.HoaDonService;
-import com.library.librarymanager.service.Interface.KhachHangService;
-import com.library.librarymanager.service.Interface.MaGiamGiaService;
-import com.library.librarymanager.service.Interface.UuDaiService;
+import com.library.librarymanager.service.Interface.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -39,6 +38,8 @@ public class HoaDonServiceImpl implements HoaDonService {
     private final KhachHangService khachHangService;
     private final MaGiamGiaService maGiamGiaService;
     private final UuDaiService uuDaiService;
+    private final ApplicationEventPublisher publisher;
+
     @Override
     public List<HoaDon> getAll() {
         return hoaDonRepository.findAll();
@@ -65,7 +66,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         HoaDon newHoaDon = new HoaDon();
         newHoaDon.setNhanVien(nhanVien);
         newHoaDon.setKhachHang(khachHang);
-        newHoaDon.setTrangThai("HOAN THANH");
+        newHoaDon.setTrangThai("PROCESSING");
         hoaDonRepository.save(newHoaDon);
         BigDecimal tongTien = BigDecimal.ZERO;
         List<ChiTietHoaDon> list = new ArrayList<>();
@@ -107,6 +108,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         newHoaDon.setTongTien(tongTienCuoi);
         hoaDonRepository.save(newHoaDon);
         khachHangService.congDiemTuHoaDon(khachHang, tongTienCuoi);
+        publisher.publishEvent(new StockChangedEvent());
         return newHoaDon;
     }
 
@@ -175,6 +177,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         }
         hoaDon.setTrangThai("DA HUY");
         hoaDonRepository.save(hoaDon);
+        publisher.publishEvent(new StockChangedEvent());
     }
     @Override
     @Transactional
@@ -235,7 +238,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         BigDecimal tongTienCuoi = maGiamGiaService.tinhTienSauMaGiamGia(tongTienSauGiamGia, hoaDon.getMaGiamGia());
         hoaDon.setTienGiamGia(tongTienSauGiamGia.subtract(tongTienCuoi));
         hoaDon.setTongTien(tongTienCuoi);
-
+        publisher.publishEvent(new StockChangedEvent());
         return hoaDonRepository.save(hoaDon);
     }
 
@@ -347,6 +350,15 @@ public class HoaDonServiceImpl implements HoaDonService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
 
         hoaDon.setTrangThai("PAID");
+
+        hoaDonRepository.save(hoaDon);
+    }
+    @Override
+    public void setPendingStatus(int hoaDonId) {
+        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
+
+        hoaDon.setTrangThai("PENDING");
 
         hoaDonRepository.save(hoaDon);
     }

@@ -9,6 +9,7 @@ import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.entity.NhaCungCap;
 import com.library.librarymanager.entity.PhieuNhap;
 import com.library.librarymanager.entity.Sach;
+import com.library.librarymanager.event.StockChangedEvent;
 import com.library.librarymanager.repository.ChiTietPhieuNhapRepository;
 import com.library.librarymanager.repository.NguoiDungRepository;
 import com.library.librarymanager.repository.NhaCungCapRepository;
@@ -17,6 +18,7 @@ import com.library.librarymanager.repository.SachRepository;
 import com.library.librarymanager.service.Interface.PhieuNhapService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -40,7 +42,7 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
     private final NguoiDungRepository nhanVienRepository;
     private final SachRepository sachRepository;
     private final ChiTietPhieuNhapRepository chiTietPhieuNhapRepository;
-
+    private final ApplicationEventPublisher publisher;
     @Override
     public List<PhieuNhap> getAll() {
         return phieuNhapRepository.findAll();
@@ -96,7 +98,7 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
         chiTietPhieuNhapRepository.saveAll(list);
         phieuNhap.setTongTien(tongTienNhap);
         phieuNhap.setDanhSachChiTiet(list);
-
+        publisher.publishEvent(new StockChangedEvent());
         return phieuNhapRepository.save(phieuNhap);
     }
 

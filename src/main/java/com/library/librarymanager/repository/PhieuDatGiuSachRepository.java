@@ -29,18 +29,13 @@ public interface PhieuDatGiuSachRepository extends JpaRepository<PhieuDatGiuSach
     SELECT p
     FROM PhieuDatGiuSach p
     WHERE (:id IS NULL OR p.id = :id)
-      AND (
-            :tuNgay IS NULL
-            OR (
-                p.createdAt >= :tuNgay
-                AND p.createdAt < :denNgay
-            )
-          )
+      AND (:tuNgay IS NULL OR p.createdAt >= :tuNgay)
+      AND (:denNgay IS NULL OR p.createdAt < :denNgay)
 """)
     Page<PhieuDatGiuSach> getAll(
-            Integer id,
-            LocalDateTime tuNgay,
-            LocalDateTime denNgay,
+            @Param("id") Integer id,
+            @Param("tuNgay") LocalDateTime tuNgay,
+            @Param("denNgay") LocalDateTime denNgay,
             Pageable pageable
     );
 }

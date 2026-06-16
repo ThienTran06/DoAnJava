@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="vi">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BookHouse – Quản lý phiếu nhập</title>
@@ -1440,6 +1442,22 @@
     const drawerImgPlaceholder =
       "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1MCcgaGVpZ2h0PSc2OCcgdmlld0JveD0nMCAwIDUwIDY4JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
 
+
+
+const socket = new SockJS(window.location.origin +"/ws");
+const stompClient = Stomp.over(socket);
+
+stompClient.connect({}, function () {
+
+  stompClient.subscribe("/topic/stock", async function (msg) {
+    const data = JSON.parse(msg.body);
+    if (data.type === "STOCK_CHANGED") {
+        console.log("🎉 ĐÃ BẮT ĐƯỢC SỰ KIỆN TỪ BACKEND! Đang tải lại sách...");
+        await fetchBooks();
+    }
+});
+
+});
     function getAuthHeaders(contentType = "application/json") {
       const token = localStorage.getItem("token");
       const headers = {};

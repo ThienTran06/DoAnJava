@@ -30,4 +30,5 @@ public interface HoaDonService {
     HoaDon updateChiTiet(int id, HoaDonRequest request);
     ThongKeHoaDonResponse getThongKe();
     void thanhToanTienMat(int hoaDonId);
+    void setPendingStatus(int hoaDonId);
 }

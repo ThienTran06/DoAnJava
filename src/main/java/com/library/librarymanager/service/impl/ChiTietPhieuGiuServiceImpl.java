@@ -2,8 +2,10 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.*;
 import com.library.librarymanager.enums.TrangThaiGiu;
+import com.library.librarymanager.event.StockChangedEvent;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.ChiTietPhieuGiuService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,17 +17,19 @@ public class ChiTietPhieuGiuServiceImpl implements ChiTietPhieuGiuService {
     private final ChiTietPhieuGiuRepository ctRepo;
     private final PhieuDatGiuSachRepository phieuRepo;
     private final SachRepository sachRepo;
-
+    private final ApplicationEventPublisher publisher;
     private final int maxSach = 5;
 
     public ChiTietPhieuGiuServiceImpl(
             ChiTietPhieuGiuRepository ctRepo,
             PhieuDatGiuSachRepository phieuRepo,
-            SachRepository sachRepo
+            SachRepository sachRepo,
+            ApplicationEventPublisher publisher
     ) {
         this.ctRepo = ctRepo;
         this.phieuRepo = phieuRepo;
         this.sachRepo = sachRepo;
+        this.publisher=publisher;
     }
 
     @Override
@@ -55,13 +59,7 @@ public class ChiTietPhieuGiuServiceImpl implements ChiTietPhieuGiuService {
             throw new RuntimeException("Vuợt giới hạn số lượng sách");
         }
 
-        boolean daGiu = ctRepo.existsBySach_IdAndPhieuGiu_IdNotAndPhieuGiu_TrangThai(
-                sachId, phieuId, TrangThaiGiu.PENDING
-        );
 
-        if (daGiu) {
-            throw new RuntimeException("Sách đã được giữ");
-        }
 
         Sach s = sachRepo.findByIdForUpdate(sachId) .orElseThrow(() -> new RuntimeException("Không tìm thấy sách"));;
 
@@ -78,7 +76,7 @@ public class ChiTietPhieuGiuServiceImpl implements ChiTietPhieuGiuService {
         ct.setPhieuGiu(p);
         ct.setSach(s);
         ct.setSoLuong(soLuong);
-
+        publisher.publishEvent(new StockChangedEvent());
         ctRepo.save(ct);
     }
     @Override

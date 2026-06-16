@@ -44,6 +44,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 || uri.startsWith("/swagger-ui")
                 || uri.startsWith("/Create")
                 || uri.startsWith("/api/webhook/sepay")
+                || uri.startsWith("/ws")
+                || uri.startsWith("/api/nguoi-dung/create")
+
                 || uri.startsWith("/v3/api-docs")) {
 
             chain.doFilter(req, res);

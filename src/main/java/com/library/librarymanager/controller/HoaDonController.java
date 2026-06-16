@@ -86,4 +86,9 @@ public class HoaDonController {
         hoaDonService.thanhToanTienMat(id);
         return ResponseEntity.ok().build();
     }
+    @PutMapping("/{id}/Pending")
+    public ResponseEntity<Void> setPendingStatus(@PathVariable int id) {
+        hoaDonService.setPendingStatus(id);
+        return ResponseEntity.ok().build();
+    }
 }
