@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -750,7 +750,7 @@
       <div class="report-toolbar">
         <div>
           <h2 style="font-size:22px;letter-spacing:-0.5px;margin-bottom:4px;">Doanh thu</h2>
-          <div class="report-note">Dữ liệu lấy từ /api/bao-cao để test trên Vercel.</div>
+          <div class="report-note">Dữ liệu lấy từ hệ thống báo cáo.</div>
         </div>
         <div class="report-actions">
           <div class="report-date-field">
@@ -783,12 +783,12 @@
         <div class="card">
           <span class="card-title">7 ngày gần nhất</span>
           <div class="report-value" id="sevenDayRevenue">--</div>
-          <div class="report-label">Tổng theo endpoint bảy ngày trước</div>
+          <div class="report-label">Tổng 7 ngày gần nhất</div>
         </div>
         <div class="card">
           <span class="card-title">30 ngày gần nhất</span>
           <div class="report-value" id="thirtyDayRevenue">--</div>
-          <div class="report-label">Tổng theo endpoint ba mươi ngày trước</div>
+          <div class="report-label">Tổng 30 ngày gần nhất</div>
         </div>
         <div class="card">
           <span class="card-title">Bộ lọc đang xem</span>
@@ -839,9 +839,9 @@
           <div class="report-label">Số lượng sách hiện còn</div>
         </div>
         <div class="card">
-          <span class="card-title">Trạng thái API</span>
+          <span class="card-title">Trạng thái dữ liệu</span>
           <div class="report-value" id="inventoryApiState">--</div>
-          <div class="report-label">Kết quả gọi endpoint tồn kho</div>
+          <div class="report-label">Kết quả tải tồn kho</div>
         </div>
       </div>
 
@@ -989,7 +989,7 @@ window.API_BASE_URL = API_BASE;
 const viewTitles = {
   dashboard: ['Tổng quan', 'Chào mừng bạn trở lại, Admin!'],
   books: ['Sách', 'Quản lý toàn bộ đầu sách trong kho'],
-  categories: ['Danh mục', 'Quản lý thể loại sách'],
+  categories: ['Danh mục', 'Quản lý thể loại, tác giả và nhà xuất bản'],
   customers: ['Khách hàng', 'Quản lý thông tin khách hàng'],
   cskh: ['Chăm sóc khách hàng', 'Quản lý đánh giá và phản hồi'],
   staff: ['Nhân viên', 'Quản lý nhân sự cửa hàng'],
@@ -1224,7 +1224,7 @@ function setDashboardStat(index, value, label, state) {
   if (deltaEl) {
     deltaEl.textContent = state || 'T\u1eeb backend';
     deltaEl.classList.remove('up', 'down');
-    deltaEl.classList.add(state === 'L\u1ed7i API' ? 'down' : 'up');
+    deltaEl.classList.add(state === 'L\u1ed7i tải dữ liệu' ? 'down' : 'up');
   }
 }
 
@@ -1269,7 +1269,7 @@ function renderDailyKpi(todayRevenue, failed = false) {
   if (failed) {
     percentEl.textContent = 'Lỗi';
     labelEl.textContent = 'KPI doanh thu hôm nay';
-    statusEl.textContent = 'Lỗi API';
+    statusEl.textContent = 'Lỗi tải dữ liệu';
     statusEl.classList.remove('up');
     statusEl.classList.add('down');
     progressEl.style.width = '0%';
@@ -1653,14 +1653,14 @@ async function loadDashboard() {
   ]);
 
   const [todayResult, stockResult, sevenResult, thirtyResult, categoryResult, bestSellerResult, inventoryResult, invoiceResult, kpiResult] = results;
-  setDashboardStat(0, todayResult.status === 'fulfilled' ? money(todayResult.value) : 'L\u1ed7i', 'Doanh thu h\u00f4m nay', todayResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
-  setDashboardStat(1, stockResult.status === 'fulfilled' ? Number(stockResult.value || 0).toLocaleString('vi-VN') : 'L\u1ed7i', 'T\u1ed3n kho hi\u1ec7n t\u1ea1i', stockResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
+  setDashboardStat(0, todayResult.status === 'fulfilled' ? money(todayResult.value) : 'L\u1ed7i', 'Doanh thu h\u00f4m nay', todayResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i tải dữ liệu');
+  setDashboardStat(1, stockResult.status === 'fulfilled' ? Number(stockResult.value || 0).toLocaleString('vi-VN') : 'L\u1ed7i', 'T\u1ed3n kho hi\u1ec7n t\u1ea1i', stockResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i tải dữ liệu');
 
   dashboardState.todayRevenue = todayResult.status === 'fulfilled' ? Number(todayResult.value || 0) : 0;
   dashboardState.sevenDays = sevenResult.status === 'fulfilled' ? sevenResult.value : [];
   dashboardState.thirtyDays = thirtyResult.status === 'fulfilled' ? thirtyResult.value : [];
-  setDashboardStat(2, sevenResult.status === 'fulfilled' ? money(sumMoney(sevenResult.value)) : 'L\u1ed7i', 'Doanh thu 7 ng\u00e0y qua', sevenResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
-  setDashboardStat(3, thirtyResult.status === 'fulfilled' ? money(sumMoney(thirtyResult.value)) : 'L\u1ed7i', 'Doanh thu 30 ng\u00e0y qua', thirtyResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
+  setDashboardStat(2, sevenResult.status === 'fulfilled' ? money(sumMoney(sevenResult.value)) : 'L\u1ed7i', 'Doanh thu 7 ng\u00e0y qua', sevenResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i tải dữ liệu');
+  setDashboardStat(3, thirtyResult.status === 'fulfilled' ? money(sumMoney(thirtyResult.value)) : 'L\u1ed7i', 'Doanh thu 30 ng\u00e0y qua', thirtyResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i tải dữ liệu');
   if (kpiResult.status !== 'fulfilled') dashboardState.dailyKpiTarget = 0;
   renderDailyKpi(dashboardState.todayRevenue, todayResult.status !== 'fulfilled');
 
@@ -1736,7 +1736,7 @@ async function loadRevenue(mode = 'range') {
     document.getElementById('rangeRevenue').textContent = 'Lỗi';
     document.getElementById('dailyRevenueRows').innerHTML =
       '<tr><td colspan="4" class="state-text">Từ ngày phải nhỏ hơn hoặc bằng đến ngày</td></tr>';
-    document.getElementById('categoryRevenueRows').innerHTML = '<div class="state-text">Chưa gọi API</div>';
+    document.getElementById('categoryRevenueRows').innerHTML = '<div class="state-text">Chưa tải dữ liệu</div>';
     loadedViews.revenue = true;
     return;
   }

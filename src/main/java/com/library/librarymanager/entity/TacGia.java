@@ -11,6 +11,10 @@ public class TacGia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "ho_ten", nullable = false)
     private String hoTen;
+
+    @Column(name = "quoc_tich")
     private String quocTich;
 }
