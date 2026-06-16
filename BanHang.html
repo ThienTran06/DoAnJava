@@ -1296,8 +1296,6 @@
         openInvoicePrintModal(invoice, mockCartItems);
       } catch (e) {
         console.error("Lỗi đồng bộ dữ liệu hóa đơn tĩnh:", e);
-      } finally {
-        localStorage.removeItem("RESERVATION_INVOICE");
       }
     }
 
@@ -1325,6 +1323,7 @@
         document.getElementById("p-invoice-method").innerText = "Tiền mặt";
         qrArea.style.display = "none";
         btnCashConfirm.style.display = "inline-flex";
+        btnCashConfirm.innerText = "✓ Xác nhận đã thu tiền mặt";
 
         btnCloseModal.disabled = true;
         btnPrint.disabled = true;
@@ -1341,7 +1340,8 @@
         document.getElementById("p-invoice-method").innerText =
           "Chuyển khoản (VietQR)";
         qrArea.style.display = "block";
-        btnCashConfirm.style.display = "none";
+        btnCashConfirm.style.display = "inline-flex";
+        btnCashConfirm.innerText = "✓ Xác nhận đã nhận chuyển khoản QR";
         overlay.style.display = "flex";
         document.getElementById("countdownText").innerText =
           "Đang tải mã QR thanh toán...";
@@ -1413,41 +1413,46 @@
     }
 
     async function executeConfirmCashPay() {
-      if (!confirm("Xác nhận bạn đã thu đủ tiền mặt của khách hàng?")) return;
+      const isQrPayment = currentPaymentMethod === "QUET_MA";
+      const confirmMessage = isQrPayment
+        ? "Xác nhận bạn đã nhận đủ tiền chuyển khoản QR của khách hàng?"
+        : "Xác nhận bạn đã thu đủ tiền mặt của khách hàng?";
+      if (!confirm(confirmMessage)) return;
       try {
         const response = await fetch(
-          `${API_BASE_URL}/api/hoa-don/${activeInvoiceId}/thanh-toan-tien-mat`,
+          `${API_BASE_URL}/api/hoa-don/${activeInvoiceId}/xac-nhan-thanh-toan`,
           {
             method: "PUT",
             headers: getAuthHeaders(null),
           },
         );
-        if (!response.ok)
-          throw new Error(
-            "Cập nhật trạng thái thanh toán tiền mặt thất bại.",
-          );
+        if (!response.ok) {
+          throw new Error("Cập nhật trạng thái thanh toán thất bại.");
+        }
 
         document.getElementById("p-modal-title").innerText =
-          "🎉 ĐÃ THU TIỀN MẶT THÀNH CÔNG!";
+          isQrPayment ? "🎉 ĐÃ NHẬN CHUYỂN KHOẢN QR!" : "🎉 ĐÃ THU TIỀN MẶT THÀNH CÔNG!";
         document.getElementById("p-invoice-title-type").innerText =
           "HÓA ĐƠN BÁN LẺ";
         document.getElementById("p-invoice-method").innerText =
-          "Tiền mặt (Đã thanh toán)";
+          isQrPayment ? "Chuyển khoản QR (Đã thanh toán)" : "Tiền mặt (Đã thanh toán)";
 
         document.getElementById("paymentToggleZone").style.display = "none";
         document.getElementById("btnConfirmCashPay").style.display = "none";
+        document.getElementById("qrStatusOverlay").style.display = "none";
+        if (paymentCheckInterval) {
+          clearInterval(paymentCheckInterval);
+          paymentCheckInterval = null;
+        }
 
         document.getElementById("btnCloseInvoiceModal").disabled = false;
         document.getElementById("btnExecutePrint").disabled = false;
 
-        alert(
-          "Hóa đơn chuyển sang trạng thái ĐÃ THANH TOÁN (Tiền mặt). Hãy nhấn nút In hóa đơn!",
-        );
+        alert("Hóa đơn đã chuyển sang trạng thái ĐÃ THANH TOÁN. Hãy nhấn nút In hóa đơn!");
       } catch (err) {
         alert("Lỗi: " + err.message);
       }
     }
-
     async function fetchSidebarInvoiceCount() {
       try {
         const response = await fetch(
@@ -1813,6 +1818,7 @@
       activeInvoiceId = null;
       isInvoiceFromReservation = false;
       activeInvoiceObjectCache = null;
+      localStorage.removeItem("RESERVATION_INVOICE");
       renderCartItems();
       fetchBooks();
       fetchSidebarInvoiceCount();
@@ -1858,3 +1864,4 @@
 </script>
 </body>
 </html>
+

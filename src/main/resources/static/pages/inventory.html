@@ -14,18 +14,20 @@
       </div>
       <button class="btn ghost" type="button" id="btnRefreshPromotions">Tải lại ưu đãi</button>
     </div>
-    <form id="promotionForm" style="display:grid;grid-template-columns:minmax(160px,1fr) 110px 145px 145px minmax(220px,1.4fr) auto;gap:12px;align-items:end;margin-bottom:14px;padding:14px;border:1.5px solid var(--border);border-radius:12px;background:var(--bg)">
+    <form id="promotionForm" style="display:grid;grid-template-columns:minmax(160px,1fr) 110px 145px 145px minmax(220px,1.4fr) 88px auto auto;gap:12px;align-items:end;margin-bottom:14px;padding:14px;border:1.5px solid var(--border);border-radius:12px;background:var(--bg)">
       <div class="field" style="margin:0"><div class="label">Tên ưu đãi</div><input class="input" id="promotionName" placeholder="Ưu đãi hôm nay" required></div>
       <div class="field" style="margin:0"><div class="label">% giảm</div><input class="input" id="promotionPercent" type="number" min="1" max="100" step="1" placeholder="40" required></div>
       <div class="field" style="margin:0"><div class="label">Ngày bắt đầu</div><input class="input" id="promotionStart" type="date" required></div>
       <div class="field" style="margin:0"><div class="label">Ngày kết thúc</div><input class="input" id="promotionEnd" type="date" required></div>
       <div class="field" style="margin:0"><div class="label">Sách áp dụng</div><select class="select" id="promotionBookSelect" multiple required style="min-height:44px"></select></div>
+      <label class="field" style="margin:0;display:flex;gap:8px;align-items:center;min-height:44px;font-weight:800;color:var(--text);font-size:12.5px"><input id="promotionActive" type="checkbox" checked> Bật</label>
       <button class="btn primary" type="submit" id="btnCreatePromotion">Tạo ưu đãi</button>
+      <button class="btn ghost" type="button" id="btnCancelPromotionEdit" style="display:none">Hủy</button>
     </form>
     <div class="table-wrap">
       <table class="tbl-books">
-        <thead><tr><th>Tên ưu đãi</th><th>% giảm</th><th>Thời gian</th><th>Số sách</th><th>Trạng thái</th></tr></thead>
-        <tbody id="promotionTable"><tr><td colspan="5"><div class="empty-state">Đang tải danh sách ưu đãi...</div></td></tr></tbody>
+        <thead><tr><th>Tên ưu đãi</th><th>% giảm</th><th>Thời gian</th><th>Số sách</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <tbody id="promotionTable"><tr><td colspan="6"><div class="empty-state">Đang tải danh sách ưu đãi...</div></td></tr></tbody>
       </table>
     </div>
   </div>
@@ -56,6 +58,7 @@ window.initBooks = function() {
   const promotionBookSelect = document.getElementById('promotionBookSelect');
   const refreshPromotionsBtn = document.getElementById('btnRefreshPromotions');
   const createPromotionBtn = document.getElementById('btnCreatePromotion');
+  const cancelPromotionEditBtn = document.getElementById('btnCancelPromotionEdit');
   
   if (!overlay || !openBtn || !form) return;
 
@@ -121,6 +124,36 @@ window.initBooks = function() {
     promotionBookSelect.innerHTML = (window.allBooks || []).map(book =>
       `<option value="${book.id}">${book.name} - ${money(book.price)}</option>`
     ).join('');
+    if (window.editingPromotionId !== undefined) {
+      const promotion = promotions.find(item => String(item.id) === String(window.editingPromotionId));
+      if (promotion) setPromotionBookSelection(getPromotionBookIds(promotion));
+    }
+  };
+
+  const setPromotionBookSelection = sachIds => {
+    if (!promotionBookSelect) return;
+    const selectedIds = new Set((sachIds || []).map(id => String(id)));
+    Array.from(promotionBookSelect.options).forEach(option => {
+      option.selected = selectedIds.has(String(option.value));
+    });
+  };
+
+  const getPromotionBookIds = promotion => Array.isArray(promotion?.danhSachSach)
+    ? promotion.danhSachSach.map(book => book.id).filter(Boolean)
+    : [];
+
+  const resetPromotionForm = () => {
+    if (!promotionForm) return;
+    promotionForm.reset();
+    window.editingPromotionId = undefined;
+    const startInput = document.getElementById('promotionStart');
+    const endInput = document.getElementById('promotionEnd');
+    const activeInput = document.getElementById('promotionActive');
+    if (startInput) startInput.value = todayInputValue();
+    if (endInput) endInput.value = todayInputValue();
+    if (activeInput) activeInput.checked = true;
+    if (createPromotionBtn) createPromotionBtn.textContent = 'Tạo ưu đãi';
+    if (cancelPromotionEditBtn) cancelPromotionEditBtn.style.display = 'none';
   };
 
   const renderPromotions = () => {
@@ -138,14 +171,15 @@ window.initBooks = function() {
           <td>${formatDate(start)} - ${formatDate(end)}</td>
           <td>${Array.isArray(item.danhSachSach) ? item.danhSachSach.length : 0}</td>
           <td><span class="badge ${active ? 'ok' : 'bad'}">${status}</span></td>
+          <td><div class="ops"><button class="link promotion-edit" data-id="${item.id}">Sửa</button><button class="link danger promotion-delete" data-id="${item.id}">Xóa</button></div></td>
         </tr>
       `;
-    }).join('') : '<tr><td colspan="5"><div class="empty-state">Chưa có ưu đãi nào.</div></td></tr>';
+    }).join('') : '<tr><td colspan="6"><div class="empty-state">Chưa có ưu đãi nào.</div></td></tr>';
   };
 
   const loadPromotionsFromApi = async () => {
     if (!promotionTable) return;
-    promotionTable.innerHTML = '<tr><td colspan="5"><div class="empty-state">Đang tải danh sách ưu đãi...</div></td></tr>';
+    promotionTable.innerHTML = '<tr><td colspan="6"><div class="empty-state">Đang tải danh sách ưu đãi...</div></td></tr>';
     try {
       const response = await fetch(PROMOTION_API, {
         headers: { Accept: 'application/json', ...getAuthHeaders() },
@@ -156,7 +190,7 @@ window.initBooks = function() {
       promotions = Array.isArray(data) ? data : [];
       renderPromotions();
     } catch (error) {
-      promotionTable.innerHTML = '<tr><td colspan="5"><div class="empty-state">Không thể tải danh sách ưu đãi.</div></td></tr>';
+      promotionTable.innerHTML = '<tr><td colspan="6"><div class="empty-state">Không thể tải danh sách ưu đãi.</div></td></tr>';
     }
   };
 
@@ -444,8 +478,10 @@ window.initBooks = function() {
   if (categoryFilter) categoryFilter.onchange = null;
   if (promotionForm) promotionForm.onsubmit = null;
   if (refreshPromotionsBtn) refreshPromotionsBtn.onclick = null;
+  if (cancelPromotionEditBtn) cancelPromotionEditBtn.onclick = null;
   if (addPublisherBtn) addPublisherBtn.onclick = null;
   if (addAuthorBtn) addAuthorBtn.onclick = null;
+  if (promotionTable) promotionTable.removeEventListener('click', window.promotionTableHandler);
   bookTable.removeEventListener('click', window.bookTableHandler);
   
   // Attach fresh listeners
@@ -488,6 +524,7 @@ window.initBooks = function() {
   if (bookSearch) bookSearch.oninput = renderTable;
   if (categoryFilter) categoryFilter.onchange = renderTable;
   if (refreshPromotionsBtn) refreshPromotionsBtn.onclick = () => loadPromotionsFromApi();
+  if (cancelPromotionEditBtn) cancelPromotionEditBtn.onclick = resetPromotionForm;
   if (promotionForm) {
     const today = todayInputValue();
     if (promotionForm.querySelector('#promotionStart') && !promotionForm.querySelector('#promotionStart').value) {
@@ -500,6 +537,7 @@ window.initBooks = function() {
       const percent = Number(document.getElementById('promotionPercent').value || 0);
       const start = document.getElementById('promotionStart').value;
       const end = document.getElementById('promotionEnd').value;
+      const activeInput = document.getElementById('promotionActive');
       const sachIds = Array.from(promotionBookSelect?.selectedOptions || []).map(option => Number(option.value));
       if (!name || percent <= 0 || percent > 100 || !start || !end || !sachIds.length) {
         window.showToast('Vui lòng nhập đủ thông tin ưu đãi');
@@ -511,8 +549,9 @@ window.initBooks = function() {
       }
       if (createPromotionBtn) createPromotionBtn.disabled = true;
       try {
-        const response = await fetch(PROMOTION_API, {
-          method: 'POST',
+        const isEdit = window.editingPromotionId !== undefined;
+        const response = await fetch(isEdit ? `${PROMOTION_API}/${window.editingPromotionId}` : PROMOTION_API, {
+          method: isEdit ? 'PUT' : 'POST',
           headers: {
             'Content-Type': 'application/json',
             ...getAuthHeaders(),
@@ -522,22 +561,20 @@ window.initBooks = function() {
             phanTramGiam: percent,
             ngayBatDau: start,
             ngayKetThuc: end,
-            trangThai: true,
+            trangThai: activeInput ? activeInput.checked : true,
             sachIds,
           }),
         });
         if (response.status === 401) throw new Error('Bạn chưa đăng nhập hoặc phiên làm việc đã hết hạn.');
         if (!response.ok) {
           const message = await response.text();
-          throw new Error(message || 'Không thể tạo ưu đãi');
+          throw new Error(message || (isEdit ? 'Không thể cập nhật ưu đãi' : 'Không thể tạo ưu đãi'));
         }
-        promotionForm.reset();
-        document.getElementById('promotionStart').value = todayInputValue();
-        document.getElementById('promotionEnd').value = todayInputValue();
-        window.showToast('Đã tạo ưu đãi sản phẩm');
+        resetPromotionForm();
+        window.showToast(isEdit ? 'Đã cập nhật ưu đãi sản phẩm' : 'Đã tạo ưu đãi sản phẩm');
         await Promise.all([loadPromotionsFromApi(), loadBooksFromApi()]);
       } catch (err) {
-        window.showToast(err.message || 'Không thể tạo ưu đãi');
+        window.showToast(err.message || 'Không thể lưu ưu đãi');
       } finally {
         if (createPromotionBtn) createPromotionBtn.disabled = false;
       }
@@ -695,6 +732,48 @@ window.initBooks = function() {
     }
   };
 
+  window.promotionTableHandler = e => {
+    const editBtn = e.target.closest('.promotion-edit');
+    const deleteBtn = e.target.closest('.promotion-delete');
+    if (!editBtn && !deleteBtn) return;
+
+    const promotionId = editBtn ? editBtn.dataset.id : deleteBtn.dataset.id;
+    const promotion = promotions.find(item => String(item.id) === String(promotionId));
+    if (!promotion) return;
+
+    if (editBtn) {
+      document.getElementById('promotionName').value = promotion.tenUuDai || '';
+      document.getElementById('promotionPercent').value = Number(promotion.phanTramGiam || 0);
+      document.getElementById('promotionStart').value = promotion.ngayBatDau || todayInputValue();
+      document.getElementById('promotionEnd').value = promotion.ngayKetThuc || todayInputValue();
+      const activeInput = document.getElementById('promotionActive');
+      if (activeInput) activeInput.checked = promotion.trangThai !== false;
+      setPromotionBookSelection(getPromotionBookIds(promotion));
+      window.editingPromotionId = promotion.id;
+      if (createPromotionBtn) createPromotionBtn.textContent = 'Cập nhật';
+      if (cancelPromotionEditBtn) cancelPromotionEditBtn.style.display = 'inline-flex';
+      promotionForm?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (deleteBtn) {
+      window.showConfirm('Bạn chắc chắn muốn xóa ưu đãi này?', async () => {
+        try {
+          const response = await fetch(`${PROMOTION_API}/${promotionId}`, {
+            method: 'DELETE',
+            headers: { ...getAuthHeaders() }
+          });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          if (String(window.editingPromotionId) === String(promotionId)) resetPromotionForm();
+          promotions = promotions.filter(item => String(item.id) !== String(promotionId));
+          renderPromotions();
+          await loadBooksFromApi();
+          window.showToast('Đã xóa ưu đãi');
+        } catch (error) {
+          window.showToast('Không thể xóa ưu đãi');
+        }
+      });
+    }
+  };
+
+  if (promotionTable) promotionTable.addEventListener('click', window.promotionTableHandler);
   bookTable.addEventListener('click', window.bookTableHandler);
 
   window.setBookCategoryFilter = (categoryId, categoryName = '') => {

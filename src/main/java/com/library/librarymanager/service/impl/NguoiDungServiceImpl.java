@@ -267,7 +267,23 @@ public class NguoiDungServiceImpl implements NguoiDungService {
 
         NguoiDung nd = repo.findById(id)
                 .orElseThrow(() -> new AuthException("Người dùng không tồn tại"));
-        applyRolePermissions(nd, nd.getNhom().getTenNhom());
+        if (permissionIds == null || permissionIds.isEmpty()) {
+            throw ValidationUtils.badRequest("Danh sach quyen khong duoc de trong");
+        }
+        if (permissionIds.stream().anyMatch(permissionId -> permissionId == null || permissionId <= 0)) {
+            throw ValidationUtils.badRequest("Danh sach quyen khong hop le");
+        }
+
+        List<Integer> distinctPermissionIds = permissionIds.stream()
+                .distinct()
+                .toList();
+        List<ChucNang> permissions = chucNangRepo.findAllById(distinctPermissionIds);
+        if (permissions.size() != distinctPermissionIds.size()) {
+            throw ValidationUtils.badRequest("Co quyen khong ton tai trong he thong");
+        }
+
+        phanQuyenRepo.deleteAllByNguoiDungId(nd.getId());
+        addPermissionsByIds(nd, distinctPermissionIds);
     }
 
     @Override

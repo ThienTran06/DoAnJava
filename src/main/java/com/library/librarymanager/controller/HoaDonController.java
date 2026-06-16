@@ -86,4 +86,10 @@ public class HoaDonController {
         hoaDonService.thanhToanTienMat(id);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/{id}/xac-nhan-thanh-toan")
+    public ResponseEntity<?> xacNhanThanhToan(@PathVariable int id) {
+        hoaDonService.xacNhanThanhToan(id);
+        return ResponseEntity.ok().build();
+    }
 }

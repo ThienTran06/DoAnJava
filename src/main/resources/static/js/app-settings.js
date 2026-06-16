@@ -640,6 +640,17 @@
       font-weight: 800;
       cursor: pointer;
     }
+    .app-menu-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .app-menu-link:disabled {
+      cursor: default;
+      opacity: .45;
+    }
     .app-notification-list {
       display: grid;
       gap: 4px;
@@ -647,14 +658,24 @@
     }
     .app-notification-item {
       display: grid;
-      grid-template-columns: 38px 1fr;
+      grid-template-columns: 38px minmax(0, 1fr) auto;
       gap: 10px;
+      width: 100%;
       padding: 10px;
+      border: 0;
       border-radius: 8px;
       background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
     }
     .app-notification-item.is-unread {
       background: rgba(47, 111, 58, .08);
+    }
+    .app-notification-item.is-empty {
+      grid-template-columns: 1fr;
+      color: var(--muted, #777);
+      cursor: default;
     }
     .app-notification-dot {
       width: 38px;
@@ -1514,6 +1535,15 @@
     ['Khách vãng lai', 'Walk-in customer']
   );
 
+  translationPairs.push(
+    ['Xóa tất cả', 'Clear all'],
+    ['Xóa', 'Delete'],
+    ['Chưa có thông báo nào', 'No notifications yet'],
+    ['phút trước', 'minutes ago'],
+    ['giờ trước', 'hours ago'],
+    ['ngày trước', 'days ago']
+  );
+
   function normalizeText(value) {
     return String(value || '')
       .normalize('NFD')
@@ -1874,12 +1904,13 @@
     return toast;
   }
 
-  function showToast(message) {
+  function showToast(message, type) {
     const toast = ensureToast();
     toast.textContent = message;
     toast.classList.add('show');
     clearTimeout(showToast.timer);
     showToast.timer = setTimeout(() => toast.classList.remove('show'), 2600);
+    addNotification(message, type || 'info', { source: 'toast' });
   }
 
   const iconPaths = {
@@ -2058,6 +2089,13 @@
     return (text.charAt(0) || 'B').toUpperCase();
   }
 
+  const NOTIFICATION_STORAGE_KEY = 'bookhouseNotifications';
+  const LEGACY_NOTIFICATION_STORAGE_KEY = 'bh_notifications';
+  const NOTIFICATION_READ_AT_KEY = 'bookhouseNotificationsReadAt';
+  const NOTIFICATION_SEED_AT_KEY = 'bookhouseNotificationsSeedAt';
+  const MAX_NOTIFICATIONS = 50;
+  let notificationBridgeInstalled = false;
+
   function notificationDefaults() {
     const pageTitle = (document.querySelector('.topbar-title') || document.querySelector('h1') || document).textContent || '';
     let seedAt = Number(localStorage.getItem('bookhouseNotificationsSeedAt') || 0);
@@ -2159,6 +2197,263 @@
       list.appendChild(row);
     });
     menu.appendChild(list);
+  }
+
+  function notificationDefaults() {
+    const pageTitle = (document.querySelector('.topbar-title') || document.querySelector('h1') || document).textContent || '';
+    let seedAt = Number(localStorage.getItem(NOTIFICATION_SEED_AT_KEY) || 0);
+    if (!seedAt) {
+      seedAt = Date.now() - 180000;
+      localStorage.setItem(NOTIFICATION_SEED_AT_KEY, String(seedAt));
+    }
+    return [
+      {
+        id: 'low-stock',
+        createdAt: seedAt,
+        title: 'Sách sắp hết hàng',
+        detail: 'Kiểm tra lại các đầu sách có tồn kho thấp để nhập thêm kịp thời.',
+        unread: true
+      },
+      {
+        id: 'pending-reservations',
+        createdAt: seedAt - 60000,
+        title: 'Phiếu giữ cần xử lý',
+        detail: 'Có phiếu giữ đang chờ xác nhận hoặc đến hạn lấy sách.',
+        unread: true
+      },
+      {
+        id: 'page-context',
+        createdAt: seedAt - 120000,
+        title: pageTitle.trim() || 'BookHouse',
+        detail: 'Thông báo hệ thống và cập nhật công việc sẽ hiển thị tại đây.',
+        unread: true
+      }
+    ];
+  }
+
+  function writeJsonStorage(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      // Ignore storage quota/private-mode errors.
+    }
+  }
+
+  function normalizeNotification(item, index) {
+    const now = Date.now();
+    const createdAt = Number(item.createdAt || item.ts || now - index * 60000);
+    const read = item.read === true || item.unread === false;
+    return {
+      id: item.id || `notice-${createdAt}-${index}`,
+      createdAt,
+      type: item.type || 'info',
+      title: item.title || item.message || 'Thông báo',
+      detail: item.detail || '',
+      unread: !read
+    };
+  }
+
+  function loadStoredNotifications() {
+    const stored = readJsonStorage(NOTIFICATION_STORAGE_KEY);
+    if (Array.isArray(stored)) return stored;
+
+    const legacy = readJsonStorage(LEGACY_NOTIFICATION_STORAGE_KEY);
+    if (Array.isArray(legacy) && legacy.length) {
+      const migrated = legacy.map(normalizeNotification).slice(0, MAX_NOTIFICATIONS);
+      writeJsonStorage(NOTIFICATION_STORAGE_KEY, migrated);
+      localStorage.removeItem(LEGACY_NOTIFICATION_STORAGE_KEY);
+      return migrated;
+    }
+
+    const defaults = notificationDefaults();
+    writeJsonStorage(NOTIFICATION_STORAGE_KEY, defaults);
+    return defaults;
+  }
+
+  function saveNotifications(items) {
+    writeJsonStorage(NOTIFICATION_STORAGE_KEY, items.slice(0, MAX_NOTIFICATIONS));
+  }
+
+  function getNotifications() {
+    const readAt = Number(localStorage.getItem(NOTIFICATION_READ_AT_KEY) || 0);
+    return loadStoredNotifications()
+      .map(normalizeNotification)
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map(item => Object.assign({}, item, {
+        unread: item.unread !== false && item.createdAt > readAt
+      }));
+  }
+
+  function formatNotificationTime(createdAt) {
+    const diff = Math.max(0, Math.floor((Date.now() - Number(createdAt || Date.now())) / 1000));
+    if (diff < 60) return localizedText('Vừa xong');
+    if (diff < 3600) return `${Math.floor(diff / 60)} ${localizedText('phút trước')}`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} ${localizedText('giờ trước')}`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)} ${localizedText('ngày trước')}`;
+    return new Date(createdAt).toLocaleDateString(currentLanguage() === 'en' ? 'en-US' : 'vi-VN');
+  }
+
+  function refreshNotificationMenus() {
+    document.querySelectorAll('#appNotificationMenu').forEach(menu => {
+      const badge = menu.parentElement?.querySelector('.app-notification-badge');
+      if (badge) renderNotificationMenu(menu, badge);
+    });
+  }
+
+  function addNotification(message, type, options) {
+    const text = String(message || '').trim();
+    if (!text) return null;
+    const item = {
+      id: `notice-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      createdAt: Date.now(),
+      type: type || 'info',
+      title: text,
+      detail: options?.detail || '',
+      unread: true
+    };
+    const items = loadStoredNotifications().map(normalizeNotification);
+    saveNotifications([item].concat(items));
+    refreshNotificationMenus();
+    return item;
+  }
+
+  function markNotificationRead(id) {
+    const items = loadStoredNotifications().map(normalizeNotification);
+    saveNotifications(items.map(item => item.id === id ? Object.assign({}, item, { unread: false }) : item));
+    refreshNotificationMenus();
+  }
+
+  function markAllNotificationsRead() {
+    localStorage.setItem(NOTIFICATION_READ_AT_KEY, String(Date.now()));
+    saveNotifications(loadStoredNotifications().map(normalizeNotification).map(item => Object.assign({}, item, { unread: false })));
+    refreshNotificationMenus();
+  }
+
+  function deleteNotification(id) {
+    saveNotifications(loadStoredNotifications().map(normalizeNotification).filter(item => item.id !== id));
+    refreshNotificationMenus();
+  }
+
+  function clearNotifications() {
+    saveNotifications([]);
+    localStorage.setItem(NOTIFICATION_READ_AT_KEY, String(Date.now()));
+    refreshNotificationMenus();
+  }
+
+  function renderNotificationMenu(menu, badge) {
+    const notifications = getNotifications();
+    const unreadCount = notifications.filter(item => item.unread).length;
+    badge.textContent = unreadCount > 9 ? '9+' : String(unreadCount);
+    badge.classList.toggle('is-hidden', unreadCount === 0);
+    menu.textContent = '';
+
+    const header = document.createElement('div');
+    header.className = 'app-menu-header';
+    const title = document.createElement('h3');
+    title.className = 'app-menu-title';
+    title.textContent = localizedText('Thông báo');
+    const actions = document.createElement('div');
+    actions.className = 'app-menu-actions';
+    const markRead = document.createElement('button');
+    markRead.type = 'button';
+    markRead.className = 'app-menu-link';
+    markRead.textContent = localizedText('Đánh dấu đã đọc');
+    markRead.disabled = unreadCount === 0;
+    markRead.addEventListener('click', event => {
+      event.stopPropagation();
+      markAllNotificationsRead();
+    });
+    const clearAll = document.createElement('button');
+    clearAll.type = 'button';
+    clearAll.className = 'app-menu-link';
+    clearAll.textContent = localizedText('Xóa tất cả');
+    clearAll.disabled = notifications.length === 0;
+    clearAll.addEventListener('click', event => {
+      event.stopPropagation();
+      clearNotifications();
+    });
+    actions.append(markRead, clearAll);
+    header.append(title, actions);
+    menu.appendChild(header);
+
+    const list = document.createElement('div');
+    list.className = 'app-notification-list';
+    if (!notifications.length) {
+      const empty = document.createElement('div');
+      empty.className = 'app-notification-item is-empty';
+      empty.textContent = localizedText('Chưa có thông báo nào');
+      list.appendChild(empty);
+    } else {
+      notifications.forEach(item => {
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = `app-notification-item${item.unread ? ' is-unread' : ''}`;
+        row.dataset.notificationId = item.id;
+        row.addEventListener('click', event => {
+          event.stopPropagation();
+          markNotificationRead(item.id);
+        });
+
+        const icon = document.createElement('div');
+        icon.className = 'app-notification-dot';
+        icon.textContent = item.unread ? '!' : 'OK';
+        const body = document.createElement('div');
+        const text = document.createElement('div');
+        text.className = 'app-notification-text';
+        text.textContent = localizedText(item.title || 'Thông báo');
+        const detail = document.createElement('div');
+        detail.className = 'app-notification-time';
+        detail.textContent = localizedText(item.detail || '');
+        const time = document.createElement('div');
+        time.className = 'app-notification-time';
+        time.textContent = formatNotificationTime(item.createdAt);
+        const remove = document.createElement('span');
+        remove.className = 'app-menu-link';
+        remove.textContent = localizedText('Xóa');
+        remove.addEventListener('click', event => {
+          event.stopPropagation();
+          deleteNotification(item.id);
+        });
+        body.append(text);
+        if (item.detail) body.appendChild(detail);
+        body.append(time);
+        row.append(icon, body, remove);
+        list.appendChild(row);
+      });
+    }
+    menu.appendChild(list);
+  }
+
+  function installToastNotificationBridge() {
+    if (notificationBridgeInstalled) return;
+    notificationBridgeInstalled = true;
+
+    let currentToast = typeof window.showToast === 'function' ? window.showToast : showToast;
+    const wrapToast = fn => {
+      if (fn?.__bookHouseNotificationWrapped) return fn;
+      const wrapped = function (message, type) {
+        const result = fn.apply(this, arguments);
+        if (fn !== showToast) addNotification(message, type || 'info', { source: 'toast' });
+        return result;
+      };
+      wrapped.__bookHouseNotificationWrapped = true;
+      return wrapped;
+    };
+    currentToast = wrapToast(currentToast);
+
+    try {
+      Object.defineProperty(window, 'showToast', {
+        configurable: true,
+        get() {
+          return currentToast;
+        },
+        set(fn) {
+          currentToast = wrapToast(typeof fn === 'function' ? fn : showToast);
+        }
+      });
+    } catch (error) {
+      window.showToast = currentToast;
+    }
   }
 
   function renderAccountMenu(menu) {
@@ -2552,6 +2847,7 @@
 
   function init() {
     applyTheme();
+    installToastNotificationBridge();
     enhanceUiIcons();
     restoreMusic();
     applyLanguage();
@@ -2586,6 +2882,10 @@
     applyLanguage,
     setLanguage,
     showToast,
+    addNotification,
+    getNotifications,
+    markAllNotificationsRead,
+    clearNotifications,
     enhanceUiIcons
   };
 
@@ -2609,6 +2909,8 @@
   window.previousMusicTrack = previousMusicTrack;
   window.seekMusicTrack = seekMusicTrack;
   window.setLanguage = setLanguage;
+  window.addNotification = addNotification;
+  installToastNotificationBridge();
   window.showToast = window.showToast || showToast;
 
   if (document.readyState === 'loading') {

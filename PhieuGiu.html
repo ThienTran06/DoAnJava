@@ -1508,8 +1508,10 @@
         totalResElements = pageData?.totalElements || reservations.length;
 
         if (!searchReservationQuery && !searchDateQuery) {
-          document.getElementById("sidebar-reserve-count").innerText =
-            totalResElements;
+          const reserveCountBadge = document.getElementById("sidebar-reserve-count");
+          if (reserveCountBadge) {
+            reserveCountBadge.innerText = totalResElements;
+          }
         }
 
         renderReservationsTable();

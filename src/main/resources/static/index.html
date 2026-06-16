@@ -1173,6 +1173,11 @@ async function loadExternalPage(view) {
 
 async function setView(view) {
   if (!viewTitles[view]) view = 'dashboard';
+  const accessKey = { dashboard: 'dashboard', books: 'books', categories: 'categories', customers: 'customers', cskh: 'cskh', staff: 'staff', revenue: 'revenue', inventory: 'inventory' }[view];
+  if (window.BookHouseAccess && accessKey && !window.BookHouseAccess.canAccess(accessKey)) {
+    window.location.replace(window.BookHouseAccess.firstAllowedRoute());
+    return;
+  }
   document.querySelectorAll('.sidebar .nav-item.active').forEach(item => {
     item.classList.remove('active');
   });

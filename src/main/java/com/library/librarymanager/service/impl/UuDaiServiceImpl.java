@@ -10,6 +10,7 @@ import com.library.librarymanager.util.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -31,21 +32,52 @@ public class UuDaiServiceImpl implements UuDaiService {
     }
 
     @Override
+    @Transactional
     public UuDai create(UuDaiRequest request) {
         validateRequest(request);
+        List<Sach> danhSachSach = getDanhSachSachHopLe(request);
+
+        UuDai uuDai = new UuDai();
+        applyRequest(uuDai, request, danhSachSach);
+        return uuDaiRepository.save(uuDai);
+    }
+
+    @Override
+    @Transactional
+    public UuDai update(int id, UuDaiRequest request) {
+        validateRequest(request);
+        UuDai uuDai = uuDaiRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Khong tim thay uu dai"));
+        List<Sach> danhSachSach = getDanhSachSachHopLe(request);
+
+        applyRequest(uuDai, request, danhSachSach);
+        return uuDaiRepository.save(uuDai);
+    }
+
+    @Override
+    @Transactional
+    public void delete(int id) {
+        UuDai uuDai = uuDaiRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Khong tim thay uu dai"));
+        uuDai.getDanhSachSach().clear();
+        uuDaiRepository.delete(uuDai);
+    }
+
+    private List<Sach> getDanhSachSachHopLe(UuDaiRequest request) {
         List<Sach> danhSachSach = sachRepository.findAllById(request.getSachIds());
         if (danhSachSach.size() != new HashSet<>(request.getSachIds()).size()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Danh sach sach ap dung uu dai khong hop le");
         }
+        return danhSachSach;
+    }
 
-        UuDai uuDai = new UuDai();
+    private void applyRequest(UuDai uuDai, UuDaiRequest request, List<Sach> danhSachSach) {
         uuDai.setTenUuDai(ValidationUtils.requireText(request.getTenUuDai(), "Ten uu dai"));
         uuDai.setPhanTramGiam(request.getPhanTramGiam());
         uuDai.setNgayBatDau(request.getNgayBatDau());
         uuDai.setNgayKetThuc(request.getNgayKetThuc());
         uuDai.setTrangThai(request.getTrangThai() == null || request.getTrangThai());
         uuDai.setDanhSachSach(danhSachSach);
-        return uuDaiRepository.save(uuDai);
     }
 
     @Override

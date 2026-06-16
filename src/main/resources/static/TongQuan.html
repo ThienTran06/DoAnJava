@@ -1062,6 +1062,14 @@ function canSetDailyKpi() {
   return hasPermission('XEM_BAO_CAO') || hasPermission('XEM BÁO CÁO');
 }
 
+function canViewReports() {
+  return canSetDailyKpi() || hasPermission('XEM BAO CAO');
+}
+
+function canViewInvoices() {
+  return hasPermission('QUAN_LY_HOA_DON') || hasPermission('ADMIN');
+}
+
 async function apiGet(path) {
   return apiRequest(path);
 }
@@ -1106,10 +1114,14 @@ async function apiRequest(path, options = {}) {
     credentials: 'include'
   });
 
-  if (res.status === 401 || res.status === 403) {
+  if (res.status === 401) {
     localStorage.removeItem('token');
     window.location.href = 'login.html';
     throw new Error('Unauthorized');
+  }
+
+  if (res.status === 403) {
+    throw new Error('Forbidden');
   }
 
   if (!res.ok) {
@@ -1173,6 +1185,11 @@ async function loadExternalPage(view) {
 
 async function setView(view) {
   if (!viewTitles[view]) view = 'dashboard';
+  const accessKey = { dashboard: 'dashboard', books: 'books', categories: 'categories', customers: 'customers', cskh: 'cskh', staff: 'staff', revenue: 'revenue', inventory: 'inventory' }[view];
+  if (window.BookHouseAccess && accessKey && !window.BookHouseAccess.canAccess(accessKey)) {
+    window.location.replace(window.BookHouseAccess.firstAllowedRoute());
+    return;
+  }
   document.querySelectorAll('.sidebar .nav-item.active').forEach(item => {
     item.classList.remove('active');
   });
@@ -1227,7 +1244,7 @@ function setDashboardStat(index, value, label, state) {
   if (deltaEl) {
     deltaEl.textContent = state || 'T\u1eeb backend';
     deltaEl.classList.remove('up', 'down');
-    deltaEl.classList.add(state === 'L\u1ed7i API' ? 'down' : 'up');
+    deltaEl.classList.add(state === 'L\u1ed7i API' || state === 'Thi\u1ebfu quy\u1ec1n' ? 'down' : 'up');
   }
 }
 
@@ -1242,11 +1259,13 @@ function setDailyKpiTarget(value) {
 }
 
 async function loadDailyKpiTarget() {
+  if (!canViewReports()) return setDailyKpiTarget(0);
   const kpi = await apiGet('/api/kpi-ngay/hom-nay');
   return setDailyKpiTarget(kpi ? kpi.mucTieuDoanhThu : 0);
 }
 
 async function saveDailyKpiTarget(value) {
+  if (!canViewReports()) throw new Error('Forbidden');
   const kpi = await apiPost('/api/kpi-ngay/hom-nay', { mucTieuDoanhThu: Number(value || 0) });
   return setDailyKpiTarget(kpi ? kpi.mucTieuDoanhThu : value);
 }
@@ -1643,6 +1662,35 @@ async function loadDashboard() {
     if (deltaEl) deltaEl.textContent = '\u0110ang t\u1ea3i';
   });
 
+  if (!canViewReports()) {
+    const noPermissionState = 'Thi\u1ebfu quy\u1ec1n';
+    setDashboardStat(0, '--', 'Doanh thu h\u00f4m nay', noPermissionState);
+    setDashboardStat(1, '--', 'T\u1ed3n kho hi\u1ec7n t\u1ea1i', noPermissionState);
+    setDashboardStat(2, '--', 'Doanh thu 7 ng\u00e0y qua', noPermissionState);
+    setDashboardStat(3, '--', 'Doanh thu 30 ng\u00e0y qua', noPermissionState);
+    dashboardState.todayRevenue = 0;
+    dashboardState.sevenDays = [];
+    dashboardState.thirtyDays = [];
+    dashboardState.bestSellers = [];
+    dashboardState.inventoryTop = [];
+    dashboardState.latestInvoices = [];
+    renderDailyKpi(0, false);
+    renderDashboardLineChart([]);
+    renderDashboardDonut([]);
+    renderDashboardBestSellers([]);
+    renderDashboardInventory([]);
+    if (canViewInvoices()) {
+      try {
+        dashboardState.latestInvoices = normalizeInvoiceRows(await apiGet('/api/hoa-don'));
+      } catch (error) {
+        dashboardState.latestInvoices = [];
+      }
+    }
+    renderDashboardInvoices(dashboardState.latestInvoices);
+    loadedViews.dashboard = true;
+    return;
+  }
+
   const results = await Promise.allSettled([
     apiGet('/api/bao-cao/doanh-thu-hom-nay'),
     apiGet('/api/bao-cao/tong-ton-kho'),
@@ -1740,6 +1788,18 @@ async function loadRevenue(mode = 'range') {
     document.getElementById('dailyRevenueRows').innerHTML =
       '<tr><td colspan="4" class="state-text">Từ ngày phải nhỏ hơn hoặc bằng đến ngày</td></tr>';
     document.getElementById('categoryRevenueRows').innerHTML = '<div class="state-text">Chưa gọi API</div>';
+    loadedViews.revenue = true;
+    return;
+  }
+
+  if (!canViewReports()) {
+    const message = 'Tai khoan nay chua co quyen XEM_BAO_CAO.';
+    document.getElementById('todayRevenue').textContent = '--';
+    document.getElementById('sevenDayRevenue').textContent = '--';
+    document.getElementById('thirtyDayRevenue').textContent = '--';
+    document.getElementById('rangeRevenue').textContent = '--';
+    document.getElementById('dailyRevenueRows').innerHTML = `<tr><td colspan="4" class="state-text">${message}</td></tr>`;
+    document.getElementById('categoryRevenueRows').innerHTML = `<div class="state-text">${message}</div>`;
     loadedViews.revenue = true;
     return;
   }
@@ -1850,6 +1910,16 @@ async function loadInventory() {
   document.getElementById('inventoryApiState').textContent = 'Đang tải';
 
   try {
+    if (!canViewReports()) {
+      const message = 'Tai khoan nay chua co quyen XEM_BAO_CAO.';
+      document.getElementById('totalInventory').textContent = '--';
+      document.getElementById('inventoryApiState').textContent = 'Thieu quyen';
+      document.getElementById('inventoryRows').innerHTML = `<tr><td colspan="3" class="state-text">${message}</td></tr>`;
+      document.getElementById('lowInventoryRows').innerHTML = `<tr><td colspan="3" class="state-text">${message}</td></tr>`;
+      loadedViews.inventory = true;
+      return;
+    }
+
     const [total, topInventory, lowInventory] = await Promise.all([
       apiGet('/api/bao-cao/tong-ton-kho'),
       apiGet('/api/bao-cao/ton-kho-nhieu-nhat'),
