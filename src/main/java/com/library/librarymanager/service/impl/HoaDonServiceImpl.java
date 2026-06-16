@@ -53,15 +53,15 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     public HoaDon getById(int id) {
-        return hoaDonRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"KhĂ´ng tĂ¬m tháº¥y hĂ³a Ä‘Æ¡n cĂ³ id = "+id));
+        return hoaDonRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy hóa đơn có id = "+id));
     }
 
     @Override
     @Transactional
     public HoaDon create(HoaDonRequest request) {
         validateHoaDonRequest(request);
-        NguoiDung nhanVien = nhanVienRepository.findById(request.getNhanVienId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"KhĂ´ng tĂ¬m tháº¥y nhĂ¢n viĂªn cĂ³ id = "+request.getNhanVienId()));
-        KhachHang khachHang = khachHangRepository.findById(request.getKhachHangId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"KhĂ´ng tĂ¬m tháº¥y khĂ¡ch hĂ ng cĂ³ id = "+request.getKhachHangId()));
+        NguoiDung nhanVien = nhanVienRepository.findById(request.getNhanVienId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy nhân viên có id = "+request.getNhanVienId()));
+        KhachHang khachHang = khachHangRepository.findById(request.getKhachHangId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy khách hàng có id = "+request.getKhachHangId()));
         HoaDon newHoaDon = new HoaDon();
         newHoaDon.setNhanVien(nhanVien);
         newHoaDon.setKhachHang(khachHang);
@@ -70,9 +70,9 @@ public class HoaDonServiceImpl implements HoaDonService {
         BigDecimal tongTien = BigDecimal.ZERO;
         List<ChiTietHoaDon> list = new ArrayList<>();
         for(ChiTietHoaDonRequest chiTietHoaDonRequest : request.getDanhSachChiTiet()){
-            Sach sach= sachRepository.findByIdForUpdate(chiTietHoaDonRequest.getSachID()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"KhĂ´ng tĂ¬m tháº¥y sĂ¡ch cĂ³ id = "+ chiTietHoaDonRequest.getSachID()));
-            if(sach.getSoLuongTon()< chiTietHoaDonRequest.getSoLuong())throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"KhĂ´ng Ä‘á»§ sĂ¡ch tá»“n kho Ä‘á»ƒ bĂ¡n");
-            if(chiTietHoaDonRequest.getSoLuong()<=0)throw new IllegalArgumentException("Sá»‘ lÆ°á»£ng khĂ´ng Ä‘Æ°á»£c Ă¢m");
+            Sach sach= sachRepository.findByIdForUpdate(chiTietHoaDonRequest.getSachID()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy sách có id = "+ chiTietHoaDonRequest.getSachID()));
+            if(sach.getSoLuongTon()< chiTietHoaDonRequest.getSoLuong())throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không đủ sách tồn kho để bán");
+            if(chiTietHoaDonRequest.getSoLuong()<=0)throw new IllegalArgumentException("Số lượng không được âm");
             uuDaiService.ganUuDaiHienTai(sach);
             BigDecimal donGiaSauUuDai = sach.getGiaSauUuDai() == null ? sach.getGiaBan() : sach.getGiaSauUuDai();
             ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon();
@@ -166,10 +166,10 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Transactional
     @Override
     public void huyHoaDon(int id) {
-        HoaDon hoaDon =hoaDonRepository.findByIdForUpdate(id).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"KhĂ´ng tĂ¬m tháº¥y hĂ³a Ä‘Æ¡n cĂ³ id = "+id));
-        if("DA HUY".equals(hoaDon.getTrangThai()))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"ÄÆ¡n Ä‘Ă£ há»§y rá»“i!");
+        HoaDon hoaDon =hoaDonRepository.findByIdForUpdate(id).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy hóa đơn có id = "+id));
+        if("DA HUY".equals(hoaDon.getTrangThai()))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Đơn đã huỷ rồi!");
         for(ChiTietHoaDon chiTietHoaDon : hoaDon.getDanhSachChiTiet()){
-            Sach sach =  sachRepository.findByIdForUpdate(chiTietHoaDon.getSach().getId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"KhĂ´ng tĂ¬m tháº¥y sĂ¡ch cĂ³ id = "+id));
+            Sach sach =  sachRepository.findByIdForUpdate(chiTietHoaDon.getSach().getId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy sách có id = "+id));
             sach.setSoLuongTon(chiTietHoaDon.getSoLuong()+ sach.getSoLuongTon());
             sachRepository.save(sach);
         }
@@ -308,10 +308,6 @@ public class HoaDonServiceImpl implements HoaDonService {
                 tongDoanhThu
         );
     }
-
-
-
-
 
     private void validateHoaDonRequest(HoaDonRequest request) {
         if (request == null || request.getDanhSachChiTiet() == null || request.getDanhSachChiTiet().isEmpty()) {
