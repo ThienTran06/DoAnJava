@@ -63,7 +63,8 @@ public class SecurityConfig {
                                 "/api/webhook/sepay",
                                 "/api/danh-gia/public",
                                 "/api/danh-gia/public/submit",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/favicon.ico"
                         ).permitAll()
 
                         .anyRequest().authenticated()

@@ -1411,7 +1411,107 @@
     ['Chưa có ưu đãi nào.', 'No promotions yet.'],
     ['Đang tải danh sách ưu đãi...', 'Loading promotion list...'],
     ['Không thể tải danh sách ưu đãi.', 'Could not load promotion list.'],
-    ['Giảm', 'Discount']
+    ['Giảm', 'Discount'],
+    ['Thông báo', 'Notifications'],
+    ['Đánh dấu đã đọc', 'Mark all as read'],
+    ['Mở thông báo', 'Open notifications'],
+    ['Mở thông tin tài khoản', 'Open account information'],
+    ['Thông tin tài khoản', 'Account information'],
+    ['Tài khoản BookHouse', 'BookHouse account'],
+    ['Xem thông tin tài khoản', 'View account information'],
+    ['Mã tài khoản', 'Account ID'],
+    ['Tài khoản', 'Account'],
+    ['Vai trò', 'Role'],
+    ['SĐT', 'Phone'],
+    ['Ca làm việc', 'Work shift'],
+    ['Không có ghi chú', 'No notes'],
+    ['Chưa cập nhật', 'Not updated'],
+    ['Người dùng', 'User'],
+    ['Sách sắp hết hàng', 'Low-stock books'],
+    ['Kiểm tra lại các đầu sách có tồn kho thấp để nhập thêm kịp thời.', 'Review low-stock books and restock them in time.'],
+    ['Vừa xong', 'Just now'],
+    ['Phiếu giữ cần xử lý', 'Reservations need attention'],
+    ['Có phiếu giữ đang chờ xác nhận hoặc đến hạn lấy sách.', 'Some reservations are waiting for confirmation or pickup.'],
+    ['Thông báo hệ thống và cập nhật công việc sẽ hiển thị tại đây.', 'System notifications and work updates will appear here.'],
+    ['Mới cập nhật', 'Recently updated'],
+    ['Chăm sóc khách hàng', 'Customer care'],
+    ['Quản lý đánh giá và phản hồi', 'Manage reviews and replies'],
+    ['Tổng đánh giá', 'Total reviews'],
+    ['Chờ duyệt', 'Pending approval'],
+    ['Đã duyệt', 'Approved'],
+    ['Đánh giá 5 sao', '5-star reviews'],
+    ['Lọc theo loại', 'Filter by type'],
+    ['Lọc theo trạng thái', 'Filter by status'],
+    ['Lọc theo sao', 'Filter by stars'],
+    ['Tất cả', 'All'],
+    ['Sách', 'Book'],
+    ['Dịch vụ', 'Service'],
+    ['Khách hàng', 'Customer'],
+    ['Loại', 'Type'],
+    ['Sao', 'Stars'],
+    ['Nội dung / Phản hồi', 'Content / Reply'],
+    ['Trạng thái', 'Status'],
+    ['Ngày', 'Date'],
+    ['Chưa có đánh giá nào phù hợp bộ lọc.', 'No reviews match the current filters.'],
+    ['Phản hồi đánh giá', 'Reply to review'],
+    ['Nội dung phản hồi', 'Reply content'],
+    ['Nhập nội dung phản hồi tại đây...', 'Enter reply content here...'],
+    ['Gửi phản hồi', 'Send reply'],
+    ['Khách ẩn danh', 'Anonymous customer'],
+    ['Phản hồi:', 'Reply:'],
+    ['Đang tải danh sách đánh giá...', 'Loading review list...'],
+    ['Không thể tải danh sách đánh giá từ backend:', 'Could not load reviews from backend:'],
+    ['Đã gửi phản hồi thành công', 'Reply sent successfully'],
+    ['Không thể gửi phản hồi:', 'Could not send reply:'],
+    ['Bạn chắc chắn muốn xóa đánh giá này?', 'Are you sure you want to delete this review?'],
+    ['Xóa thất bại', 'Delete failed'],
+    ['Đã xóa đánh giá', 'Review deleted'],
+    ['Không thể xóa đánh giá:', 'Could not delete review:'],
+    ['Đánh giá KH', 'Customer reviews'],
+    ['Đánh giá khách hàng', 'Customer reviews'],
+    ['Đánh giá từ khách hàng', 'Customer reviews'],
+    ['Nhận xét chất lượng Sách và Dịch vụ của BookHouse', 'Customer feedback on BookHouse books and service'],
+    ['Điểm trung bình', 'Average rating'],
+    ['Đã được phản hồi', 'Replied'],
+    ['Đang tải đánh giá...', 'Loading reviews...'],
+    ['Chưa có đánh giá nào.', 'No reviews yet.'],
+    ['Không thể tải đánh giá:', 'Could not load reviews:'],
+    ['Đánh giá sách', 'Book review'],
+    ['Chia sẻ ý kiến của bạn về sách yêu thích', 'Share your thoughts about your favorite books'],
+    ['✓ Cảm ơn!', '✓ Thank you!'],
+    ['Đánh giá của bạn đã được gửi thành công. Admin sẽ xem xét và phê duyệt trong thời gian sớm nhất.', 'Your review has been submitted successfully. Admin will review and approve it soon.'],
+    ['Đang gửi đánh giá...', 'Submitting review...'],
+    ['Thông tin của bạn', 'Your information'],
+    ['Họ và tên', 'Full name'],
+    ['Họ và tên *', 'Full name *'],
+    ['VD: Nguyễn Văn A', 'Example: Nguyen Van A'],
+    ['VD: 0912345678', 'Example: 0912345678'],
+    ['VD: email@example.com', 'Example: email@example.com'],
+    ['Lựa chọn sách (tùy chọn)', 'Book selection (optional)'],
+    ['Tìm kiếm sách', 'Search books'],
+    ['Tìm kiếm tên sách...', 'Search book title...'],
+    ['Loại đánh giá', 'Review type'],
+    ['Loại đánh giá *', 'Review type *'],
+    ['Đánh giá của bạn', 'Your review'],
+    ['Xếp hạng', 'Rating'],
+    ['Xếp hạng *', 'Rating *'],
+    ['Chọn xếp hạng', 'Select rating'],
+    ['1 sao', '1 star'],
+    ['2 sao', '2 stars'],
+    ['3 sao', '3 stars'],
+    ['4 sao', '4 stars'],
+    ['5 sao', '5 stars'],
+    ['Nhận xét', 'Comment'],
+    ['Nhận xét *', 'Comment *'],
+    ['Chia sẻ trải nghiệm của bạn về sách này...', 'Share your experience with this book...'],
+    ['Hình ảnh đính kèm', 'Attached images'],
+    ['Nhấn để chọn ảnh (tối đa 3 ảnh, mỗi ảnh dưới 5MB)', 'Click to choose images (max 3 images, each under 5MB)'],
+    ['Gửi đánh giá', 'Submit review'],
+    ['Mới nhất', 'Latest'],
+    ['5 sao trước', '5 stars first'],
+    ['Ít sao trước', 'Lowest rating first'],
+    ['Ẩn danh', 'Anonymous'],
+    ['Khách vãng lai', 'Walk-in customer']
   );
 
   function normalizeText(value) {
@@ -1676,6 +1776,11 @@
   function translateValue(value) {
     if (!value || !String(value).trim()) return null;
     return translateText(String(value));
+  }
+
+  function localizedText(value) {
+    if (currentLanguage() !== 'en') return value;
+    return translateValue(value) || value;
   }
 
   function translateAttributes(lang) {
@@ -2019,11 +2124,11 @@
     header.className = 'app-menu-header';
     const title = document.createElement('h3');
     title.className = 'app-menu-title';
-    title.textContent = 'Thông báo';
+    title.textContent = localizedText('Thông báo');
     const markRead = document.createElement('button');
     markRead.type = 'button';
     markRead.className = 'app-menu-link';
-    markRead.textContent = 'Đánh dấu đã đọc';
+    markRead.textContent = localizedText('Đánh dấu đã đọc');
     markRead.addEventListener('click', () => {
       localStorage.setItem('bookhouseNotificationsReadAt', String(Date.now()));
       renderNotificationMenu(menu, badge);
@@ -2042,13 +2147,13 @@
       const body = document.createElement('div');
       const text = document.createElement('div');
       text.className = 'app-notification-text';
-      text.textContent = item.title || 'Thông báo';
+      text.textContent = localizedText(item.title || 'Thông báo');
       const detail = document.createElement('div');
       detail.className = 'app-notification-time';
-      detail.textContent = item.detail || item.message || '';
+      detail.textContent = localizedText(item.detail || item.message || '');
       const time = document.createElement('div');
       time.className = 'app-notification-time';
-      time.textContent = item.time || '';
+      time.textContent = localizedText(item.time || '');
       body.append(text, detail, time);
       row.append(icon, body);
       list.appendChild(row);
@@ -2076,10 +2181,10 @@
     const info = document.createElement('div');
     const name = document.createElement('div');
     name.className = 'app-account-name';
-    name.textContent = profile.name || 'Tài khoản BookHouse';
+    name.textContent = profile.name || localizedText('Tài khoản BookHouse');
     const meta = document.createElement('div');
     meta.className = 'app-account-meta';
-    meta.textContent = [profile.email || profile.username, profile.role].filter(Boolean).join(' • ');
+    meta.textContent = [profile.email || profile.username, localizedText(profile.role)].filter(Boolean).join(' • ');
     info.append(name, meta);
     row.append(avatar, info);
 
@@ -2088,7 +2193,7 @@
     const profileButton = document.createElement('button');
     profileButton.type = 'button';
     profileButton.className = 'app-account-button';
-    profileButton.textContent = 'Xem thông tin tài khoản';
+    profileButton.textContent = localizedText('Xem thông tin tài khoản');
     profileButton.addEventListener('click', () => {
       closeTopbarMenus();
       showAccountProfileDetails();
@@ -2096,14 +2201,14 @@
     const settingsButton = document.createElement('button');
     settingsButton.type = 'button';
     settingsButton.className = 'app-account-button';
-    settingsButton.textContent = 'Cài đặt';
+    settingsButton.textContent = localizedText('Cài đặt');
     settingsButton.addEventListener('click', () => {
       window.location.href = 'settings.html';
     });
     const logoutButton = document.createElement('button');
     logoutButton.type = 'button';
     logoutButton.className = 'app-account-button danger';
-    logoutButton.textContent = 'Đăng xuất';
+    logoutButton.textContent = localizedText('Đăng xuất');
     logoutButton.addEventListener('click', () => {
       ['token', 'accessToken', 'refreshToken', 'user', 'currentUser', 'account'].forEach(key => localStorage.removeItem(key));
       window.location.href = 'login.html';
@@ -2118,11 +2223,11 @@
     row.className = 'app-profile-row';
     const labelEl = document.createElement('div');
     labelEl.className = 'app-profile-label';
-    labelEl.textContent = label;
+    labelEl.textContent = localizedText(label);
     const valueEl = document.createElement('div');
     valueEl.className = 'app-profile-value';
     const display = value === 0 ? '0' : String(value || '').trim();
-    valueEl.textContent = display || fallback || 'Chưa cập nhật';
+    valueEl.textContent = localizedText(display || fallback || 'Chưa cập nhật');
     row.append(labelEl, valueEl);
     container.appendChild(row);
   }
@@ -2178,12 +2283,12 @@
     modal.className = 'app-profile-modal';
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-label', 'Thông tin tài khoản');
+    modal.setAttribute('aria-label', localizedText('Thông tin tài khoản'));
 
     const closeBtn = document.createElement('button');
     closeBtn.type = 'button';
     closeBtn.className = 'app-profile-close';
-    closeBtn.setAttribute('aria-label', 'Đóng');
+    closeBtn.setAttribute('aria-label', localizedText('Đóng'));
     closeBtn.textContent = '×';
 
     const avatar = document.createElement('div');
@@ -2203,11 +2308,11 @@
 
     const name = document.createElement('div');
     name.className = 'app-profile-name';
-    name.textContent = profile.name || 'Tài khoản BookHouse';
+    name.textContent = profile.name || localizedText('Tài khoản BookHouse');
 
     const role = document.createElement('div');
     role.className = 'app-profile-role';
-    role.textContent = profile.role || 'Người dùng';
+    role.textContent = localizedText(profile.role || 'Người dùng');
 
     const info = document.createElement('div');
     info.className = 'app-profile-info';
@@ -2229,11 +2334,11 @@
     const closeAction = document.createElement('button');
     closeAction.type = 'button';
     closeAction.className = 'app-profile-action';
-    closeAction.textContent = 'Đóng';
+    closeAction.textContent = localizedText('Đóng');
     const settingsAction = document.createElement('button');
     settingsAction.type = 'button';
     settingsAction.className = 'app-profile-action primary';
-    settingsAction.textContent = 'Cài đặt';
+    settingsAction.textContent = localizedText('Cài đặt');
     settingsAction.addEventListener('click', () => {
       window.location.href = 'settings.html';
     });
@@ -2285,8 +2390,8 @@
     accountButton.setAttribute('role', 'button');
     notificationButton.setAttribute('tabindex', '0');
     accountButton.setAttribute('tabindex', '0');
-    notificationButton.setAttribute('aria-label', 'Mở thông báo');
-    accountButton.setAttribute('aria-label', 'Mở thông tin tài khoản');
+    notificationButton.setAttribute('aria-label', localizedText('Mở thông báo'));
+    accountButton.setAttribute('aria-label', localizedText('Mở thông tin tài khoản'));
 
     notificationButton.querySelectorAll('.notif-dot').forEach(dot => dot.remove());
     let badge = notificationButton.querySelector('.app-notification-badge');
