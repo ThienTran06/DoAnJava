@@ -2,9 +2,11 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.*;
 import com.library.librarymanager.enums.TrangThaiGiu;
+import com.library.librarymanager.event.StockChangedEvent;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.KhachHangService;
 import com.library.librarymanager.service.Interface.PhieuGiuSachService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -30,7 +32,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
     private final NguoiDungRepository nguoiDungRepository;
     private final SachRepository sachRepository;
     private final KhachHangService khachHangService;
-
+    private final ApplicationEventPublisher publisher;
     public PhieuGiuSachServiceImpl(
             ChiTietPhieuGiuRepository ctRepo,
             PhieuDatGiuSachRepository phieuRepo,
@@ -39,7 +41,8 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
             KhachHangRepository khachHangRepository,
             NguoiDungRepository nguoiDungRepository,
             SachRepository sachRepository,
-            KhachHangService khachHangService
+            KhachHangService khachHangService,
+            ApplicationEventPublisher publisher
     ) {
         this.ctRepo = ctRepo;
         this.phieuRepo = phieuRepo;
@@ -49,6 +52,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
         this.nguoiDungRepository = nguoiDungRepository;
         this.sachRepository = sachRepository;
         this.khachHangService = khachHangService;
+        this.publisher=publisher;
     }
 
     @Override
@@ -106,7 +110,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
         hd.setKhachHang(kh);
         hd.setNhanVien(nv);
         hd.setNgayBan(LocalDateTime.now());
-        hd.setTrangThai("PENDING");
+        hd.setTrangThai("PROCESSING");
 
         hoaDonRepo.save(hd);
 
@@ -174,7 +178,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
             }
 
             p.setTrangThai(TrangThaiGiu.EXPIRED);
-
+            publisher.publishEvent(new StockChangedEvent());
             phieuRepo.save(p);
         }
         else throw new RuntimeException("Không thể expire phiếu giữ không có trạng thái pending");
