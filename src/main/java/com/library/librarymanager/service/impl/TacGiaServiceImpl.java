@@ -1,10 +1,12 @@
 package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.TacGia;
+import com.library.librarymanager.repository.SachRepository;
 import com.library.librarymanager.repository.TacGiaRepository;
 import com.library.librarymanager.service.Interface.TacGiaService;
 import com.library.librarymanager.util.ValidationUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TacGiaServiceImpl implements TacGiaService {
     private final TacGiaRepository tacGiaRepository;
+    private final SachRepository sachRepository;
 
     @Override
     public List<TacGia> getAll() {
@@ -44,7 +47,15 @@ public class TacGiaServiceImpl implements TacGiaService {
 
     @Override
     public void deleteById(int id) {
-        tacGiaRepository.deleteById(id);
+        getById(id);
+        if (sachRepository.existsByTacGiaId(id)) {
+            throw ValidationUtils.badRequest("Khong the xoa tac gia dang duoc sach su dung");
+        }
+        try {
+            tacGiaRepository.deleteById(id);
+        } catch (DataIntegrityViolationException ex) {
+            throw ValidationUtils.badRequest("Khong the xoa tac gia dang duoc sach su dung");
+        }
     }
 
     private void validateTacGia(TacGia tacGia, Integer currentId) {
