@@ -3,8 +3,14 @@ package com.library.librarymanager.service.impl;
 import com.library.librarymanager.dto.response.SachBanChayResponse;
 import com.library.librarymanager.dto.response.SachThongKeResponse;
 import com.library.librarymanager.dto.response.SachTonKhoResponse;
+import com.library.librarymanager.entity.NhaXuatBan;
+import com.library.librarymanager.entity.TacGia;
+import com.library.librarymanager.entity.TheLoai;
 import com.library.librarymanager.entity.Sach;
 import com.library.librarymanager.repository.ChiTietHoaDonRepository;
+import com.library.librarymanager.repository.NhaXuatBanRepository;
+import com.library.librarymanager.repository.TacGiaRepository;
+import com.library.librarymanager.repository.TheLoaiRepository;
 import com.library.librarymanager.repository.SachRepository;
 import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.SachService;
@@ -16,16 +22,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class SachServiceImpl implements SachService {
     private final SachRepository sachRepository;
+    private final TheLoaiRepository theLoaiRepository;
+    private final NhaXuatBanRepository nhaXuatBanRepository;
+    private final TacGiaRepository tacGiaRepository;
     private final CloudinaryService cloudinaryService;
     private final ChiTietHoaDonRepository chiTietHoaDonRepository;
     private final UuDaiService uuDaiService;
@@ -46,25 +59,31 @@ public class SachServiceImpl implements SachService {
     }
 
     @Override
+    @Transactional
     public Sach create(Sach sach) {
         validateSach(sach, null);
+        resolveSachReferences(sach);
         return sachRepository.save(sach);
     }
 
     @Override
+    @Transactional
     public Sach create(Sach sach, MultipartFile fileAnh) {
         String imageUrl = uploadImageIfPresent(fileAnh);
         if (imageUrl != null) {
             sach.setHinhAnh(imageUrl);
         }
         validateSach(sach, null);
+        resolveSachReferences(sach);
         return sachRepository.save(sach);
     }
 
     @Override
+    @Transactional
     public Sach updateById(int id, Sach sach) {
         Sach res = getById(id);
         validateSach(sach, id);
+        resolveSachReferences(sach);
         res.setTenSach(sach.getTenSach());
         if (sach.getHinhAnh() != null) {
             res.setHinhAnh(sach.getHinhAnh());
@@ -79,6 +98,7 @@ public class SachServiceImpl implements SachService {
     }
 
     @Override
+    @Transactional
     public Sach updateById(int id, Sach sach, MultipartFile fileAnh) {
         String imageUrl = uploadImageIfPresent(fileAnh);
         if (imageUrl != null) {
@@ -185,6 +205,51 @@ public class SachServiceImpl implements SachService {
             throw ValidationUtils.badRequest("Tac gia khong hop le");
         }
         sach.setTenSach(tenSach);
+    }
+
+    private void resolveSachReferences(Sach sach) {
+        TheLoai theLoai = loadTheLoai(sach.getTheLoai().getId());
+        NhaXuatBan nhaXuatBan = loadNhaXuatBan(sach.getNhaXuatBan().getId());
+        List<TacGia> danhSachTacGia = resolveTacGiaList(sach.getDanhSachTacGia());
+
+        sach.setTheLoai(theLoai);
+        sach.setNhaXuatBan(nhaXuatBan);
+        sach.setDanhSachTacGia(danhSachTacGia);
+    }
+
+    private TheLoai loadTheLoai(int id) {
+        return theLoaiRepository.findById(id)
+                .orElseThrow(() -> ValidationUtils.badRequest("Khong tim thay the loai co id = " + id));
+    }
+
+    private NhaXuatBan loadNhaXuatBan(int id) {
+        return nhaXuatBanRepository.findById(id)
+                .orElseThrow(() -> ValidationUtils.badRequest("Khong tim thay nha xuat ban co id = " + id));
+    }
+
+    private List<TacGia> resolveTacGiaList(List<TacGia> tacGiaList) {
+        if (tacGiaList == null) {
+            throw ValidationUtils.badRequest("Vui long chon it nhat mot tac gia");
+        }
+
+        Set<Integer> tacGiaIds = new LinkedHashSet<>();
+        for (TacGia tacGia : tacGiaList) {
+            if (tacGia == null || tacGia.getId() <= 0) {
+                throw ValidationUtils.badRequest("Tac gia khong hop le");
+            }
+            tacGiaIds.add(tacGia.getId());
+        }
+
+        if (tacGiaIds.isEmpty()) {
+            throw ValidationUtils.badRequest("Vui long chon it nhat mot tac gia");
+        }
+
+        List<TacGia> resolved = new ArrayList<>();
+        for (Integer tacGiaId : tacGiaIds) {
+            resolved.add(tacGiaRepository.findById(tacGiaId)
+                    .orElseThrow(() -> ValidationUtils.badRequest("Khong tim thay tac gia co id = " + tacGiaId)));
+        }
+        return resolved;
     }
 
     private String normalizeBookImage(String imageUrl) {

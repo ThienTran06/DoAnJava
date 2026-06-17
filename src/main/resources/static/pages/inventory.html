@@ -35,7 +35,7 @@
     <div class="header-row"><div style="font-size:14.5px;font-weight:800">Danh sách đầu sách</div><div style="display:flex;gap:10px;align-items:center"><div class="search-box" style="width:300px"><input type="text" id="bookSearch" placeholder="Tìm kiếm sách..."></div><select id="categoryFilter" class="select" style="width:150px"><option value="">Tất cả thể loại</option><option>Kinh tế</option><option>Tâm lý</option><option>Văn học</option><option>Thiếu nhi</option><option>Kỹ năng</option></select><button class="btn primary" id="btnAddBook">Thêm sách</button></div></div>
     <div class="table-wrap"><table class="tbl-books"><thead><tr><th>STT</th><th>Ảnh</th><th>Tên</th><th>Mục</th><th>Giá</th><th>Số lượng</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="bookTable"><tr><td>1</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Đắc nhân tâm</td><td>Kinh tế</td><td>95k đ</td><td>186</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>2</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Combo Harry Potter</td><td>Trẻ em</td><td>250k đ</td><td>152</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>3</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Nhà giả kim</td><td>Văn học</td><td>89k đ</td><td>128</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>4</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Atomic Habits</td><td>Kỹ năng</td><td>119k đ</td><td>0</td><td><span class="badge bad">Hết hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr><tr><td>5</td><td><img src="" style="width:40px;height:50px;object-fit:cover;border-radius:4px" alt="Ảnh sách"></td><td>Dám bị ghét</td><td>Tâm lý</td><td>105k đ</td><td>98</td><td><span class="badge ok">Còn hàng</span></td><td><div class="ops"><button class="link">Sửa</button><button class="link danger">Xóa</button></div></td></tr></tbody></table></div>
   </div>
-<div class="modal-overlay" id="modalOverlay"><div class="modal"><div class="modal-head"><div class="modal-title"> Thêm sách</div><button class="close" id="modalClose">Đóng</button></div><form id="bookForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Tên sách</div><input class="input" name="title" required><div class="helper">Không để trống tên sách</div></div><div class="field"><div class="label">Giá bán</div><input class="input" name="price" type="number" min="1" step="1" required><div class="helper">Giá phải lớn hơn 0</div></div><div class="field"><div class="label">Số lượng tồn</div><input class="input" name="stock" type="number" min="0" step="1" required></div><div class="field"><div class="label">Năm xuất bản</div><input class="input" name="year" type="number" min="1900" max="2099" required></div><div class="field"><div class="label">Ảnh sách</div><input class="input" name="image" type="file" accept="image/*"><div class="thumb"><img id="bookPreview"><span>Preview ảnh sẽ hiển thị ở đây</span></div></div><div class="field"><div class="label">Thể loại</div><select class="select" name="theLoaiId" required><option value="">-- Chọn thể loại --</option></select></div><div class="field"><div class="label">Nhà xuất bản</div><div class="metadata-picker"><select class="select" name="nhaXuatBanId" required><option value="">-- Chọn NXB --</option></select><button class="btn ghost metadata-add-btn" type="button" id="btnAddPublisher" title="Thêm nhà xuất bản" aria-label="Thêm nhà xuất bản">+</button></div><div class="helper">Không tìm thấy NXB thì bấm + để thêm mới</div></div><div class="field"><div class="label">Tác giả</div><div class="metadata-picker"><select class="select" name="tacGiaIds" required><option value="">-- Chọn tác giả --</option></select><button class="btn ghost metadata-add-btn" type="button" id="btnAddAuthor" title="Thêm tác giả" aria-label="Thêm tác giả">+</button></div><div class="helper">Không tìm thấy tác giả thì bấm + để thêm mới</div></div><div class="field full"><div class="label">Mô tả sách</div><textarea class="textarea" name="description"></textarea></div><div class="field"><div class="label">ISBN</div><input class="input" name="isbn"></div><div class="field"><div class="label">Ngôn ngữ</div><input class="input" name="language" value="Tiếng Việt"></div><div class="field"><div class="label">Số trang</div><input class="input" name="pages" type="number" min="1" step="1"></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelBook">Hủy</button><button type="submit" class="btn primary" id="saveBook"><span class="txt">Lưu</span><span class="spin"></span></button></div></form></div></div>
+<div class="modal-overlay" id="modalOverlay"><div class="modal"><div class="modal-head"><div class="modal-title"> Thêm sách</div><button class="close" id="modalClose">Đóng</button></div><form id="bookForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Tên sách</div><input class="input" name="title" required><div class="helper">Không để trống tên sách</div></div><div class="field"><div class="label">Giá bán</div><input class="input" name="price" type="number" min="1" step="1" required><div class="helper">Giá phải lớn hơn 0</div></div><div class="field"><div class="label">Số lượng tồn</div><input class="input" name="stock" type="number" min="0" step="1" required></div><div class="field"><div class="label">Năm xuất bản</div><input class="input" name="year" type="number" min="1900" max="2099" required></div><div class="field"><div class="label">Ảnh sách</div><input class="input" name="image" type="file" accept="image/*"><div class="thumb"><img id="bookPreview"><span>Preview ảnh sẽ hiển thị ở đây</span></div></div><div class="field"><div class="label">Thể loại</div><select class="select" name="theLoaiId" required><option value="">-- Chọn thể loại --</option></select></div><div class="field"><div class="label">Nhà xuất bản</div><div class="metadata-picker"><select class="select" name="nhaXuatBanId" required><option value="">-- Chọn NXB --</option></select><button class="btn ghost metadata-add-btn" type="button" id="btnAddPublisher" title="Thêm nhà xuất bản" aria-label="Thêm nhà xuất bản">+</button></div><div class="helper">Không tìm thấy NXB thì bấm + để thêm mới</div></div><div class="field"><div class="label">Tác giả</div><div class="metadata-picker"><select class="select" name="tacGiaId" required><option value="">-- Chọn tác giả --</option></select><button class="btn ghost metadata-add-btn" type="button" id="btnAddAuthor" title="Thêm tác giả" aria-label="Thêm tác giả">+</button></div><div class="helper">Chọn 1 tác giả</div></div><div class="field full"><div class="label">Mô tả sách</div><textarea class="textarea" name="description"></textarea></div><div class="field"><div class="label">ISBN</div><input class="input" name="isbn"></div><div class="field"><div class="label">Ngôn ngữ</div><input class="input" name="language" value="Tiếng Việt"></div><div class="field"><div class="label">Số trang</div><input class="input" name="pages" type="number" min="1" step="1"></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelBook">Hủy</button><button type="submit" class="btn primary" id="saveBook"><span class="txt">Lưu</span><span class="spin"></span></button></div></form></div></div>
 </div>
 
 <script>
@@ -107,8 +107,16 @@ window.initBooks = function() {
     populateMetadataSelects();
   };
 
-  const publisherName = pub => pub ? (pub.tenNXB || pub.tenNhaXuatBan || pub.ten || 'NXB') : '';
+  const publisherName = pub => pub ? (pub.tenNxb || pub.tenNXB || pub.tenNhaXuatBan || pub.ten || 'NXB') : '';
   const authorName = author => author ? (author.hoTen || author.tenTacGia || author.ten || 'Tác giả') : '';
+  const getSelectValues = select => Array.from(select?.selectedOptions || []).map(option => option.value).filter(Boolean);
+  const setSelectValues = (select, values) => {
+    if (!select) return;
+    const selected = new Set((values || []).map(value => String(value)));
+    Array.from(select.options).forEach(option => {
+      option.selected = selected.has(String(option.value));
+    });
+  };
   const money = value => Number(value || 0).toLocaleString('vi-VN') + ' đ';
   const todayInputValue = () => new Date().toISOString().slice(0, 10);
 
@@ -197,7 +205,9 @@ window.initBooks = function() {
   const populateMetadataSelects = () => {
     const categorySelect = form.theLoaiId;
     const publisherSelect = form.nhaXuatBanId;
-    const authorSelect = form.tacGiaIds;
+    const authorSelect = form.tacGiaId;
+    const selectedPublisherId = publisherSelect ? publisherSelect.value : '';
+    const selectedAuthorId = authorSelect ? authorSelect.value : '';
 
     if (categorySelect) {
       categorySelect.innerHTML = `
@@ -237,6 +247,7 @@ window.initBooks = function() {
           <option value="${pub.id}">${publisherName(pub)}</option>
         `).join('')}
       `;
+      publisherSelect.value = selectedPublisherId;
     }
 
     if (authorSelect) {
@@ -247,6 +258,7 @@ window.initBooks = function() {
           <option value="${author.id}">${authorName(author)}</option>
         `).join('')}
       `;
+      authorSelect.value = selectedAuthorId;
     }
   };
 
@@ -257,7 +269,7 @@ window.initBooks = function() {
     if (!name || !name.trim()) return;
 
     const endpoint = isPublisher ? `${API_BASE}/api/nha-xuat-ban` : `${API_BASE}/api/tac-gia`;
-    const payload = isPublisher ? { tenNXB: name.trim() } : { hoTen: name.trim() };
+    const payload = isPublisher ? { tenNxb: name.trim(), diaChi: '' } : { hoTen: name.trim() };
 
     try {
       const response = await fetch(endpoint, {
@@ -278,8 +290,11 @@ window.initBooks = function() {
         authors.push(saved);
       }
       populateMetadataSelects();
-      const select = isPublisher ? form.nhaXuatBanId : form.tacGiaIds;
-      if (select && saved.id != null) select.value = String(saved.id);
+      if (isPublisher && saved.id != null) {
+        form.nhaXuatBanId.value = String(saved.id);
+      } else if (saved.id != null) {
+        form.tacGiaId.value = String(saved.id);
+      }
       window.showToast(`Đã thêm ${label}`);
     } catch (error) {
       console.error(error);
@@ -298,6 +313,7 @@ window.initBooks = function() {
     const authors = Array.isArray(book?.danhSachTacGia) ? book.danhSachTacGia : [];
     const theLoaiId = book?.theLoai?.id ?? book?.theLoaiId;
     const categoryName = book?.theLoai?.tenTheLoai || book?.tenTheLoai || getCategoryNameById(theLoaiId);
+    const authorIds = authors.map(a => a.id).filter(Boolean);
 
     return {
       id: book?.id,
@@ -315,7 +331,8 @@ window.initBooks = function() {
       publisher: publisherName(book?.nhaXuatBan) || '—',
       nhaXuatBanId: book?.nhaXuatBan?.id,
       author: authors.map(a => a.hoTen || a.tenTacGia || a.ten || '').filter(Boolean).join(', ') || '—',
-      tacGiaIds: authors.map(a => a.id).filter(Boolean),
+      authorIds,
+      tacGiaIds: authorIds,
       description: '',
       isbn: '',
       language: 'Tiếng Việt',
@@ -372,7 +389,9 @@ window.initBooks = function() {
     }
   };
 
-  const closeModal = () => overlay.classList.remove('open');
+  const closeModal = () => {
+    overlay.classList.remove('open');
+  };
 
   const formatMoney = value => Number(value || 0).toLocaleString('vi-VN') + ' đ';
 
@@ -582,7 +601,6 @@ window.initBooks = function() {
   }
   if (addPublisherBtn) addPublisherBtn.onclick = () => createMetadataItem('publisher');
   if (addAuthorBtn) addAuthorBtn.onclick = () => createMetadataItem('author');
-  
   form.onsubmit = async e => { 
     e.preventDefault(); 
     const title = form.title.value.trim(); 
@@ -605,8 +623,7 @@ window.initBooks = function() {
     if (!Number.isInteger(year) || year < 1000 || year > y) mark('year', `Năm xuất bản phải từ 1000 đến ${y}`); 
     if (!form.theLoaiId.value) mark('theLoaiId', 'Vui lòng chọn thể loại'); 
     if (!form.nhaXuatBanId.value) mark('nhaXuatBanId', 'Vui lòng chọn nhà xuất bản'); 
-    const selectedAuthors = Array.from(form.tacGiaIds.selectedOptions).map(o => o.value).filter(Boolean);
-    if (!selectedAuthors.length) mark('tacGiaIds', 'Vui lòng chọn tác giả'); 
+    if (!form.tacGiaId.value) mark('tacGiaId', 'Vui lòng chọn tác giả'); 
     if (!ok) return; 
 
     saveBtn.classList.add('loading'); 
@@ -619,7 +636,7 @@ window.initBooks = function() {
         namXuatBan: year,
         theLoai: { id: Number(form.theLoaiId.value) },
         nhaXuatBan: { id: Number(form.nhaXuatBanId.value) },
-        danhSachTacGia: selectedAuthors.map(id => ({ id: Number(id) })),
+        danhSachTacGia: [{ id: Number(form.tacGiaId.value) }],
       };
       formData.append('sach', new Blob([JSON.stringify(sachPayload)], { type: 'application/json' }));
       const imageFile = form.image.files && form.image.files[0];
@@ -693,7 +710,7 @@ window.initBooks = function() {
       form.theLoaiId.value = book.theLoaiId || '';
       form.year.value = book.year || new Date().getFullYear();
       form.nhaXuatBanId.value = book.nhaXuatBanId || '';
-      form.tacGiaIds.value = Array.isArray(book.tacGiaIds) && book.tacGiaIds.length ? String(book.tacGiaIds[0]) : '';
+      form.tacGiaId.value = book.authorIds?.[0] || book.tacGiaIds?.[0] || '';
       form.description.value = book.description || '';
       form.isbn.value = book.isbn || '';
       form.language.value = book.language || 'Tiếng Việt';

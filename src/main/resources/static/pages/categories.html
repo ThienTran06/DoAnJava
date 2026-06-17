@@ -1,80 +1,289 @@
-﻿<div class="page-shell page-transition active">
+<div class="page-shell page-transition active">
+  <style>
+    .category-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 18px 0 16px;
+    }
+    .category-tab {
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
+    }
+    .category-tab:hover {
+      transform: translateY(-1px);
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+    .category-tab.active {
+      background: var(--text);
+      color: #fff;
+      border-color: var(--text);
+    }
+    .category-tab.active:hover {
+      color: #fff;
+      border-color: var(--text);
+    }
+    .category-subtitle {
+      margin-top: 3px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .category-grid .field.full {
+      grid-column: 1 / -1;
+    }
+    @media (max-width: 900px) {
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
   <div class="table-card">
     <div class="header-row">
       <div>
-        <div style="font-size:28px;font-weight:800;letter-spacing:-.8px;margin-bottom:4px">Thể loại</div>
-        <div style="font-size:13px;color:var(--muted)">Quản lý thể loại sách</div>
+        <div id="categoryPageTitle" style="font-size:28px;font-weight:800;letter-spacing:-.8px;margin-bottom:4px">Danh mục</div>
+        <div id="categoryPageSubtitle" class="category-subtitle">Quản lý thể loại, tác giả và nhà xuất bản</div>
       </div>
       <button class="btn primary" id="btnAddCategory">Thêm thể loại</button>
     </div>
+
+    <div class="category-tabs" id="categoryTabs">
+      <button type="button" class="category-tab active" data-mode="the-loai">Thể loại</button>
+      <button type="button" class="category-tab" data-mode="tac-gia">Tác giả</button>
+      <button type="button" class="category-tab" data-mode="nha-xuat-ban">Nhà xuất bản</button>
+    </div>
+
     <div class="search-box" style="margin-bottom:18px;width:100%">
-      
       <input type="text" id="categorySearch" placeholder="Tìm kiếm thể loại...">
     </div>
+
     <div class="table-wrap">
       <table class="tbl-books" style="min-width:100%">
-        <thead><tr><th>STT</th><th>Tên thể loại</th><th>Mô tả</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <thead id="categoryTableHead"></thead>
         <tbody id="categoryTableBody"></tbody>
       </table>
     </div>
   </div>
-  <div class="modal-overlay" id="categoryModal"><div class="modal"><div class="modal-head"><div class="modal-title"> Thêm thể loại</div><button class="close" id="closeCategoryModal">Đóng</button></div><form id="categoryForm"><div class="modal-body"><div class="grid"><div class="field full" id="categoryNameField"><div class="label">Tên thể loại</div><input class="input" name="name" required><div class="helper">Nhập tên thể loại</div></div><div class="field full"><div class="label">Mô tả</div><textarea class="textarea" name="description"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelCategory">Hủy</button><button type="submit" class="btn primary" id="saveCategory"><span class="txt">Lưu thể loại</span><span class="spin"></span></button></div></form></div></div>
+
+  <div class="modal-overlay" id="categoryModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title" id="categoryModalTitle">Thêm thể loại</div>
+        <button class="close" id="closeCategoryModal">Đóng</button>
+      </div>
+      <form id="categoryForm">
+        <div class="modal-body">
+          <div class="grid category-grid">
+            <div class="field full" id="categoryNameField">
+              <div class="label" id="categoryNameLabel">Tên thể loại</div>
+              <input class="input" name="name" required>
+              <div class="helper" id="categoryNameHelper">Nhập tên thể loại</div>
+            </div>
+            <div class="field full" id="categoryMetaField">
+              <div class="label" id="categoryMetaLabel">Mô tả</div>
+              <textarea class="textarea" name="meta"></textarea>
+              <div class="helper" id="categoryMetaHelper">Mô tả có thể để trống</div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-actions">
+          <button type="button" class="btn ghost" id="cancelCategory">Hủy</button>
+          <button type="submit" class="btn primary" id="saveCategory"><span class="txt">Lưu thể loại</span><span class="spin"></span></button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <script>
-// Initialize Categories page
 window.initCategories = function() {
-  const state = {
-    items: []
+  const API_BASE = window.API_BASE_URL || window.location.origin;
+  const BOOK_API = `${API_BASE}/api/sach`;
+  const configs = {
+    'the-loai': {
+      key: 'the-loai',
+      title: 'Thể loại',
+      subtitle: 'Quản lý thể loại sách',
+      addLabel: 'Thêm thể loại',
+      saveLabel: 'Lưu thể loại',
+      editLabel: 'Cập nhật thể loại',
+      searchPlaceholder: 'Tìm kiếm thể loại...',
+      nameLabel: 'Tên thể loại',
+      metaLabel: 'Mô tả',
+      metaHelper: 'Mô tả có thể để trống',
+      api: `${API_BASE}/api/the-loai`,
+      map: item => ({
+        id: item?.id,
+        name: item?.tenTheLoai || '',
+        meta: item?.moTa || '',
+      }),
+      payload: (name, meta) => ({ tenTheLoai: name, moTa: meta }),
+      columns: ['STT', 'Tên thể loại', 'Mô tả', 'Trạng thái', 'Thao tác'],
+      search: item => `${item.name} ${item.meta}`,
+      renderRow: item => [item.name || '—', item.meta || '—'],
+    },
+    'tac-gia': {
+      key: 'tac-gia',
+      title: 'Tác giả',
+      subtitle: 'Quản lý tác giả sách',
+      addLabel: 'Thêm tác giả',
+      saveLabel: 'Lưu tác giả',
+      editLabel: 'Cập nhật tác giả',
+      searchPlaceholder: 'Tìm kiếm tác giả...',
+      nameLabel: 'Họ và tên',
+      metaLabel: 'Quốc tịch',
+      metaHelper: 'Quốc tịch có thể để trống',
+      api: `${API_BASE}/api/tac-gia`,
+      map: item => ({
+        id: item?.id,
+        name: item?.hoTen || '',
+        meta: item?.quocTich || '',
+      }),
+      payload: (name, meta) => ({ hoTen: name, quocTich: meta }),
+      columns: ['STT', 'Họ tên', 'Quốc tịch', 'Trạng thái', 'Thao tác'],
+      search: item => `${item.name} ${item.meta}`,
+      renderRow: item => [item.name || '—', item.meta || '—'],
+    },
+    'nha-xuat-ban': {
+      key: 'nha-xuat-ban',
+      title: 'Nhà xuất bản',
+      subtitle: 'Quản lý nhà xuất bản sách',
+      addLabel: 'Thêm nhà xuất bản',
+      saveLabel: 'Lưu nhà xuất bản',
+      editLabel: 'Cập nhật nhà xuất bản',
+      searchPlaceholder: 'Tìm kiếm nhà xuất bản...',
+      nameLabel: 'Tên nhà xuất bản',
+      metaLabel: 'Địa chỉ',
+      metaHelper: 'Địa chỉ có thể để trống',
+      api: `${API_BASE}/api/nha-xuat-ban`,
+      map: item => ({
+        id: item?.id,
+        name: item?.tenNxb || item?.tenNXB || '',
+        meta: item?.diaChi || '',
+      }),
+      payload: (name, meta) => ({ tenNxb: name, diaChi: meta }),
+      columns: ['STT', 'Tên nhà xuất bản', 'Địa chỉ', 'Trạng thái', 'Thao tác'],
+      search: item => `${item.name} ${item.meta}`,
+      renderRow: item => [item.name || '—', item.meta || '—'],
+    }
   };
+
+  const state = {
+    activeMode: 'the-loai',
+    items: {
+      'the-loai': [],
+      'tac-gia': [],
+      'nha-xuat-ban': [],
+    },
+    loaded: {
+      'the-loai': false,
+      'tac-gia': false,
+      'nha-xuat-ban': false,
+    },
+    search: {
+      'the-loai': '',
+      'tac-gia': '',
+      'nha-xuat-ban': '',
+    },
+    usage: {
+      'the-loai': new Map(),
+      'tac-gia': new Map(),
+      'nha-xuat-ban': new Map(),
+    },
+    editingId: null,
+  };
+
   const modal = document.getElementById('categoryModal');
+  const modalTitle = document.getElementById('categoryModalTitle');
   const openBtn = document.getElementById('btnAddCategory');
   const closeBtn = document.getElementById('closeCategoryModal');
   const cancelBtn = document.getElementById('cancelCategory');
   const form = document.getElementById('categoryForm');
+  const tableHead = document.getElementById('categoryTableHead');
   const tableBody = document.getElementById('categoryTableBody');
   const search = document.getElementById('categorySearch');
-  if (!modal || !openBtn || !form || !tableBody) return;
+  const tabs = document.getElementById('categoryTabs');
+  const titleEl = document.getElementById('categoryPageTitle');
+  const subtitleEl = document.getElementById('categoryPageSubtitle');
+  const nameField = document.getElementById('categoryNameField');
+  const metaField = document.getElementById('categoryMetaField');
+  const nameLabel = document.getElementById('categoryNameLabel');
+  const metaLabel = document.getElementById('categoryMetaLabel');
+  const nameHelper = document.getElementById('categoryNameHelper');
+  const metaHelper = document.getElementById('categoryMetaHelper');
+  const saveBtn = document.getElementById('saveCategory');
 
-  const API_BASE = window.API_BASE_URL || window.location.origin;
-  const CATEGORY_API = `${API_BASE}/api/the-loai`;
-  const BOOK_API = `${API_BASE}/api/sach`;
-  let categoriesLoaded = false;
-  let categoriesLoading = false;
+  if (!modal || !form || !tableHead || !tableBody || !search || !tabs) return;
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem('token')
       || sessionStorage.getItem('token')
       || window.localStorage.token
       || window.sessionStorage.token;
-
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  const mapCategory = (item) => ({
-    id: item?.id,
-    name: item?.tenTheLoai || '—',
-    description: item?.moTa || item?.description || '—',
-    available: false,
-    bookCount: 0
-  });
-
-  const getBookCategoryId = (book) => book?.theLoai?.id ?? book?.theLoaiId;
-
-  const updateCategoryAvailability = (books = []) => {
-    const counts = new Map();
-    books.forEach(book => {
-      const categoryId = getBookCategoryId(book);
-      if (categoryId == null) return;
-      counts.set(String(categoryId), (counts.get(String(categoryId)) || 0) + 1);
-    });
-    state.items = state.items.map(item => {
-      const bookCount = counts.get(String(item.id)) || 0;
-      return { ...item, bookCount, available: bookCount > 0 };
-    });
+  const readErrorMessage = async (response, fallback) => {
+    try {
+      const text = await response.text();
+      if (!text) return fallback;
+      const parsed = JSON.parse(text);
+      return parsed?.message || parsed?.error || text;
+    } catch (error) {
+      return fallback;
+    }
   };
 
-  const loadBooksForAvailability = async () => {
+  const getUsageMap = (mode) => state.usage[mode] || new Map();
+
+  const updateUsageFromBooks = (books = []) => {
+    const usage = {
+      'the-loai': new Map(),
+      'tac-gia': new Map(),
+      'nha-xuat-ban': new Map(),
+    };
+
+    books.forEach(book => {
+      const categoryId = book?.theLoai?.id ?? book?.theLoaiId;
+      if (categoryId != null) {
+        const key = String(categoryId);
+        usage['the-loai'].set(key, (usage['the-loai'].get(key) || 0) + 1);
+      }
+
+      const publisherId = book?.nhaXuatBan?.id ?? book?.nhaXuatBanId;
+      if (publisherId != null) {
+        const key = String(publisherId);
+        usage['nha-xuat-ban'].set(key, (usage['nha-xuat-ban'].get(key) || 0) + 1);
+      }
+
+      const authors = Array.isArray(book?.danhSachTacGia) ? book.danhSachTacGia : [];
+      authors.forEach(author => {
+        const authorId = author?.id;
+        if (authorId != null) {
+          const key = String(authorId);
+          usage['tac-gia'].set(key, (usage['tac-gia'].get(key) || 0) + 1);
+        }
+      });
+    });
+
+    state.usage = usage;
+  };
+
+  const loadUsageFromBooks = async () => {
     try {
       const response = await fetch(BOOK_API, {
         headers: {
@@ -84,26 +293,136 @@ window.initCategories = function() {
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
-      updateCategoryAvailability(Array.isArray(data) ? data : []);
+      updateUsageFromBooks(Array.isArray(data) ? data : []);
     } catch (error) {
-      updateCategoryAvailability(window.allBooks || []);
+      updateUsageFromBooks(window.allBooks || []);
     }
+    renderTable();
+  };
+
+  const setActiveTab = (mode) => {
+    state.activeMode = configs[mode] ? mode : 'the-loai';
+    Array.from(tabs.querySelectorAll('[data-mode]')).forEach(button => {
+      button.classList.toggle('active', button.dataset.mode === state.activeMode);
+    });
+  };
+
+  const updateShellText = () => {
+    const config = configs[state.activeMode];
+    if (!config) return;
+    if (titleEl) titleEl.textContent = 'Danh mục';
+    if (subtitleEl) subtitleEl.textContent = config.subtitle;
+    if (openBtn) openBtn.textContent = config.addLabel;
+    if (search) search.placeholder = config.searchPlaceholder;
+    if (nameLabel) nameLabel.textContent = config.nameLabel;
+    if (metaLabel) metaLabel.textContent = config.metaLabel;
+    if (nameHelper) nameHelper.textContent = `Nhập ${config.nameLabel.toLowerCase()}`;
+    if (metaHelper) metaHelper.textContent = config.metaHelper;
+  };
+
+  const renderTableHead = () => {
+    const config = configs[state.activeMode];
+    if (!config) return;
+    tableHead.innerHTML = `
+      <tr>
+        ${config.columns.map(column => `<th>${column}</th>`).join('')}
+      </tr>
+    `;
+  };
+
+  const getStatusLabel = (mode, id) => {
+    const count = Number(getUsageMap(mode).get(String(id)) || 0);
+    return {
+      count,
+      label: count > 0 ? `Đang dùng (${count})` : 'Chưa dùng',
+      className: count > 0 ? 'ok' : 'bad',
+    };
   };
 
   const renderLoadingState = () => {
-    tableBody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Đang tải thể loại...</div></td></tr>`;
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="5"><div class="empty-state">Đang tải dữ liệu...</div></td>
+      </tr>
+    `;
   };
 
-  const renderErrorState = (message) => {
-    tableBody.innerHTML = `<tr><td colspan="5"><div class="empty-state">${message}</div></td></tr>`;
+  const renderEmptyState = (message) => {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="5"><div class="empty-state">${message}</div></td>
+      </tr>
+    `;
   };
 
-  const loadCategoriesFromApi = async () => {
-    categoriesLoading = true;
+  const renderTable = () => {
+    const config = configs[state.activeMode];
+    if (!config) return;
+
+    renderTableHead();
+    updateShellText();
+
+    const keyword = (state.search[state.activeMode] || '').trim().toLowerCase();
+    const rows = (state.items[state.activeMode] || []).filter(item => {
+      if (!keyword) return true;
+      return config.search(item).toLowerCase().includes(keyword);
+    });
+
+    if (!rows.length) {
+      renderEmptyState(state.loaded[state.activeMode] ? 'Không tìm thấy dữ liệu phù hợp.' : 'Chưa có dữ liệu.');
+      return;
+    }
+
+    tableBody.innerHTML = rows.map((item, index) => {
+      const [primary, secondary] = config.renderRow(item);
+      const status = getStatusLabel(state.activeMode, item.id);
+      return `
+        <tr>
+          <td>${index + 1}</td>
+          <td style="font-weight:700">${primary}</td>
+          <td style="color:var(--muted)">${secondary}</td>
+          <td><span class="badge ${status.className}">${status.label}</span></td>
+          <td>
+            <div class="ops">
+              <button class="link category-edit" data-id="${item.id}">Sửa</button>
+              <button class="link danger category-delete" data-id="${item.id}">Xóa</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  };
+
+  const showModal = () => {
+    modal.classList.add('open');
+  };
+
+  const closeModal = () => {
+    modal.classList.remove('open');
+    state.editingId = null;
+    form.reset();
+    form.querySelectorAll('.field').forEach(field => field.classList.remove('error'));
+    updateShellText();
+  };
+
+  const populateForm = (item) => {
+    const config = configs[state.activeMode];
+    if (!config) return;
+    form.name.value = item?.name || '';
+    form.meta.value = item?.meta || '';
+    modalTitle.textContent = item ? config.editLabel : config.addLabel;
+    saveBtn.querySelector('.txt').textContent = item ? config.editLabel : config.saveLabel;
+    showModal();
+  };
+
+  const loadItems = async (mode) => {
+    const config = configs[mode];
+    if (!config) return;
+
     renderLoadingState();
 
     try {
-      const response = await fetch(CATEGORY_API, {
+      const response = await fetch(config.api, {
         headers: {
           Accept: 'application/json',
           ...getAuthHeaders(),
@@ -116,195 +435,197 @@ window.initCategories = function() {
       }
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        const message = await readErrorMessage(response, `Không thể tải ${config.title.toLowerCase()}.`);
+        throw new Error(message);
       }
 
       const data = await response.json();
-      state.items = Array.isArray(data) ? data.map(mapCategory) : [];
-      await loadBooksForAvailability();
-      categoriesLoaded = true;
-      categoriesLoading = false;
-      render(search ? search.value : '');
+      state.items[mode] = Array.isArray(data) ? data.map(config.map) : [];
+      state.loaded[mode] = true;
+      renderTable();
     } catch (error) {
-      categoriesLoading = false;
-      renderErrorState('Không thể tải danh sách thể loại từ backend.');
+      state.items[mode] = [];
+      state.loaded[mode] = false;
+      renderEmptyState(error.message || `Không thể tải ${config.title.toLowerCase()}.`);
     }
   };
 
-  const render = (filter = '') => {
-    if (categoriesLoading) return;
-    const q = filter.trim().toLowerCase();
-    const rows = state.items.filter(i => !q || i.name.toLowerCase().includes(q) || i.description.toLowerCase().includes(q));
-    tableBody.innerHTML = rows.length ? rows.map((item, index) => `
-      <tr>
-        <td>${index + 1}</td>
-        <td style="font-weight:700">
-          ${item.available ? `<button type="button" class="link category-open-books" data-id="${item.id}" title="Xem sách thuộc thể loại này">${item.name}</button>` : item.name}
-        </td>
-        <td style="color:var(--muted)">${item.description}</td>
-        <td><span class="badge ${item.available ? 'ok' : 'bad'}">${item.available ? 'Có sẵn' : 'Không có sẵn'}</span></td>
-        <td><div class="ops"><button class="link" data-id="${item.id}">Sửa</button><button class="link danger" data-id="${item.id}">Xóa</button></div></td>
-      </tr>
-    `).join('') : `<tr><td colspan="5"><div class="empty-state">Không tìm thấy thể loại phù hợp.</div></td></tr>`;
+  const switchMode = async (mode) => {
+    if (!configs[mode]) return;
+    setActiveTab(mode);
+    updateShellText();
+
+    const currentSearch = state.search[mode] || '';
+    if (search.value !== currentSearch) {
+      search.value = currentSearch;
+    }
+
+    if (state.loaded[mode]) {
+      renderTable();
+      return;
+    }
+
+    await loadItems(mode);
   };
 
-  const closeModal = () => { modal.classList.remove('open'); form.reset(); form.querySelector('.field').classList.remove('error'); };
-  
-  // Clear old listeners
-  if (openBtn) openBtn.onclick = null;
-  if (closeBtn) closeBtn.onclick = null;
-  if (cancelBtn) cancelBtn.onclick = null;
-  if (form) form.onsubmit = null;
-  if (search) search.oninput = null;
-  
-  // Attach new listeners
-  if (openBtn) openBtn.onclick = () => {
-    window.currentEditCategoryIndex = undefined;
-    form.reset();
-    document.querySelector('#categoryModal .modal-title').textContent = ' Thêm thể loại';
-    document.getElementById('saveCategory').querySelector('.txt').textContent = 'Lưu thể loại';
-    modal.classList.add('open');
+  const findItemById = (mode, id) => {
+    return (state.items[mode] || []).find(item => String(item.id) === String(id));
   };
-  if (closeBtn) closeBtn.onclick = closeModal;
-  if (cancelBtn) cancelBtn.onclick = closeModal;
-  
-  modal.removeEventListener('click', window.categoryModalHandler);
-  window.categoryModalHandler = e => { if (e.target === modal) closeModal(); };
-  modal.addEventListener('click', window.categoryModalHandler);
-  
-  if (search) search.oninput = e => render(e.target.value);
-  
-  form.onsubmit = e => {
-    e.preventDefault();
+
+  const duplicateNameExists = (mode, name, editingId) => {
+    const normalized = name.trim().toLowerCase();
+    return (state.items[mode] || []).some((item, index) => {
+      const sameName = String(item.name || '').trim().toLowerCase() === normalized;
+      const sameId = editingId != null && String(item.id) === String(editingId);
+      return sameName && !sameId;
+    });
+  };
+
+  const submitForm = async (event) => {
+    event.preventDefault();
+
+    const config = configs[state.activeMode];
+    if (!config) return;
+
     const name = form.name.value.trim();
-    const desc = form.description.value.trim();
-    const field = form.name.closest('.field');
-    const helper = field.querySelector('.helper');
-    field.classList.remove('error');
-    helper.textContent = 'Nhập tên thể loại';
+    const meta = form.meta.value.trim();
+
+    form.querySelectorAll('.field').forEach(field => field.classList.remove('error'));
+
+    const nameFieldEl = nameField || form.name.closest('.field');
+    const metaFieldEl = metaField || form.meta.closest('.field');
+
+    const markField = (field, helper, message) => {
+      if (!field) return;
+      field.classList.add('error');
+      if (helper) helper.textContent = message;
+    };
+
     if (!name) {
-      field.classList.add('error');
-      helper.textContent = 'Tên thể loại không được để trống';
-      return;
-    }
-    state.items.unshift({ name, description: desc || '—', status: 'Hoạt động' });
-    render(search.value);
-    closeModal();
-    window.showToast('Đã thêm thể loại');
-  };
-
-  // Handle edit and delete buttons in table
-  tableBody.addEventListener('click', e => {
-    const openBooksBtn = e.target.closest('.category-open-books');
-    const editBtn = e.target.closest('.ops .link:not(.danger)');
-    const deleteBtn = e.target.closest('.ops .link.danger');
-    if (openBooksBtn) {
-      const categoryId = openBooksBtn.dataset.id;
-      const categoryName = state.items.find(i => String(i.id) === String(categoryId))?.name || '';
-      const params = new URLSearchParams(window.location.search);
-      params.set('view', 'books');
-      params.set('categoryId', categoryId);
-      params.set('categoryName', categoryName);
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-      if (typeof window.setView === 'function') {
-        window.setView('books').then(() => window.setBookCategoryFilter?.(categoryId, categoryName));
-      } else {
-        window.location.href = `index.html?view=books&categoryId=${encodeURIComponent(categoryId)}&categoryName=${encodeURIComponent(categoryName)}`;
-      }
-      return;
-    }
-    if (!editBtn && !deleteBtn) return;
-
-    const id = editBtn ? editBtn.dataset.id : deleteBtn.dataset.id;
-    const itemIndex = state.items.findIndex(i => String(i.id) === String(id));
-    if (itemIndex < 0) return;
-    const item = state.items[itemIndex];
-
-    if (editBtn) {
-      // Open edit modal
-      form.name.value = item.name;
-      form.description.value = item.description === '—' ? '' : item.description;
-      document.querySelector('#categoryModal .modal-title').textContent = ' Sửa thể loại';
-      document.getElementById('saveCategory').querySelector('.txt').textContent = 'Cập nhật thể loại';
-      modal.classList.add('open');
-      
-      // Store original item for update
-      window.currentEditCategoryIndex = itemIndex;
-    } else if (deleteBtn) {
-      // Delete confirmation
-      window.showConfirm('Bạn chắc chắn muốn xóa thể loại này?', async () => {
-        try {
-          const response = await fetch(`${CATEGORY_API}/${id}`, {
-            method: 'DELETE',
-            headers: { ...getAuthHeaders() }
-          });
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          state.items.splice(itemIndex, 1);
-          render(search.value);
-          window.showToast('Đã xóa thể loại');
-        } catch (error) {
-          window.showToast('Không thể xóa thể loại');
-        }
-      });
-    }
-  });
-
-  // Override form submit for edit/add
-  const originalSubmit = form.onsubmit;
-  form.onsubmit = async e => {
-    e.preventDefault();
-    const name = form.name.value.trim();
-    const desc = form.description.value.trim();
-    const field = form.name.closest('.field');
-    const helper = field.querySelector('.helper');
-    field.classList.remove('error');
-    helper.textContent = 'Nhập tên thể loại';
-    if (!name) {
-      field.classList.add('error');
-      helper.textContent = 'Tên thể loại không được để trống';
-      return;
-    }
-    const isEdit = window.currentEditCategoryIndex !== undefined;
-    const duplicated = state.items.some((item, index) =>
-      item.name.trim().toLowerCase() === name.toLowerCase()
-      && (!isEdit || index !== window.currentEditCategoryIndex)
-    );
-    if (duplicated) {
-      field.classList.add('error');
-      helper.textContent = 'Tên thể loại đã tồn tại';
+      markField(nameFieldEl, nameHelper, `${config.nameLabel} không được để trống`);
       return;
     }
 
-    const editingItem = isEdit ? state.items[window.currentEditCategoryIndex] : null;
+    if (duplicateNameExists(state.activeMode, name, state.editingId)) {
+      markField(nameFieldEl, nameHelper, `${config.nameLabel} đã tồn tại`);
+      return;
+    }
+
+    const payload = config.payload(name, meta);
+    const isEdit = state.editingId != null;
+    const url = isEdit ? `${config.api}/${state.editingId}` : config.api;
+    const method = isEdit ? 'PUT' : 'POST';
+
     try {
-      const response = await fetch(isEdit ? `${CATEGORY_API}/${editingItem.id}` : CATEGORY_API, {
-        method: isEdit ? 'PUT' : 'POST',
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
-          ...getAuthHeaders()
+          Accept: 'application/json',
+          ...getAuthHeaders(),
         },
-        body: JSON.stringify({ tenTheLoai: name, moTa: desc })
+        body: JSON.stringify(payload),
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const saved = mapCategory(await response.json());
-      if (isEdit) {
-        state.items[window.currentEditCategoryIndex] = saved;
-      } else {
-        state.items.unshift(saved);
+
+      if (!response.ok) {
+        const message = await readErrorMessage(response, isEdit ? 'Không thể cập nhật dữ liệu.' : 'Không thể lưu dữ liệu.');
+        throw new Error(message);
       }
-      window.currentEditCategoryIndex = undefined;
-      document.querySelector('#categoryModal .modal-title').textContent = ' Thêm thể loại';
-      document.getElementById('saveCategory').querySelector('.txt').textContent = 'Lưu thể loại';
-      render(search.value);
+
+      const saved = config.map(await response.json());
+      if (isEdit) {
+        const index = (state.items[state.activeMode] || []).findIndex(item => String(item.id) === String(state.editingId));
+        if (index >= 0) {
+          state.items[state.activeMode][index] = saved;
+        }
+      } else {
+        state.items[state.activeMode].unshift(saved);
+      }
+
+      state.editingId = null;
+      window.showToast(isEdit ? `${config.title} đã được cập nhật` : `${config.title} đã được thêm`);
       closeModal();
-      form.reset();
-      window.showToast(isEdit ? 'Đã cập nhật thể loại' : 'Đã thêm thể loại');
+      renderTable();
     } catch (error) {
-      window.showToast('Không thể lưu thể loại');
+      window.showToast(error.message || 'Không thể lưu dữ liệu');
     }
   };
 
-  render();
-  loadCategoriesFromApi();
+  const handleTableAction = async (event) => {
+    const editBtn = event.target.closest('.category-edit');
+    const deleteBtn = event.target.closest('.category-delete');
+    if (!editBtn && !deleteBtn) return;
+
+    const config = configs[state.activeMode];
+    if (!config) return;
+
+    const id = editBtn ? editBtn.dataset.id : deleteBtn.dataset.id;
+    const item = findItemById(state.activeMode, id);
+    if (!item) return;
+
+    if (editBtn) {
+      state.editingId = item.id;
+      modalTitle.textContent = config.editLabel;
+      saveBtn.querySelector('.txt').textContent = config.editLabel;
+      populateForm(item);
+      return;
+    }
+
+    window.showConfirm(`Bạn chắc chắn muốn xóa ${config.title.toLowerCase()} này?`, async () => {
+      try {
+        const response = await fetch(`${config.api}/${id}`, {
+          method: 'DELETE',
+          headers: {
+            Accept: 'application/json',
+            ...getAuthHeaders(),
+          },
+        });
+
+        if (!response.ok) {
+          const message = await readErrorMessage(response, `Không thể xóa ${config.title.toLowerCase()}.`);
+          throw new Error(message);
+        }
+
+        state.items[state.activeMode] = (state.items[state.activeMode] || []).filter(entry => String(entry.id) !== String(id));
+        window.showToast(`${config.title} đã được xóa`);
+        renderTable();
+      } catch (error) {
+        window.showToast(error.message || `Không thể xóa ${config.title.toLowerCase()}`);
+      }
+    });
+  };
+
+  tabs.addEventListener('click', event => {
+    const button = event.target.closest('[data-mode]');
+    if (!button) return;
+    state.search[state.activeMode] = search.value;
+    switchMode(button.dataset.mode);
+  });
+
+  search.addEventListener('input', event => {
+    state.search[state.activeMode] = event.target.value;
+    renderTable();
+  });
+
+  openBtn.addEventListener('click', () => {
+    state.editingId = null;
+    modalTitle.textContent = configs[state.activeMode].addLabel;
+    saveBtn.querySelector('.txt').textContent = configs[state.activeMode].saveLabel;
+    form.reset();
+    form.querySelectorAll('.field').forEach(field => field.classList.remove('error'));
+    showModal();
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  cancelBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', event => {
+    if (event.target === modal) closeModal();
+  });
+  form.addEventListener('submit', submitForm);
+
+  updateShellText();
+  setActiveTab(state.activeMode);
+  switchMode(state.activeMode);
+  loadUsageFromBooks();
 };
 </script>
