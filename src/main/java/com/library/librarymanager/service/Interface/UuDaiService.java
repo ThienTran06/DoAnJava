@@ -12,6 +12,10 @@ public interface UuDaiService {
 
     UuDai create(UuDaiRequest request);
 
+    UuDai update(int id, UuDaiRequest request);
+
+    void delete(int id);
+
     UuDai getActiveForSach(int sachId);
 
     BigDecimal tinhGiaSauUuDai(Sach sach);

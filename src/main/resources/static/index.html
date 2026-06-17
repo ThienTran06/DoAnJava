@@ -1,9 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BookHouse - Tổng quan</title>
+<!-- Favicon: browser will request /favicon.ico when served from the root of the static resources -->
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<!-- also include a relative path (works when app is served with a context path or opened as file) -->
+<link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap" rel="stylesheet">
 <style>
@@ -53,9 +58,9 @@
   }
   .logo-mark {
     width: 34px; height: 34px;
-    background: var(--text);
     border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
   }
   .logo-text { font-weight: 800; font-size: 15.5px; letter-spacing: -0.5px; line-height: 1.1; }
   .logo-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
@@ -434,7 +439,7 @@
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark">
-      
+      <img src="logo-moi.png" alt="Logo" style="width: 34px; height: 34px; object-fit: contain;">
     </div>
     <div>
       <div class="logo-text">BookHouse</div>
@@ -745,7 +750,7 @@
       <div class="report-toolbar">
         <div>
           <h2 style="font-size:22px;letter-spacing:-0.5px;margin-bottom:4px;">Doanh thu</h2>
-          <div class="report-note">Dữ liệu lấy từ /api/bao-cao để test trên Vercel.</div>
+          <div class="report-note">Dữ liệu lấy từ hệ thống báo cáo.</div>
         </div>
         <div class="report-actions">
           <div class="report-date-field">
@@ -778,12 +783,12 @@
         <div class="card">
           <span class="card-title">7 ngày gần nhất</span>
           <div class="report-value" id="sevenDayRevenue">--</div>
-          <div class="report-label">Tổng theo endpoint bảy ngày trước</div>
+          <div class="report-label">Tổng 7 ngày gần nhất</div>
         </div>
         <div class="card">
           <span class="card-title">30 ngày gần nhất</span>
           <div class="report-value" id="thirtyDayRevenue">--</div>
-          <div class="report-label">Tổng theo endpoint ba mươi ngày trước</div>
+          <div class="report-label">Tổng 30 ngày gần nhất</div>
         </div>
         <div class="card">
           <span class="card-title">Bộ lọc đang xem</span>
@@ -834,9 +839,9 @@
           <div class="report-label">Số lượng sách hiện còn</div>
         </div>
         <div class="card">
-          <span class="card-title">Trạng thái API</span>
+          <span class="card-title">Trạng thái dữ liệu</span>
           <div class="report-value" id="inventoryApiState">--</div>
-          <div class="report-label">Kết quả gọi endpoint tồn kho</div>
+          <div class="report-label">Kết quả tải tồn kho</div>
         </div>
       </div>
 
@@ -984,7 +989,7 @@ window.API_BASE_URL = API_BASE;
 const viewTitles = {
   dashboard: ['Tổng quan', 'Chào mừng bạn trở lại, Admin!'],
   books: ['Sách', 'Quản lý toàn bộ đầu sách trong kho'],
-  categories: ['Danh mục', 'Quản lý thể loại sách'],
+  categories: ['Danh mục', 'Quản lý thể loại, tác giả và nhà xuất bản'],
   customers: ['Khách hàng', 'Quản lý thông tin khách hàng'],
   cskh: ['Chăm sóc khách hàng', 'Quản lý đánh giá và phản hồi'],
   staff: ['Nhân viên', 'Quản lý nhân sự cửa hàng'],
@@ -1168,6 +1173,11 @@ async function loadExternalPage(view) {
 
 async function setView(view) {
   if (!viewTitles[view]) view = 'dashboard';
+  const accessKey = { dashboard: 'dashboard', books: 'books', categories: 'categories', customers: 'customers', cskh: 'cskh', staff: 'staff', revenue: 'revenue', inventory: 'inventory' }[view];
+  if (window.BookHouseAccess && accessKey && !window.BookHouseAccess.canAccess(accessKey)) {
+    window.location.replace(window.BookHouseAccess.firstAllowedRoute());
+    return;
+  }
   document.querySelectorAll('.sidebar .nav-item.active').forEach(item => {
     item.classList.remove('active');
   });
@@ -1222,7 +1232,7 @@ function setDashboardStat(index, value, label, state) {
   if (deltaEl) {
     deltaEl.textContent = state || 'T\u1eeb backend';
     deltaEl.classList.remove('up', 'down');
-    deltaEl.classList.add(state === 'L\u1ed7i API' ? 'down' : 'up');
+    deltaEl.classList.add(state === 'L\u1ed7i tải dữ liệu' ? 'down' : 'up');
   }
 }
 
@@ -1267,7 +1277,7 @@ function renderDailyKpi(todayRevenue, failed = false) {
   if (failed) {
     percentEl.textContent = 'Lỗi';
     labelEl.textContent = 'KPI doanh thu hôm nay';
-    statusEl.textContent = 'Lỗi API';
+    statusEl.textContent = 'Lỗi tải dữ liệu';
     statusEl.classList.remove('up');
     statusEl.classList.add('down');
     progressEl.style.width = '0%';
@@ -1651,14 +1661,14 @@ async function loadDashboard() {
   ]);
 
   const [todayResult, stockResult, sevenResult, thirtyResult, categoryResult, bestSellerResult, inventoryResult, invoiceResult, kpiResult] = results;
-  setDashboardStat(0, todayResult.status === 'fulfilled' ? money(todayResult.value) : 'L\u1ed7i', 'Doanh thu h\u00f4m nay', todayResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
-  setDashboardStat(1, stockResult.status === 'fulfilled' ? Number(stockResult.value || 0).toLocaleString('vi-VN') : 'L\u1ed7i', 'T\u1ed3n kho hi\u1ec7n t\u1ea1i', stockResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
+  setDashboardStat(0, todayResult.status === 'fulfilled' ? money(todayResult.value) : 'L\u1ed7i', 'Doanh thu h\u00f4m nay', todayResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i tải dữ liệu');
+  setDashboardStat(1, stockResult.status === 'fulfilled' ? Number(stockResult.value || 0).toLocaleString('vi-VN') : 'L\u1ed7i', 'T\u1ed3n kho hi\u1ec7n t\u1ea1i', stockResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i tải dữ liệu');
 
   dashboardState.todayRevenue = todayResult.status === 'fulfilled' ? Number(todayResult.value || 0) : 0;
   dashboardState.sevenDays = sevenResult.status === 'fulfilled' ? sevenResult.value : [];
   dashboardState.thirtyDays = thirtyResult.status === 'fulfilled' ? thirtyResult.value : [];
-  setDashboardStat(2, sevenResult.status === 'fulfilled' ? money(sumMoney(sevenResult.value)) : 'L\u1ed7i', 'Doanh thu 7 ng\u00e0y qua', sevenResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
-  setDashboardStat(3, thirtyResult.status === 'fulfilled' ? money(sumMoney(thirtyResult.value)) : 'L\u1ed7i', 'Doanh thu 30 ng\u00e0y qua', thirtyResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i API');
+  setDashboardStat(2, sevenResult.status === 'fulfilled' ? money(sumMoney(sevenResult.value)) : 'L\u1ed7i', 'Doanh thu 7 ng\u00e0y qua', sevenResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i tải dữ liệu');
+  setDashboardStat(3, thirtyResult.status === 'fulfilled' ? money(sumMoney(thirtyResult.value)) : 'L\u1ed7i', 'Doanh thu 30 ng\u00e0y qua', thirtyResult.status === 'fulfilled' ? 'OK' : 'L\u1ed7i tải dữ liệu');
   if (kpiResult.status !== 'fulfilled') dashboardState.dailyKpiTarget = 0;
   renderDailyKpi(dashboardState.todayRevenue, todayResult.status !== 'fulfilled');
 
@@ -1734,7 +1744,7 @@ async function loadRevenue(mode = 'range') {
     document.getElementById('rangeRevenue').textContent = 'Lỗi';
     document.getElementById('dailyRevenueRows').innerHTML =
       '<tr><td colspan="4" class="state-text">Từ ngày phải nhỏ hơn hoặc bằng đến ngày</td></tr>';
-    document.getElementById('categoryRevenueRows').innerHTML = '<div class="state-text">Chưa gọi API</div>';
+    document.getElementById('categoryRevenueRows').innerHTML = '<div class="state-text">Chưa tải dữ liệu</div>';
     loadedViews.revenue = true;
     return;
   }

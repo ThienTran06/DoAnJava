@@ -343,6 +343,186 @@
     }
   }
 
+  function normalizePermission(value) {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[\s-]+/g, '_')
+      .toUpperCase();
+  }
+
+  function getJwtPermissions() {
+    var jwt = decodeJwt() || {};
+    return Array.isArray(jwt.permissions) ? jwt.permissions : [];
+  }
+
+  function getJwtRole() {
+    var jwt = decodeJwt() || {};
+    return normalizePermission(jwt.role);
+  }
+
+  function hasPermission(permission) {
+    var expected = normalizePermission(permission);
+    return getJwtPermissions().some(function (item) {
+      return normalizePermission(item) === expected;
+    });
+  }
+
+  function isAdmin() {
+    return getJwtRole() === 'ADMIN' || hasPermission('ADMIN');
+  }
+
+  function canAccessRule(rule) {
+    if (!rule) return true;
+    if (isAdmin()) return true;
+    if (rule.pendingInvoicePayment && hasPermission('QUAN_LY_HOA_DON') && localStorage.getItem('RESERVATION_INVOICE')) return true;
+    if (rule.roles && rule.roles.map(normalizePermission).indexOf(getJwtRole()) >= 0) return true;
+    return (rule.permissions || []).some(hasPermission);
+  }
+
+  var ACCESS_RULES = {
+    dashboard: { permissions: ['XEM_BAO_CAO'] },
+    books: { permissions: ['QUAN_LY_SACH'] },
+    categories: { permissions: ['QUAN_LY_THE_LOAI', 'QUAN_LY_TAC_GIA', 'QUAN_LY_NHA_XUAT_BAN'] },
+    customers: { permissions: ['QUAN_LY_KHACH_HANG'] },
+    cskh: { permissions: ['QUAN_LY_KHACH_HANG'] },
+    staff: { permissions: ['QUAN_LY_NGUOI_DUNG'] },
+    sales: { roles: ['NHAN_VIEN_BAN_HANG'], pendingInvoicePayment: true },
+    invoices: { permissions: ['QUAN_LY_HOA_DON'] },
+    imports: { permissions: ['QUAN_LY_PHIEU_NHAP'] },
+    reservations: { permissions: ['QUAN_LY_PHIEU_GIU', 'QUAN_LY_HOA_DON'] },
+    reviews: { permissions: ['QUAN_LY_KHACH_HANG'] },
+    revenue: { permissions: ['XEM_BAO_CAO'] },
+    inventory: { permissions: ['XEM_BAO_CAO'] }
+  };
+
+  var PAGE_TO_KEY = {
+    'tongquan.html': 'dashboard',
+    'sach.html': 'books',
+    'danhmuc.html': 'categories',
+    'khachhang.html': 'customers',
+    'cskh.html': 'cskh',
+    'nhanvien.html': 'staff',
+    'banhang.html': 'sales',
+    'hoadon.html': 'invoices',
+    'nhaphang.html': 'imports',
+    'phieugiu.html': 'reservations',
+    'danh-gia-cong-cong.html': 'reviews',
+    'settings.html': 'settings'
+  };
+
+  var VIEW_TO_KEY = {
+    dashboard: 'dashboard',
+    books: 'books',
+    categories: 'categories',
+    customers: 'customers',
+    cskh: 'cskh',
+    staff: 'staff',
+    revenue: 'revenue',
+    inventory: 'inventory'
+  };
+
+  var DEFAULT_ROUTES = [
+    ['dashboard', 'TongQuan.html'],
+    ['customers', 'KhachHang.html'],
+    ['invoices', 'HoaDon.html'],
+    ['reservations', 'PhieuGiu.html'],
+    ['books', 'Sach.html'],
+    ['imports', 'NhapHang.html'],
+    ['categories', 'DanhMuc.html'],
+    ['staff', 'NhanVien.html'],
+    ['revenue', 'index.html?view=revenue'],
+    ['inventory', 'index.html?view=inventory'],
+    ['settings', 'settings.html']
+  ];
+
+  function getPageFileName(url) {
+    var path = (url || window.location.pathname).split('/').pop() || 'index.html';
+    return path.toLowerCase();
+  }
+
+  function accessKeyFromUrl(url) {
+    var parsed;
+    try {
+      parsed = new URL(url, window.location.href);
+    } catch (e) {
+      parsed = new URL(window.location.href);
+    }
+    var file = getPageFileName(parsed.pathname);
+    if (file === 'index.html') {
+      return VIEW_TO_KEY[parsed.searchParams.get('view') || 'dashboard'] || 'dashboard';
+    }
+    return PAGE_TO_KEY[file] || null;
+  }
+
+  function firstAllowedRoute() {
+    for (var i = 0; i < DEFAULT_ROUTES.length; i++) {
+      if (canAccessRule(ACCESS_RULES[DEFAULT_ROUTES[i][0]])) return DEFAULT_ROUTES[i][1];
+    }
+    return 'login.html';
+  }
+
+  function routeKeyFromNavItem(item) {
+    var href = item.getAttribute('href');
+    if (href) return accessKeyFromUrl(href);
+
+    var onclick = item.getAttribute('onclick') || '';
+    var match = onclick.match(/['"]([^'"]+\.html(?:\?[^'"]*)?)['"]/i);
+    if (match) return accessKeyFromUrl(match[1]);
+
+    var label = normalizePermission(item.textContent);
+    if (label.indexOf('TONG_QUAN') >= 0) return 'dashboard';
+    if (label.indexOf('SACH') >= 0 && label.indexOf('PHIEU') < 0) return 'books';
+    if (label.indexOf('DANH_MUC') >= 0) return 'categories';
+    if (label.indexOf('KHACH_HANG') >= 0) return 'customers';
+    if (label.indexOf('CHAM_SOC') >= 0 || label.indexOf('CSKH') >= 0) return 'cskh';
+    if (label.indexOf('NHAN_VIEN') >= 0) return 'staff';
+    if (label.indexOf('BAN_HANG') >= 0) return 'sales';
+    if (label.indexOf('HOA_DON') >= 0) return 'invoices';
+    if (label.indexOf('NHAP_HANG') >= 0) return 'imports';
+    if (label.indexOf('PHIEU_GIU') >= 0) return 'reservations';
+    if (label.indexOf('DANH_GIA') >= 0) return 'reviews';
+    if (label.indexOf('DOANH_THU') >= 0) return 'revenue';
+    if (label.indexOf('TON_KHO') >= 0) return 'inventory';
+    if (label.indexOf('CAI_DAT') >= 0) return 'settings';
+    return null;
+  }
+
+  function applyNavigationAccess() {
+    var items = document.querySelectorAll('.sidebar .nav-item');
+    items.forEach(function (item) {
+      var key = routeKeyFromNavItem(item);
+      if (!key) return;
+      var allowed = canAccessRule(ACCESS_RULES[key]);
+      item.hidden = !allowed;
+      item.style.display = allowed ? '' : 'none';
+      if (!allowed) {
+        item.classList.remove('active');
+        item.addEventListener('click', function (event) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          if (window.showToast) window.showToast('Tai khoan nay khong co quyen truy cap chuc nang nay');
+        }, true);
+      }
+    });
+
+    document.querySelectorAll('.sidebar .nav-section').forEach(function (section) {
+      var visible = Array.from(section.querySelectorAll('.nav-item')).some(function (item) {
+        return !item.hidden && item.style.display !== 'none';
+      });
+      section.style.display = visible ? '' : 'none';
+    });
+  }
+
+  function enforceCurrentPageAccess() {
+    var token = localStorage.getItem('token');
+    if (!token || getPageFileName() === 'login.html') return;
+    var key = accessKeyFromUrl(window.location.href);
+    if (!key) return;
+    if (canAccessRule(ACCESS_RULES[key])) return;
+    window.location.replace(firstAllowedRoute());
+  }
+
   function fallbackProfile() {
     var jwt = decodeJwt() || {};
     var stored = readStoredUser() || {};
@@ -368,6 +548,8 @@
     _initDone = true;
 
     var jwt = decodeJwt();
+    applyNavigationAccess();
+    enforceCurrentPageAccess();
 
     /* 1. Try cache first for instant sidebar */
     var cached = getCachedProfile();
@@ -415,6 +597,15 @@
         populateSidebar(data);
       });
     }
+  };
+
+  window.BookHouseAccess = {
+    hasPermission: hasPermission,
+    canAccess: function (key) { return canAccessRule(ACCESS_RULES[key]); },
+    keyFromUrl: accessKeyFromUrl,
+    firstAllowedRoute: firstAllowedRoute,
+    applyNavigation: applyNavigationAccess,
+    enforceCurrentPage: enforceCurrentPageAccess
   };
 
   /* Run on DOM ready */

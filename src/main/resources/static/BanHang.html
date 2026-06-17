@@ -1448,8 +1448,8 @@
             document.getElementById("p-invoice-method").innerText = "Tiền mặt";
             qrArea.style.display = "none";
             btnCashConfirm.style.display = "inline-flex";
-
-            btnCloseModal.disabled = false;
+            btnCashConfirm.innerText = "✓ Xác nhận đã thu tiền mặt";
+            btnCloseModal.disabled = true;
             btnPrint.disabled = true;
 
             if (paymentCheckInterval) {
@@ -1461,7 +1461,8 @@
             document.getElementById("p-invoice-title-type").innerText = "PHIẾU TẠM TÍNH (CHỜ THANH TOÁN)";
             document.getElementById("p-invoice-method").innerText = "Chuyển khoản (VietQR)";
             qrArea.style.display = "block";
-            btnCashConfirm.style.display = "none";
+            btnCashConfirm.style.display = "inline-flex";
+            btnCashConfirm.innerText = "✓ Xác nhận đã nhận chuyển khoản QR";
             overlay.style.display = "flex";
             document.getElementById("countdownText").innerText = "Đang tải mã QR thanh toán...";
 
@@ -1472,7 +1473,7 @@
             const totalMoney = activeInvoiceObjectCache ? activeInvoiceObjectCache.tongTien || 0 : 0;
             qrImage.src = `https://img.vietqr.io/image/MB-0393107717-compact2.png?amount=${totalMoney}&addInfo=Thanh%20toan%20HD${activeInvoiceId}`;
 
-            btnCloseModal.disabled = false;
+            btnCloseModal.disabled = true;
             btnPrint.disabled = true;
 
             startQrCheckPolling(activeInvoiceId);
@@ -1567,8 +1568,50 @@
         } catch (err) {
             alert("Lỗi: " + err.message);
         }
+      }, 2000);
     }
 
+    async function executeConfirmCashPay() {
+      const isQrPayment = currentPaymentMethod === "QUET_MA";
+      const confirmMessage = isQrPayment
+        ? "Xác nhận bạn đã nhận đủ tiền chuyển khoản QR của khách hàng?"
+        : "Xác nhận bạn đã thu đủ tiền mặt của khách hàng?";
+      if (!confirm(confirmMessage)) return;
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/hoa-don/${activeInvoiceId}/xac-nhan-thanh-toan`,
+          {
+            method: "PUT",
+            headers: getAuthHeaders(null),
+          },
+        );
+        if (!response.ok) {
+          throw new Error("Cập nhật trạng thái thanh toán thất bại.");
+        }
+
+        document.getElementById("p-modal-title").innerText =
+          isQrPayment ? "🎉 ĐÃ NHẬN CHUYỂN KHOẢN QR!" : "🎉 ĐÃ THU TIỀN MẶT THÀNH CÔNG!";
+        document.getElementById("p-invoice-title-type").innerText =
+          "HÓA ĐƠN BÁN LẺ";
+        document.getElementById("p-invoice-method").innerText =
+          isQrPayment ? "Chuyển khoản QR (Đã thanh toán)" : "Tiền mặt (Đã thanh toán)";
+
+        document.getElementById("paymentToggleZone").style.display = "none";
+        document.getElementById("btnConfirmCashPay").style.display = "none";
+        document.getElementById("qrStatusOverlay").style.display = "none";
+        if (paymentCheckInterval) {
+          clearInterval(paymentCheckInterval);
+          paymentCheckInterval = null;
+        }
+
+        document.getElementById("btnCloseInvoiceModal").disabled = false;
+        document.getElementById("btnExecutePrint").disabled = false;
+
+        alert("Hóa đơn đã chuyển sang trạng thái ĐÃ THANH TOÁN. Hãy nhấn nút In hóa đơn!");
+      } catch (err) {
+        alert("Lỗi: " + err.message);
+      }
+    }
     async function fetchSidebarInvoiceCount() {
         try {
             const response = await fetch(`${API_BASE_URL}/api/hoa-don?page=0&size=1`, {
@@ -2087,21 +2130,22 @@
     }
 
     function clearCartAndRefresh() {
-        selectedCartItems = [];
-        selectedCustomer = null;
-        customerDiscountCodes = [];
-        document.getElementById("customerSearchInput").value = "";
-        document.getElementById("discountCodeInput").value = "";
-        document.getElementById("discountCodeSummary").style.display = "none";
-        document.getElementById("discountCodeSuggestions").style.display = "none";
-        document.getElementById("selectedCustomerCard").style.display = "none";
-        activeInvoiceId = null;
-        isInvoiceFromReservation = false;
-        activeInvoiceObjectCache = null;
-        renderCartItems();
-        fetchBooks();
-        fetchSidebarInvoiceCount();
-        document.getElementById("invoicePrintModal").classList.remove("open");
+      selectedCartItems = [];
+      selectedCustomer = null;
+      customerDiscountCodes = [];
+      document.getElementById("customerSearchInput").value = "";
+      document.getElementById("discountCodeInput").value = "";
+      document.getElementById("discountCodeSummary").style.display = "none";
+      document.getElementById("discountCodeSuggestions").style.display = "none";
+      document.getElementById("selectedCustomerCard").style.display = "none";
+      activeInvoiceId = null;
+      isInvoiceFromReservation = false;
+      activeInvoiceObjectCache = null;
+      localStorage.removeItem("RESERVATION_INVOICE");
+      renderCartItems();
+      fetchBooks();
+      fetchSidebarInvoiceCount();
+      document.getElementById("invoicePrintModal").classList.remove("open");
     }
 
     async function closeInvoicePrintModal() {
@@ -2167,3 +2211,4 @@
 </script>
 </body>
 </html>
+

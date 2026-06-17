@@ -31,4 +31,5 @@ public interface HoaDonService {
     ThongKeHoaDonResponse getThongKe();
     void thanhToanTienMat(int hoaDonId);
     void setPendingStatus(int hoaDonId);
+    void xacNhanThanhToan(int hoaDonId);
 }

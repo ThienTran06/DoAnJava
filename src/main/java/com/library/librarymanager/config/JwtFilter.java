@@ -13,6 +13,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +22,8 @@ import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -36,6 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String uri = req.getRequestURI();
+        log.debug("JwtFilter incoming request: method={} uri={} remote={}", req.getMethod(), uri, req.getRemoteAddr());
 
         if (isPublicResource(uri)
                 || uri.startsWith("/auth")
@@ -49,6 +54,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 || uri.startsWith("/v3/api-docs")) {
 
+            log.debug("JwtFilter: allowing public resource {}", uri);
             chain.doFilter(req, res);
             return;
         }
@@ -56,6 +62,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = req.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            log.debug("JwtFilter: missing or invalid Authorization header for {}", uri);
             res.setStatus(401);
             res.getWriter().write("Thiếu token");
             return;
@@ -64,6 +71,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         if (!jwtUtil.validateToken(token)) {
+            log.debug("JwtFilter: token validation failed for {}", uri);
             res.setStatus(401);
             res.getWriter().write("Token không hợp lệ");
             return;

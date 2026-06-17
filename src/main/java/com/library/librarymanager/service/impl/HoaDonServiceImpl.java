@@ -169,7 +169,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public void huyHoaDon(int id) {
         HoaDon hoaDon =hoaDonRepository.findByIdForUpdate(id).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy hóa đơn có id = "+id));
-        if("DA HUY".equals(hoaDon.getTrangThai()))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Đơn đã hủy rồi!");
+        if("DA HUY".equals(hoaDon.getTrangThai()))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Đơn đã huỷ rồi!");
         for(ChiTietHoaDon chiTietHoaDon : hoaDon.getDanhSachChiTiet()){
             Sach sach =  sachRepository.findByIdForUpdate(chiTietHoaDon.getSach().getId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST,"Không tìm thấy sách có id = "+id));
             sach.setSoLuongTon(chiTietHoaDon.getSoLuong()+ sach.getSoLuongTon());
@@ -312,10 +312,6 @@ public class HoaDonServiceImpl implements HoaDonService {
         );
     }
 
-
-
-
-
     private void validateHoaDonRequest(HoaDonRequest request) {
         if (request == null || request.getDanhSachChiTiet() == null || request.getDanhSachChiTiet().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Danh sach chi tiet hoa don khong duoc trong");
@@ -346,11 +342,19 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
     @Override
     public void thanhToanTienMat(int hoaDonId) {
+        xacNhanThanhToan(hoaDonId);
+    }
+
+    @Override
+    public void xacNhanThanhToan(int hoaDonId) {
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
+                .orElseThrow(() -> new RuntimeException("Khong tim thay hoa don"));
+
+        if ("DA HUY".equals(hoaDon.getTrangThai()) || "CANCELLED".equals(hoaDon.getTrangThai())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Khong the thanh toan hoa don da huy");
+        }
 
         hoaDon.setTrangThai("PAID");
-
         hoaDonRepository.save(hoaDon);
     }
     @Override
@@ -363,4 +367,3 @@ public class HoaDonServiceImpl implements HoaDonService {
         hoaDonRepository.save(hoaDon);
     }
 }
-

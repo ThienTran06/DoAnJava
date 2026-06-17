@@ -1561,26 +1561,35 @@ stompClient.connect({}, function () {
           method: "GET",
           headers: getAuthHeaders(null),
         });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
         const pageData = await response.json();
 
-        reservations =
-          pageData?.content ||
-          pageData?.data ||
-          (Array.isArray(pageData) ? pageData : []);
-        totalResPages = pageData?.totalPages || 0;
+        const content = pageData?.content ?? pageData?.data ?? pageData;
+        reservations = Array.isArray(content) ? content : [];
+        totalResPages = pageData?.totalPages ?? (reservations.length ? 1 : 0);
         totalResElements = pageData?.totalElements || reservations.length;
 
-<!--        if (!searchReservationQuery && !searchDateQuery) {-->
-<!--          document.getElementById("sidebar-reserve-count").innerText =-->
-<!--            totalResElements;-->
-<!--        }-->
+        if (!searchReservationQuery && !searchDateQuery) {
+          const reserveCountBadge = document.getElementById("sidebar-reserve-count");
+          if (reserveCountBadge) {
+            reserveCountBadge.innerText = totalResElements;
+          }
+        }
 
         renderReservationsTable();
         updatePaginationUI();
       } catch (err) {
         reservations = [];
-        renderReservationsTable();
+        totalResPages = 0;
+        totalResElements = 0;
+        const tbody = document.getElementById("reservationTableBody");
+        if (tbody) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--red); padding:40px 0;">Không thể tải danh sách phiếu giữ (${err.message || "Lỗi API"})</td></tr>`;
+        }
         updatePaginationUI();
+        return;
       }
     }
 

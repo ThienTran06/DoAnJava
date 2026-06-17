@@ -20,6 +20,21 @@ public interface SachRepository extends JpaRepository<Sach,Integer> {
 
     boolean existsByTenSachIgnoreCaseAndIdNot(String tenSach, int id);
 
+    @Query("""
+    SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
+    FROM Sach s
+    WHERE s.nhaXuatBan.id = :nhaXuatBanId
+""")
+    boolean existsByNhaXuatBanId(@Param("nhaXuatBanId") int nhaXuatBanId);
+
+    @Query("""
+    SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
+    FROM Sach s
+    JOIN s.danhSachTacGia tg
+    WHERE tg.id = :tacGiaId
+""")
+    boolean existsByTacGiaId(@Param("tacGiaId") int tacGiaId);
+
     @Query("SELECT s.tenSach as tenSach,s.soLuongTon as soLuongTonKho "
     +"FROM Sach s "
     +"ORDER BY s.soLuongTon DESC ")

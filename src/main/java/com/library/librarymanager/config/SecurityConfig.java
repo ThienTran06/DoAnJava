@@ -65,8 +65,8 @@ public class SecurityConfig {
                                 "/api/danh-gia/public/submit",
                                 "/ws/**",
                                 "/v3/api-docs/**",
-                                "/api/nguoi-dung/create"
-
+                                "/api/nguoi-dung/create",
+                                "/favicon.ico"
                         ).permitAll()
 
                         .anyRequest().authenticated()

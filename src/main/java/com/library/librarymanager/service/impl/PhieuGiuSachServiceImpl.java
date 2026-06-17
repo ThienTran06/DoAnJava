@@ -9,6 +9,7 @@ import com.library.librarymanager.service.Interface.PhieuGiuSachService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -198,6 +199,15 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
     }
     @Override
     public Page<PhieuDatGiuSach> getAll(Integer ma, LocalDate ngay, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(
+                Math.max(page, 0),
+                Math.max(size, 1),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
+        if (ma == null && ngay == null) {
+            return phieuRepo.findAll(pageRequest);
+        }
 
         LocalDateTime tuNgay = null;
         LocalDateTime denNgay = null;
@@ -211,7 +221,7 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
                 ma,
                 tuNgay,
                 denNgay,
-                PageRequest.of(page, size)
+                pageRequest
         );
     }
     @Override

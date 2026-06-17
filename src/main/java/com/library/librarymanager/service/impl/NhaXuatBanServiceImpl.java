@@ -1,10 +1,12 @@
 package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.NhaXuatBan;
+import com.library.librarymanager.repository.SachRepository;
 import com.library.librarymanager.repository.NhaXuatBanRepository;
 import com.library.librarymanager.service.Interface.NhaXuatBanService;
 import com.library.librarymanager.util.ValidationUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NhaXuatBanServiceImpl implements NhaXuatBanService {
     private final NhaXuatBanRepository nhaXuatBanRepository;
+    private final SachRepository sachRepository;
 
     @Override
     public List<NhaXuatBan> getAll() {
@@ -38,27 +41,35 @@ public class NhaXuatBanServiceImpl implements NhaXuatBanService {
         NhaXuatBan res = getById(id);
         validateNhaXuatBan(nhaXuatBan, id);
         res.setDiaChi(nhaXuatBan.getDiaChi());
-        res.setTenNXB(nhaXuatBan.getTenNXB());
+        res.setTenNxb(nhaXuatBan.getTenNxb());
         return nhaXuatBanRepository.save(res);
     }
 
     @Override
     public void deleteById(int id) {
-        nhaXuatBanRepository.deleteById(id);
+        getById(id);
+        if (sachRepository.existsByNhaXuatBanId(id)) {
+            throw ValidationUtils.badRequest("Khong the xoa nha xuat ban dang duoc sach su dung");
+        }
+        try {
+            nhaXuatBanRepository.deleteById(id);
+        } catch (DataIntegrityViolationException ex) {
+            throw ValidationUtils.badRequest("Khong the xoa nha xuat ban dang duoc sach su dung");
+        }
     }
 
     private void validateNhaXuatBan(NhaXuatBan nhaXuatBan, Integer currentId) {
         if (nhaXuatBan == null) {
             throw ValidationUtils.badRequest("Du lieu nha xuat ban khong duoc de trong");
         }
-        String tenNXB = ValidationUtils.requireText(nhaXuatBan.getTenNXB(), "Ten nha xuat ban");
+        String tenNxb = ValidationUtils.requireText(nhaXuatBan.getTenNxb(), "Ten nha xuat ban");
         boolean duplicated = currentId == null
-                ? nhaXuatBanRepository.existsByTenNXBIgnoreCase(tenNXB)
-                : nhaXuatBanRepository.existsByTenNXBIgnoreCaseAndIdNot(tenNXB, currentId);
+                ? nhaXuatBanRepository.existsByTenNxbIgnoreCase(tenNxb)
+                : nhaXuatBanRepository.existsByTenNxbIgnoreCaseAndIdNot(tenNxb, currentId);
         if (duplicated) {
             throw ValidationUtils.badRequest("Nha xuat ban da ton tai");
         }
-        nhaXuatBan.setTenNXB(tenNXB);
+        nhaXuatBan.setTenNxb(tenNxb);
         nhaXuatBan.setDiaChi(ValidationUtils.trimToNull(nhaXuatBan.getDiaChi()));
     }
 }
