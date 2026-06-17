@@ -1,0 +1,888 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/p11z36",
+    "id": "p11z36",
+    "slide": 26,
+    "layoutId": "4e61ea02-57ac-4256-a34a-609e3c8c09d8",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "435e7106-542a-4fec-8950-86ec47f0442c",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#FFF8EF",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "4e61ea02-57ac-4256-a34a-609e3c8c09d8",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "435e7106-542a-4fec-8950-86ec47f0442c",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "435e7106-542a-4fec-8950-86ec47f0442c",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hcrmhk3q",
+      "id": "1",
+      "bbox": [
+        72,
+        48,
+        520,
+        30
+      ],
+      "geometry": "rect",
+      "text": "REFLECTION",
+      "textPreview": "REFLECTION",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "color": "#F17364",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "REFLECTION"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "REFLECTION",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Aptos",
+            "color": "#F17364",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "REFLECTION",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#F17364",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/al87ed8b",
+      "id": "2",
+      "bbox": [
+        72,
+        78,
+        850,
+        70
+      ],
+      "geometry": "rect",
+      "text": "Hạn chế hiện tại",
+      "textPreview": "Hạn chế hiện tại",
+      "resolvedFontSize": 42,
+      "resolvedTextStyle": {
+        "fontSize": 42,
+        "typeface": "Aptos",
+        "color": "#1F1F22",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Hạn chế hiện tại"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Hạn chế hiện tại",
+          "resolvedTextStyle": {
+            "fontSize": 42,
+            "typeface": "Aptos",
+            "color": "#1F1F22",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Hạn chế hiện tại",
+              "fontSize": 42,
+              "typeface": "Aptos",
+              "color": "#1F1F22",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/z61032ls",
+      "id": "3",
+      "bbox": [
+        74,
+        142,
+        780,
+        44
+      ],
+      "geometry": "rect",
+      "text": "Một số điểm có thể tiếp tục hoàn thiện để tăng tính thực tế khi triển khai.",
+      "textPreview": "Một số điểm có thể tiếp tục hoàn thiện để tăng tính thực tế khi triển khai.",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Aptos",
+        "color": "#68626D",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Một số điểm có thể tiếp tục hoàn thiện để tăng tính thực tế khi triển khai."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Một số điểm có thể tiếp tục hoàn thiện để tăng tính thực tế khi triển khai.",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Aptos",
+            "color": "#68626D",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Một số điểm có thể tiếp tục hoàn thiện để tăng tính thực tế khi triển khai.",
+              "fontSize": 18,
+              "typeface": "Aptos",
+              "color": "#68626D",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sfil0rqd",
+      "id": "4",
+      "bbox": [
+        72,
+        668,
+        500,
+        24
+      ],
+      "geometry": "rect",
+      "text": "BookHouse - Hệ thống quản lý nhà sách",
+      "textPreview": "BookHouse - Hệ thống quản lý nhà sách",
+      "resolvedFontSize": 11,
+      "resolvedTextStyle": {
+        "fontSize": 11,
+        "typeface": "Aptos",
+        "color": "#68626D",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "BookHouse - Hệ thống quản lý nhà sách"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "BookHouse - Hệ thống quản lý nhà sách",
+          "resolvedTextStyle": {
+            "fontSize": 11,
+            "typeface": "Aptos",
+            "color": "#68626D",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "BookHouse - Hệ thống quản lý nhà sách",
+              "fontSize": 11,
+              "typeface": "Aptos",
+              "color": "#68626D",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/h0fepkzu",
+      "id": "5",
+      "bbox": [
+        1160,
+        662,
+        48,
+        32
+      ],
+      "geometry": "rect",
+      "text": "26",
+      "textPreview": "26",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Aptos",
+        "color": "#F17364",
+        "bold": true,
+        "alignment": "right",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "26"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "26",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Aptos",
+            "color": "#F17364",
+            "bold": true,
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "26",
+              "fontSize": 14,
+              "typeface": "Aptos",
+              "color": "#F17364",
+              "bold": true,
+              "alignment": "right"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/a9w3m94f",
+      "id": "6",
+      "bbox": [
+        96,
+        225,
+        320,
+        245
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFD6DA",
+      "lineColor": "#E6DED2",
+      "lineWidth": 1
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zupwb2hw",
+      "id": "7",
+      "bbox": [
+        96,
+        225,
+        8,
+        245
+      ],
+      "geometry": "rect",
+      "fillColor": "#F17364",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/obm58z25",
+      "id": "8",
+      "bbox": [
+        120,
+        247,
+        278,
+        32
+      ],
+      "geometry": "rect",
+      "text": "Thanh toán",
+      "textPreview": "Thanh toán",
+      "resolvedFontSize": 22,
+      "resolvedTextStyle": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#1F1F22",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Thanh toán"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Thanh toán",
+          "resolvedTextStyle": {
+            "fontSize": 22,
+            "typeface": "Aptos",
+            "color": "#1F1F22",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Thanh toán",
+              "fontSize": 22,
+              "typeface": "Aptos",
+              "color": "#1F1F22",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hwfyxobm",
+      "id": "9",
+      "bbox": [
+        120,
+        287,
+        278,
+        165
+      ],
+      "geometry": "rect",
+      "text": "Mới dừng ở quản lý trạng thái và webhook, chưa mở rộng đầy đủ nhiều cổng thanh toán.",
+      "textPreview": "Mới dừng ở quản lý trạng thái và webhook, chưa mở rộng đầy đủ nhiều cổng thanh toán.",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#68626D",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Mới dừng ở quản lý trạng thái và"
+          },
+          {
+            "index": 2,
+            "text": "webhook, chưa mở rộng đầy đủ"
+          },
+          {
+            "index": 3,
+            "text": "nhiều cổng thanh toán."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Mới dừng ở quản lý trạng thái và webhook, chưa mở rộng đầy đủ nhiều cổng thanh toán.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Aptos",
+            "color": "#68626D",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Mới dừng ở quản lý trạng thái và webhook, chưa mở rộng đầy đủ nhiều cổng thanh toán.",
+              "fontSize": 17,
+              "typeface": "Aptos",
+              "color": "#68626D",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/t83itgfm",
+      "id": "10",
+      "bbox": [
+        480,
+        225,
+        320,
+        245
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#E8DDF8",
+      "lineColor": "#E6DED2",
+      "lineWidth": 1
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4nap4r65",
+      "id": "11",
+      "bbox": [
+        480,
+        225,
+        8,
+        245
+      ],
+      "geometry": "rect",
+      "fillColor": "#8A5DE8",
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/b2hwfyxo",
+      "id": "12",
+      "bbox": [
+        504,
+        247,
+        278,
+        32
+      ],
+      "geometry": "rect",
+      "text": "Kiểm thử",
+      "textPreview": "Kiểm thử",
+      "resolvedFontSize": 22,
+      "resolvedTextStyle": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#1F1F22",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Kiểm thử"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Kiểm thử",
+          "resolvedTextStyle": {
+            "fontSize": 22,
+            "typeface": "Aptos",
+            "color": "#1F1F22",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Kiểm thử",
+              "fontSize": 22,
+              "typeface": "Aptos",
+              "color": "#1F1F22",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mhk3q5o7",
+      "id": "13",
+      "bbox": [
+        504,
+        287,
+        278,
+        165
+      ],
+      "geometry": "rect",
+      "text": "Cần bổ sung test nghiệp vụ và kiểm thử tích hợp cho các luồng quan trọng.",
+      "textPreview": "Cần bổ sung test nghiệp vụ và kiểm thử tích hợp cho các luồng quan trọng.",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#68626D",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Cần bổ sung test nghiệp vụ và kiểm"
+          },
+          {
+            "index": 2,
+            "text": "thử tích hợp cho các luồng quan"
+          },
+          {
+            "index": 3,
+            "text": "trọng."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Cần bổ sung test nghiệp vụ và kiểm thử tích hợp cho các luồng quan trọng.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Aptos",
+            "color": "#68626D",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Cần bổ sung test nghiệp vụ và kiểm thử tích hợp cho các luồng quan trọng.",
+              "fontSize": 17,
+              "typeface": "Aptos",
+              "color": "#68626D",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/twra5gbq",
+      "id": "14",
+      "bbox": [
+        864,
+        225,
+        320,
+        245
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#BEECEF",
+      "lineColor": "#E6DED2",
+      "lineWidth": 1
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4byhgn29",
+      "id": "15",
+      "bbox": [
+        864,
+        225,
+        8,
+        245
+      ],
+      "geometry": "rect",
+      "fillColor": "#4DB7C4",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/bq1oryts",
+      "id": "16",
+      "bbox": [
+        888,
+        247,
+        278,
+        32
+      ],
+      "geometry": "rect",
+      "text": "Triển khai",
+      "textPreview": "Triển khai",
+      "resolvedFontSize": 22,
+      "resolvedTextStyle": {
+        "fontSize": 22,
+        "typeface": "Aptos",
+        "color": "#1F1F22",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Triển khai"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Triển khai",
+          "resolvedTextStyle": {
+            "fontSize": 22,
+            "typeface": "Aptos",
+            "color": "#1F1F22",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Triển khai",
+              "fontSize": 22,
+              "typeface": "Aptos",
+              "color": "#1F1F22",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/m58z25kb",
+      "id": "17",
+      "bbox": [
+        888,
+        287,
+        278,
+        165
+      ],
+      "geometry": "rect",
+      "text": "Có cấu hình môi trường nhưng cần tối ưu log, backup và giám sát khi vận hành thật.",
+      "textPreview": "Có cấu hình môi trường nhưng cần tối ưu log, backup và giám sát khi vận hành thật.",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#68626D",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Có cấu hình môi trường nhưng cần"
+          },
+          {
+            "index": 2,
+            "text": "tối ưu log, backup và giám sát khi vận"
+          },
+          {
+            "index": 3,
+            "text": "hành thật."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Có cấu hình môi trường nhưng cần tối ưu log, backup và giám sát khi vận hành thật.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Aptos",
+            "color": "#68626D",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Có cấu hình môi trường nhưng cần tối ưu log, backup và giám sát khi vận hành thật.",
+              "fontSize": 17,
+              "typeface": "Aptos",
+              "color": "#68626D",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

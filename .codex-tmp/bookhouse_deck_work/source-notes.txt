@@ -1,0 +1,3 @@
+Source: user-provided PDF 'The Book Club.pdf', 20 pages, used as draft content and visual style reference.
+Source: local Java/Spring Boot project under C:/Users/dangt/IdeaProjects/DoAnJava, especially controller package and static HTML pages.
+Deck facts are derived from local source code endpoints/entities and extracted slide text. No external metrics were invented.

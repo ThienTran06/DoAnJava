@@ -1,0 +1,4 @@
+Final PPTX: C:\Users\dangt\IdeaProjects\DoAnJava\outputs\BookHouse_BaoCao_DoAn_NangCap.pptx
+Slide count: 28
+Rendered every slide to PNG and generated montage for visual QA.
+Checked for obvious issues: title placement, dense timeline cards, footer/page numbering, and placeholder/sample slide removal.

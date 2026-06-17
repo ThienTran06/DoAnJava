@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -68,6 +69,19 @@ public class GlobalExceptionHandler {
     }
 
     // 🔥 RUNTIME ERROR
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex) {
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("status", HttpStatus.FORBIDDEN.value());
+        res.put("message", "Tai khoan hien tai khong co quyen thuc hien thao tac nay");
+        res.put("errors", new HashMap<>());
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(res);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleRuntime(RuntimeException ex) {
 

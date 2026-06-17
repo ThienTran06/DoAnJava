@@ -1,0 +1,852 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/pw2zrr",
+    "id": "pw2zrr",
+    "slide": 25,
+    "layoutId": "4e61ea02-57ac-4256-a34a-609e3c8c09d8",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "435e7106-542a-4fec-8950-86ec47f0442c",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#FFF8EF",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "4e61ea02-57ac-4256-a34a-609e3c8c09d8",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "435e7106-542a-4fec-8950-86ec47f0442c",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "435e7106-542a-4fec-8950-86ec47f0442c",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/loj2t83i",
+      "id": "1",
+      "bbox": [
+        72,
+        48,
+        520,
+        30
+      ],
+      "geometry": "rect",
+      "text": "OUTCOME",
+      "textPreview": "OUTCOME",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "color": "#F17364",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "OUTCOME"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "OUTCOME",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "typeface": "Aptos",
+            "color": "#F17364",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "OUTCOME",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#F17364",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ex0nuxc3",
+      "id": "2",
+      "bbox": [
+        72,
+        78,
+        850,
+        70
+      ],
+      "geometry": "rect",
+      "text": "Kết quả đạt được",
+      "textPreview": "Kết quả đạt được",
+      "resolvedFontSize": 42,
+      "resolvedTextStyle": {
+        "fontSize": 42,
+        "typeface": "Aptos",
+        "color": "#1F1F22",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Kết quả đạt được"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Kết quả đạt được",
+          "resolvedTextStyle": {
+            "fontSize": 42,
+            "typeface": "Aptos",
+            "color": "#1F1F22",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Kết quả đạt được",
+              "fontSize": 42,
+              "typeface": "Aptos",
+              "color": "#1F1F22",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3itgfmlk",
+      "id": "3",
+      "bbox": [
+        74,
+        142,
+        780,
+        44
+      ],
+      "geometry": "rect",
+      "text": "Phần mềm đã hoàn thiện các nghiệp vụ cốt lõi của hệ thống quản lý nhà sách.",
+      "textPreview": "Phần mềm đã hoàn thiện các nghiệp vụ cốt lõi của hệ thống quản lý nhà sách.",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Aptos",
+        "color": "#68626D",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Phần mềm đã hoàn thiện các nghiệp vụ cốt lõi của hệ thống quản lý nhà sách."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Phần mềm đã hoàn thiện các nghiệp vụ cốt lõi của hệ thống quản lý nhà sách.",
+          "resolvedTextStyle": {
+            "fontSize": 18,
+            "typeface": "Aptos",
+            "color": "#68626D",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Phần mềm đã hoàn thiện các nghiệp vụ cốt lõi của hệ thống quản lý nhà sách.",
+              "fontSize": 18,
+              "typeface": "Aptos",
+              "color": "#68626D",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wb2hwfyx",
+      "id": "4",
+      "bbox": [
+        72,
+        668,
+        500,
+        24
+      ],
+      "geometry": "rect",
+      "text": "BookHouse - Hệ thống quản lý nhà sách",
+      "textPreview": "BookHouse - Hệ thống quản lý nhà sách",
+      "resolvedFontSize": 11,
+      "resolvedTextStyle": {
+        "fontSize": 11,
+        "typeface": "Aptos",
+        "color": "#68626D",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "BookHouse - Hệ thống quản lý nhà sách"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "BookHouse - Hệ thống quản lý nhà sách",
+          "resolvedTextStyle": {
+            "fontSize": 11,
+            "typeface": "Aptos",
+            "color": "#68626D",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "BookHouse - Hệ thống quản lý nhà sách",
+              "fontSize": 11,
+              "typeface": "Aptos",
+              "color": "#68626D",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lwval87e",
+      "id": "5",
+      "bbox": [
+        1160,
+        662,
+        48,
+        32
+      ],
+      "geometry": "rect",
+      "text": "25",
+      "textPreview": "25",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Aptos",
+        "color": "#F17364",
+        "bold": true,
+        "alignment": "right",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "25"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "25",
+          "resolvedTextStyle": {
+            "fontSize": 14,
+            "typeface": "Aptos",
+            "color": "#F17364",
+            "bold": true,
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "25",
+              "fontSize": 14,
+              "typeface": "Aptos",
+              "color": "#F17364",
+              "bold": true,
+              "alignment": "right"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/e9cvixcz",
+      "id": "6",
+      "bbox": [
+        105,
+        211,
+        12,
+        12
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#4DB7C4",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3q5o7qpg",
+      "id": "7",
+      "bbox": [
+        133,
+        205,
+        992,
+        58
+      ],
+      "geometry": "rect",
+      "text": "Xây dựng backend REST API theo mô hình phân tầng rõ ràng.",
+      "textPreview": "Xây dựng backend REST API theo mô hình phân tầng rõ ràng.",
+      "resolvedFontSize": 21,
+      "resolvedTextStyle": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#1F1F22",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Xây dựng backend REST API theo mô hình phân tầng rõ ràng."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Xây dựng backend REST API theo mô hình phân tầng rõ ràng.",
+          "resolvedTextStyle": {
+            "fontSize": 21,
+            "typeface": "Aptos",
+            "color": "#1F1F22",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Xây dựng backend REST API theo mô hình phân tầng rõ ràng.",
+              "fontSize": 21,
+              "typeface": "Aptos",
+              "color": "#1F1F22",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sneloj2t",
+      "id": "8",
+      "bbox": [
+        105,
+        273,
+        12,
+        12
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#4DB7C4",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/l87ed8ba",
+      "id": "9",
+      "bbox": [
+        133,
+        267,
+        992,
+        58
+      ],
+      "geometry": "rect",
+      "text": "Hoàn thiện giao diện quản trị cho các phân hệ chính.",
+      "textPreview": "Hoàn thiện giao diện quản trị cho các phân hệ chính.",
+      "resolvedFontSize": 21,
+      "resolvedTextStyle": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#1F1F22",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Hoàn thiện giao diện quản trị cho các phân hệ chính."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Hoàn thiện giao diện quản trị cho các phân hệ chính.",
+          "resolvedTextStyle": {
+            "fontSize": 21,
+            "typeface": "Aptos",
+            "color": "#1F1F22",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Hoàn thiện giao diện quản trị cho các phân hệ chính.",
+              "fontSize": 21,
+              "typeface": "Aptos",
+              "color": "#1F1F22",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5kb6xkf6",
+      "id": "10",
+      "bbox": [
+        105,
+        335,
+        12,
+        12
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#4DB7C4",
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/czed8v6p",
+      "id": "11",
+      "bbox": [
+        133,
+        329,
+        992,
+        58
+      ],
+      "geometry": "rect",
+      "text": "Áp dụng xác thực JWT và phân quyền chức năng.",
+      "textPreview": "Áp dụng xác thực JWT và phân quyền chức năng.",
+      "resolvedFontSize": 21,
+      "resolvedTextStyle": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#1F1F22",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Áp dụng xác thực JWT và phân quyền chức năng."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Áp dụng xác thực JWT và phân quyền chức năng.",
+          "resolvedTextStyle": {
+            "fontSize": 21,
+            "typeface": "Aptos",
+            "color": "#1F1F22",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Áp dụng xác thực JWT và phân quyền chức năng.",
+              "fontSize": 21,
+              "typeface": "Aptos",
+              "color": "#1F1F22",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/neloj2t8",
+      "id": "12",
+      "bbox": [
+        105,
+        397,
+        12,
+        12
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#4DB7C4",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ytsvu9kn",
+      "id": "13",
+      "bbox": [
+        133,
+        391,
+        992,
+        58
+      ],
+      "geometry": "rect",
+      "text": "Tích hợp lưu ảnh Cloudinary và tài liệu API Swagger.",
+      "textPreview": "Tích hợp lưu ảnh Cloudinary và tài liệu API Swagger.",
+      "resolvedFontSize": 21,
+      "resolvedTextStyle": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#1F1F22",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Tích hợp lưu ảnh Cloudinary và tài liệu API Swagger."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Tích hợp lưu ảnh Cloudinary và tài liệu API Swagger.",
+          "resolvedTextStyle": {
+            "fontSize": 21,
+            "typeface": "Aptos",
+            "color": "#1F1F22",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Tích hợp lưu ảnh Cloudinary và tài liệu API Swagger.",
+              "fontSize": 21,
+              "typeface": "Aptos",
+              "color": "#1F1F22",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5sneloj2",
+      "id": "14",
+      "bbox": [
+        105,
+        459,
+        12,
+        12
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#4DB7C4",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/cbulwval",
+      "id": "15",
+      "bbox": [
+        133,
+        453,
+        992,
+        58
+      ],
+      "geometry": "rect",
+      "text": "Có scheduler tự động cho điểm khách hàng và phiếu giữ quá hạn.",
+      "textPreview": "Có scheduler tự động cho điểm khách hàng và phiếu giữ quá hạn.",
+      "resolvedFontSize": 21,
+      "resolvedTextStyle": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#1F1F22",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Có scheduler tự động cho điểm khách hàng và phiếu giữ quá hạn."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Có scheduler tự động cho điểm khách hàng và phiếu giữ quá hạn.",
+          "resolvedTextStyle": {
+            "fontSize": 21,
+            "typeface": "Aptos",
+            "color": "#1F1F22",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Có scheduler tự động cho điểm khách hàng và phiếu giữ quá hạn.",
+              "fontSize": 21,
+              "typeface": "Aptos",
+              "color": "#1F1F22",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nqxs72x4",
+      "id": "16",
+      "bbox": [
+        105,
+        521,
+        12,
+        12
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#4DB7C4",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/u54zidon",
+      "id": "17",
+      "bbox": [
+        133,
+        515,
+        992,
+        58
+      ],
+      "geometry": "rect",
+      "text": "Có dashboard/báo cáo hỗ trợ theo dõi doanh thu, KPI và tồn kho.",
+      "textPreview": "Có dashboard/báo cáo hỗ trợ theo dõi doanh thu, KPI và tồn kho.",
+      "resolvedFontSize": 21,
+      "resolvedTextStyle": {
+        "fontSize": 21,
+        "typeface": "Aptos",
+        "color": "#1F1F22",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Có dashboard/báo cáo hỗ trợ theo dõi doanh thu, KPI và tồn kho."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Có dashboard/báo cáo hỗ trợ theo dõi doanh thu, KPI và tồn kho.",
+          "resolvedTextStyle": {
+            "fontSize": 21,
+            "typeface": "Aptos",
+            "color": "#1F1F22",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Có dashboard/báo cáo hỗ trợ theo dõi doanh thu, KPI và tồn kho.",
+              "fontSize": 21,
+              "typeface": "Aptos",
+              "color": "#1F1F22",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

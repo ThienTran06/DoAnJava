@@ -427,6 +427,7 @@
 <link rel="stylesheet" href="ui-polish.css">
 <script src="js/app-settings.js"></script>
 <script src="js/user-profile.js"></script>
+<script src="js/notifications.js?v=20260617-one-icon"></script>
 </head>
 <body>
 
@@ -1275,6 +1276,7 @@ function renderDailyKpi(todayRevenue, failed = false) {
   const revenue = Number(todayRevenue || 0);
   const percent = target > 0 ? Math.round((revenue / target) * 100) : 0;
   const reached = target > 0 && revenue >= target;
+  if (!failed && reached) window.BookHouseNotify?.checkKpi?.(revenue, target);
 
   const percentEl = document.getElementById('dailyKpiPercent');
   const labelEl = document.getElementById('dailyKpiLabel');

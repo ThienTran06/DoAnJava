@@ -773,6 +773,7 @@
     <link rel="stylesheet" href="ui-polish.css" />
 <script src="js/app-settings.js"></script>
 <script src="js/user-profile.js"></script>
+<script src="js/notifications.js?v=20260617-one-icon"></script>
 </head>
 <body>
 <aside class="sidebar">
@@ -2172,6 +2173,13 @@ stompClient.connect({}, function () {
         const orderResult = await response.json();
 
         alert("Tạo phiếu nhập kho thành công!");
+        window.BookHouseNotify?.push({
+          type: "import",
+          title: "Phiếu nhập mới",
+          message: `Đã tạo phiếu nhập #PN${orderResult.id || ""} với ${selectedBooks.length} mặt hàng.`,
+          href: "NhapHang.html",
+          dedupeKey: `purchase-created-${orderResult.id || Date.now()}`
+        });
 
         // SỬA: Lấy thông tin đối tác NCC trực tiếp từ DB response trả về
         const supplierInfo = orderResult.nhaCungCap || selectedSupplier;

@@ -1,0 +1,4 @@
+Slides 1-19: rendered from user-provided PDF 'The Book Club.pdf' to preserve the existing deck exactly.
+Slides 20 onward: added from local project pages and controller/service facts in C:/Users/dangt/IdeaProjects/DoAnJava.
+Screenshots: captured from local static server http://127.0.0.1:8765 using files in the workspace.
+Report screenshot uses a temporary capture page with a fake token only to avoid login redirect; API data is not fabricated.

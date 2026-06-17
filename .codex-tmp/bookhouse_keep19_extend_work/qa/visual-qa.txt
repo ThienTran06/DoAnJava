@@ -1,0 +1,4 @@
+Final PPTX: C:\Users\dangt\IdeaProjects\DoAnJava\outputs\BookHouse_BaoCao_DoAn_Giu19_HoanThien.pptx
+Slide count: 38
+Rendered all slides to PNG for visual QA.
+Checked that original slides 1-19 are preserved as full-slide images and new slides follow the screenshot/function-list pattern.

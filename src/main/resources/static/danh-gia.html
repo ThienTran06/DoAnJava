@@ -383,6 +383,7 @@
     }
   </style>
 <script src="js/app-settings.js"></script>
+<script src="js/notifications.js?v=20260617-one-icon"></script>
 </head>
 <body>
   <div class="container">
@@ -692,6 +693,13 @@
 
         loadingMessage.classList.remove('show');
         successMessage.classList.add('show');
+        window.BookHouseNotify?.push({
+          type: 'review',
+          title: 'Nhận xét mới',
+          message: `${hoTen} vừa gửi đánh giá ${diemSao} sao${selectedSachName ? ` cho "${selectedSachName}"` : ''}.`,
+          href: 'danh-gia-cong-cong.html',
+          dedupeKey: `review-${Date.now()}-${sdt}`
+        });
         alert('Đánh giá của bạn đã được gửi thành công.');
         resetForm();
         window.scrollTo({ top: 0, behavior: 'smooth' });

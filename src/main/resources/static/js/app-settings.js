@@ -2505,7 +2505,7 @@
     logoutButton.className = 'app-account-button danger';
     logoutButton.textContent = localizedText('Đăng xuất');
     logoutButton.addEventListener('click', () => {
-      ['token', 'accessToken', 'refreshToken', 'user', 'currentUser', 'account'].forEach(key => localStorage.removeItem(key));
+      ['token', 'accessToken', 'refreshToken', 'user', 'currentUser', 'account', 'bh_user_profile'].forEach(key => localStorage.removeItem(key));
       window.location.href = 'login.html';
     });
     actions.append(profileButton, settingsButton, logoutButton);

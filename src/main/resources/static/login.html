@@ -869,6 +869,7 @@
             const data = await response.json();
 
             if (data.token) {
+                localStorage.removeItem('bh_user_profile');
                 localStorage.setItem('token', data.token);
                 const payload = decodeJwtPayload(data.token);
                 localStorage.setItem('user', JSON.stringify({

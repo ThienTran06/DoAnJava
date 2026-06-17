@@ -27,15 +27,33 @@
   function getCachedProfile() {
     try {
       var raw = JSON.parse(localStorage.getItem(CACHE_KEY));
-      if (raw && raw.ts && (Date.now() - raw.ts < CACHE_TTL)) return raw.data;
+      var ownerId = getCurrentProfileOwnerId();
+      var sameUser = ownerId && String(raw && raw.userId) === String(ownerId);
+      if (raw && raw.ts && sameUser && (Date.now() - raw.ts < CACHE_TTL)) return raw.data;
     } catch (e) { /* ignore */ }
     return null;
   }
 
   function setCachedProfile(data) {
     try {
-      localStorage.setItem(CACHE_KEY, JSON.stringify({ data: data, ts: Date.now() }));
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
+        data: data,
+        ts: Date.now(),
+        userId: data && (data.id || data.userId || data.maNguoiDung || getCurrentProfileOwnerId())
+      }));
     } catch (e) { /* ignore */ }
+  }
+
+  function clearCachedProfile() {
+    try {
+      localStorage.removeItem(CACHE_KEY);
+    } catch (e) { /* ignore */ }
+  }
+
+  function getCurrentProfileOwnerId() {
+    var jwt = decodeJwt() || {};
+    var stored = readStoredUser ? readStoredUser() || {} : {};
+    return jwt.id || jwt.userId || stored.id || stored.userId || stored.maNguoiDung || '';
   }
 
   function fetchProfile(userId) {
@@ -588,6 +606,7 @@
   window.BookHouseProfile = {
     getProfile: function () { return _profile || fallbackProfile(); },
     showPopup: function () { showProfilePopup(_profile || fallbackProfile()); },
+    clearCache: clearCachedProfile,
     refresh: function () {
       var jwt = decodeJwt();
       if (!jwt || !jwt.id) return;

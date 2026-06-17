@@ -1,0 +1,1427 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/irg0sq",
+    "id": "irg0sq",
+    "slide": 29,
+    "layoutId": "6ec5c295-eed1-4133-a256-bcc77e95fd8c",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "d59955f2-46de-4419-a071-14b2530bdccc",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#F4F8FE",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "6ec5c295-eed1-4133-a256-bcc77e95fd8c",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "d59955f2-46de-4419-a071-14b2530bdccc",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "d59955f2-46de-4419-a071-14b2530bdccc",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mtwra5gb",
+      "id": "1",
+      "bbox": [
+        360,
+        26,
+        560,
+        112
+      ],
+      "geometry": "rect",
+      "text": "Chức năng\nquản lý hóa đơn",
+      "textPreview": "Chức năng | quản lý hóa đơn",
+      "resolvedFontSize": 35,
+      "resolvedTextStyle": {
+        "fontSize": 35,
+        "typeface": "Aptos",
+        "color": "#242428",
+        "bold": true,
+        "alignment": "center",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Chức năng"
+          },
+          {
+            "index": 2,
+            "text": "quản lý hóa đơn"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Chức năng",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "typeface": "Aptos",
+            "color": "#242428",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Chức năng",
+              "fontSize": 35,
+              "typeface": "Aptos",
+              "color": "#242428",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "quản lý hóa đơn",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "typeface": "Aptos",
+            "color": "#242428",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "quản lý hóa đơn",
+              "fontSize": 35,
+              "typeface": "Aptos",
+              "color": "#242428",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xkf6dcbu",
+      "id": "2",
+      "bbox": [
+        58,
+        305,
+        1164,
+        0
+      ],
+      "geometry": "line",
+      "lineColor": "#9EA3AA",
+      "lineWidth": 3
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4zidonyd",
+      "id": "3",
+      "bbox": [
+        72,
+        160,
+        76,
+        76
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#8B5CE5",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/f6dcbulw",
+      "id": "4",
+      "bbox": [
+        80,
+        180,
+        60,
+        32
+      ],
+      "geometry": "rect",
+      "text": "01",
+      "textPreview": "01",
+      "resolvedFontSize": 28,
+      "resolvedTextStyle": {
+        "fontSize": 28,
+        "typeface": "Aptos",
+        "color": "#FFFFFF",
+        "bold": true,
+        "alignment": "center",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "01"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "01",
+          "resolvedTextStyle": {
+            "fontSize": 28,
+            "typeface": "Aptos",
+            "color": "#FFFFFF",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "01",
+              "fontSize": 28,
+              "typeface": "Aptos",
+              "color": "#FFFFFF",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mlkjm1cf",
+      "id": "5",
+      "bbox": [
+        110,
+        236,
+        0,
+        72
+      ],
+      "geometry": "line",
+      "lineColor": "#9EA3AA",
+      "lineWidth": 3
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xc3ylc7u",
+      "id": "6",
+      "bbox": [
+        36,
+        355,
+        150,
+        215
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#E8DDF8",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4r65wjud",
+      "id": "7",
+      "bbox": [
+        52,
+        378,
+        120,
+        170
+      ],
+      "geometry": "rect",
+      "text": "Hiển thị danh sách hóa đơn có phân trang và tìm kiếm.",
+      "textPreview": "Hiển thị danh sách hóa đơn có phân trang và tìm kiếm.",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#242428",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Hiển thị danh"
+          },
+          {
+            "index": 2,
+            "text": "sách hóa đơn"
+          },
+          {
+            "index": 3,
+            "text": "có phân trang"
+          },
+          {
+            "index": 4,
+            "text": "và tìm kiếm."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Hiển thị danh sách hóa đơn có phân trang và tìm kiếm.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Aptos",
+            "color": "#242428",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Hiển thị danh sách hóa đơn có phân trang và tìm kiếm.",
+              "fontSize": 17,
+              "typeface": "Aptos",
+              "color": "#242428",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fu18jqh0",
+      "id": "8",
+      "bbox": [
+        262,
+        160,
+        76,
+        76
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#E85F6B",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/m94fu18j",
+      "id": "9",
+      "bbox": [
+        270,
+        180,
+        60,
+        32
+      ],
+      "geometry": "rect",
+      "text": "02",
+      "textPreview": "02",
+      "resolvedFontSize": 28,
+      "resolvedTextStyle": {
+        "fontSize": 28,
+        "typeface": "Aptos",
+        "color": "#FFFFFF",
+        "bold": true,
+        "alignment": "center",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "02"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "02",
+          "resolvedTextStyle": {
+            "fontSize": 28,
+            "typeface": "Aptos",
+            "color": "#FFFFFF",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "02",
+              "fontSize": 28,
+              "typeface": "Aptos",
+              "color": "#FFFFFF",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sji5snel",
+      "id": "10",
+      "bbox": [
+        300,
+        236,
+        0,
+        72
+      ],
+      "geometry": "line",
+      "lineColor": "#9EA3AA",
+      "lineWidth": 3
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/h4byhgn2",
+      "id": "11",
+      "bbox": [
+        226,
+        355,
+        150,
+        215
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFB8C0",
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/adsji5sn",
+      "id": "12",
+      "bbox": [
+        242,
+        378,
+        120,
+        170
+      ],
+      "geometry": "rect",
+      "text": "Xem chi tiết hóa đơn: khách hàng, nhân viên, sản phẩm, tổng tiền.",
+      "textPreview": "Xem chi tiết hóa đơn: khách hàng, nhân viên, sản phẩm, tổng tiền.",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#242428",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 6,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Xem chi tiết"
+          },
+          {
+            "index": 2,
+            "text": "hóa đơn:"
+          },
+          {
+            "index": 3,
+            "text": "khách hàng,"
+          },
+          {
+            "index": 4,
+            "text": "nhân viên, sản"
+          },
+          {
+            "index": 5,
+            "text": "phẩm, tổng"
+          },
+          {
+            "index": 6,
+            "text": "tiền."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Xem chi tiết hóa đơn: khách hàng, nhân viên, sản phẩm, tổng tiền.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Aptos",
+            "color": "#242428",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Xem chi tiết hóa đơn: khách hàng, nhân viên, sản phẩm, tổng tiền.",
+              "fontSize": 17,
+              "typeface": "Aptos",
+              "color": "#242428",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ylc7u54",
+      "id": "13",
+      "bbox": [
+        452,
+        160,
+        76,
+        76
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#39AEB8",
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/s72x4nap",
+      "id": "14",
+      "bbox": [
+        460,
+        180,
+        60,
+        32
+      ],
+      "geometry": "rect",
+      "text": "03",
+      "textPreview": "03",
+      "resolvedFontSize": 28,
+      "resolvedTextStyle": {
+        "fontSize": 28,
+        "typeface": "Aptos",
+        "color": "#FFFFFF",
+        "bold": true,
+        "alignment": "center",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "03"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "03",
+          "resolvedTextStyle": {
+            "fontSize": 28,
+            "typeface": "Aptos",
+            "color": "#FFFFFF",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "03",
+              "fontSize": 28,
+              "typeface": "Aptos",
+              "color": "#FFFFFF",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lszqtcj6",
+      "id": "15",
+      "bbox": [
+        490,
+        236,
+        0,
+        72
+      ],
+      "geometry": "line",
+      "lineColor": "#9EA3AA",
+      "lineWidth": 3
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/a5gbq1or",
+      "id": "16",
+      "bbox": [
+        416,
+        355,
+        150,
+        215
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#B7E8EC",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3m94fu18",
+      "id": "17",
+      "bbox": [
+        432,
+        378,
+        120,
+        170
+      ],
+      "geometry": "rect",
+      "text": "Cập nhật thông tin hóa đơn và chi tiết sản phẩm.",
+      "textPreview": "Cập nhật thông tin hóa đơn và chi tiết sản phẩm.",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#242428",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Cập nhật"
+          },
+          {
+            "index": 2,
+            "text": "thông tin hóa"
+          },
+          {
+            "index": 3,
+            "text": "đơn và chi tiết"
+          },
+          {
+            "index": 4,
+            "text": "sản phẩm."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Cập nhật thông tin hóa đơn và chi tiết sản phẩm.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Aptos",
+            "color": "#242428",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Cập nhật thông tin hóa đơn và chi tiết sản phẩm.",
+              "fontSize": 17,
+              "typeface": "Aptos",
+              "color": "#242428",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/s36hcrmh",
+      "id": "18",
+      "bbox": [
+        642,
+        160,
+        76,
+        76
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#E1A900",
+      "lineWidth": 0
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hoza1gvy",
+      "id": "19",
+      "bbox": [
+        650,
+        180,
+        60,
+        32
+      ],
+      "geometry": "rect",
+      "text": "04",
+      "textPreview": "04",
+      "resolvedFontSize": 28,
+      "resolvedTextStyle": {
+        "fontSize": 28,
+        "typeface": "Aptos",
+        "color": "#FFFFFF",
+        "bold": true,
+        "alignment": "center",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "04"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "04",
+          "resolvedTextStyle": {
+            "fontSize": 28,
+            "typeface": "Aptos",
+            "color": "#FFFFFF",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "04",
+              "fontSize": 28,
+              "typeface": "Aptos",
+              "color": "#FFFFFF",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lkjm1cfa",
+      "id": "20",
+      "bbox": [
+        680,
+        236,
+        0,
+        72
+      ],
+      "geometry": "line",
+      "lineColor": "#9EA3AA",
+      "lineWidth": 3
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/szqtcj6t",
+      "id": "21",
+      "bbox": [
+        606,
+        355,
+        150,
+        215
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFE7A3",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ex0nuxc",
+      "id": "22",
+      "bbox": [
+        622,
+        378,
+        120,
+        170
+      ],
+      "geometry": "rect",
+      "text": "Xác nhận thanh toán tiền mặt hoặc trạng thái thanh toán.",
+      "textPreview": "Xác nhận thanh toán tiền mặt hoặc trạng thái thanh toán.",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#242428",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 5,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Xác nhận"
+          },
+          {
+            "index": 2,
+            "text": "thanh toán"
+          },
+          {
+            "index": 3,
+            "text": "tiền mặt hoặc"
+          },
+          {
+            "index": 4,
+            "text": "trạng thái"
+          },
+          {
+            "index": 5,
+            "text": "thanh toán."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Xác nhận thanh toán tiền mặt hoặc trạng thái thanh toán.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Aptos",
+            "color": "#242428",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Xác nhận thanh toán tiền mặt hoặc trạng thái thanh toán.",
+              "fontSize": 17,
+              "typeface": "Aptos",
+              "color": "#242428",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/at47y1kr",
+      "id": "23",
+      "bbox": [
+        832,
+        160,
+        76,
+        76
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#8B5CE5",
+      "lineWidth": 0
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/l87ed8ba",
+      "id": "24",
+      "bbox": [
+        840,
+        180,
+        60,
+        32
+      ],
+      "geometry": "rect",
+      "text": "05",
+      "textPreview": "05",
+      "resolvedFontSize": 28,
+      "resolvedTextStyle": {
+        "fontSize": 28,
+        "typeface": "Aptos",
+        "color": "#FFFFFF",
+        "bold": true,
+        "alignment": "center",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "05"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "05",
+          "resolvedTextStyle": {
+            "fontSize": 28,
+            "typeface": "Aptos",
+            "color": "#FFFFFF",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "05",
+              "fontSize": 28,
+              "typeface": "Aptos",
+              "color": "#FFFFFF",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sneloj2t",
+      "id": "25",
+      "bbox": [
+        870,
+        236,
+        0,
+        72
+      ],
+      "geometry": "line",
+      "lineColor": "#9EA3AA",
+      "lineWidth": 3
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/32lszqtc",
+      "id": "26",
+      "bbox": [
+        796,
+        355,
+        150,
+        215
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#E8DDF8",
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ahoza1gv",
+      "id": "27",
+      "bbox": [
+        812,
+        378,
+        120,
+        170
+      ],
+      "geometry": "rect",
+      "text": "Hủy hóa đơn khi phát sinh sai sót.",
+      "textPreview": "Hủy hóa đơn khi phát sinh sai sót.",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#242428",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Hủy hóa đơn"
+          },
+          {
+            "index": 2,
+            "text": "khi phát sinh"
+          },
+          {
+            "index": 3,
+            "text": "sai sót."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Hủy hóa đơn khi phát sinh sai sót.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Aptos",
+            "color": "#242428",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Hủy hóa đơn khi phát sinh sai sót.",
+              "fontSize": 17,
+              "typeface": "Aptos",
+              "color": "#242428",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lwval87e",
+      "id": "28",
+      "bbox": [
+        1022,
+        160,
+        76,
+        76
+      ],
+      "geometry": "ellipse",
+      "fillColor": "#E85F6B",
+      "lineWidth": 0
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wb2hwfyx",
+      "id": "29",
+      "bbox": [
+        1030,
+        180,
+        60,
+        32
+      ],
+      "geometry": "rect",
+      "text": "06",
+      "textPreview": "06",
+      "resolvedFontSize": 28,
+      "resolvedTextStyle": {
+        "fontSize": 28,
+        "typeface": "Aptos",
+        "color": "#FFFFFF",
+        "bold": true,
+        "alignment": "center",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "06"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "06",
+          "resolvedTextStyle": {
+            "fontSize": 28,
+            "typeface": "Aptos",
+            "color": "#FFFFFF",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "06",
+              "fontSize": 28,
+              "typeface": "Aptos",
+              "color": "#FFFFFF",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6dcbulwv",
+      "id": "30",
+      "bbox": [
+        1060,
+        236,
+        0,
+        72
+      ],
+      "geometry": "line",
+      "lineColor": "#9EA3AA",
+      "lineWidth": 3
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vy90je9c",
+      "id": "31",
+      "bbox": [
+        986,
+        355,
+        150,
+        215
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFB8C0",
+      "lineWidth": 0
+    },
+    {
+      "order": 32,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/oj2t83it",
+      "id": "32",
+      "bbox": [
+        1002,
+        378,
+        120,
+        170
+      ],
+      "geometry": "rect",
+      "text": "In hóa đơn phục vụ thanh toán và lưu chứng từ.",
+      "textPreview": "In hóa đơn phục vụ thanh toán và lưu chứng từ.",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "color": "#242428",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "In hóa đơn"
+          },
+          {
+            "index": 2,
+            "text": "phục vụ thanh"
+          },
+          {
+            "index": 3,
+            "text": "toán và lưu"
+          },
+          {
+            "index": 4,
+            "text": "chứng từ."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "In hóa đơn phục vụ thanh toán và lưu chứng từ.",
+          "resolvedTextStyle": {
+            "fontSize": 17,
+            "typeface": "Aptos",
+            "color": "#242428",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "In hóa đơn phục vụ thanh toán và lưu chứng từ.",
+              "fontSize": 17,
+              "typeface": "Aptos",
+              "color": "#242428",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 33,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d4vmtwra",
+      "id": "33",
+      "bbox": [
+        30,
+        690,
+        360,
+        18
+      ],
+      "geometry": "rect",
+      "text": "BookHouse - Hệ thống quản lý nhà sách",
+      "textPreview": "BookHouse - Hệ thống quản lý nhà sách",
+      "resolvedFontSize": 9,
+      "resolvedTextStyle": {
+        "fontSize": 9,
+        "typeface": "Aptos",
+        "color": "#A0A4AA",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "BookHouse - Hệ thống quản lý nhà sách"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "BookHouse - Hệ thống quản lý nhà sách",
+          "resolvedTextStyle": {
+            "fontSize": 9,
+            "typeface": "Aptos",
+            "color": "#A0A4AA",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "BookHouse - Hệ thống quản lý nhà sách",
+              "fontSize": 9,
+              "typeface": "Aptos",
+              "color": "#A0A4AA",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 34,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/61032lsz",
+      "id": "34",
+      "bbox": [
+        1210,
+        686,
+        40,
+        20
+      ],
+      "geometry": "rect",
+      "text": "29",
+      "textPreview": "29",
+      "resolvedFontSize": 10,
+      "resolvedTextStyle": {
+        "fontSize": 10,
+        "typeface": "Aptos",
+        "color": "#A0A4AA",
+        "alignment": "right",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "29"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "29",
+          "resolvedTextStyle": {
+            "fontSize": 10,
+            "typeface": "Aptos",
+            "color": "#A0A4AA",
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "29",
+              "fontSize": 10,
+              "typeface": "Aptos",
+              "color": "#A0A4AA",
+              "alignment": "right"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

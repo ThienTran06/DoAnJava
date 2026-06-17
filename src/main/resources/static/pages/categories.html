@@ -622,6 +622,7 @@ window.initCategories = function() {
     if (event.target === modal) closeModal();
   });
   form.addEventListener('submit', submitForm);
+  tableBody.addEventListener('click', handleTableAction);
 
   updateShellText();
   setActiveTab(state.activeMode);

@@ -719,6 +719,7 @@
     <link rel="stylesheet" href="ui-polish.css" />
     <script src="js/app-settings.js"></script>
     <script src="js/user-profile.js"></script>
+<script src="js/notifications.js?v=20260617-one-icon"></script>
 </head>
 <body>
 <aside class="sidebar">
@@ -1253,22 +1254,38 @@
 
     let isInvoiceFromReservation = false;
     let activeInvoiceObjectCache = null;
+    let activeInvoicePaid = false;
 
     const imgPlaceholder = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc1NCcgdmlld0JveD0nMCAwIDQwIDU0JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
     const cartPlaceholder = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1MCcgaGVpZ2h0PSc2OCcgdmlld0JveD0nMCAwIDUwIDY4JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
 
-    const socket = new SockJS(window.location.origin +"/ws");
-    const stompClient = Stomp.over(socket);
+    function initStockRealtime() {
+        if (typeof SockJS !== "function" || typeof Stomp === "undefined") {
+            console.warn("Kh?ng t?i ???c SockJS/STOMP, b? qua realtime t?n kho.");
+            return;
+        }
 
-    stompClient.connect({}, function () {
-        stompClient.subscribe("/topic/stock", async function (msg) {
-            const data = JSON.parse(msg.body);
-            if (data.type === "STOCK_CHANGED") {
-                console.log("🎉 ĐÃ BẮT ĐƯỢC SỰ KIỆN TỪ BACKEND! Đang tải lại sách...");
-                await fetchBooks();
-            }
-        });
-    });
+        try {
+            const socket = new SockJS(window.location.origin + "/ws");
+            const stompClient = Stomp.over(socket);
+            if (stompClient.debug) stompClient.debug = null;
+
+            stompClient.connect({}, function () {
+                stompClient.subscribe("/topic/stock", async function (msg) {
+                    const data = JSON.parse(msg.body);
+                    if (data.type === "STOCK_CHANGED") {
+                        console.log("?? nh?n s? ki?n t?n kho, ?ang t?i l?i s?ch...");
+                        await fetchBooks();
+                        window.BookHouseNotify?.checkLowStock?.();
+                    }
+                });
+            }, function (error) {
+                console.warn("Kh?ng k?t n?i ???c realtime t?n kho:", error);
+            });
+        } catch (error) {
+            console.warn("Kh?ng kh?i t?o ???c realtime t?n kho:", error);
+        }
+    }
 
     function getSafeBookImage(src, fallback = imgPlaceholder) {
         const value = String(src || "").trim();
@@ -1286,6 +1303,26 @@
         if (contentType) headers["Content-Type"] = contentType;
         if (token) headers["Authorization"] = `Bearer ${token}`;
         return headers;
+    }
+
+    async function readApiError(response, fallback) {
+        try {
+            const text = await response.text();
+            if (!text) return fallback;
+            const data = JSON.parse(text);
+            return data.message || data.error || text;
+        } catch {
+            return fallback;
+        }
+    }
+
+    function renderBookLoadError(message) {
+        const tbody = document.getElementById("bookSearchTableBody");
+        if (!tbody) return;
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--red); padding:30px 12px;">${message}</td></tr>`;
+        document.getElementById("bookPaginationInfo").innerText = "Trang 1";
+        document.getElementById("btnPrevBookPage").disabled = true;
+        document.getElementById("btnNextBookPage").disabled = true;
     }
 
     function decodeJwtPayload() {
@@ -1499,6 +1536,7 @@
 
         activeInvoiceId = invoice.id;
         activeInvoiceObjectCache = invoice;
+        activeInvoicePaid = false;
 
         localStorage.setItem('DRAFT_INVOICE', JSON.stringify({
             id: invoice.id,
@@ -1528,7 +1566,16 @@
                     document.getElementById("p-invoice-method").innerText = "Chuyển khoản (Đã thanh toán)";
                     document.getElementById("paymentToggleZone").style.display = "none";
 
+                    activeInvoicePaid = true;
                     localStorage.removeItem('DRAFT_INVOICE');
+                    window.BookHouseNotify?.push({
+                        type: "invoice",
+                        title: "H?a ??n ?? ho?n th?nh",
+                        message: `H?a ??n #HD${invoiceId} ?? thanh to?n b?ng QR.`,
+                        href: "HoaDon.html",
+                        dedupeKey: `invoice-paid-${invoiceId}`
+                    });
+                    window.BookHouseNotify?.checkLowStock?.();
 
                     document.getElementById("qrStatusOverlay").style.display = "flex";
                     document.getElementById("countdownText").innerText = "Thanh toán hoàn tất! Vui lòng nhấn nút in hóa đơn.";
@@ -1543,32 +1590,6 @@
                 console.log("Hệ thống đang kiểm tra biến động số dư...");
             }
         }, 2000);
-    }
-
-    async function executeConfirmCashPay() {
-        if (!confirm("Xác nhận bạn đã thu đủ tiền mặt của khách hàng?")) return;
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/hoa-don/${activeInvoiceId}/thanh-toan-tien-mat`, {
-                method: "PUT",
-                headers: getAuthHeaders(null),
-            });
-            if (!response.ok) throw new Error("Cập nhật trạng thái thanh toán tiền mặt thất bại.");
-
-            localStorage.removeItem('DRAFT_INVOICE');
-
-            document.getElementById("p-modal-title").innerText = "🎉 ĐÃ THU TIỀN MẶT THÀNH CÔNG!";
-            document.getElementById("p-invoice-title-type").innerText = "HÓA ĐƠN BÁN LẺ";
-            document.getElementById("p-invoice-method").innerText = "Tiền mặt (Đã thanh toán)";
-            document.getElementById("paymentToggleZone").style.display = "none";
-            document.getElementById("btnConfirmCashPay").style.display = "none";
-            document.getElementById("btnCloseInvoiceModal").disabled = false;
-            document.getElementById("btnExecutePrint").disabled = false;
-
-            alert("Hóa đơn chuyển sang trạng thái ĐÃ THANH TOÁN (Tiền mặt). Hãy nhấn nút In hóa đơn!");
-        } catch (err) {
-            alert("Lỗi: " + err.message);
-        }
-      }, 2000);
     }
 
     async function executeConfirmCashPay() {
@@ -1591,6 +1612,17 @@
 
         document.getElementById("p-modal-title").innerText =
           isQrPayment ? "🎉 ĐÃ NHẬN CHUYỂN KHOẢN QR!" : "🎉 ĐÃ THU TIỀN MẶT THÀNH CÔNG!";
+        activeInvoicePaid = true;
+        localStorage.removeItem("DRAFT_INVOICE");
+        window.BookHouseNotify?.push({
+          type: "invoice",
+          title: "H?a ??n ?? ho?n th?nh",
+          message: `H?a ??n #HD${activeInvoiceId} ?? thanh to?n b?ng ${isQrPayment ? "QR" : "ti?n m?t"}.`,
+          href: "HoaDon.html",
+          dedupeKey: `invoice-paid-${activeInvoiceId}`
+        });
+        window.BookHouseNotify?.checkLowStock?.();
+
         document.getElementById("p-invoice-title-type").innerText =
           "HÓA ĐƠN BÁN LẺ";
         document.getElementById("p-invoice-method").innerText =
@@ -2150,7 +2182,9 @@
 
     async function closeInvoicePrintModal() {
         const currentDraft = localStorage.getItem('DRAFT_INVOICE');
-        if (!currentDraft) {
+        const canPrintInvoice = document.getElementById("btnExecutePrint")?.disabled === false;
+        if (!currentDraft || activeInvoicePaid || canPrintInvoice) {
+            localStorage.removeItem('DRAFT_INVOICE');
             document.getElementById("invoicePrintModal").classList.remove("open");
             clearCartAndRefresh();
             return;

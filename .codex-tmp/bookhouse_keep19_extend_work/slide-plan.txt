@@ -1,0 +1,3 @@
+Mode: create new PPTX from PDF-preserved pages plus new editable slides.
+Design: keep 16:9 layout and mimic the original function-list timeline style: numbered circles, dotted/solid guide line, pastel cards.
+New slide pattern: screenshot slide followed by function list slide for each remaining feature.

@@ -361,7 +361,6 @@ if (avatarFile) {
   hoTen: form.name.value.trim(),
   sdt: form.phone.value.trim(),
   tenNhom: toGroupName(form.role.value),
-  permissionIds: [],
   email: form.email.value.trim(),
   caLamViec: form.shift.value || '',
   diaChi: form.address.value || '',
@@ -380,9 +379,25 @@ if (avatarFile) {
       },
       body: JSON.stringify(payload),
     });
-    if (response.status === 401) { window.location.href = 'login.html'; return; }
+    if (response.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('bh_user_profile');
+      window.location.href = 'login.html';
+      return;
+    }
     if (!response.ok) {
-      const message = await response.text();
+      const text = await response.text();
+      let message = text;
+      try {
+        const data = JSON.parse(text);
+        const fieldErrors = data.errors ? Object.values(data.errors).filter(Boolean).join('\n') : '';
+        message = fieldErrors || data.message || text;
+      } catch (err) {}
+      if (response.status === 403) {
+        localStorage.removeItem('bh_user_profile');
+        message = 'Tài khoản hiện tại không có quyền tạo nhân viên. Hãy đăng xuất rồi đăng nhập lại bằng tài khoản ADMIN hoặc tài khoản có quyền QUAN_LY_NGUOI_DUNG.';
+      }
       throw new Error(message || 'Request failed');
     }
     const saved = await response.json();

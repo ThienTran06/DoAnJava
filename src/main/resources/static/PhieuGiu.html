@@ -734,6 +734,7 @@
     <link rel="stylesheet" href="ui-polish.css" />
 <script src="js/app-settings.js"></script>
 <script src="js/user-profile.js"></script>
+<script src="js/notifications.js?v=20260617-one-icon"></script>
 </head>
 <body>
 <aside class="sidebar">
@@ -1940,6 +1941,13 @@ function renderReservationsTable() {
         const cartCopy = [...selectedCartItems];
         const customerCopy = selectedCustomer;
         const totalQty = cartCopy.reduce((acc, curr) => acc + curr.sl, 0);
+        window.BookHouseNotify?.push({
+          type: "reservation",
+          title: "Phiếu giữ mới",
+          message: `Đã tạo phiếu giữ #${phieuId} cho ${customerCopy?.hoTen || "khách hàng"} (${totalQty} cuốn).`,
+          href: "PhieuGiu.html",
+          dedupeKey: `reservation-created-${phieuId}`
+        });
 
         closeCreateModal(); // Đóng form lập phiếu
 
@@ -2041,6 +2049,13 @@ function renderReservationsTable() {
         }
 
         const invoice = await response.json();
+        window.BookHouseNotify?.push({
+          type: "reservation",
+          title: "Phiếu giữ đã được xác nhận",
+          message: `Phiếu giữ #${id} đã chuyển sang hóa đơn #HD${invoice.id || ""}.`,
+          href: "HoaDon.html",
+          dedupeKey: `reservation-confirmed-${id}`
+        });
 
         // Đóng gói lưu Object hóa đơn chờ tĩnh vào LocalStorage để trang BanHang.html bắt đơn
         localStorage.setItem("RESERVATION_INVOICE", JSON.stringify(invoice));

@@ -1,0 +1,3 @@
+Mode: create a new editable PPTX using the PDF as content/style reference.
+Style: warm cream background, coral primary, teal/violet/yellow accents, Aptos/Georgia typography.
+Slide count: 25. Content covers overview, architecture, database, security, core features, workflow, results, limitations, future work.
