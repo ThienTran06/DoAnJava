@@ -11,7 +11,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,15 +23,16 @@ public class WebHookController {
 
     private static final Pattern HD_PATTERN = Pattern.compile("HD\\d+");
 
-    @Value("${app.webhook.sepay.secret:}")
-    private String sepayWebhookSecret;
+    @Value("${app.webhook.sepay.api-key}")
+    private String sepayApiKey;
 
     @PostMapping("/sepay")
     public void handle(
-            @RequestHeader(value = "X-Webhook-Secret", required = false) String webhookSecret,
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody WebHookRequest req
     ) {
-        validateWebhookSecret(webhookSecret);
+
+        validateApiKey(authorization);
 
         if (req == null || req.getContent() == null || req.getTransferAmount() == null) return;
 
@@ -60,11 +60,7 @@ public class WebHookController {
 
         if (tongTien == null) return;
 
-        // CHECK SỐ TIỀN
-        // Cho phép >= (tránh thiếu 1-2đ do làm tròn)
-        if (soTienNhan.compareTo(tongTien) < 0) {
-            return;
-        }
+        if (soTienNhan.compareTo(tongTien) < 0) return;
 
         hd.setTrangThai("PAID");
         hd.setNgayBan(LocalDateTime.now());
@@ -72,12 +68,19 @@ public class WebHookController {
         hoaDonRepository.save(hd);
     }
 
-    private void validateWebhookSecret(String webhookSecret) {
-        if (sepayWebhookSecret == null || sepayWebhookSecret.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Sepay webhook secret is not configured");
+    private void validateApiKey(String authorization) {
+        if (sepayApiKey == null || sepayApiKey.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.SERVICE_UNAVAILABLE,
+                    "SePay API key is not configured"
+            );
         }
-        if (!Objects.equals(sepayWebhookSecret, webhookSecret)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid webhook secret");
+
+        if (authorization == null || !authorization.equals("Apikey " + sepayApiKey)) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Invalid API key"
+            );
         }
     }
 }

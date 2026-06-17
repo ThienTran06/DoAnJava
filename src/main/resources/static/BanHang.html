@@ -719,7 +719,6 @@
     <link rel="stylesheet" href="ui-polish.css" />
     <script src="js/app-settings.js"></script>
     <script src="js/user-profile.js"></script>
-<script src="js/notifications.js?v=20260617-one-icon"></script>
 </head>
 <body>
 <aside class="sidebar">
@@ -1254,38 +1253,22 @@
 
     let isInvoiceFromReservation = false;
     let activeInvoiceObjectCache = null;
-    let activeInvoicePaid = false;
 
-    const imgPlaceholder = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc1NCcgdmlld0JveD0nMCAwIDQwIDU0JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
-    const cartPlaceholder = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1MCcgaGVpZ2h0PSc2OCcgdmlld0JveD0nMCAwIDUwIDY4JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
+    const imgPlaceholder = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc0MCcgaGVpZ2h0PSc1NCcgdmlld0JveD0nMCAwIDQwIDU0JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0tc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
+    const cartPlaceholder = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1MCcgaGVpZ2h0PSc2OCcgdmlld0JveD0nMCAwIDUwIDY4JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0tc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
 
-    function initStockRealtime() {
-        if (typeof SockJS !== "function" || typeof Stomp === "undefined") {
-            console.warn("Kh?ng t?i ???c SockJS/STOMP, b? qua realtime t?n kho.");
-            return;
-        }
+    const socket = new SockJS(window.location.origin +"/ws");
+    const stompClient = Stomp.over(socket);
 
-        try {
-            const socket = new SockJS(window.location.origin + "/ws");
-            const stompClient = Stomp.over(socket);
-            if (stompClient.debug) stompClient.debug = null;
-
-            stompClient.connect({}, function () {
-                stompClient.subscribe("/topic/stock", async function (msg) {
-                    const data = JSON.parse(msg.body);
-                    if (data.type === "STOCK_CHANGED") {
-                        console.log("?? nh?n s? ki?n t?n kho, ?ang t?i l?i s?ch...");
-                        await fetchBooks();
-                        window.BookHouseNotify?.checkLowStock?.();
-                    }
-                });
-            }, function (error) {
-                console.warn("Kh?ng k?t n?i ???c realtime t?n kho:", error);
-            });
-        } catch (error) {
-            console.warn("Kh?ng kh?i t?o ???c realtime t?n kho:", error);
-        }
-    }
+    stompClient.connect({}, function () {
+        stompClient.subscribe("/topic/stock", async function (msg) {
+            const data = JSON.parse(msg.body);
+            if (data.type === "STOCK_CHANGED") {
+                console.log("🎉 ĐÃ BẮT ĐƯỢC SỰ KIỆN TỪ BACKEND! Đang tải lại sách...");
+                await fetchBooks();
+            }
+        });
+    });
 
     function getSafeBookImage(src, fallback = imgPlaceholder) {
         const value = String(src || "").trim();
@@ -1303,26 +1286,6 @@
         if (contentType) headers["Content-Type"] = contentType;
         if (token) headers["Authorization"] = `Bearer ${token}`;
         return headers;
-    }
-
-    async function readApiError(response, fallback) {
-        try {
-            const text = await response.text();
-            if (!text) return fallback;
-            const data = JSON.parse(text);
-            return data.message || data.error || text;
-        } catch {
-            return fallback;
-        }
-    }
-
-    function renderBookLoadError(message) {
-        const tbody = document.getElementById("bookSearchTableBody");
-        if (!tbody) return;
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--red); padding:30px 12px;">${message}</td></tr>`;
-        document.getElementById("bookPaginationInfo").innerText = "Trang 1";
-        document.getElementById("btnPrevBookPage").disabled = true;
-        document.getElementById("btnNextBookPage").disabled = true;
     }
 
     function decodeJwtPayload() {
@@ -1484,9 +1447,12 @@
             document.getElementById("p-invoice-title-type").innerText = "PHIẾU TẠM TÍNH (CHỜ THANH TOÁN)";
             document.getElementById("p-invoice-method").innerText = "Tiền mặt";
             qrArea.style.display = "none";
+
+            // Hiển thị nút Xác nhận tiền mặt
             btnCashConfirm.style.display = "inline-flex";
             btnCashConfirm.innerText = "✓ Xác nhận đã thu tiền mặt";
-            btnCloseModal.disabled = true;
+
+            btnCloseModal.disabled = false;
             btnPrint.disabled = true;
 
             if (paymentCheckInterval) {
@@ -1498,8 +1464,10 @@
             document.getElementById("p-invoice-title-type").innerText = "PHIẾU TẠM TÍNH (CHỜ THANH TOÁN)";
             document.getElementById("p-invoice-method").innerText = "Chuyển khoản (VietQR)";
             qrArea.style.display = "block";
-            btnCashConfirm.style.display = "inline-flex";
-            btnCashConfirm.innerText = "✓ Xác nhận đã nhận chuyển khoản QR";
+
+            // ẨN HẲN NÚT XÁC NHẬN THỦ CÔNG KHI QUÉT QR VÌ LÀ TỰ ĐỘNG
+            btnCashConfirm.style.display = "none";
+
             overlay.style.display = "flex";
             document.getElementById("countdownText").innerText = "Đang tải mã QR thanh toán...";
 
@@ -1510,7 +1478,7 @@
             const totalMoney = activeInvoiceObjectCache ? activeInvoiceObjectCache.tongTien || 0 : 0;
             qrImage.src = `https://img.vietqr.io/image/MB-0393107717-compact2.png?amount=${totalMoney}&addInfo=Thanh%20toan%20HD${activeInvoiceId}`;
 
-            btnCloseModal.disabled = true;
+            btnCloseModal.disabled = false;
             btnPrint.disabled = true;
 
             startQrCheckPolling(activeInvoiceId);
@@ -1536,7 +1504,6 @@
 
         activeInvoiceId = invoice.id;
         activeInvoiceObjectCache = invoice;
-        activeInvoicePaid = false;
 
         localStorage.setItem('DRAFT_INVOICE', JSON.stringify({
             id: invoice.id,
@@ -1566,22 +1533,13 @@
                     document.getElementById("p-invoice-method").innerText = "Chuyển khoản (Đã thanh toán)";
                     document.getElementById("paymentToggleZone").style.display = "none";
 
-                    activeInvoicePaid = true;
                     localStorage.removeItem('DRAFT_INVOICE');
-                    window.BookHouseNotify?.push({
-                        type: "invoice",
-                        title: "H?a ??n ?? ho?n th?nh",
-                        message: `H?a ??n #HD${invoiceId} ?? thanh to?n b?ng QR.`,
-                        href: "HoaDon.html",
-                        dedupeKey: `invoice-paid-${invoiceId}`
-                    });
-                    window.BookHouseNotify?.checkLowStock?.();
 
                     document.getElementById("qrStatusOverlay").style.display = "flex";
                     document.getElementById("countdownText").innerText = "Thanh toán hoàn tất! Vui lòng nhấn nút in hóa đơn.";
                     document.getElementById("btnCloseInvoiceModal").disabled = false;
                     document.getElementById("btnExecutePrint").disabled = false;
-
+executePrint();
                     setTimeout(() => {
                         document.getElementById("qrStatusOverlay").style.display = "none";
                     }, 1000);
@@ -1593,11 +1551,7 @@
     }
 
     async function executeConfirmCashPay() {
-      const isQrPayment = currentPaymentMethod === "QUET_MA";
-      const confirmMessage = isQrPayment
-        ? "Xác nhận bạn đã nhận đủ tiền chuyển khoản QR của khách hàng?"
-        : "Xác nhận bạn đã thu đủ tiền mặt của khách hàng?";
-      if (!confirm(confirmMessage)) return;
+      if (!confirm("Xác nhận bạn đã thu đủ tiền mặt của khách hàng?")) return;
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/hoa-don/${activeInvoiceId}/xac-nhan-thanh-toan`,
@@ -1610,23 +1564,11 @@
           throw new Error("Cập nhật trạng thái thanh toán thất bại.");
         }
 
-        document.getElementById("p-modal-title").innerText =
-          isQrPayment ? "🎉 ĐÃ NHẬN CHUYỂN KHOẢN QR!" : "🎉 ĐÃ THU TIỀN MẶT THÀNH CÔNG!";
-        activeInvoicePaid = true;
-        localStorage.removeItem("DRAFT_INVOICE");
-        window.BookHouseNotify?.push({
-          type: "invoice",
-          title: "H?a ??n ?? ho?n th?nh",
-          message: `H?a ??n #HD${activeInvoiceId} ?? thanh to?n b?ng ${isQrPayment ? "QR" : "ti?n m?t"}.`,
-          href: "HoaDon.html",
-          dedupeKey: `invoice-paid-${activeInvoiceId}`
-        });
-        window.BookHouseNotify?.checkLowStock?.();
+        localStorage.removeItem('DRAFT_INVOICE');
 
-        document.getElementById("p-invoice-title-type").innerText =
-          "HÓA ĐƠN BÁN LẺ";
-        document.getElementById("p-invoice-method").innerText =
-          isQrPayment ? "Chuyển khoản QR (Đã thanh toán)" : "Tiền mặt (Đã thanh toán)";
+        document.getElementById("p-modal-title").innerText = "🎉 ĐÃ THU TIỀN MẶT THÀNH CÔNG!";
+        document.getElementById("p-invoice-title-type").innerText = "HÓA ĐƠN BÁN LẺ";
+        document.getElementById("p-invoice-method").innerText = "Tiền mặt (Đã thanh toán)";
 
         document.getElementById("paymentToggleZone").style.display = "none";
         document.getElementById("btnConfirmCashPay").style.display = "none";
@@ -1644,6 +1586,7 @@
         alert("Lỗi: " + err.message);
       }
     }
+
     async function fetchSidebarInvoiceCount() {
         try {
             const response = await fetch(`${API_BASE_URL}/api/hoa-don?page=0&size=1`, {
@@ -2180,11 +2123,9 @@
       document.getElementById("invoicePrintModal").classList.remove("open");
     }
 
-    async function closeInvoicePrintModal() {
+   async function closeInvoicePrintModal() {
         const currentDraft = localStorage.getItem('DRAFT_INVOICE');
-        const canPrintInvoice = document.getElementById("btnExecutePrint")?.disabled === false;
-        if (!currentDraft || activeInvoicePaid || canPrintInvoice) {
-            localStorage.removeItem('DRAFT_INVOICE');
+        if (!currentDraft) {
             document.getElementById("invoicePrintModal").classList.remove("open");
             clearCartAndRefresh();
             return;
@@ -2245,4 +2186,3 @@
 </script>
 </body>
 </html>
-
