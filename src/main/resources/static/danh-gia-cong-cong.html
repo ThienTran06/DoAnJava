@@ -27,8 +27,24 @@
   }
   .logo { font-size: 17px; font-weight: 800; letter-spacing: -0.5px; }
   .logo span { opacity: 0.4; font-weight: 400; margin-left: 8px; font-size: 13px; }
+  .write-review-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 38px; padding: 0 18px; border-radius: 999px;
+    background: var(--text); color: #f6f7ed; border: 1.5px solid var(--text);
+    text-decoration: none; font-size: 13px; font-weight: 800;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .write-review-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+    background: #343434;
+  }
   .container { max-width: 860px; margin: 0 auto; padding: 32px 20px 60px; }
-  .page-header { margin-bottom: 28px; }
+  .page-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 18px; margin-bottom: 28px;
+  }
   .page-title { font-size: 26px; font-weight: 800; letter-spacing: -0.7px; margin-bottom: 4px; }
   .page-sub { color: var(--muted); font-size: 13px; font-weight: 400; }
 
@@ -127,6 +143,12 @@
 
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  @media (max-width: 720px) {
+    .topbar { padding: 0 18px; }
+    .logo span { display: none; }
+    .page-header { align-items: flex-start; flex-direction: column; }
+    .write-review-btn { width: 100%; }
+  }
 </style>
 <script src="js/app-settings.js"></script>
 </head>
@@ -134,12 +156,16 @@
 
 <div class="topbar">
   <div class="logo">BookHouse <span>Đánh giá từ khách hàng</span></div>
+  <a class="write-review-btn" href="danh-gia.html">Viết nhận xét</a>
 </div>
 
 <div class="container">
   <div class="page-header">
-    <div class="page-title">Đánh giá khách hàng</div>
-    <div class="page-sub">Nhận xét chất lượng Sách và Dịch vụ của BookHouse</div>
+    <div>
+      <div class="page-title">Đánh giá khách hàng</div>
+      <div class="page-sub">Nhận xét chất lượng Sách và Dịch vụ của BookHouse</div>
+    </div>
+    <a class="write-review-btn" href="danh-gia.html">Thêm nhận xét mới</a>
   </div>
 
   <div class="stats-row">
