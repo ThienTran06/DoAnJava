@@ -35,11 +35,11 @@ public interface SachRepository extends JpaRepository<Sach,Integer> {
 """)
     boolean existsByTacGiaId(@Param("tacGiaId") int tacGiaId);
 
-    @Query("SELECT s.tenSach as tenSach,s.soLuongTon as soLuongTonKho "
+    @Query("SELECT s.id as id, s.tenSach as tenSach,s.soLuongTon as soLuongTonKho "
     +"FROM Sach s "
     +"ORDER BY s.soLuongTon DESC ")
     List<SachTonKhoResponse> tonKhoNhieuNhat();
-    @Query("SELECT s.tenSach as tenSach,s.soLuongTon as soLuongTonKho "
+    @Query("SELECT s.id as id, s.tenSach as tenSach,s.soLuongTon as soLuongTonKho "
     +"FROM Sach s "
     +"WHERE s.soLuongTon < 5 "
     +"ORDER BY s.soLuongTon ASC"
@@ -57,7 +57,7 @@ public interface SachRepository extends JpaRepository<Sach,Integer> {
             @Param("namXuatBan") Integer namXuatBan
     );
 
-    @Query("SELECT s.tenSach as tenSach,s.soLuongTon as soLuongTonKho "
+    @Query("SELECT s.id as id, s.tenSach as tenSach,s.soLuongTon as soLuongTonKho "
     + "FROM Sach s "
     + "WHERE (:tenSach IS NULL OR s.tenSach LIKE %:tenSach%) ")
     List<SachTonKhoResponse> tonKhoTheoTen(@Param("tenSach")String tenSach);

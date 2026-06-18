@@ -1439,6 +1439,7 @@
     let searchDateQuery = "";
     let searchBookQuery = "";
     let supplierTypingTimeout = null;
+    let prefillBookDone = false;
 
     const drawerImgPlaceholder =
       "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1MCcgaGVpZ2h0PSc2OCcgdmlld0JveD0nMCAwIDUwIDY4JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
@@ -1524,24 +1525,16 @@ stompClient.connect({}, function () {
       fetchSuppliers();
       fetchThongKe();
       setupEventListeners();
-      if (
-        new URLSearchParams(window.location.search).get("quick") === "create"
-      ) {
-        setTimeout(
-          () => document.getElementById("btnOpenCreateModal")?.click(),
-          120,
-        );
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("quick") === "create") {
+        setTimeout(() => openCreateOrderModal(), 120);
       }
     });
 
     function setupEventListeners() {
       document
         .getElementById("btnOpenCreateModal")
-        .addEventListener("click", () => {
-          document.getElementById("createOrderModal").classList.add("open");
-          currentBookPage = 0;
-          fetchBooks();
-        });
+        .addEventListener("click", () => openCreateOrderModal());
 
       document
         .getElementById("btnReloadSuppliers")
@@ -1653,6 +1646,12 @@ stompClient.connect({}, function () {
           .charAt(0)
           .toUpperCase();
       }
+    }
+
+    function openCreateOrderModal() {
+      document.getElementById("createOrderModal").classList.add("open");
+      currentBookPage = 0;
+      fetchBooks().then(() => prefillBookFromQuery());
     }
 
     /* ================= GỌI API THỐNG KÊ KHO HÀNG ================= */
@@ -1903,6 +1902,59 @@ stompClient.connect({}, function () {
       }
     }
 
+    async function fetchBookById(bookId) {
+      const response = await fetch(`${API_BASE_URL}/api/sach/${encodeURIComponent(bookId)}`, {
+        method: "GET",
+        headers: getAuthHeaders(null),
+      });
+      if (!response.ok) throw new Error("ERR_BOOK");
+      return response.json();
+    }
+
+    async function fetchBookByName(bookName) {
+      const response = await fetch(`${API_BASE_URL}/api/sach/page-all?keyword=${encodeURIComponent(bookName)}&page=0&size=1`, {
+        method: "GET",
+        headers: getAuthHeaders(null),
+      });
+      if (!response.ok) throw new Error("ERR_BOOK_SEARCH");
+      const pageData = await response.json();
+      return (pageData.content || [])[0] || null;
+    }
+
+    async function prefillBookFromQuery() {
+      if (prefillBookDone) return;
+      const params = new URLSearchParams(window.location.search);
+      const bookId = params.get("bookId");
+      const bookName = params.get("bookName");
+      if (!bookId && !bookName) return;
+      prefillBookDone = true;
+
+      try {
+        if (bookName) {
+          searchBookQuery = bookName;
+          const input = document.getElementById("searchBookInput");
+          if (input) input.value = bookName;
+        }
+
+        let book = bookId ? books.find((b) => String(b.id) === String(bookId)) : null;
+        if (!book && bookId) book = await fetchBookById(bookId);
+        if (!book && bookName) book = await fetchBookByName(bookName);
+        if (!book) {
+          alert("Không tìm thấy sách cần nhập kho.");
+          return;
+        }
+
+        if (!books.some((b) => String(b.id) === String(book.id))) {
+          books.unshift(book);
+          renderBookSearchList();
+        }
+        addBookObjectToCart(book);
+      } catch (err) {
+        console.error("Không thể tự thêm sách vào phiếu nhập:", err);
+        alert("Không thể tự thêm sách vào phiếu nhập.");
+      }
+    }
+
     async function fetchSupplierSuggestions(keyword) {
       try {
         let url = `${API_BASE_URL}/api/nha-cung-cap?keyword=${encodeURIComponent(keyword)}&page=0&size=10`;
@@ -2039,7 +2091,11 @@ stompClient.connect({}, function () {
     function addBookToCart(bookId) {
       const book = books.find((b) => b.id === bookId);
       if (!book) return;
+      addBookObjectToCart(book);
+    }
 
+    function addBookObjectToCart(book) {
+      const bookId = book.id;
       const existing = selectedBooks.find((x) => x.id === bookId);
       if (existing) {
         existing.sl += 1;

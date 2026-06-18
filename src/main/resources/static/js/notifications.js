@@ -33,6 +33,32 @@
     }
   }
 
+  function normalizeAuthValue(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[\s-]+/g, "_")
+      .toUpperCase();
+  }
+
+  function canUseImportFlow() {
+    var payload = decodeJwtPayload();
+    var role = normalizeAuthValue(payload && payload.role);
+    if (role === "ADMIN" || role === "KHO") return true;
+    var permissions = Array.isArray(payload && payload.permissions) ? payload.permissions : [];
+    return permissions.some(function (p) {
+      return normalizeAuthValue(p) === "QUAN_LY_PHIEU_NHAP";
+    });
+  }
+
+  function canSeeNotification(item) {
+    return !item || item.type !== "stock" || canUseImportFlow();
+  }
+
+  function getVisibleItems() {
+    return readItems().filter(canSeeNotification);
+  }
+
   function writeItems(items) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, MAX_ITEMS)));
   }
@@ -133,6 +159,9 @@
   }
 
   function pushNotification(payload) {
+    if (payload && payload.type === "stock" && !canUseImportFlow()) {
+      return null;
+    }
     const item = {
       id: payload.id || `${Date.now()}-${Math.random().toString(16).slice(2)}`,
       type: payload.type || "system",
@@ -167,12 +196,12 @@
   }
 
   function getUnreadCount() {
-    return readItems().filter(item => !item.read).length;
+    return getVisibleItems().filter(item => !item.read).length;
   }
 
   function renderList(panel) {
     const list = panel.querySelector(".bh-notification-list");
-    const items = readItems();
+    const items = getVisibleItems();
     if (!items.length) {
       list.innerHTML = '<div class="bh-notification-empty">Chưa có thông báo nào</div>';
       return;
@@ -314,13 +343,7 @@
   }
 
   function canSeeStockNotifications() {
-    var payload = decodeJwtPayload();
-    if (!payload || !payload.role) return false;
-    if (String(payload.role).toUpperCase() === "ADMIN") return true;
-    var permissions = Array.isArray(payload.permissions) ? payload.permissions : [];
-    return permissions.some(function (p) {
-      return p === "QUAN_LY_PHIEU_NHAP" || p === "QUAN_LY_SACH";
-    });
+    return canUseImportFlow();
   }
 
   async function checkLowStock() {
@@ -336,7 +359,7 @@
           type: "stock",
           title: "Sách tồn kho thấp",
           message: `${name} chỉ còn ${qty} cuốn trong kho.`,
-          href: "index.html?view=inventory",
+          href: `NhapHang.html?quick=create&bookId=${encodeURIComponent(id)}&bookName=${encodeURIComponent(name)}`,
           dedupeKey: `low-stock-${todayKey()}-${id}-${qty}`
         });
       });

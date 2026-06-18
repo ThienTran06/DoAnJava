@@ -32,10 +32,12 @@ public class BaoCaoController {
 
 
     @GetMapping("/ton-kho-nhieu-nhat")
+    @PreAuthorize("hasAnyAuthority('XEM_BAO_CAO', 'QUAN_LY_PHIEU_NHAP')")
     List<SachTonKhoResponse> getTonKhoNhieuNhat() {
         return sachService.getTonKhoNhieuNhat();
     }
     @GetMapping("/ton-kho-it")
+    @PreAuthorize("hasAnyAuthority('XEM_BAO_CAO', 'QUAN_LY_PHIEU_NHAP')")
     List<SachTonKhoResponse> getTonKhoIt(){
         return sachService.getTonKhoIt();
     }
@@ -66,6 +68,7 @@ public class BaoCaoController {
     }
 
     @GetMapping("/tong-ton-kho")
+    @PreAuthorize("hasAnyAuthority('XEM_BAO_CAO', 'QUAN_LY_PHIEU_NHAP')")
     Integer getTongTonKho() {
         return sachService.getTongSoLuongTon();
     }

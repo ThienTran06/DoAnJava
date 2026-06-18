@@ -338,6 +338,7 @@
   .tbl td { padding: 9px 0; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; font-weight: 500; }
   .tbl tr:last-child td { border-bottom: none; }
   .tbl tr:hover td { background: var(--bg); }
+  .low-inventory-row { cursor: pointer; }
   .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
   .badge.paid { background: var(--green-light); color: var(--green); }
 
@@ -386,7 +387,7 @@
   .view-panel.active { display: block; }
   .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 18px; }
   .report-grid.two { grid-template-columns: 1fr 1fr; }
-  .report-grid.charts { grid-template-columns: 1fr 1fr; }
+  .report-grid.charts { grid-template-columns: 1fr; }
   .report-chart-wrap { position: relative; height: 190px; }
   .report-value { font-size: 26px; font-weight: 800; letter-spacing: -0.7px; margin-top: 12px; }
   .report-label { color: var(--text-muted); font-size: 12.5px; margin-top: 5px; }
@@ -800,12 +801,14 @@
 
       <div class="report-grid charts">
         <div class="card">
-          <div class="card-header"><span class="card-title">Biểu đồ doanh thu 7 ngày</span></div>
-          <div class="report-chart-wrap"><canvas id="sevenDayRevenueChart"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Biểu đồ doanh thu 30 ngày</span></div>
-          <div class="report-chart-wrap"><canvas id="thirtyDayRevenueChart"></canvas></div>
+          <div class="card-header">
+            <span class="card-title" id="revenueTrendTitle">Biểu đồ doanh thu 7 ngày</span>
+            <select class="select" id="revenueTrendRange" aria-label="Chọn khoảng biểu đồ doanh thu" style="width:140px;height:36px;padding:6px 10px">
+              <option value="7">7 ngày</option>
+              <option value="30">30 ngày</option>
+            </select>
+          </div>
+          <div class="report-chart-wrap"><canvas id="revenueTrendChart"></canvas></div>
         </div>
       </div>
 
@@ -1014,6 +1017,10 @@ const dashboardState = {
   bestSellers: [],
   inventoryTop: [],
   latestInvoices: []
+};
+const revenueChartState = {
+  sevenDays: [],
+  thirtyDays: []
 };
 
 const todayDateEl = document.getElementById('todayDate');
@@ -1398,7 +1405,7 @@ function renderRevenueLineChart(canvasId, rows) {
   ctx.clearRect(0, 0, W, H);
 
   const dataRows = normalizeRevenueRows(rows);
-  const pad = { t: 12, r: 14, b: 34, l: 48 };
+  const pad = { t: 12, r: 18, b: 34, l: 52 };
   const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
 
   if (!dataRows.length) {
@@ -1417,7 +1424,7 @@ function renderRevenueLineChart(canvasId, rows) {
   const px = i => pad.l + (data.length === 1 ? cw / 2 : (i / (data.length - 1)) * cw);
   const py = v => pad.t + ch - (v / yMax) * ch;
 
-  ctx.strokeStyle = '#e8e8e2';
+  ctx.strokeStyle = '#dde7f3';
   ctx.lineWidth = 1;
   [0, yMax * 0.25, yMax * 0.5, yMax * 0.75, yMax].forEach(v => {
     const y = py(v);
@@ -1425,15 +1432,16 @@ function renderRevenueLineChart(canvasId, rows) {
     ctx.moveTo(pad.l, y);
     ctx.lineTo(pad.l + cw, y);
     ctx.stroke();
-    ctx.fillStyle = '#b5b5ae';
+    ctx.fillStyle = '#718096';
     ctx.font = '600 10px DM Sans, sans-serif';
     ctx.textAlign = 'right';
     ctx.fillText(v.toLocaleString('vi-VN', { maximumFractionDigits: 1 }) + 'M', pad.l - 6, y + 3.5);
   });
 
   const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + ch);
-  grad.addColorStop(0, 'rgba(31,31,31,0.14)');
-  grad.addColorStop(1, 'rgba(31,31,31,0)');
+  grad.addColorStop(0, 'rgba(37,99,235,0.24)');
+  grad.addColorStop(0.55, 'rgba(20,184,166,0.10)');
+  grad.addColorStop(1, 'rgba(37,99,235,0)');
   ctx.beginPath();
   ctx.moveTo(px(0), py(data[0]));
   for (let i = 1; i < data.length; i++) {
@@ -1452,28 +1460,39 @@ function renderRevenueLineChart(canvasId, rows) {
     const xc = (px(i) + px(i - 1)) / 2;
     ctx.bezierCurveTo(xc, py(data[i - 1]), xc, py(data[i]), px(i), py(data[i]));
   }
-  ctx.strokeStyle = '#1f1f1f';
-  ctx.lineWidth = 2.4;
+  ctx.strokeStyle = '#2563eb';
+  ctx.lineWidth = 3;
   ctx.stroke();
 
   data.forEach((value, i) => {
     ctx.beginPath();
-    ctx.arc(px(i), py(value), 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#1f1f1f';
+    ctx.arc(px(i), py(value), 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#14b8a6';
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(px(i), py(value), 2, 0, Math.PI * 2);
+    ctx.arc(px(i), py(value), 2.4, 0, Math.PI * 2);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
   });
 
   const step = Math.max(1, Math.ceil(labels.length / 8));
-  ctx.fillStyle = '#b5b5ae';
+  ctx.fillStyle = '#718096';
   ctx.font = '600 10px DM Sans, sans-serif';
   ctx.textAlign = 'center';
   labels.forEach((label, i) => {
     if (i % step === 0 || i === labels.length - 1) ctx.fillText(label, px(i), H - 9);
   });
+}
+
+function renderSelectedRevenueTrend() {
+  const select = document.getElementById('revenueTrendRange');
+  const title = document.getElementById('revenueTrendTitle');
+  const range = select?.value === '30' ? '30' : '7';
+  if (title) title.textContent = `Biểu đồ doanh thu ${range} ngày`;
+  renderRevenueLineChart(
+    'revenueTrendChart',
+    range === '30' ? revenueChartState.thirtyDays : revenueChartState.sevenDays
+  );
 }
 
 function renderDashboardDonut(rows) {
@@ -1737,8 +1756,9 @@ async function loadRevenue(mode = 'range') {
   document.getElementById('sevenDayRevenue').textContent = '--';
   document.getElementById('thirtyDayRevenue').textContent = '--';
   document.getElementById('rangeRevenue').textContent = '--';
-  renderRevenueLineChart('sevenDayRevenueChart', []);
-  renderRevenueLineChart('thirtyDayRevenueChart', []);
+  revenueChartState.sevenDays = [];
+  revenueChartState.thirtyDays = [];
+  renderSelectedRevenueTrend();
   document.getElementById('rangeRevenueLabel').textContent =
     mode === 'month' ? `Tháng ${month}/${year}` : `${startDate} đến ${endDate}`;
 
@@ -1771,22 +1791,24 @@ async function loadRevenue(mode = 'range') {
   }
 
   if (sevenDaysResult.status === 'fulfilled') {
+    revenueChartState.sevenDays = sevenDaysResult.value || [];
     document.getElementById('sevenDayRevenue').textContent = money(sumMoney(sevenDaysResult.value));
-    renderRevenueLineChart('sevenDayRevenueChart', sevenDaysResult.value);
   }
   else {
+    revenueChartState.sevenDays = [];
     document.getElementById('sevenDayRevenue').textContent = 'Lỗi';
-    renderRevenueLineChart('sevenDayRevenueChart', []);
   }
 
   if (thirtyDaysResult.status === 'fulfilled') {
+    revenueChartState.thirtyDays = thirtyDaysResult.value || [];
     document.getElementById('thirtyDayRevenue').textContent = money(sumMoney(thirtyDaysResult.value));
-    renderRevenueLineChart('thirtyDayRevenueChart', thirtyDaysResult.value);
   }
   else {
+    revenueChartState.thirtyDays = [];
     document.getElementById('thirtyDayRevenue').textContent = 'Lỗi';
-    renderRevenueLineChart('thirtyDayRevenueChart', []);
   }
+
+  renderSelectedRevenueTrend();
 
   if (dailyResult.status === 'fulfilled') {
     renderDailyRevenue(dailyResult.value);
@@ -1839,10 +1861,24 @@ function renderCategoryRevenue(rows) {
     : '<div class="state-text">Không có dữ liệu</div>';
 }
 
+function getInventoryBookId(row) {
+  return row?.id ?? row?.sachId ?? row?.maSach ?? row?.sach?.id ?? '';
+}
+
+function getImportHrefForInventoryRow(row) {
+  const id = getInventoryBookId(row);
+  const name = row?.tenSach || '';
+  const params = new URLSearchParams({ quick: 'create' });
+  if (id !== '') params.set('bookId', id);
+  if (name) params.set('bookName', name);
+  return 'NhapHang.html?' + params.toString();
+}
+
 function renderInventoryTable(targetId, rows) {
+  const isLowInventory = targetId === 'lowInventoryRows';
   document.getElementById(targetId).innerHTML = rows && rows.length
     ? rows.map((row, index) => `
-        <tr>
+        <tr${isLowInventory ? ` class="low-inventory-row" data-import-href="${escapeHtml(getImportHrefForInventoryRow(row))}" title="Bấm để lập phiếu nhập sách này"` : ''}>
           <td style="font-weight:700">${index + 1}</td>
           <td>${escapeHtml(row.tenSach || '')}</td>
           <td style="font-weight:700">${Number(row.soLuongTonKho || 0).toLocaleString('vi-VN')}</td>
@@ -1908,9 +1944,14 @@ document.getElementById('loadMonthlyRevenueBtn').addEventListener('click', () =>
   loadedViews.revenue = false;
   loadRevenue('month');
 });
+document.getElementById('revenueTrendRange')?.addEventListener('change', renderSelectedRevenueTrend);
 document.getElementById('loadInventoryBtn').addEventListener('click', () => {
   loadedViews.inventory = false;
   loadInventory();
+});
+document.getElementById('lowInventoryRows')?.addEventListener('click', event => {
+  const row = event.target.closest('[data-import-href]');
+  if (row?.dataset.importHref) window.location.href = row.dataset.importHref;
 });
 const kpiEditBtn = document.getElementById('kpiEditBtn');
 const dailyKpiForm = document.getElementById('dailyKpiForm');
