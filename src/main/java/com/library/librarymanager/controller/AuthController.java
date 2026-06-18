@@ -4,11 +4,13 @@ import com.library.librarymanager.config.JwtUtil;
 import com.library.librarymanager.dto.request.ForgotPasswordRequest;
 import com.library.librarymanager.dto.request.LoginRequest;
 import com.library.librarymanager.dto.request.RefreshRequest;
+import com.library.librarymanager.dto.request.SendOtpRequest;
 import com.library.librarymanager.dto.response.LoginResponse;
 import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.entity.RefreshToken;
 import com.library.librarymanager.repository.NguoiDungRepository;
 import com.library.librarymanager.service.Interface.AuthService;
+import com.library.librarymanager.service.impl.OtpService;
 import com.library.librarymanager.service.impl.RefreshTokenServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,9 @@ public class AuthController {
 
     @Autowired
     private BCryptPasswordEncoder encoder;
+
+    @Autowired
+    private OtpService otpService;
 
     @Value("${app.auth.refresh-cookie-same-site:None}")
     private String refreshCookieSameSite;
@@ -125,6 +130,20 @@ public class AuthController {
         return "Logout thanh cong";
     }
 
+    @PostMapping("/send-otp")
+    public String sendOtp(@Valid @RequestBody SendOtpRequest req) {
+        NguoiDung user = repo.findByUsername(req.getUsername())
+                .orElseThrow(() -> new RuntimeException("Khong tim thay tai khoan hoac email khong khop"));
+
+        String savedEmail = user.getEmail();
+        if (savedEmail == null || !savedEmail.equalsIgnoreCase(req.getEmail().trim())) {
+            throw new RuntimeException("Khong tim thay tai khoan hoac email khong khop");
+        }
+
+        otpService.generateAndSend(req.getUsername(), savedEmail);
+        return "OTP da duoc gui den email cua ban";
+    }
+
     @PostMapping("/forgot-password")
     public String forgotPassword(@Valid @RequestBody ForgotPasswordRequest req) {
         NguoiDung user = repo.findByUsername(req.getUsername())
@@ -133,6 +152,10 @@ public class AuthController {
         String savedEmail = user.getEmail();
         if (savedEmail == null || !savedEmail.equalsIgnoreCase(req.getEmail().trim())) {
             throw new RuntimeException("Khong tim thay tai khoan hoac email khong khop");
+        }
+
+        if (!otpService.verify(req.getUsername(), req.getOtp())) {
+            throw new RuntimeException("OTP khong hop le hoac da het han");
         }
 
         user.setPassword(encoder.encode(req.getNewPassword()));
