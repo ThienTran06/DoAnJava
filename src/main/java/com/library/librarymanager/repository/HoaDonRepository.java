@@ -102,16 +102,15 @@ public interface HoaDonRepository extends JpaRepository<HoaDon,Integer> {
     SELECT h
     FROM HoaDon h
     WHERE (:id IS NULL OR h.id = :id)
-      AND (
-            :tuNgay IS NULL
-            OR h.ngayBan >= :tuNgay
-               AND h.ngayBan < :denNgay
-      )
+      AND (:tuNgay IS NULL OR h.ngayBan >= :tuNgay)
+      AND (:denNgay IS NULL OR h.ngayBan < :denNgay)
+      AND (:trangThai IS NULL OR h.trangThai = :trangThai)
 """)
     Page<HoaDon> getAll(
             @Param("id") Integer id,
             @Param("tuNgay") LocalDateTime tuNgay,
             @Param("denNgay") LocalDateTime denNgay,
+            @Param("trangThai") String trangThai,
             Pageable pageable
     );
     @Query("""

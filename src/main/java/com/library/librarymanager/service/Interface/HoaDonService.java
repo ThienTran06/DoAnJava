@@ -13,7 +13,14 @@ import java.util.List;
 
 public interface HoaDonService {
     List<HoaDon> getAll();
-    Page<HoaDon> getAll(Integer id, LocalDate ngay, int page, int size);
+     Page<HoaDon> getAll(
+            Integer id,
+            LocalDate tuNgay,
+            LocalDate denNgay,
+            String trangThai,
+            int page,
+            int size
+    );
     HoaDon getById(int id);
     HoaDon create(HoaDonRequest request);
     HoaDon updateById(int id, UpdateHoaDonRequest request);

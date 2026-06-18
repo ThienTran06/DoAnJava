@@ -26,13 +26,21 @@ public class HoaDonController {
     @GetMapping(params = {"page", "size"})
     Page<HoaDon> getPage(
             @RequestParam(required = false, name = "ma") String ma,
-            @RequestParam(required = false, name = "ngay") LocalDate ngay,
+            @RequestParam(required = false) LocalDate tuNgay,
+            @RequestParam(required = false) LocalDate denNgay,
+            @RequestParam(required = false) String trangThai,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return hoaDonService.getAll(parseId(ma), ngay, page, size);
+        return hoaDonService.getAll(
+                parseId(ma),
+                tuNgay,
+                denNgay,
+                trangThai,
+                page,
+                size
+        );
     }
-
     @GetMapping
     List<HoaDon> getAll(){return hoaDonService.getAll();}
     @GetMapping("/{id}")

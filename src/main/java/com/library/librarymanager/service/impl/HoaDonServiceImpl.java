@@ -46,10 +46,24 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public Page<HoaDon> getAll(Integer id, LocalDate ngay, int page, int size) {
-        LocalDateTime tuNgay = ngay == null ? null : ngay.atStartOfDay();
-        LocalDateTime denNgay = ngay == null ? null : ngay.plusDays(1).atStartOfDay();
-        return hoaDonRepository.getAll(id, tuNgay, denNgay, PageRequest.of(page, size));
+    public Page<HoaDon> getAll(
+            Integer id,
+            LocalDate tuNgay,
+            LocalDate denNgay,
+            String trangThai,
+            int page,
+            int size
+    ) {
+        LocalDateTime tu = tuNgay == null ? null : tuNgay.atStartOfDay();
+        LocalDateTime den = denNgay == null ? null : denNgay.plusDays(1).atStartOfDay();
+
+        return hoaDonRepository.getAll(
+                id,
+                tu,
+                den,
+                trangThai,
+                PageRequest.of(page, size)
+        );
     }
 
     @Override

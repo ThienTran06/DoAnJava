@@ -296,6 +296,7 @@
           display: flex;
           align-items: center;
           gap: 10px;
+          flex-wrap: wrap;
         }
         .input-text {
           background: var(--bg);
@@ -530,7 +531,7 @@
     <link rel="stylesheet" href="ui-polish.css" />
     <script src="js/app-settings.js"></script>
     <script src="js/user-profile.js"></script>
-<script src="js/notifications.js?v=20260617-one-icon"></script>
+    <script src="js/notifications.js?v=20260617-one-icon"></script>
 </head>
 <body>
 <aside class="sidebar">
@@ -646,10 +647,24 @@
                             class="input-text"
                             id="searchInvoiceInput"
                             placeholder="Tìm ID hóa đơn (số)..."
-                            style="width: 240px"
+                            style="width: 170px"
                             min="1"
                     />
-                    <input type="date" class="input-text" id="datePickerInput" />
+
+                    <select class="input-text" id="statusFilterInput" style="width: 140px;">
+                        <option value="">-- Trạng thái --</option>
+                        <option value="PENDING">Chờ thanh toán</option>
+                        <option value="PROCESSING">Đang xử lý</option>
+                        <option value="HOAN THANH">Hoàn thành</option>
+                        <option value="DA HUy">Đã hủy</option>
+                    </select>
+
+                    <span style="font-size: 12.5px; color: var(--text-muted)">Từ</span>
+                    <input type="date" class="input-text" id="tuNgayInput" />
+
+                    <span style="font-size: 12.5px; color: var(--text-muted)">Đến</span>
+                    <input type="date" class="input-text" id="denNgayInput" />
+
                     <button
                             class="btn btn-primary"
                             onclick="location.href = 'BanHang.html'"
@@ -817,8 +832,11 @@
     let totalPages = 0;
     let totalElements = 0;
 
+    // Khai báo các bộ lọc đồng bộ hóa với Backend
     let searchInvoiceQuery = null;
-    let searchDateQuery = "";
+    let searchTuNgayQuery = "";
+    let searchDenNgayQuery = "";
+    let searchTrangThaiQuery = "";
 
     const drawerImgPlaceholder =
       "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1MCcgaGVpZ2h0PSc2OCcgdmlld0JveD0nMCAwIDUwIDY4JyBzdHlsZT0nYmFja2dyb3VuZDolMjNlZWU7Jz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZm9udC1zaXplPSc5JyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZmlsbD0nJTIzOTk5JyBkb21pbmFudC1iYXNlbGluZT0nbWlkZGxlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
@@ -873,6 +891,7 @@
     }
 
     function setupEventListeners() {
+      // 1. Tìm theo Mã ID số
       document
         .getElementById("searchInvoiceInput")
         .addEventListener("input", (e) => {
@@ -887,10 +906,29 @@
           fetchInvoices();
         });
 
+      // 2. Bộ lọc Trạng thái đơn hàng
       document
-        .getElementById("datePickerInput")
+        .getElementById("statusFilterInput")
         .addEventListener("change", (e) => {
-          searchDateQuery = e.target.value;
+          searchTrangThaiQuery = e.target.value;
+          currentPage = 0;
+          fetchInvoices();
+        });
+
+      // 3. Bộ lọc mốc thời gian: Từ Ngày
+      document
+        .getElementById("tuNgayInput")
+        .addEventListener("change", (e) => {
+          searchTuNgayQuery = e.target.value;
+          currentPage = 0;
+          fetchInvoices();
+        });
+
+      // 4. Bộ lọc mốc thời gian: Đến Ngày
+      document
+        .getElementById("denNgayInput")
+        .addEventListener("change", (e) => {
+          searchDenNgayQuery = e.target.value;
           currentPage = 0;
           fetchInvoices();
         });
@@ -909,7 +947,7 @@
       });
     }
 
-    // HÀM GỌI API THỐNG KÊ (Bao gồm chức năng hiển thị log chi tiết lỗi nếu sập API)
+    // HÀM GỌI API THỐNG KÊ
     async function fetchThongKe() {
       try {
         const url = `${API_BASE_URL}/api/hoa-don/thong_ke`;
@@ -929,7 +967,6 @@
 
         const data = await response.json();
 
-        // Gán dữ liệu tương thích theo thuộc tính ThongKeDTO
         document.getElementById("statInvoicesToday").innerText = (
           data.hoaDonTrongNgay || 0
         ).toLocaleString();
@@ -945,11 +982,14 @@
       }
     }
 
+    // HÀM TẢI DANH SÁCH HÓA ĐƠN KÈM THEO CÁC QUERY PARAMETERS MỚI
     async function fetchInvoices() {
       try {
         let url = `${API_BASE_URL}/api/hoa-don?page=${currentPage}&size=${pageSize}`;
         if (searchInvoiceQuery !== null) url += `&ma=${searchInvoiceQuery}`;
-        if (searchDateQuery) url += `&ngay=${searchDateQuery}`;
+        if (searchTuNgayQuery) url += `&tuNgay=${searchTuNgayQuery}`;
+        if (searchDenNgayQuery) url += `&denNgay=${searchDenNgayQuery}`;
+        if (searchTrangThaiQuery) url += `&trangThai=${searchTrangThaiQuery}`;
 
         const response = await fetch(url, {
           method: "GET",
@@ -970,15 +1010,11 @@
       }
     }
 
-    // HÀM ĐIỀU HƯỚNG SANG KHỐI POS ĐỂ TIẾP TỤC GIAO DỊCH
     function navigateToInvoicePaymentFlow(invoiceId) {
       const target = invoices.find((x) => x.id === invoiceId);
       if (!target) return;
 
-      // Đóng gói lưu Object hóa đơn tĩnh vào LocalStorage để trang BanHang.html bắt đơn
       localStorage.setItem("RESERVATION_INVOICE", JSON.stringify(target));
-
-      // Điều hướng trực tiếp sang trang Quầy bán hàng
       location.href = "BanHang.html";
     }
 
@@ -1030,7 +1066,6 @@
           ? `<button class="btn" disabled style="background:#f5f5f5; color:var(--text-subtle); border-color:var(--border);">Đã đóng</button>`
           : `<button class="btn btn-danger-ghost" onclick="triggerCancelInvoice(${item.id})" title="Hủy hóa đơn">Hủy</button>`;
 
-        // Nếu hóa đơn chưa hoàn tất (đang PENDING/Chờ thanh toán), sinh nút Thanh toán điều hướng sang POS lẻ
         const payActionBtn = (isClosed || isProcessing)
           ? ""
           : `<button class="btn btn-success" style="padding:4px 10px; font-size:12.5px;" onclick="navigateToInvoicePaymentFlow(${item.id})">Thanh toán</button>`;
@@ -1361,7 +1396,7 @@
         if (isFromDrawer) closeDetailDrawer();
 
         fetchInvoices();
-        fetchThongKe(); // Tải lại thống kê ngay khi hủy đơn thành công để trừ doanh số
+        fetchThongKe();
       } catch (err) {
         window.showToast
           ? window.showToast("Hủy hóa đơn thất bại")
