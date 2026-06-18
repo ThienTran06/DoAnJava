@@ -2,6 +2,7 @@ package com.library.librarymanager.service.impl;
 
 import com.library.librarymanager.entity.*;
 import com.library.librarymanager.enums.TrangThaiGiu;
+import com.library.librarymanager.event.NotificationEvent;
 import com.library.librarymanager.event.StockChangedEvent;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.KhachHangService;
@@ -73,7 +74,12 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
         p.setExpiredAt(LocalDateTime.now().plusDays(2));
         p.setTrangThai(TrangThaiGiu.PENDING);
 
-        return phieuRepo.save(p).getId();
+        PhieuDatGiuSach saved = phieuRepo.save(p);
+        publisher.publishEvent(new NotificationEvent(
+                "reservation", "Phiếu giữ mới",
+                "Đã tạo phiếu giữ #" + saved.getId() + " cho khách hàng.",
+                "PhieuGiu.html"));
+        return saved.getId();
     }
 
     @Override
@@ -179,6 +185,10 @@ public class PhieuGiuSachServiceImpl implements PhieuGiuSachService {
 
             p.setTrangThai(TrangThaiGiu.EXPIRED);
             publisher.publishEvent(new StockChangedEvent());
+            publisher.publishEvent(new NotificationEvent(
+                    "reservation", "Phiếu giữ hết hạn",
+                    "Phiếu giữ #" + phieuId + " đã hết hạn và trả lại tồn kho.",
+                    "PhieuGiu.html"));
             phieuRepo.save(p);
         }
         else throw new RuntimeException("Không thể expire phiếu giữ không có trạng thái pending");
