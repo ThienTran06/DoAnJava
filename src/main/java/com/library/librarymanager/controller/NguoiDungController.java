@@ -4,20 +4,25 @@ import com.library.librarymanager.dto.request.CreateUserRequest;
 import com.library.librarymanager.dto.request.UpdatePermissionsRequest;
 import com.library.librarymanager.dto.response.NhanVienXuatSacResponse;
 import com.library.librarymanager.entity.NguoiDung;
+import com.library.librarymanager.service.Interface.CloudinaryService;
 import com.library.librarymanager.service.Interface.NguoiDungService;
 import com.library.librarymanager.service.impl.NguoiDungServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 @PreAuthorize("hasAnyAuthority('QUAN_LY_NGUOI_DUNG','ADMIN')")
 @RestController
 @RequestMapping("/api/nguoi-dung")
 public class NguoiDungController {
     @Autowired
     private NguoiDungService sv;
+    @Autowired
+    private CloudinaryService cloudinaryService;
     @PostMapping("/create")
     public NguoiDung create(@Valid @RequestBody CreateUserRequest req) {
 
@@ -67,6 +72,12 @@ public class NguoiDungController {
     @PutMapping("/{id}/permissions")
     public void updatePermissions(@PathVariable int id, @Valid @RequestBody UpdatePermissionsRequest req ){
         sv.updatePermissions(id,req.getPermissionIds());
+    }
+
+    @PostMapping("/upload-avatar")
+    public Map<String, String> uploadAvatar(@RequestParam("file") MultipartFile file) {
+        String url = cloudinaryService.uploadFile(file);
+        return Map.of("url", url);
     }
 
 }

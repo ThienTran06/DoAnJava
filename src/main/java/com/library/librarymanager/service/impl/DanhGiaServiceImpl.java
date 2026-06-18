@@ -17,9 +17,11 @@ import com.library.librarymanager.repository.DanhGiaRepository;
 import com.library.librarymanager.repository.KhachHangRepository;
 import com.library.librarymanager.repository.SachRepository;
 import com.library.librarymanager.service.Interface.CloudinaryService;
+import com.library.librarymanager.event.NotificationEvent;
 import com.library.librarymanager.service.Interface.DanhGiaService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class DanhGiaServiceImpl implements DanhGiaService {
     private final SachRepository sachRepository;
     private final ChiTietHoaDonRepository chiTietHoaDonRepository;
     private final CloudinaryService cloudinaryService;
+    private final ApplicationEventPublisher publisher;
 
     @Override
     public List<DanhGia> getAll() {
@@ -123,7 +126,12 @@ public class DanhGiaServiceImpl implements DanhGiaService {
         danhGia.setTrangThai("DA_DUYET");
         danhGia.setCreatedAt(LocalDateTime.now());
 
-        return danhGiaRepository.save(danhGia);
+        DanhGia saved = danhGiaRepository.save(danhGia);
+        publisher.publishEvent(new NotificationEvent(
+                "review", "Đánh giá mới",
+                hoTen + " vừa gửi đánh giá " + diemSao + " sao.",
+                "danh-gia.html"));
+        return saved;
     }
 
     @Override

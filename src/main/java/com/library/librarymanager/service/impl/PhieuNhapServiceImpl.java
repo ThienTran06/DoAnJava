@@ -9,6 +9,7 @@ import com.library.librarymanager.entity.NguoiDung;
 import com.library.librarymanager.entity.NhaCungCap;
 import com.library.librarymanager.entity.PhieuNhap;
 import com.library.librarymanager.entity.Sach;
+import com.library.librarymanager.event.NotificationEvent;
 import com.library.librarymanager.event.StockChangedEvent;
 import com.library.librarymanager.repository.ChiTietPhieuNhapRepository;
 import com.library.librarymanager.repository.NguoiDungRepository;
@@ -99,6 +100,10 @@ public class PhieuNhapServiceImpl implements PhieuNhapService {
         phieuNhap.setTongTien(tongTienNhap);
         phieuNhap.setDanhSachChiTiet(list);
         publisher.publishEvent(new StockChangedEvent());
+        publisher.publishEvent(new NotificationEvent(
+                "import", "Phiếu nhập mới",
+                "Đã tạo phiếu nhập #PN" + phieuNhap.getId() + " với " + request.getList().size() + " mặt hàng.",
+                "NhapHang.html"));
         return phieuNhapRepository.save(phieuNhap);
     }
 

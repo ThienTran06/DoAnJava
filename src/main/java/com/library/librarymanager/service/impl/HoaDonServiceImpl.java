@@ -5,6 +5,7 @@ import com.library.librarymanager.dto.request.HoaDonRequest;
 import com.library.librarymanager.dto.request.UpdateHoaDonRequest;
 import com.library.librarymanager.dto.response.*;
 import com.library.librarymanager.entity.*;
+import com.library.librarymanager.event.NotificationEvent;
 import com.library.librarymanager.event.StockChangedEvent;
 import com.library.librarymanager.repository.*;
 import com.library.librarymanager.service.Interface.*;
@@ -109,6 +110,10 @@ public class HoaDonServiceImpl implements HoaDonService {
         hoaDonRepository.save(newHoaDon);
         khachHangService.congDiemTuHoaDon(khachHang, tongTienCuoi);
         publisher.publishEvent(new StockChangedEvent());
+        publisher.publishEvent(new NotificationEvent(
+                "invoice", "Hóa đơn mới",
+                "Đã tạo hóa đơn #HD" + newHoaDon.getId() + " - " + newHoaDon.getTongTien().toPlainString() + " đ.",
+                "HoaDon.html"));
         return newHoaDon;
     }
 
@@ -178,6 +183,10 @@ public class HoaDonServiceImpl implements HoaDonService {
         hoaDon.setTrangThai("DA HUY");
         hoaDonRepository.save(hoaDon);
         publisher.publishEvent(new StockChangedEvent());
+        publisher.publishEvent(new NotificationEvent(
+                "invoice", "Hủy hóa đơn",
+                "Hóa đơn #HD" + id + " đã bị hủy.",
+                "HoaDon.html"));
     }
     @Override
     @Transactional
