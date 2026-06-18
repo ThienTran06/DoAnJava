@@ -29,64 +29,6 @@
     <div class="stat-card"><div class="stat-value" id="customerNew">0</div><div class="stat-label">Khách hàng mới tháng này</div></div>
     <div class="stat-card"><div class="stat-value" id="customerOrders">0</div><div class="stat-label">Tổng đơn hàng</div></div>
   </div>
-  <div class="table-card" style="margin-bottom:18px">
-    <div class="header-row" style="margin-bottom:14px;align-items:flex-end">
-      <div>
-        <div style="font-size:18px;font-weight:800;letter-spacing:-.3px">Mã giảm giá & điểm đã đổi</div>
-        <div style="font-size:12.5px;color:var(--muted);margin-top:3px">Theo dõi toàn bộ mã giảm giá được tạo từ điểm tích lũy của khách hàng</div>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-        <div class="search-box" style="width:300px">
-          <input type="text" id="discountCodeSearch" placeholder="Tìm mã, tên hoặc SĐT...">
-        </div>
-        <button class="btn ghost" type="button" id="btnRefreshDiscountCodes">Tải lại</button>
-      </div>
-    </div>
-    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
-      <div class="stat-card"><div class="stat-value" id="discountCodeTotal">0</div><div class="stat-label">Tổng mã</div></div>
-      <div class="stat-card"><div class="stat-value" id="discountCodeUnused">0</div><div class="stat-label">Chưa sử dụng</div></div>
-      <div class="stat-card dark"><div class="stat-value" id="discountCodeUsed">0</div><div class="stat-label">Đã sử dụng</div></div>
-      <div class="stat-card"><div class="stat-value" id="discountPointTotal">0</div><div class="stat-label">Tổng điểm đã đổi</div></div>
-    </div>
-    <form id="discountExchangeForm" style="display:grid;grid-template-columns:minmax(220px,1.5fr) minmax(130px,.6fr) minmax(130px,.6fr) auto;gap:12px;align-items:end;margin-bottom:14px;padding:14px;border:1.5px solid var(--border);border-radius:12px;background:var(--bg)">
-      <div class="field" style="margin:0">
-        <div class="label">Khách hàng quy đổi</div>
-        <select class="input" id="discountCustomerSelect" required>
-          <option value="">Chọn khách hàng</option>
-        </select>
-      </div>
-      <div class="field" style="margin:0">
-        <div class="label">Điểm sử dụng</div>
-        <input class="input" id="discountPointInput" type="number" min="100" step="1" placeholder="Tối thiểu 100" required>
-      </div>
-      <div class="field" style="margin:0">
-        <div class="label">Giá trị giảm dự kiến</div>
-        <input class="input" id="discountValuePreview" readonly value="0 đ" style="background:var(--surface);font-weight:800">
-      </div>
-      <button class="btn primary" type="submit" id="btnCreateDiscountCode">Tạo mã</button>
-    </form>
-    <div class="table-wrap">
-      <table class="tbl-books">
-        <thead>
-          <tr>
-            <th>Mã giảm giá</th>
-            <th>Khách hàng</th>
-            <th>SĐT</th>
-            <th>Điểm đã đổi</th>
-            <th>Giá trị giảm</th>
-            <th>Trạng thái</th>
-            <th>Ngày tạo</th>
-            <th>Hết hạn</th>
-            <th>Ngày dùng</th>
-          </tr>
-        </thead>
-        <tbody id="discountCodeTableBody">
-          <tr><td colspan="9"><div class="empty-state">Đang tải danh sách mã giảm giá...</div></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="empty-state" id="discountCodeEmptyState" style="display:none;margin-top:16px">Chưa có mã giảm giá nào.</div>
-  </div>
   <div class="table-card">
     <div class="table-wrap">
       <table class="tbl-books customer-table">
@@ -115,11 +57,10 @@
 <script>
 // Initialize Customers page
 window.initCustomers = function() {
-  const state = { items: window.allCustomers || [], discountCodes: [] };
+  const state = { items: window.allCustomers || [] };
 
   const API_BASE = window.API_BASE_URL || window.location.origin;
   const CUSTOMER_API = `${API_BASE}/api/khach-hang`;
-  const DISCOUNT_API = `${API_BASE}/api/ma-giam-gia`;
   let customersLoading = false;
 
   const getAuthHeaders = () => {
@@ -163,66 +104,6 @@ window.initCustomers = function() {
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
 
-  const money = value => Number(value || 0).toLocaleString('vi-VN') + ' đ';
-
-  const DISCOUNT_VALUE_PER_POINT = 100;
-
-  const formatDateTime = value => {
-    if (!value) return '—';
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '—';
-    return date.toLocaleString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const getDiscountCustomer = code => code?.khachHang || {};
-
-  const getDiscountCustomerName = code => {
-    const customer = getDiscountCustomer(code);
-    return customer.hoTen || customer.name || '—';
-  };
-
-  const getDiscountCustomerPhone = code => {
-    const customer = getDiscountCustomer(code);
-    return customer.sdt || customer.SDT || customer.phone || '—';
-  };
-
-  const discountStatusLabel = status => ({
-    CHUA_SU_DUNG: 'Chưa sử dụng',
-    DA_SU_DUNG: 'Đã sử dụng',
-    HET_HAN: 'Hết hạn',
-  }[status] || status || '—');
-
-  const discountStatusClass = status => {
-    if (status === 'CHUA_SU_DUNG') return 'paid';
-    if (status === 'DA_SU_DUNG') return 'tier-silver';
-    return 'bad';
-  };
-
-  const renderDiscountCustomerOptions = () => {
-    if (!discountCustomerSelect) return;
-    const selectedValue = discountCustomerSelect.value;
-    discountCustomerSelect.innerHTML = '<option value="">Chọn khách hàng</option>' + state.items.map(customer => `
-      <option value="${customer.id}">
-        ${escapeText(customer.name)} - ${escapeText(customer.phone || 'N/A')} - ${Number(customer.diemTichLuy || 0).toLocaleString('vi-VN')} điểm
-      </option>
-    `).join('');
-    if (selectedValue && state.items.some(customer => String(customer.id) === String(selectedValue))) {
-      discountCustomerSelect.value = selectedValue;
-    }
-  };
-
-  const updateDiscountValuePreview = () => {
-    if (!discountPointInput || !discountValuePreview) return;
-    const points = Number(discountPointInput.value || 0);
-    discountValuePreview.value = money(points * DISCOUNT_VALUE_PER_POINT);
-  };
-
   const renderLoadingState = () => {
     tableBody.innerHTML = `<tr><td colspan="10"><div class="empty-state">Đang tải danh sách khách hàng...</div></td></tr>`;
     emptyState.style.display = 'none';
@@ -250,7 +131,6 @@ window.initCustomers = function() {
       const data = await response.json();
       state.items = Array.isArray(data) ? data.map(mapCustomer) : [];
       window.allCustomers = state.items;
-      renderDiscountCustomerOptions();
       customersLoading = false;
       render(search ? search.value : '');
     } catch (error) {
@@ -259,89 +139,8 @@ window.initCustomers = function() {
     }
   };
 
-  const updateDiscountStats = rows => {
-    const total = state.discountCodes.length;
-    const unused = state.discountCodes.filter(x => x.trangThai === 'CHUA_SU_DUNG').length;
-    const used = state.discountCodes.filter(x => x.trangThai === 'DA_SU_DUNG').length;
-    const points = state.discountCodes.reduce((sum, x) => sum + Number(x.diemDaDoi || 0), 0);
-
-    const totalEl = document.getElementById('discountCodeTotal');
-    const unusedEl = document.getElementById('discountCodeUnused');
-    const usedEl = document.getElementById('discountCodeUsed');
-    const pointEl = document.getElementById('discountPointTotal');
-    if (totalEl) totalEl.textContent = total.toLocaleString('vi-VN');
-    if (unusedEl) unusedEl.textContent = unused.toLocaleString('vi-VN');
-    if (usedEl) usedEl.textContent = used.toLocaleString('vi-VN');
-    if (pointEl) pointEl.textContent = points.toLocaleString('vi-VN');
-  };
-
-  const renderDiscountCodes = () => {
-    if (!discountCodeTableBody) return;
-    const query = (discountCodeSearch?.value || '').trim().toLowerCase();
-    const rows = state.discountCodes.filter(code => {
-      if (!query) return true;
-      return String(code.ma || '').toLowerCase().includes(query)
-        || getDiscountCustomerName(code).toLowerCase().includes(query)
-        || getDiscountCustomerPhone(code).toLowerCase().includes(query);
-    });
-
-    discountCodeTableBody.innerHTML = rows.length ? rows.map(code => `
-      <tr>
-        <td style="font-weight:800">${escapeText(code.ma)}</td>
-        <td>${escapeText(getDiscountCustomerName(code))}</td>
-        <td>${escapeText(getDiscountCustomerPhone(code))}</td>
-        <td style="font-weight:700">${Number(code.diemDaDoi || 0).toLocaleString('vi-VN')}</td>
-        <td style="font-weight:700">${money(code.giaTriGiam)}</td>
-        <td><span class="badge ${discountStatusClass(code.trangThai)}">${escapeText(discountStatusLabel(code.trangThai))}</span></td>
-        <td>${formatDateTime(code.ngayTao)}</td>
-        <td>${formatDateTime(code.ngayHetHan)}</td>
-        <td>${formatDateTime(code.ngaySuDung)}</td>
-      </tr>
-    `).join('') : '';
-
-    if (discountCodeEmptyState) {
-      discountCodeEmptyState.style.display = rows.length ? 'none' : 'block';
-    }
-    updateDiscountStats(rows);
-  };
-
-  const loadDiscountCodesFromApi = async () => {
-    if (!discountCodeTableBody) return;
-    discountCodeTableBody.innerHTML = `<tr><td colspan="9"><div class="empty-state">Đang tải danh sách mã giảm giá...</div></td></tr>`;
-    if (discountCodeEmptyState) discountCodeEmptyState.style.display = 'none';
-    try {
-      const response = await fetch(DISCOUNT_API, {
-        headers: {
-          Accept: 'application/json',
-          ...getAuthHeaders(),
-        },
-      });
-
-      if (response.status === 401) {
-        window.location.href = 'login.html';
-        return;
-      }
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const data = await response.json();
-      state.discountCodes = Array.isArray(data) ? data : [];
-      renderDiscountCodes();
-    } catch (error) {
-      discountCodeTableBody.innerHTML = `<tr><td colspan="9"><div class="empty-state">Không thể tải danh sách mã giảm giá từ backend.</div></td></tr>`;
-      updateDiscountStats([]);
-    }
-  };
   const tableBody = document.getElementById('customerTableBody');
   const emptyState = document.getElementById('customerEmptyState');
-  const discountCodeTableBody = document.getElementById('discountCodeTableBody');
-  const discountCodeEmptyState = document.getElementById('discountCodeEmptyState');
-  const discountCodeSearch = document.getElementById('discountCodeSearch');
-  const refreshDiscountBtn = document.getElementById('btnRefreshDiscountCodes');
-  const discountExchangeForm = document.getElementById('discountExchangeForm');
-  const discountCustomerSelect = document.getElementById('discountCustomerSelect');
-  const discountPointInput = document.getElementById('discountPointInput');
-  const discountValuePreview = document.getElementById('discountValuePreview');
-  const createDiscountBtn = document.getElementById('btnCreateDiscountCode');
   const modal = document.getElementById('customerModal');
   const form = document.getElementById('customerForm');
   const search = document.getElementById('customerSearch');
@@ -552,10 +351,6 @@ window.initCustomers = function() {
   if (cancelBtn) cancelBtn.onclick = null;
   if (form) form.onsubmit = null;
   if (search) search.oninput = e => render(e.target.value);
-  if (discountCodeSearch) discountCodeSearch.oninput = () => renderDiscountCodes();
-  if (refreshDiscountBtn) refreshDiscountBtn.onclick = () => loadDiscountCodesFromApi();
-  if (discountPointInput) discountPointInput.oninput = updateDiscountValuePreview;
-  if (discountExchangeForm) discountExchangeForm.onsubmit = null;
   if (filterBtn) filterBtn.onclick = null;
   if (resetFilterBtn) resetFilterBtn.onclick = null;
   [statusFilter, pointsMinFilter, pointsMaxFilter, ordersMinFilter, ordersMaxFilter].forEach(input => {
@@ -596,57 +391,6 @@ window.initCustomers = function() {
   modal.addEventListener('click', window.customerModalHandler);
   
   if (search) search.oninput = e => render(e.target.value);
-  if (discountPointInput) discountPointInput.oninput = updateDiscountValuePreview;
-  if (discountExchangeForm) {
-    discountExchangeForm.onsubmit = async e => {
-      e.preventDefault();
-      const customerId = discountCustomerSelect?.value;
-      const points = Number(discountPointInput?.value || 0);
-      if (!customerId) {
-        showInlineToast('Vui lòng chọn khách hàng cần quy đổi', false);
-        return;
-      }
-      if (!Number.isInteger(points) || points < 100) {
-        showInlineToast('Điểm quy đổi tối thiểu là 100', false);
-        return;
-      }
-
-      const selectedCustomer = state.items.find(customer => String(customer.id) === String(customerId));
-      if (selectedCustomer && Number(selectedCustomer.diemTichLuy || 0) < points) {
-        showInlineToast('Khách hàng không đủ điểm để quy đổi', false);
-        return;
-      }
-
-      if (createDiscountBtn) createDiscountBtn.disabled = true;
-      try {
-        const response = await fetch(`${DISCOUNT_API}/khach-hang/${customerId}/doi-diem`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeaders(),
-          },
-          body: JSON.stringify({ diemSuDung: points }),
-        });
-        if (response.status === 401) {
-          window.location.href = 'login.html';
-          return;
-        }
-        if (!response.ok) {
-          const message = await response.text();
-          throw new Error(message || 'Không thể tạo mã giảm giá');
-        }
-        const created = await response.json();
-        discountExchangeForm.reset();
-        updateDiscountValuePreview();
-        showInlineToast(`Đã tạo mã ${created.ma || 'giảm giá'}`);
-        await Promise.all([loadCustomersFromApi(), loadDiscountCodesFromApi()]);
-      } catch (err) {
-        showInlineToast(err.message || 'Không thể tạo mã giảm giá', false);
-      } finally {
-        if (createDiscountBtn) createDiscountBtn.disabled = false;
-      }
-    };
-  }
   if (filterBtn && filterPanel) {
     filterBtn.onclick = () => {
       filterPanel.style.display = filterPanel.style.display === 'none' ? 'block' : 'none';
@@ -923,9 +667,6 @@ window.initCustomers = function() {
   });
 
   render();
-  renderDiscountCustomerOptions();
-  updateDiscountValuePreview();
   loadCustomersFromApi();
-  loadDiscountCodesFromApi();
 };
 </script>

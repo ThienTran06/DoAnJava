@@ -294,6 +294,35 @@
     return response.json();
   }
 
+  function decodeJwtPayload() {
+    var token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (!token) return {};
+    var parts = token.split(".");
+    if (parts.length < 2) return {};
+    try {
+      var base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+      while (base64.length % 4 !== 0) base64 += "=";
+      var json = decodeURIComponent(
+        atob(base64).split("").map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join("")
+      );
+      return JSON.parse(json);
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function canSeeStockNotifications() {
+    var payload = decodeJwtPayload();
+    if (!payload || !payload.role) return false;
+    if (String(payload.role).toUpperCase() === "ADMIN") return true;
+    var permissions = Array.isArray(payload.permissions) ? payload.permissions : [];
+    return permissions.some(function (p) {
+      return p === "QUAN_LY_PHIEU_NHAP" || p === "QUAN_LY_SACH";
+    });
+  }
+
   async function checkLowStock() {
     try {
       const rows = await fetchJson("/api/bao-cao/ton-kho-it");
@@ -361,6 +390,9 @@
         client.subscribe("/topic/notifications", function (msg) {
           try {
             var data = JSON.parse(msg.body);
+            if (data.type === "stock" && !canSeeStockNotifications()) {
+              return;
+            }
             pushNotification({
               type: data.type || "system",
               title: data.title || "Thông báo",
@@ -383,8 +415,10 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     initCenter();
-    setTimeout(checkLowStock, 1200);
-    setInterval(checkLowStock, 90000);
+    if (canSeeStockNotifications()) {
+      setTimeout(checkLowStock, 1200);
+      setInterval(checkLowStock, 90000);
+    }
     connectNotificationWs();
   });
 })();
