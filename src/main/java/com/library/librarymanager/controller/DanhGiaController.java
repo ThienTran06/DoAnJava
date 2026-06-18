@@ -60,6 +60,7 @@ public class DanhGiaController {
 
     @PostMapping("/api/danh-gia/public/submit")
     public DanhGia submitPublicReview(
+            @RequestParam(required = false) Integer khachHangId,
             @RequestParam String hoTen,
             @RequestParam String sdt,
             @RequestParam(required = false) String email,
@@ -69,6 +70,6 @@ public class DanhGiaController {
             @RequestParam(defaultValue = "SACH") String loai,
             @RequestParam(required = false) List<MultipartFile> hinhAnh
     ) {
-        return danhGiaService.submitPublicReview(hoTen, sdt, email, sachId, diemSao, noiDung, loai, hinhAnh);
+        return danhGiaService.submitPublicReview(khachHangId, hoTen, sdt, email, sachId, diemSao, noiDung, loai, hinhAnh);
     }
 }

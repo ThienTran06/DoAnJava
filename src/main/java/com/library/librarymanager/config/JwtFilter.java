@@ -44,6 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (isPublicResource(uri)
                 || uri.startsWith("/auth")
+                || uri.startsWith("/api/khach-hang/login")
                 || uri.startsWith("/api/public")
                 || uri.startsWith("/api/danh-gia/public")
                 || uri.startsWith("/swagger-ui")

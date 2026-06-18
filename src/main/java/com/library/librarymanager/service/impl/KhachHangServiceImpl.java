@@ -1,5 +1,6 @@
 package com.library.librarymanager.service.impl;
 
+import com.library.librarymanager.Exception.AuthException;
 import com.library.librarymanager.entity.KhachHang;
 import com.library.librarymanager.repository.HoaDonRepository;
 import com.library.librarymanager.repository.KhachHangRepository;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,6 +26,7 @@ public class KhachHangServiceImpl implements KhachHangService {
     private final KhachHangRepository khachHangRepository;
     private final HoaDonRepository hoaDonRepository;
     private final CloudinaryService cloudinaryService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     private static final BigDecimal MOT_NGAN_DONG = BigDecimal.valueOf(1000);
     private static final BigDecimal VIP_POINT_RATE = BigDecimal.valueOf(1.5);
@@ -44,9 +47,33 @@ public class KhachHangServiceImpl implements KhachHangService {
     }
 
     @Override
+    public KhachHang login(String email, String password) {
+        String normalizedEmail = ValidationUtils.trimToNull(email);
+        String rawPassword = ValidationUtils.trimToNull(password);
+
+        if (normalizedEmail == null || rawPassword == null) {
+            throw new AuthException("Sai email hoặc mật khẩu đăng nhập");
+        }
+
+        KhachHang khachHang = khachHangRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new AuthException("Sai email hoặc mật khẩu đăng nhập"));
+
+        if (khachHang.getTrangThai() != null && !khachHang.getTrangThai()) {
+            throw new AuthException("Sai email hoặc mật khẩu đăng nhập");
+        }
+
+        if (!passwordMatches(rawPassword, khachHang.getPassword())) {
+            throw new AuthException("Sai email hoặc mật khẩu đăng nhập");
+        }
+
+        return ganTongDonHang(khachHang);
+    }
+
+    @Override
     public KhachHang create(KhachHang khachHang) {
         validateKhachHang(khachHang, null);
         apDungHangThanhVienMacDinhNeuCan(khachHang);
+        apDungMatKhau(khachHang, khachHang.getPassword(), null);
         return ganTongDonHang(khachHangRepository.save(khachHang));
     }
 
@@ -74,6 +101,7 @@ public class KhachHangServiceImpl implements KhachHangService {
         res.setHangThanhVien(khachHang.getHangThanhVien());
         res.setVip(khachHang.isVip());
         res.setTrangThai(khachHang.getTrangThai() == null || khachHang.getTrangThai());
+        apDungMatKhau(res, khachHang.getPassword(), res.getPassword());
         apDungHangThanhVienMacDinhNeuCan(res);
         return ganTongDonHang(khachHangRepository.save(res));
     }
@@ -148,6 +176,35 @@ public class KhachHangServiceImpl implements KhachHangService {
         if (khachHang.getHangThanhVien() == null || khachHang.getHangThanhVien().isBlank()) {
             khachHang.setHangThanhVien(tinhHangThanhVien(khachHang.getDiemTichLuy()));
         }
+    }
+
+    private void apDungMatKhau(KhachHang khachHang, String rawPassword, String currentPassword) {
+        String normalizedPassword = ValidationUtils.trimToNull(rawPassword);
+        if (normalizedPassword == null) {
+            khachHang.setPassword(currentPassword);
+            return;
+        }
+        if (normalizedPassword.length() < 4) {
+            throw ValidationUtils.badRequest("Mat khau toi thieu 4 ky tu");
+        }
+        khachHang.setPassword(passwordEncoder.encode(normalizedPassword));
+    }
+
+    private boolean passwordMatches(String rawPassword, String storedPassword) {
+        String normalizedStoredPassword = ValidationUtils.trimToNull(storedPassword);
+        if (normalizedStoredPassword == null) {
+            return false;
+        }
+        if (normalizedStoredPassword.startsWith("$2a$")
+                || normalizedStoredPassword.startsWith("$2b$")
+                || normalizedStoredPassword.startsWith("$2y$")) {
+            try {
+                return passwordEncoder.matches(rawPassword, normalizedStoredPassword);
+            } catch (IllegalArgumentException ex) {
+                return false;
+            }
+        }
+        return normalizedStoredPassword.equals(rawPassword);
     }
 
     private void validateKhachHang(KhachHang khachHang, KhachHang current) {

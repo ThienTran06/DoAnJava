@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập khách hàng - BookHouse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f1e8;
+      --surface: #ffffff;
+      --surface-2: #f7f3ec;
+      --border: #e4dacb;
+      --text: #1b1712;
+      --muted: #756d63;
+      --subtle: #a89f93;
+      --accent: #1e3a28;
+      --accent-2: #356c4a;
+      --accent-soft: #e5efe8;
+      --shadow: 0 24px 80px rgba(22, 19, 14, 0.14);
+      --radius: 24px;
+      --radius-sm: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(62, 110, 74, 0.18), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(199, 167, 110, 0.2), transparent 30%),
+        linear-gradient(135deg, #f9f6f0 0%, #f3ede4 55%, #ece4d7 100%);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .shell {
+      width: min(1120px, 100%);
+      min-height: min(780px, calc(100vh - 48px));
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      border: 1px solid rgba(79, 64, 44, 0.08);
+      border-radius: 34px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      position: relative;
+      padding: 48px;
+      background:
+        linear-gradient(180deg, rgba(18, 24, 16, 0.88), rgba(18, 24, 16, 0.82)),
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 28%),
+        linear-gradient(135deg, #1a241a 0%, #24331f 45%, #162012 100%);
+      color: #f7f3ec;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 320px;
+      height: 320px;
+      top: -110px;
+      right: -120px;
+    }
+
+    .hero::after {
+      width: 220px;
+      height: 220px;
+      left: -80px;
+      bottom: 12%;
+    }
+
+    .brand {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .brand-mark svg {
+      width: 22px;
+      height: 22px;
+      stroke: #f7f3ec;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .brand-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      letter-spacing: -0.4px;
+    }
+
+    .brand-sub {
+      color: rgba(247, 243, 236, 0.72);
+      font-size: 13px;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      max-width: 460px;
+      padding: 24px 0 0;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(247, 243, 236, 0.84);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(44px, 6vw, 76px);
+      line-height: 0.96;
+      letter-spacing: -1.4px;
+      max-width: 10ch;
+    }
+
+    .hero p {
+      margin: 20px 0 0;
+      max-width: 38ch;
+      color: rgba(247, 243, 236, 0.78);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .hero-stats {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .stat {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(4px);
+    }
+
+    .stat-value {
+      display: block;
+      font-family: 'DM Serif Display', serif;
+      font-size: 30px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      color: rgba(247, 243, 236, 0.72);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .hero-footer {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-top: 40px;
+      color: rgba(247, 243, 236, 0.6);
+      font-size: 12px;
+    }
+
+    .hero-footer .hint {
+      max-width: 34ch;
+      line-height: 1.6;
+    }
+
+    .form-side {
+      background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.96));
+      padding: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .card-head {
+      margin-bottom: 28px;
+    }
+
+    .card-head h2 {
+      margin: 0;
+      font-family: 'DM Serif Display', serif;
+      font-size: 38px;
+      line-height: 1;
+      letter-spacing: -0.9px;
+    }
+
+    .card-head p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .notice {
+      display: none;
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(53, 108, 74, 0.18);
+      color: var(--accent);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .notice.show { display: block; }
+
+    .error {
+      display: none;
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #fdecec;
+      border: 1px solid #f2c1c1;
+      color: #9e2b2b;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .error.show { display: block; }
+
+    .form-group { margin-bottom: 18px; }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.1px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      stroke: var(--subtle);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      height: 52px;
+      padding: 0 14px 0 44px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: rgba(53, 108, 74, 0.7);
+      box-shadow: 0 0 0 4px rgba(53, 108, 74, 0.1);
+    }
+
+    .btn {
+      width: 100%;
+      height: 52px;
+      border: 0;
+      border-radius: 14px;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .14s ease, box-shadow .14s ease, opacity .14s ease;
+    }
+
+    .btn-login {
+      background: linear-gradient(135deg, var(--accent) 0%, #254d35 100%);
+      color: #f8f4ec;
+      box-shadow: 0 16px 30px rgba(30, 58, 40, 0.22);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 20px 34px rgba(30, 58, 40, 0.28);
+    }
+
+    .btn-login:disabled {
+      opacity: .7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-login svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 16px 0 22px;
+      flex-wrap: wrap;
+    }
+
+    .forgot {
+      border: 0;
+      background: transparent;
+      color: var(--accent-2);
+      padding: 0;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .forgot:hover { text-decoration: underline; }
+
+    .secondary-link {
+      color: var(--muted);
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .secondary-link:hover { color: var(--accent); }
+
+    .mini-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.65;
+    }
+
+    .loader {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      animation: spin .8s linear infinite;
+    }
+
+    .loader.show { display: inline-block; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 900px) {
+      body { padding: 0; }
+      .shell {
+        width: 100%;
+        min-height: 100vh;
+        grid-template-columns: 1fr;
+        border-radius: 0;
+      }
+
+      .hero,
+      .form-side {
+        padding: 28px 22px;
+      }
+
+      .hero h1 { max-width: 12ch; }
+      .hero-stats { grid-template-columns: 1fr; }
+      .card-head h2 { font-size: 30px; }
+    }
+  </style>
+  <script>
+    (function () {
+      const raw = localStorage.getItem('loggedInCustomer') || sessionStorage.getItem('loggedInCustomer');
+      if (!raw) return;
+      try {
+        const customer = JSON.parse(raw);
+        if (customer && customer.id) {
+          window.location.replace('danh-gia.html');
+          return;
+        }
+      } catch (error) {
+        localStorage.removeItem('loggedInCustomer');
+        sessionStorage.removeItem('loggedInCustomer');
+      }
+    })();
+  </script>
+  <script src="js/app-settings.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div>
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v14.5A1.5 1.5 0 0 1 18.5 20H6.5A2.5 2.5 0 0 1 4 17.5z"></path>
+              <path d="M7 7h8"></path>
+              <path d="M7 11h8"></path>
+              <path d="M7 15h5"></path>
+            </svg>
+          </div>
+          <div class="brand-copy">
+            <div class="brand-name">BookHouse</div>
+            <div class="brand-sub">Cổng khách hàng</div>
+          </div>
+        </div>
+
+        <div class="hero-copy">
+          <div class="hero-kicker">Đánh giá sau khi đăng nhập</div>
+          <h1>Đăng nhập để viết nhận xét</h1>
+          <p>Khách hàng có tài khoản sẽ được tự động điền tên, email và số điện thoại trước khi gửi đánh giá.</p>
+          <div class="hero-stats">
+            <div class="stat">
+              <span class="stat-value">01</span>
+              <span class="stat-label">Bước đăng nhập</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">100%</span>
+              <span class="stat-label">Tự động điền hồ sơ</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">✓</span>
+              <span class="stat-label">Đến trang đánh giá</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-footer">
+        <div class="hint">Mật khẩu khách hàng sẽ được đối chiếu với dữ liệu trong bảng `khach_hang`.</div>
+        <div>BookHouse 2026</div>
+      </div>
+    </section>
+
+    <section class="form-side">
+      <div class="card">
+        <div class="card-head">
+          <h2>Khách hàng đăng nhập</h2>
+          <p>Nhập email và mật khẩu để tiếp tục đến trang đánh giá.</p>
+        </div>
+
+        <div id="forgotNotice" class="notice">Chức năng quên mật khẩu đang được phát triển</div>
+        <div id="loginError" class="error"></div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 6h16v12H4z"></path>
+                <path d="m4 7 8 6 8-6"></path>
+              </svg>
+              <input type="email" id="email" name="email" placeholder="customer@example.com" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Mật khẩu</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M17 11V8a5 5 0 0 0-10 0v3"></path>
+                <rect x="4" y="11" width="16" height="9" rx="2"></rect>
+              </svg>
+              <input type="password" id="password" name="password" placeholder="Nhập mật khẩu" autocomplete="current-password" required>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="forgot" id="forgotBtn">Quên mật khẩu</button>
+            <a class="secondary-link" href="danh-gia-cong-cong.html">Xem đánh giá công khai</a>
+          </div>
+
+          <button type="submit" class="btn btn-login" id="loginBtn">
+            <span class="loader" id="loginLoader" aria-hidden="true"></span>
+            <span id="loginBtnText">Đăng nhập</span>
+          </button>
+        </form>
+
+        <div class="mini-note">
+          Sau khi đăng nhập thành công, hệ thống sẽ lưu thông tin khách hàng vào `localStorage` với key `loggedInCustomer`.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    const LOGIN_API = `${API_BASE}/api/khach-hang/login`;
+    const REDIRECT_URL = 'danh-gia.html';
+
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginBtnText = document.getElementById('loginBtnText');
+    const loginLoader = document.getElementById('loginLoader');
+    const loginError = document.getElementById('loginError');
+    const forgotNotice = document.getElementById('forgotNotice');
+    const forgotBtn = document.getElementById('forgotBtn');
+
+    function setLoading(isLoading) {
+      loginBtn.disabled = isLoading;
+      loginLoader.classList.toggle('show', isLoading);
+      loginBtnText.textContent = isLoading ? 'Đang đăng nhập...' : 'Đăng nhập';
+    }
+
+    function showError(message) {
+      loginError.textContent = message;
+      loginError.classList.add('show');
+    }
+
+    function clearError() {
+      loginError.textContent = '';
+      loginError.classList.remove('show');
+    }
+
+    function showForgotNotice() {
+      forgotNotice.classList.add('show');
+      forgotNotice.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      window.alert('Chức năng quên mật khẩu đang được phát triển');
+    }
+
+    function saveLoggedInCustomer(customer) {
+      const payload = JSON.stringify(customer);
+      localStorage.setItem('loggedInCustomer', payload);
+      sessionStorage.setItem('loggedInCustomer', payload);
+    }
+
+    forgotBtn.addEventListener('click', showForgotNotice);
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearError();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showError('Vui lòng nhập email và mật khẩu.');
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const response = await fetch(LOGIN_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          showError(data.message || 'Sai email hoặc mật khẩu đăng nhập');
+          return;
+        }
+
+        saveLoggedInCustomer(data);
+        window.location.replace(REDIRECT_URL);
+      } catch (error) {
+        console.error(error);
+        showError('Không thể kết nối đến máy chủ. Vui lòng thử lại sau.');
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+</body>
+</html>

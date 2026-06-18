@@ -32,6 +32,10 @@ public class KhachHang {
 
     private String email;
 
+    @Column(name = "password")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
+
     private String avatar;
 
     @Column(name = "diem_tich_luy", columnDefinition = "int default 0")

@@ -93,19 +93,25 @@ public class DanhGiaServiceImpl implements DanhGiaService {
 
     @Override
     @Transactional
-    public DanhGia submitPublicReview(String hoTen, String sdt, String email, Integer sachId, int diemSao, String noiDung, String loai) {
-        // Tìm hoặc tạo khách hàng dựa trên số điện thoại
-        KhachHang khachHang = khachHangRepository.findBySDT(sdt)
-                .orElseGet(() -> {
-                    KhachHang newCustomer = new KhachHang();
-                    newCustomer.setHoTen(hoTen);
-                    newCustomer.setSDT(sdt);
-                    newCustomer.setEmail(email);
-                    newCustomer.setHangThanhVien("Đồng");
-                    newCustomer.setVip(false);
-                    newCustomer.setDiemTichLuy(0);
-                    return khachHangRepository.save(newCustomer);
-                });
+    public DanhGia submitPublicReview(Integer khachHangId, String hoTen, String sdt, String email, Integer sachId, int diemSao, String noiDung, String loai) {
+        KhachHang khachHang;
+        if (khachHangId != null) {
+            khachHang = khachHangRepository.findById(khachHangId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Khong tim thay khach hang co id = " + khachHangId));
+        } else {
+            // Tìm hoặc tạo khách hàng dựa trên số điện thoại
+            khachHang = khachHangRepository.findBySDT(sdt)
+                    .orElseGet(() -> {
+                        KhachHang newCustomer = new KhachHang();
+                        newCustomer.setHoTen(hoTen);
+                        newCustomer.setSDT(sdt);
+                        newCustomer.setEmail(email);
+                        newCustomer.setHangThanhVien("Đồng");
+                        newCustomer.setVip(false);
+                        newCustomer.setDiemTichLuy(0);
+                        return khachHangRepository.save(newCustomer);
+                    });
+        }
         // Tim sach (optional)
         Sach sach = null;
         if (sachId != null) {
@@ -128,9 +134,9 @@ public class DanhGiaServiceImpl implements DanhGiaService {
 
     @Override
     @Transactional
-    public DanhGia submitPublicReview(String hoTen, String sdt, String email, Integer sachId,
+    public DanhGia submitPublicReview(Integer khachHangId, String hoTen, String sdt, String email, Integer sachId,
             int diemSao, String noiDung, String loai, List<MultipartFile> hinhAnh) {
-        DanhGia dg = submitPublicReview(hoTen, sdt, email, sachId, diemSao, noiDung, loai);
+        DanhGia dg = submitPublicReview(khachHangId, hoTen, sdt, email, sachId, diemSao, noiDung, loai);
         if (hinhAnh != null && !hinhAnh.isEmpty()) {
             String urls = hinhAnh.stream()
                 .filter(f -> f != null && !f.isEmpty())

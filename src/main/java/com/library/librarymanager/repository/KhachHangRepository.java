@@ -30,6 +30,8 @@ public interface KhachHangRepository extends JpaRepository<KhachHang,Integer> {
 
     boolean existsByEmailIgnoreCaseAndIdNot(String email, int id);
 
+    Optional<KhachHang> findByEmailIgnoreCase(String email);
+
     @Query("""
         SELECT k
         FROM KhachHang k

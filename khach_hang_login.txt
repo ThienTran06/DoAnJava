@@ -1,0 +1,46 @@
+CHỨC NĂNG ĐĂNG NHẬP KHÁCH HÀNG VÀO TRANG ĐÁNH GIÁ
+
+1. Các file đã thêm/sửa:
+- src/main/java/com/library/librarymanager/entity/KhachHang.java
+- src/main/java/com/library/librarymanager/repository/KhachHangRepository.java
+- src/main/java/com/library/librarymanager/service/Interface/KhachHangService.java
+- src/main/java/com/library/librarymanager/service/impl/KhachHangServiceImpl.java
+- src/main/java/com/library/librarymanager/controller/KhachHangAuthController.java
+- src/main/java/com/library/librarymanager/dto/request/KhachHangLoginRequest.java
+- src/main/java/com/library/librarymanager/config/SecurityConfig.java
+- src/main/java/com/library/librarymanager/config/JwtFilter.java
+- src/main/java/com/library/librarymanager/controller/DanhGiaController.java
+- src/main/java/com/library/librarymanager/service/Interface/DanhGiaService.java
+- src/main/java/com/library/librarymanager/service/impl/DanhGiaServiceImpl.java
+- src/main/resources/static/khach-hang-login.html
+- src/main/resources/static/danh-gia.html
+- src/main/resources/static/danh-gia-cong-cong.html
+- src/main/resources/static/pages/customers.html
+
+2. Những gì đã làm:
+- Thêm password vào entity KhachHang.
+- Bổ sung password cho thêm/sửa khách hàng nếu cần.
+- Thêm API login khách hàng.
+- Tạo/sửa trang login khách hàng.
+- Bảo vệ trang danh-gia.html.
+- Tự động điền thông tin khách hàng sau khi login.
+
+3. Luồng hoạt động:
+- Khách mở trang đánh giá.
+- Nếu chưa login, hệ thống chuyển về trang login khách hàng.
+- Khách nhập email và password.
+- Frontend gọi API login.
+- Backend kiểm tra email/password trong bảng khach_hang.
+- Nếu sai, hiển thị “Sai email hoặc mật khẩu đăng nhập”.
+- Nếu đúng, lưu thông tin khách vào sessionStorage/localStorage.
+- Chuyển sang danh-gia.html.
+- Trang danh-gia.html tự điền thông tin khách hàng vào form đánh giá.
+
+4. API đã thêm:
+- POST /api/khach-hang/login
+
+5. Cách test:
+- Tạo khách hàng có email/password.
+- Đăng nhập sai để kiểm tra thông báo lỗi.
+- Đăng nhập đúng để kiểm tra vào danh-gia.html.
+- Kiểm tra form đánh giá tự điền thông tin khách hàng.

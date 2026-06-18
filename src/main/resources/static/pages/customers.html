@@ -108,7 +108,7 @@
     </div>
     <div class="empty-state" id="customerEmptyState" style="display:none;margin-top:16px">Chưa có khách hàng nào.</div>
   </div>
-  <div class="modal-overlay" id="customerModal"><div class="modal"><div class="modal-head"><div class="modal-title"> Thêm khách hàng</div><button class="close" id="closeCustomerModal">Đóng</button></div><form id="customerForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống tên</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ, ví dụ 09xxxxxxxx</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Ngày sinh</div><input class="input" name="dob" type="date"></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Điểm tích lũy</div><input class="input" name="diemTichLuy" type="number" min="0" value="0" id="editDiemTichLuy"></div><div class="field"><div class="label">Hạng thành viên</div><input class="input" id="editHangThanhVien" readonly style="background:var(--bg);cursor:default"></div><div class="field"><div class="label">VIP</div><select class="input" name="isVip" id="editIsVip"><option value="0">Không</option><option value="1">Có</option></select></div><div class="field"><div class="label">Trạng thái</div><select class="input" name="trangThai" id="editTrangThai"><option value="1">Hoạt động</option><option value="0">Ngừng hoạt động</option></select></div><div class="field"><div class="label">Avatar khách hàng</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="customerPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelCustomer">Hủy</button><button type="submit" class="btn primary" id="saveCustomer"><span class="txt">Lưu khách hàng</span><span class="spin"></span></button></div></form></div></div>
+  <div class="modal-overlay" id="customerModal"><div class="modal"><div class="modal-head"><div class="modal-title"> Thêm khách hàng</div><button class="close" id="closeCustomerModal">Đóng</button></div><form id="customerForm"><div class="modal-body"><div class="grid"><div class="field"><div class="label">Họ tên</div><input class="input" name="name" required><div class="helper">Không được để trống tên</div></div><div class="field"><div class="label">Số điện thoại</div><input class="input" name="phone" required><div class="helper">SĐT hợp lệ, ví dụ 09xxxxxxxx</div></div><div class="field"><div class="label">Email</div><input class="input" name="email" type="email" required><div class="helper">Email hợp lệ</div></div><div class="field"><div class="label">Mật khẩu đăng nhập</div><input class="input" name="password" type="password" autocomplete="new-password" placeholder=""><div class="helper">Bỏ trống nếu chưa muốn cấp hoặc đổi mật khẩu</div></div><div class="field"><div class="label">Ngày sinh</div><input class="input" name="dob" type="date"></div><div class="field"><div class="label">Địa chỉ</div><input class="input" name="address"></div><div class="field"><div class="label">Điểm tích lũy</div><input class="input" name="diemTichLuy" type="number" min="0" value="0" id="editDiemTichLuy"></div><div class="field"><div class="label">Hạng thành viên</div><input class="input" id="editHangThanhVien" readonly style="background:var(--bg);cursor:default"></div><div class="field"><div class="label">VIP</div><select class="input" name="isVip" id="editIsVip"><option value="0">Không</option><option value="1">Có</option></select></div><div class="field"><div class="label">Trạng thái</div><select class="input" name="trangThai" id="editTrangThai"><option value="1">Hoạt động</option><option value="0">Ngừng hoạt động</option></select></div><div class="field"><div class="label">Avatar khách hàng</div><input class="input" name="avatar" type="file" accept="image/*"><div class="thumb"><img id="customerPreview"><span>Preview avatar sẽ hiển thị ở đây</span></div></div><div class="field full"><div class="label">Ghi chú</div><textarea class="textarea" name="note"></textarea></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="cancelCustomer">Hủy</button><button type="submit" class="btn primary" id="saveCustomer"><span class="txt">Lưu khách hàng</span><span class="spin"></span></button></div></form></div></div>
   <div class="modal-overlay" id="customerDetailModal"><div class="modal" style="max-width:500px"><div class="modal-head"><div class="modal-title"> Chi tiết khách hàng</div><button class="close" id="closeDetailModal">Đóng</button></div><div class="modal-body"><div style="text-align:center;margin-bottom:20px" id="detailAvatarContainer"><div class="avatar" style="width:80px;height:80px;font-size:36px;margin:0 auto">A</div></div><div style="display:grid;gap:12px"><div><div style="font-size:12px;color:var(--muted)">Họ tên</div><div style="font-weight:700" id="detailName">—</div></div><div><div style="font-size:12px;color:var(--muted)">Số điện thoại</div><div style="font-weight:700" id="detailPhone">—</div></div><div><div style="font-size:12px;color:var(--muted)">Email</div><div style="font-weight:700" id="detailEmail">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ngày sinh</div><div style="font-weight:700" id="detailDOB">—</div></div><div><div style="font-size:12px;color:var(--muted)">Địa chỉ</div><div style="font-weight:700" id="detailAddress">—</div></div><div><div style="font-size:12px;color:var(--muted)">Hạng thành viên</div><div style="font-weight:700" id="detailTier">—</div></div><div><div style="font-size:12px;color:var(--muted)">Tổng đơn hàng</div><div style="font-weight:700" id="detailOrders">—</div></div><div><div style="font-size:12px;color:var(--muted)">Điểm tích lũy</div><div style="font-weight:700" id="detailPoints">—</div></div><div><div style="font-size:12px;color:var(--muted)">Trạng thái</div><div style="font-weight:700" id="detailStatus">—</div></div><div><div style="font-size:12px;color:var(--muted)">Ghi chú</div><div style="font-weight:700" id="detailNote">—</div></div></div></div><div class="footer-actions"><button type="button" class="btn ghost" id="closeDetailBtn">Đóng</button></div></div></div>
 </div>
 
@@ -580,6 +580,7 @@ window.initCustomers = function() {
   // Attach new listeners
   if (openBtn) openBtn.onclick = () => {
     form.reset();
+    if (form.password) form.password.value = '';
     preview.removeAttribute('src');
     preview.style.display = 'none';
     preview.nextElementSibling.style.display = 'block';
@@ -680,6 +681,7 @@ window.initCustomers = function() {
     const name = form.name.value.trim();
     const phone = form.phone.value.trim();
     const email = form.email.value.trim();
+    const password = form.password ? form.password.value.trim() : '';
     const nameField = form.name.closest('.field');
     const phoneField = form.phone.closest('.field');
     const emailField = form.email.closest('.field');
@@ -703,7 +705,7 @@ window.initCustomers = function() {
     const tier = form.hangThanhVien?.value || calculateTier(points);
     const isVip = form.isVip && form.isVip.value === '1';
     const formData = new FormData();
-    formData.append('khachHang', new Blob([JSON.stringify({
+    const customerPayload = {
       hoTen: name,
       sdt: phone,
       email,
@@ -711,7 +713,9 @@ window.initCustomers = function() {
       hangThanhVien: tier,
       vip: isVip,
       trangThai: trangThaiVal ? trangThaiVal.value === '1' : true,
-    })], { type: 'application/json' }));
+    };
+    if (password) customerPayload.password = password;
+    formData.append('khachHang', new Blob([JSON.stringify(customerPayload)], { type: 'application/json' }));
     const file = form.avatar.files && form.avatar.files[0];
     if (file) formData.append('avatarFile', file);
 
@@ -834,6 +838,7 @@ window.initCustomers = function() {
       form.name.value = item.name;
       form.phone.value = item.phone;
       form.email.value = item.email;
+      if (form.password) form.password.value = '';
       form.dob.value = item.dob || '';
       form.address.value = item.address || '';
       form.note.value = item.note || '';

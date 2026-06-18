@@ -45,9 +45,10 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/**",
-                                "/api/public/**",
-                                "/api/danh-gia/public/**",
+                        "/auth/**",
+                        "/api/khach-hang/login",
+                        "/api/public/**",
+                        "/api/danh-gia/public/**",
                                 "/Create/**",
                                 "/",
                                 "/*.html",

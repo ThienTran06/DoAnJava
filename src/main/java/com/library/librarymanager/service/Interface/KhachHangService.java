@@ -10,6 +10,7 @@ import java.util.List;
 public interface KhachHangService {
     List<KhachHang> getAll();
     KhachHang getById(int id);
+    KhachHang login(String email, String password);
     KhachHang create(KhachHang khachHang);
     KhachHang create(KhachHang khachHang, MultipartFile avatarFile);
     KhachHang updateById(int id,KhachHang khachHang);

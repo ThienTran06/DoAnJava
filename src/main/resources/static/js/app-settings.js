@@ -2658,6 +2658,10 @@
   }
 
   function ensureTopbarMenus() {
+    if (document.body?.dataset.disableTopbarMenus === '1' || document.documentElement?.dataset.disableTopbarMenus === '1') {
+      return;
+    }
+
     document.querySelectorAll('.topbar .search-box').forEach(box => {
       box.hidden = true;
       box.setAttribute('aria-hidden', 'true');
