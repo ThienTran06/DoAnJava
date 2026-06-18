@@ -105,24 +105,23 @@
     }
   }
 
-  /* ── Avatar Upload (Cloudinary + API) ── */
-  var CLOUD_NAME = 'ddjcg7c8y';
-  var UPLOAD_PRESET = 'ml_default';
+  /* ── Avatar Upload (via Backend) ── */
 
   function uploadAvatarToCloudinary(file) {
+    var token = localStorage.getItem('token');
+    var base = window.API_BASE_URL || window.location.origin;
     var fd = new FormData();
     fd.append('file', file);
-    fd.append('upload_preset', UPLOAD_PRESET);
-    fd.append('cloud_name', CLOUD_NAME);
-    return fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image/upload', {
+    return fetch(base + '/api/nguoi-dung/upload-avatar', {
       method: 'POST',
+      headers: { Authorization: 'Bearer ' + token },
       body: fd
     }).then(function (res) {
       if (!res.ok) throw new Error('Upload thất bại');
       return res.json();
     }).then(function (data) {
-      if (!data.secure_url) throw new Error('Không nhận được URL ảnh');
-      return data.secure_url;
+      if (!data.url) throw new Error('Không nhận được URL ảnh');
+      return data.url;
     });
   }
 

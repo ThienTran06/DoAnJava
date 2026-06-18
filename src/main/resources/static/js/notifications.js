@@ -337,6 +337,46 @@
     checkKpi
   };
 
+  /* ---- Real-time notifications via WebSocket ---- */
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
+      var s = document.createElement("script");
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  function connectNotificationWs() {
+    Promise.all([
+      loadScript("https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"),
+      loadScript("https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js")
+    ]).then(function () {
+      var sock = new SockJS(window.location.origin + "/ws");
+      var client = Stomp.over(sock);
+      client.debug = null;
+      client.connect({}, function () {
+        client.subscribe("/topic/notifications", function (msg) {
+          try {
+            var data = JSON.parse(msg.body);
+            pushNotification({
+              type: data.type || "system",
+              title: data.title || "Thông báo",
+              message: data.message || "",
+              href: data.href || ""
+            });
+          } catch (e) {
+            console.warn("Notification parse error:", e);
+          }
+        });
+      });
+    }).catch(function (e) {
+      console.warn("Could not load WebSocket libs:", e);
+    });
+  }
+
   window.addEventListener("storage", event => {
     if (event.key === STORAGE_KEY) renderNotificationCenter();
   });
@@ -345,5 +385,6 @@
     initCenter();
     setTimeout(checkLowStock, 1200);
     setInterval(checkLowStock, 90000);
+    connectNotificationWs();
   });
 })();
